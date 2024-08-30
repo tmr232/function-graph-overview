@@ -12,6 +12,15 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "type": "webview",
+          "id": "functionGraphOverview.overview",
+          "name": "Graph Overview"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "function-graph-overview.helloWorld",

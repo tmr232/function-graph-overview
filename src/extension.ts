@@ -5,8 +5,9 @@ import { MultiDirectedGraph } from 'graphology';
 import Parser, { SyntaxNode } from 'web-tree-sitter';
 import treesitterGoUrl from "./tree-sitter-go.wasm";
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
+
+let graphviz: Graphviz;
 async function dot2svg() {
-	const graphviz = await Graphviz.load();
 	console.log("svg:  ", graphviz.dot('digraph G { Hello -> World }'));
 }
 
@@ -39,6 +40,12 @@ function getCurrentGoCode(): string | null {
 export async function activate(context: vscode.ExtensionContext) {
 	// console.log("Go wasm path", treesitterGoUrl);
 	// console.log(vscode.Uri.joinPath(context.extensionUri, "dist", treesitterGoUrl).fsPath);
+	graphviz = await Graphviz.load();
+
+	const provider = new OverviewViewProvider(context.extensionUri);
+
+	context.subscriptions.push(
+		vscode.window.registerWebviewViewProvider(OverviewViewProvider.viewType, provider));
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
@@ -101,3 +108,63 @@ export async function activate(context: vscode.ExtensionContext) {
 
 // This method is called when your extension is deactivated
 export function deactivate() { }
+
+
+//------------------------------------------------
+
+class OverviewViewProvider implements vscode.WebviewViewProvider {
+	public static readonly viewType = "functionGraphOverview.overview";
+
+	private _view?: vscode.WebviewView;
+
+	constructor(
+		private readonly _extensionUri: vscode.Uri,
+	) { }
+
+
+	resolveWebviewView(webviewView: vscode.WebviewView, context: vscode.WebviewViewResolveContext, token: vscode.CancellationToken): Thenable<void> | void {
+		this._view = webviewView;
+
+		webviewView.webview.options = {
+			// Allow scripts in the webview
+			enableScripts: true,
+
+			localResourceRoots: [
+				this._extensionUri
+			]
+		};
+
+		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+	}
+	private _getHtmlForWebview(webview: vscode.Webview): string {
+		const svg = graphviz.dot('digraph G { Hello -> World }');
+		return `<!DOCTYPE html>
+			<html lang="en">
+			<head>
+				<meta charset="UTF-8">
+				<meta name="viewport" content="width=device-width, initial-scale=1.0">
+				<title>Overview</title>
+				<style>
+					body {
+						height: 100dvh;
+						width: 100dvw;
+						padding: 0;
+						margin: 0;
+						overflow: hidden;
+						display: flex;
+						justify-content: center;
+						align-items: center;
+						// background-color: white;
+					}
+					svg {
+						width: 100%;
+						height:100%;
+					}
+				</style>
+			</head>
+			<body>
+				${svg}
+			</body>
+			</html>`;
+	}
+}
