@@ -41,6 +41,7 @@ async function main() {
 			/* add to the end of plugins array */
 			esbuildProblemMatcherPlugin,
 		],
+		loader: { ".wasm": "file" },
 	});
 	if (watch) {
 		await ctx.watch();
