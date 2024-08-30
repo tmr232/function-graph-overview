@@ -4,6 +4,11 @@ import * as vscode from 'vscode';
 import { MultiDirectedGraph } from 'graphology';
 import Parser, { SyntaxNode } from 'web-tree-sitter';
 import treesitterGoUrl from "./tree-sitter-go.wasm";
+import { Graphviz } from "@hpcc-js/wasm-graphviz";
+async function dot2svg() {
+	const graphviz = await Graphviz.load();
+	console.log("svg:  ", graphviz.dot('digraph G { Hello -> World }'));
+}
 
 async function initializeParser(languagePath: string) {
 	await Parser.init();
@@ -37,6 +42,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
+	await dot2svg();
 	console.log('Congratulations, your extension "function-graph-overview" is now active!');
 
 	// The command has been defined in the package.json file
