@@ -59,6 +59,7 @@ export async function activate(context: vscode.ExtensionContext) {
 		// The code you place here will be executed every time your command is executed
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World from Function Graph Overview!');
+		provider.updateSVG();
 	});
 
 	context.subscriptions.push(disposable);
@@ -121,6 +122,12 @@ class OverviewViewProvider implements vscode.WebviewViewProvider {
 		private readonly _extensionUri: vscode.Uri,
 	) { }
 
+	public updateSVG() {
+		if (this._view) {
+			this._view.webview.postMessage({ type: 'svgImage', svg: graphviz.dot('digraph G { Hello -> Again }') });
+		}
+	}
+
 
 	resolveWebviewView(webviewView: vscode.WebviewView, context: vscode.WebviewViewResolveContext, token: vscode.CancellationToken): Thenable<void> | void {
 		this._view = webviewView;
@@ -137,11 +144,27 @@ class OverviewViewProvider implements vscode.WebviewViewProvider {
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 	}
 	private _getHtmlForWebview(webview: vscode.Webview): string {
+		// Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
+		const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.js'));
+
+		// Use a nonce to only allow a specific script to be run.
+		const nonce = getNonce();
+
+
+
 		const svg = graphviz.dot('digraph G { Hello -> World }');
 		return `<!DOCTYPE html>
 			<html lang="en">
 			<head>
 				<meta charset="UTF-8">
+
+				<!--
+					Use a content security policy to only allow loading styles from our extension directory,
+					and only allow scripts that have a specific nonce.
+					(See the 'webview-sample' extension sample for img-src content security policy examples)
+				-->
+				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<title>Overview</title>
 				<style>
@@ -160,11 +183,29 @@ class OverviewViewProvider implements vscode.WebviewViewProvider {
 						width: 100%;
 						height:100%;
 					}
+
+					#overview {
+						width: 100%;
+						height: 100%;
+					}
 				</style>
 			</head>
 			<body>
+			<div id="overview">
 				${svg}
+				</div>
+
+				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;
 	}
+}
+
+function getNonce() {
+	let text = '';
+	const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	for (let i = 0; i < 32; i++) {
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	return text;
 }
