@@ -70,7 +70,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	const code = getCurrentGoCode() ?? "";
 	const tree = await (async () => {
 		try {
-			
+
 			const tree = parser.parse(code);
 			return tree;
 		} catch (error) {
@@ -108,7 +108,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
 			const builder = new CFGBuilder();
 			const cfg = builder.buildCFG(node);
-			const dot = graphToDot(cfg);
+			const simple = simplifyGraph(cfg);
+			const dot = graphToDot(simple);
 			const svg = graphviz.dot(dot);
 			provider.setSVG(svg);
 		}
@@ -164,6 +165,11 @@ class OverviewViewProvider implements vscode.WebviewViewProvider {
 		// Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
 		const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.js'));
 
+		// Do the same for the stylesheet.
+		const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'reset.css'));
+		const styleVSCodeUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'vscode.css'));
+		const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.css'));
+
 		// Use a nonce to only allow a specific script to be run.
 		const nonce = getNonce();
 
@@ -182,29 +188,14 @@ class OverviewViewProvider implements vscode.WebviewViewProvider {
 				-->
 				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
 
+				<link href="${styleResetUri}" rel="stylesheet">
+				<link href="${styleVSCodeUri}" rel="stylesheet">
+				<link href="${styleMainUri}" rel="stylesheet">
+
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
 				<title>Overview</title>
 				<style>
-					body {
-						height: 100dvh;
-						width: 100dvw;
-						padding: 0;
-						margin: 0;
-						overflow: hidden;
-						display: flex;
-						justify-content: center;
-						align-items: center;
-						// background-color: white;
-					}
-					svg {
-						width: 100%;
-						height:100%;
-					}
 
-					#overview {
-						width: 100%;
-						height: 100%;
-					}
 				</style>
 			</head>
 			<body>

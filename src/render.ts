@@ -15,7 +15,7 @@ function distanceFromEntry(graph: MultiDirectedGraph): Map<any, number> {
 }
 
 export function graphToDot(graph: MultiDirectedGraph, name: string = "Graph"): string {
-    let dotContent = `digraph "${name}" {\n    node [shape=box];\n    edge [headport=n tailport=s]\n`;
+    let dotContent = `digraph "${name}" {\n    node [shape=box];\n    edge [headport=n tailport=s]\n    bgcolor="transparent"\n`;
     let levels = distanceFromEntry(graph);
     graph.forEachNode((node) => {
 
