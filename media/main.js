@@ -24,8 +24,8 @@
         div.innerHTML = svgMarkup;
 
         const svg = document.querySelector("svg");
-        svg.style.width = "100%";
-        svg.style.height = "100%";
+        svg.width = "100%";
+        svg.height = "100%";
     }
 
 }());

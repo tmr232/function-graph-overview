@@ -5,6 +5,8 @@ import { MultiDirectedGraph } from 'graphology';
 import Parser, { SyntaxNode } from 'web-tree-sitter';
 import treesitterGoUrl from "./tree-sitter-go.wasm";
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
+import { CFGBuilder } from './cfg';
+import { simplifyGraph, graphToDot } from './render';
 
 let graphviz: Graphviz;
 async function dot2svg() {
@@ -63,12 +65,12 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 
 	context.subscriptions.push(disposable);
-
+	const wasmPath = vscode.Uri.joinPath(context.extensionUri, "dist", treesitterGoUrl);
+	const parser = await initializeParser(wasmPath.fsPath);
 	const code = getCurrentGoCode() ?? "";
 	const tree = await (async () => {
 		try {
-			const wasmPath = vscode.Uri.joinPath(context.extensionUri, "dist", treesitterGoUrl);
-			const parser = await initializeParser(wasmPath.fsPath);
+			
 			const tree = parser.parse(code);
 			return tree;
 		} catch (error) {
@@ -83,6 +85,9 @@ export async function activate(context: vscode.ExtensionContext) {
 	const cursorMove = vscode.window.onDidChangeTextEditorSelection((event: vscode.TextEditorSelectionChangeEvent) => {
 		const editor = event.textEditor;
 		const position = editor.selection.active;
+
+		const code = getCurrentGoCode() ?? "";
+		const tree = parser.parse(code);
 
 		console.log(`Cursor position changed: Line ${position.line + 1}, Column ${position.character + 1}`);
 		let node: SyntaxNode | null = tree.rootNode.descendantForPosition({ row: position.line, column: position.character });
@@ -100,6 +105,12 @@ export async function activate(context: vscode.ExtensionContext) {
 				const name = editor.document.getText(new vscode.Range(new vscode.Position(nameNode.startPosition.row, nameNode.startPosition.column), new vscode.Position(nameNode.endPosition.row, nameNode.endPosition.column)));
 				console.log("Currently in", name);
 			}
+
+			const builder = new CFGBuilder();
+			const cfg = builder.buildCFG(node);
+			const dot = graphToDot(cfg);
+			const svg = graphviz.dot(dot);
+			provider.setSVG(svg);
 		}
 	});
 
@@ -125,6 +136,12 @@ class OverviewViewProvider implements vscode.WebviewViewProvider {
 	public updateSVG() {
 		if (this._view) {
 			this._view.webview.postMessage({ type: 'svgImage', svg: graphviz.dot('digraph G { Hello -> Again }') });
+		}
+	}
+
+	public setSVG(svg: string) {
+		if (this._view) {
+			this._view.webview.postMessage({ type: "svgImage", svg });
 		}
 	}
 
