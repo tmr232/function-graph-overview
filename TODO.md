@@ -12,4 +12,6 @@
     - Seems like the easiest way would be to tree-sitter the entire file, then use `Parser.SyntaxNode.descendantForPosition`
       From there we should be able to use `.parent` until we get a function, then use that for graphing.
 - [ ] Install the d3-graphviz package and render a basic dotfile in the view
+    - [@hpcc-js/wasm-graphviz](https://github.com/hpcc-systems/hpcc-js-wasm) might be a better option,
+        as I currently don't want the interactivity and it allows generating an SVN directly.
 - [ ] Add the remaining parts of the graph overview
