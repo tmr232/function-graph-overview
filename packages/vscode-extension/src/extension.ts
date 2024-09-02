@@ -121,11 +121,12 @@ export async function activate(context: vscode.ExtensionContext) {
 			}
 
 			const builder = new CFGBuilder();
-			const { graph: cfg, entry } = builder.buildCFG(node);
-			const trimmed = trimFor(cfg, entry);
-			// const simple = simplifyGraph(trimmed);
-			let simple = trimmed;
-			const dot = graphToDot(simple);
+			let { graph: cfg, entry } = builder.buildCFG(node);
+			cfg = trimFor(cfg, entry);
+			if (vscode.workspace.getConfiguration("functionGraphOverview").get("simplify")) {
+				cfg = simplifyGraph(cfg);
+			}
+			const dot = graphToDot(cfg);
 			const svg = graphviz.dot(dot);
 			provider.setSVG(svg);
 		}
