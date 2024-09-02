@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 import { MultiDirectedGraph } from 'graphology';
 import Parser, { SyntaxNode } from 'web-tree-sitter';
 import treesitterGoUrl from "./tree-sitter-go.wasm";
+import webTreeSitter from "web-tree-sitter/tree-sitter.wasm";
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import { CFGBuilder } from './cfg';
 import { simplifyGraph, graphToDot } from './render';
@@ -13,8 +14,13 @@ async function dot2svg() {
 	console.log("svg:  ", graphviz.dot('digraph G { Hello -> World }'));
 }
 
-async function initializeParser(languagePath: string) {
-	await Parser.init();
+async function initializeParser(context: vscode.ExtensionContext, languagePath: string) {
+	await Parser.init({
+		locateFile(scriptName: string, scriptDirectory: string) {
+			console.log("name", scriptName, "dir", scriptDirectory);
+			return vscode.Uri.joinPath(context.extensionUri, "dist", webTreeSitter).fsPath;
+		},
+	});
 	const parser = new Parser();
 	const Go = await Parser.Language.load(languagePath);
 	parser.setLanguage(Go);
@@ -42,6 +48,7 @@ function getCurrentGoCode(): string | null {
 export async function activate(context: vscode.ExtensionContext) {
 	// console.log("Go wasm path", treesitterGoUrl);
 	// console.log(vscode.Uri.joinPath(context.extensionUri, "dist", treesitterGoUrl).fsPath);
+	console.log("Found it!", webTreeSitter);
 	graphviz = await Graphviz.load();
 
 	const provider = new OverviewViewProvider(context.extensionUri);
@@ -66,7 +73,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(disposable);
 	const wasmPath = vscode.Uri.joinPath(context.extensionUri, "dist", treesitterGoUrl);
-	const parser = await initializeParser(wasmPath.fsPath);
+	const parser = await initializeParser(context, wasmPath.fsPath);
 	const code = getCurrentGoCode() ?? "";
 	const tree = await (async () => {
 		try {
