@@ -6,8 +6,9 @@ import Parser, { SyntaxNode } from 'web-tree-sitter';
 import treesitterGoUrl from "./tree-sitter-go.wasm";
 import webTreeSitter from "web-tree-sitter/tree-sitter.wasm";
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
-import { CFGBuilder } from './cfg';
-import { simplifyGraph, graphToDot } from './render';
+import { CFGBuilder } from 'control-flow/cfg';
+import { graphToDot } from 'control-flow/render';
+import { simplifyGraph, trimFor } from 'control-flow/graph-ops';
 
 let graphviz: Graphviz;
 async function dot2svg() {
@@ -98,8 +99,14 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		console.log(`Cursor position changed: Line ${position.line + 1}, Column ${position.character + 1}`);
 		let node: SyntaxNode | null = tree.rootNode.descendantForPosition({ row: position.line, column: position.character });
+		const funcTypes = [
+			"function_declaration",
+			"method_declaration",
+			"func_literal",
+		];
+
 		while (node) {
-			if (node.type === "function_declaration") {
+			if (funcTypes.includes(node.type)) {
 				break;
 			}
 			node = node.parent;
@@ -114,8 +121,10 @@ export async function activate(context: vscode.ExtensionContext) {
 			}
 
 			const builder = new CFGBuilder();
-			const cfg = builder.buildCFG(node);
-			const simple = simplifyGraph(cfg);
+			const { graph: cfg, entry } = builder.buildCFG(node);
+			const trimmed = trimFor(cfg, entry);
+			// const simple = simplifyGraph(trimmed);
+			let simple = trimmed;
 			const dot = graphToDot(simple);
 			const svg = graphviz.dot(dot);
 			provider.setSVG(svg);
