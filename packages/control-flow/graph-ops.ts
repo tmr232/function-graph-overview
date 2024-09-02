@@ -17,7 +17,7 @@ export function distanceFromEntry(cfg: CFG): Map<any, number> {
 export type AttrMerger = (nodeAttrs: object, intoAttrs: object) => object;
 function collapseNode(graph: MultiDirectedGraph, node: any, into: any, mergeAttrs?: AttrMerger) {
     graph.forEachEdge(node, (edge, attributes, source, target) => {
-        if ([source, target].includes(into)) {
+        if (target === into) {
             return;
         }
 
