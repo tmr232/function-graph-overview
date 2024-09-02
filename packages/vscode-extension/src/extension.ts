@@ -121,7 +121,7 @@ export async function activate(context: vscode.ExtensionContext) {
 			}
 
 			const builder = new CFGBuilder();
-			let { graph: cfg, entry } = builder.buildCFG(node);
+			let cfg = builder.buildCFG(node);
 			cfg = trimFor(cfg);
 			if (vscode.workspace.getConfiguration("functionGraphOverview").get("simplify")) {
 				cfg = simplifyCFG(cfg);
