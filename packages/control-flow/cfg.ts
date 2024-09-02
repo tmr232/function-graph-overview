@@ -114,16 +114,14 @@ export class CFGBuilder {
     const bodyNode = functionNode.childForFieldName('body');
     if (bodyNode) {
       const blockHandler = new BlockHandler();
-      const { entry, exit } = blockHandler.update(this.processStatements(bodyNode.namedChildren));
-      this.entry = entry;
+      const { entry } = blockHandler.update(this.processStatements(bodyNode.namedChildren));
 
       blockHandler.processGotos((gotoNode, labelNode) => this.addEdge(gotoNode, labelNode));
 
-      // Uncomment these lines if you want to add START and END nodes
-      // const startNode = this.addNode('START', 'START');
-      // const endNode = this.addNode('END', 'END');
-      // this.addEdge(startNode, entry);
-      // this.addEdge(exit, endNode);
+      const startNode = this.addNode('START', 'START');
+      // `entry` will be non-null for any valid code
+      this.addEdge(startNode, entry);
+      this.entry = startNode;
     }
     return { graph: this.graph, entry: this.entry };
   }
@@ -359,84 +357,28 @@ export class CFGBuilder {
         });
         return blockHandler.update({ entry: headNode, exit: exitNode });
       }
-      case "range_clause": {
-        // const headNode = this.addNode("LOOP_HEAD", "loop head");
-        // const { entry: bodyEntry, exit: bodyExit } = blockHandler.update(this.processBlock(forNode.firstNamedChild));
-        // const exitNode = this.addNode("LOOP_EXIT", "loop exit");
-        // if (bodyEntry) {
-        //   this.addEdge(headNode, bodyEntry, "consequence");
-        // }
-        // this.addEdge(headNode, exitNode, "alternative");
-        // if (bodyExit) this.addEdge(bodyExit, headNode);
-        // blockHandler.forEachBreak((breakNode) => {
-        //   this.addEdge(breakNode, exitNode);
-        // });
-
-        // blockHandler.forEachContinue((continueNode) => {
-        //   this.addEdge(continueNode, headNode);
-        // });
-        // return blockHandler.update({ entry: headNode, exit: exitNode });
-      }
-        break;
       case "for_clause":
-        console.log("c-style loop")
-        break;
+      case "range_clause": {
+        const headNode = this.addNode("LOOP_HEAD", "loop head");
+        const { entry: bodyEntry, exit: bodyExit } = blockHandler.update(this.processBlock(forNode.firstNamedChild));
+        const exitNode = this.addNode("LOOP_EXIT", "loop exit");
+        if (bodyEntry) {
+          this.addEdge(headNode, bodyEntry, "consequence");
+        }
+        this.addEdge(headNode, exitNode, "alternative");
+        if (bodyExit) this.addEdge(bodyExit, headNode);
+        blockHandler.forEachBreak((breakNode) => {
+          this.addEdge(breakNode, exitNode);
+        });
+
+        blockHandler.forEachContinue((continueNode) => {
+          this.addEdge(continueNode, headNode);
+        });
+        return blockHandler.update({ entry: headNode, exit: exitNode });
+      }
       default:
         throw new Error(`Unsupported for type: ${forNode.firstNamedChild?.type}`)
     }
-    throw new Error("Not intersting now");
-    const initChild = forNode.childForFieldName('initializer');
-    const initNode = this.addNode(
-      'FOR_INIT',
-      initChild ? initChild.text : 'No initializer'
-    );
-    console.log("init", initChild)
-    console.log(forNode);
-    // console.log("range_clause", forNode.childForFieldName("range_clause"));
-    console.log("What now?", forNode.firstNamedChild?.type)
-
-    const conditionChild = forNode.childForFieldName('condition');
-    const conditionNode = this.addNode(
-      'FOR_CONDITION',
-      conditionChild ? conditionChild.text : 'No condition'
-    );
-
-    const bodyChild = forNode.childForFieldName('body');
-    const { entry: bodyEntry, exit: bodyExit } = blockHandler.update(bodyChild
-      ? this.processBlock(bodyChild)
-      : { entry: null, exit: null });
-
-    const updateChild = forNode.childForFieldName('update');
-    const updateNode = this.addNode(
-      'FOR_UPDATE',
-      updateChild ? updateChild.text : 'No update'
-    );
-
-
-    const exitNode = this.addNode('FOR_EXIT', 'FOR_EXIT');
-
-    blockHandler.forEachBreak((breakNode) => {
-      this.addEdge(breakNode, exitNode);
-    });
-
-    blockHandler.forEachContinue((continueNode) => {
-      this.addEdge(continueNode, updateNode);
-    });
-
-
-    this.addEdge(initNode, conditionNode);
-    this.addEdge(conditionNode, bodyEntry || updateNode, 'consequence');
-    if (bodyExit) this.addEdge(bodyExit, updateNode);
-    this.addEdge(updateNode, conditionNode);
-
-    // Handle endless loops
-    if (conditionChild) {
-      this.addEdge(conditionNode, exitNode, 'alternative');
-      return { entry: initNode, exit: exitNode };
-
-    }
-
-    return { entry: initNode, exit: null };
   }
 
 
