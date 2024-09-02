@@ -1,15 +1,16 @@
 import { distanceFromEntry } from "control-flow/graph-ops";
-import { MultiDirectedGraph } from "graphology";
+import type { CFG } from "./cfg";
 
 
-export function graphToDot(graph: MultiDirectedGraph, verbose: boolean = false): string {
+export function graphToDot(cfg: CFG, verbose: boolean = false): string {
+    const graph = cfg.graph;
     let dotContent = `digraph "" {\n    node [shape=box];\n    edge [headport=n tailport=s]\n    bgcolor="transparent"\n`;
-    let levels = distanceFromEntry(graph);
+    let levels = distanceFromEntry(cfg);
     graph.forEachNode((node) => {
 
         let label = "";
         if (verbose) {
-            label = `${node} ${graph.getNodeAttributes(node).type}`
+            label = `${node} ${graph.getNodeAttributes(node).type} ${graph.getNodeAttributes(node).code}`
         }
         // const label = "";
         //     .replace(/"/g, '\\"')

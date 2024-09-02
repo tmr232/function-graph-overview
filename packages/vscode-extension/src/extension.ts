@@ -8,7 +8,7 @@ import webTreeSitter from "web-tree-sitter/tree-sitter.wasm";
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import { CFGBuilder } from 'control-flow/cfg';
 import { graphToDot } from 'control-flow/render';
-import { simplifyGraph, trimFor } from 'control-flow/graph-ops';
+import { simplifyCFG, trimFor } from 'control-flow/graph-ops';
 
 let graphviz: Graphviz;
 async function dot2svg() {
@@ -122,9 +122,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
 			const builder = new CFGBuilder();
 			let { graph: cfg, entry } = builder.buildCFG(node);
-			cfg = trimFor(cfg, entry);
+			cfg = trimFor(cfg);
 			if (vscode.workspace.getConfiguration("functionGraphOverview").get("simplify")) {
-				cfg = simplifyGraph(cfg);
+				cfg = simplifyCFG(cfg);
 			}
 			const dot = graphToDot(cfg);
 			const svg = graphviz.dot(dot);

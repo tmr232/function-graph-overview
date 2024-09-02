@@ -2,7 +2,7 @@
   import Parser from "web-tree-sitter";
   import { CFGBuilder, mergeNodeAttrs } from "control-flow/cfg";
   import { graphToDot } from "control-flow/render";
-  import { simplifyGraph, trimFor } from "control-flow/graph-ops";
+  import { simplifyCFG, trimFor } from "control-flow/graph-ops";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
 
   async function initializeParser() {
@@ -71,27 +71,35 @@
     ast = functionNode.toString();
 
     let builder = new CFGBuilder();
-    let { graph: cfg, entry: entry } = builder.buildCFG(functionNode);
+    let cfg = builder.buildCFG(functionNode);
     if (!cfg) {
       return;
     }
 
     if (trim) {
-      cfg = trimFor(cfg, entry);
+      cfg = trimFor(cfg);
     }
 
     if (simplify) {
-      cfg = simplifyGraph(cfg, mergeNodeAttrs);
+      cfg = simplifyCFG(cfg, mergeNodeAttrs);
     }
     const dot = graphToDot(cfg, verbose);
     return graphviz.dot(dot);
+  }
+
+  function renderWrapper(code: string, options: RenderOptions) {
+    try {
+      return renderCode(code, options);
+    } catch (error) {
+      return `<p style='border: 2px red solid;'>${error.toString()}</p>`;
+    }
   }
 </script>
 
 <div class="graph">
   {#await initialize() then}
-    {@html renderCode(code, { simplify, verbose, trim })}
+    {@html renderWrapper(code, { simplify, verbose, trim })}
   {/await}
-  <!-- <br />
-  {ast} -->
+  <br />
+  {ast}
 </div>

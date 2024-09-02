@@ -1,13 +1,13 @@
 import { MultiDirectedGraph } from "graphology";
 import { subgraph } from "graphology-operators";
 import { bfsFromNode } from "graphology-traversal";
+import type { CFG } from "./cfg";
 
-export function distanceFromEntry(graph: MultiDirectedGraph): Map<any, number> {
+export function distanceFromEntry(cfg: CFG): Map<any, number> {
+    const { graph, entry } = cfg;
     let levels = new Map();
 
-    const firstNode = graph.filterNodes((node) => graph.inDegree(node) == 0)[0];
-
-    bfsFromNode(graph, firstNode, (node, attr, depth) => {
+    bfsFromNode(graph, entry, (node, attr, depth) => {
         levels.set(node, depth);
     });
 
@@ -37,8 +37,8 @@ function collapseNode(graph: MultiDirectedGraph, node: any, into: any, mergeAttr
  * 
  * @param graph The graph to simplify
  */
-export function simplifyGraph(originalGraph: MultiDirectedGraph, mergeAttrs?: AttrMerger): MultiDirectedGraph {
-    let graph = originalGraph.copy();
+export function simplifyCFG(cfg: CFG, mergeAttrs?: AttrMerger): CFG {
+    let graph = cfg.graph.copy();
 
     let toCollapse: string[][] = graph.mapEdges((edge, attrs, source, target) => {
         if (graph.outDegree(source) === 1 && graph.inDegree(target) === 1) {
@@ -48,25 +48,32 @@ export function simplifyGraph(originalGraph: MultiDirectedGraph, mergeAttrs?: At
     }).filter(x => x) as string[][];
 
     // Sort merges based on topological order
-    const levels = distanceFromEntry(graph);
+    const levels = distanceFromEntry(cfg);
     toCollapse.sort((a, b) => (levels.get(a[0]) ?? 0) - (levels.get(b[0]) ?? 0));
+
+    let entry = cfg.entry;
 
     try {
         toCollapse.forEach(([source, target]) => {
             collapseNode(graph, source, target, mergeAttrs);
+            if (entry === source) {
+                // Keep track of the entry node!
+                entry = target;
+            }
         });
     } catch (error) {
         console.log(error);
     }
 
-    return graph;
+    return { graph, entry };
 }
 
 
-export function trimFor(graph: MultiDirectedGraph, entry: any): MultiDirectedGraph {
+export function trimFor(cfg: CFG): CFG {
+    const { graph, entry } = cfg;
     let reachable: any[] = [];
 
     bfsFromNode(graph, entry, (node) => { reachable.push(node); });
 
-    return subgraph(graph, reachable);
+    return { graph: subgraph(graph, reachable), entry };
 }

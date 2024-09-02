@@ -40,6 +40,11 @@ interface SwitchlikeProps {
   caseTypeName: NodeType;
 }
 
+export interface CFG {
+  graph: MultiDirectedGraph<GraphNode, GraphEdge>;
+  entry: string;
+}
+
 class BlockHandler {
   private breaks: string[] = [];
   private continues: string[] = [];
@@ -105,7 +110,7 @@ export class CFGBuilder {
     this.entry = null;
   }
 
-  public buildCFG(functionNode: Node): { graph: MultiDirectedGraph<GraphNode, GraphEdge>, entry: string } {
+  public buildCFG(functionNode: Node): CFG {
     const bodyNode = functionNode.childForFieldName('body');
     if (bodyNode) {
       const blockHandler = new BlockHandler();
@@ -130,6 +135,11 @@ export class CFGBuilder {
   }
 
   private addEdge(source: string, target: string, type: EdgeType = 'regular'): void {
+    if (source === undefined) {
+      throw new Error("Undefined source");
+    } else if (target === undefined) {
+      throw new Error("Undefined target");
+    }
     if (!this.graph.hasEdge(source, target)) {
       this.graph.addEdge(source, target, { type });
     }
@@ -332,11 +342,58 @@ export class CFGBuilder {
 
   private processForStatement(forNode: Node): BasicBlock {
     const blockHandler = new BlockHandler();
+    switch (forNode.firstNamedChild?.type) {
+      case "block": {
+        console.log("Infinite loop");
+        const headNode = this.addNode("LOOP_HEAD", "loop head");
+        const { entry: bodyEntry, exit: bodyExit } = blockHandler.update(this.processBlock(forNode.firstNamedChild));
+        if (bodyEntry) this.addEdge(headNode, bodyEntry);
+        if (bodyExit) this.addEdge(bodyExit, headNode);
+        const exitNode = this.addNode("LOOP_EXIT", "loop exit");
+        blockHandler.forEachBreak((breakNode) => {
+          this.addEdge(breakNode, exitNode);
+        });
+
+        blockHandler.forEachContinue((continueNode) => {
+          this.addEdge(continueNode, headNode);
+        });
+        return blockHandler.update({ entry: headNode, exit: exitNode });
+      }
+      case "range_clause": {
+        // const headNode = this.addNode("LOOP_HEAD", "loop head");
+        // const { entry: bodyEntry, exit: bodyExit } = blockHandler.update(this.processBlock(forNode.firstNamedChild));
+        // const exitNode = this.addNode("LOOP_EXIT", "loop exit");
+        // if (bodyEntry) {
+        //   this.addEdge(headNode, bodyEntry, "consequence");
+        // }
+        // this.addEdge(headNode, exitNode, "alternative");
+        // if (bodyExit) this.addEdge(bodyExit, headNode);
+        // blockHandler.forEachBreak((breakNode) => {
+        //   this.addEdge(breakNode, exitNode);
+        // });
+
+        // blockHandler.forEachContinue((continueNode) => {
+        //   this.addEdge(continueNode, headNode);
+        // });
+        // return blockHandler.update({ entry: headNode, exit: exitNode });
+      }
+        break;
+      case "for_clause":
+        console.log("c-style loop")
+        break;
+      default:
+        throw new Error(`Unsupported for type: ${forNode.firstNamedChild?.type}`)
+    }
+    throw new Error("Not intersting now");
     const initChild = forNode.childForFieldName('initializer');
     const initNode = this.addNode(
       'FOR_INIT',
       initChild ? initChild.text : 'No initializer'
     );
+    console.log("init", initChild)
+    console.log(forNode);
+    // console.log("range_clause", forNode.childForFieldName("range_clause"));
+    console.log("What now?", forNode.firstNamedChild?.type)
 
     const conditionChild = forNode.childForFieldName('condition');
     const conditionNode = this.addNode(
