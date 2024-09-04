@@ -1,0 +1,12 @@
+# Ignore everything
+*
+*/**
+
+# Whitelist what you need
+!.vscodeignore
+!dist/*
+!CHANGELOG.md
+!LICENSE.txt
+!README.md
+!media/*
+!parsers/*
