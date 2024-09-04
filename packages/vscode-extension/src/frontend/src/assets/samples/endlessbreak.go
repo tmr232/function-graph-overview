@@ -1,0 +1,5 @@
+func endlessBreak() {
+	for {
+		break
+	}
+}

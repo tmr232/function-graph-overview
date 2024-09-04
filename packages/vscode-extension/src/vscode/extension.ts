@@ -3,9 +3,9 @@
 import * as vscode from 'vscode';
 import Parser, { type SyntaxNode } from 'web-tree-sitter';
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
-import { CFGBuilder } from './cfg';
-import { graphToDot } from './render';
-import { simplifyCFG, trimFor } from './graph-ops';
+import { CFGBuilder } from '../control-flow/cfg';
+import { graphToDot } from '../control-flow/render';
+import { simplifyCFG, trimFor } from '../control-flow/graph-ops';
 
 let graphviz: Graphviz;
 async function dot2svg() {

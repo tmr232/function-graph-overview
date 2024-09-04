@@ -13,7 +13,13 @@
     "@types/bun": "latest",
     "@vscode/vsce": "^2.23.0",
     "esbuild": "^0.20.0",
-    "esbuild-plugin-copy": "^2.1.1"
+    "esbuild-plugin-copy": "^2.1.1",
+    "@rollup/plugin-wasm": "^6.2.2",
+    "@sveltejs/vite-plugin-svelte": "^3.1.1",
+    "svelte": "^4.2.18",
+    "tree-sitter-cli": "^0.23.0",
+    "vite": "^5.4.1",
+    "tree-sitter-go": "^0.23.0"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
@@ -25,7 +31,8 @@
     "watch": "bun run ./scripts/watch-with-esbuild.ts",
     "vsce-package": "bun run vsce package",
     "package": "bun run build && bun run vsce-package",
-    "clean": "rm -r ./dist"
+    "clean": "rm -r ./dist",
+    "web":"bun "
   },
   "//": "START EXTENSION ATTRIBUTES",
   "publisher": "tamir-bahar",

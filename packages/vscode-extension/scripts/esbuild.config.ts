@@ -2,7 +2,7 @@ import type { BuildOptions } from "esbuild";
 // import { copy } from 'esbuild-plugin-copy';
 
 const config: BuildOptions = {
-  entryPoints: ["./src/extension.ts"],
+  entryPoints: ["./src/vscode/extension.ts"],
   bundle: true,
   platform: "node",
   target: "node12",
