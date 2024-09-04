@@ -1,5 +1,5 @@
 {
-  "main": "./dist/extension.cjs",
+  "main": "./dist/vscode/extension.cjs",
   "module": "index.ts",
   "dependencies": {
     "@hpcc-js/wasm-graphviz": "^1.3.0",
