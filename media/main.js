@@ -22,10 +22,6 @@
     function displaySVG(svgMarkup) {
         const div = document.querySelector("#overview");
         div.innerHTML = svgMarkup;
-
-        const svg = document.querySelector("svg");
-        svg.width = "100%";
-        svg.height = "100%";
     }
 
 }());

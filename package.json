@@ -64,13 +64,7 @@
           "name": "Graph Overview"
         }
       ]
-    },
-    "commands": [
-      {
-        "command": "function-graph-overview.helloWorld",
-        "title": "Hello World"
-      }
-    ]
+    }
   },
   "engines": {
     "vscode": "^1.86.0"
