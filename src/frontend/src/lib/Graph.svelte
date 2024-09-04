@@ -68,7 +68,10 @@
 
     const functionNode = getFirstFunction(tree);
 
-    ast = functionNode.toString();
+    ast = functionNode
+      .toString()
+      .replaceAll("(", "<div style='margin-left:10px;border-left: 1px #888 solid;'>")
+      .replaceAll(")", "</div>");
 
     let builder = new CFGBuilder();
     let cfg = builder.buildCFG(functionNode);
@@ -101,5 +104,11 @@
     {@html renderWrapper(code, { simplify, verbose, trim })}
   {/await}
   <br />
-  {ast}
+  <details>
+    <summary>AST</summary>
+    {@html ast}
+  </details>
 </div>
+
+<style>
+</style>
