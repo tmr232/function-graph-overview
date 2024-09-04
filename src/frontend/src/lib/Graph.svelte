@@ -1,8 +1,8 @@
 <script lang="ts">
   import Parser from "web-tree-sitter";
-  import { CFGBuilder, mergeNodeAttrs } from "control-flow/cfg";
-  import { graphToDot } from "control-flow/render";
-  import { simplifyCFG, trimFor } from "control-flow/graph-ops";
+  import { CFGBuilder, mergeNodeAttrs } from "../../../control-flow/cfg";
+  import { graphToDot } from "../../../control-flow/render";
+  import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
 
   async function initializeParser() {

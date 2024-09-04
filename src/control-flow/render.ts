@@ -1,4 +1,4 @@
-import { distanceFromEntry } from "control-flow/graph-ops";
+import { distanceFromEntry } from "./graph-ops";
 import type { CFG } from "./cfg";
 
 

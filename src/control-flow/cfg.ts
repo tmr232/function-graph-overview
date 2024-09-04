@@ -3,7 +3,7 @@ import Parser from 'web-tree-sitter';
 
 type Node = Parser.SyntaxNode;
 
-type NodeType = 'SELECT' | 'SELECT_MERGE' | 'COMMUNICATION_CASE' | 'TYPE_CASE' | 'TYPE_SWITCH_MERGE' | 'TYPE_SWITCH_VALUE' | 'GOTO' | 'LABEL' | 'CONTINUE' | 'BREAK' | 'START' | 'END' | 'CONDITION' | 'STATEMENT' | 'RETURN' | 'EMPTY' | 'MERGE' | 'FOR_INIT' | 'FOR_CONDITION' | 'FOR_UPDATE' | 'FOR_EXIT' | 'SWITCH_CONDITION' | 'SWITCH_MERGE' | 'CASE_CONDITION';
+type NodeType = 'LOOP_HEAD' | 'LOOP_EXIT' | 'SELECT' | 'SELECT_MERGE' | 'COMMUNICATION_CASE' | 'TYPE_CASE' | 'TYPE_SWITCH_MERGE' | 'TYPE_SWITCH_VALUE' | 'GOTO' | 'LABEL' | 'CONTINUE' | 'BREAK' | 'START' | 'END' | 'CONDITION' | 'STATEMENT' | 'RETURN' | 'EMPTY' | 'MERGE' | 'FOR_INIT' | 'FOR_CONDITION' | 'FOR_UPDATE' | 'FOR_EXIT' | 'SWITCH_CONDITION' | 'SWITCH_MERGE' | 'CASE_CONDITION';
 type EdgeType = "regular" | "consequence" | "alternative";
 interface GraphNode {
   type: NodeType;

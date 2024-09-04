@@ -3,22 +3,23 @@
 
   const goSamples = import.meta.glob("../assets/samples/*.go", {
     eager: true,
-    as: "raw",
+    query: "?raw",
+    import: "default",
   });
 
-  let simplify:boolean=true;
-  let verbose:boolean=false;
-  let trim:boolean=true;
+  let simplify: boolean = true;
+  let verbose: boolean = false;
+  let trim: boolean = true;
 </script>
 
 <div class="controls">
   <input type="checkbox" id="simplify" bind:checked={simplify} />
   <label for="simplify">Simplify</label>
 
-  <input type="checkbox" id="verbose"  bind:checked={verbose}/>
+  <input type="checkbox" id="verbose" bind:checked={verbose} />
   <label for="verbose">Verbose</label>
 
-  <input type="checkbox" id="trim"  bind:checked={trim}/>
+  <input type="checkbox" id="trim" bind:checked={trim} />
   <label for="trim">Trim</label>
 </div>
 <div class="container">
