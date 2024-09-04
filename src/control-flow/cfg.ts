@@ -340,8 +340,11 @@ export class CFGBuilder {
 
   private processForStatement(forNode: Node): BasicBlock {
     const blockHandler = new BlockHandler();
-    switch (forNode.firstNamedChild?.type) {
-      case "block": {
+    console.log("children", forNode.firstNamedChild?.type, forNode.firstChild?.type, forNode.children[1]?.type);
+    console.log("named childre", forNode.namedChildren?.map((child) => child.type));
+    switch (forNode.namedChildCount) {
+      // One child means only loop body, two children means loop head.
+      case 1: {
         console.log("Infinite loop");
         const headNode = this.addNode("LOOP_HEAD", "loop head");
         const { entry: bodyEntry, exit: bodyExit } = blockHandler.update(this.processBlock(forNode.firstNamedChild));
@@ -357,10 +360,10 @@ export class CFGBuilder {
         });
         return blockHandler.update({ entry: headNode, exit: exitNode });
       }
-      case "for_clause":
-      case "range_clause": {
+      // TODO: Handle the case where there is no loop condition, only init and update.
+      case 2: {
         const headNode = this.addNode("LOOP_HEAD", "loop head");
-        const { entry: bodyEntry, exit: bodyExit } = blockHandler.update(this.processBlock(forNode.firstNamedChild));
+        const { entry: bodyEntry, exit: bodyExit } = blockHandler.update(this.processBlock(forNode.namedChildren[1]));
         const exitNode = this.addNode("LOOP_EXIT", "loop exit");
         if (bodyEntry) {
           this.addEdge(headNode, bodyEntry, "consequence");
