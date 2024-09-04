@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@vscode/vsce": "^2.23.0",
+    "@vscode/vsce": "^3.0.0",
     "esbuild": "^0.20.0",
     "esbuild-plugin-copy": "^2.1.1",
     "@rollup/plugin-wasm": "^6.2.2",
@@ -30,7 +30,9 @@
     "build": "bun run ./scripts/build-with-esbuild.ts",
     "watch": "bun run ./scripts/watch-with-esbuild.ts",
     "vsce-package": "bun run vsce package",
+    "vsce-publish": "bun run vsce publish",
     "package": "bun run build && bun run vsce-package",
+    "publish": "bun run package && bun run vsce-publish",
     "clean": "rm -r ./dist",
     "web": "bun run --cwd ./src/frontend/ vite"
   },
