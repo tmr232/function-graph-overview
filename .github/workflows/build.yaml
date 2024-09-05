@@ -1,13 +1,24 @@
 name: Package Extension
 on: push
 jobs:
-  package-extension:
+  test-and-package:
+    name: "Test & Package"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
 
       - run: bun install
+
+      - name: Lint & Check Formatting
+        run: |
+          failure=0
+          bun prettier . --check || failure=1
+          bun eslint || failure=1
+
+      - name: Test
+        run: bun test
+
       - run: bun run package
 
       - name: Setup Environment

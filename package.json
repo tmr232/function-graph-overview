@@ -40,7 +40,8 @@
     "publish": "bun run package && bun run vsce-publish",
     "clean": "rm -r ./dist",
     "web": "bun run --cwd ./src/frontend/ vite",
-    "test": "bun run vitest"
+    "format": "bun prettier . --write",
+    "lint": "bun format && bun run eslint"
   },
   "//": "START EXTENSION ATTRIBUTES",
   "publisher": "tamir-bahar",
