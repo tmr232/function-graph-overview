@@ -38,7 +38,8 @@
     "package": "bun run build && bun run vsce-package",
     "publish": "bun run package && bun run vsce-publish",
     "clean": "rm -r ./dist",
-    "web": "bun run --cwd ./src/frontend/ vite"
+    "web": "bun run --cwd ./src/frontend/ vite",
+    "test": "bun run vitest"
   },
   "//": "START EXTENSION ATTRIBUTES",
   "publisher": "tamir-bahar",

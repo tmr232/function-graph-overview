@@ -272,7 +272,6 @@ export class CFGBuilder {
     const blockHandler = new BlockHandler();
     const name = this.getChildFieldText(labelSyntax, "label");
     const labelNode = this.addNode("LABEL", name);
-    console.log("label", labelSyntax.namedChildCount);
     const { entry: labeledEntry, exit: labeledExit } = blockHandler.update(this.processBlock(labelSyntax.namedChildren[1]))
     if (labeledEntry) this.addEdge(labelNode, labeledEntry)
     return blockHandler.update({ entry: labelNode, exit: labeledExit, labels: new Map([[name, labelNode]]) });
@@ -349,12 +348,9 @@ export class CFGBuilder {
 
   private processForStatement(forNode: Node): BasicBlock {
     const blockHandler = new BlockHandler();
-    console.log("children", forNode.firstNamedChild?.type, forNode.firstChild?.type, forNode.children[1]?.type);
-    console.log("named childre", forNode.namedChildren?.map((child) => child.type));
     switch (forNode.namedChildCount) {
       // One child means only loop body, two children means loop head.
       case 1: {
-        console.log("Infinite loop");
         const headNode = this.addNode("LOOP_HEAD", "loop head");
         const { entry: bodyEntry, exit: bodyExit } = blockHandler.update(this.processBlock(forNode.firstNamedChild));
         if (bodyEntry) this.addEdge(headNode, bodyEntry);
