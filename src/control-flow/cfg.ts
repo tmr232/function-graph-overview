@@ -287,14 +287,17 @@ export class CFGBuilder {
   private processStatements(statements: Node[]): BasicBlock {
     const blockHandler = new BlockHandler();
 
-    if (statements.length === 0) {
+    // Ignore comments
+    const codeStatements = statements.filter(syntax => syntax.type !== "comment");
+
+    if (codeStatements.length === 0) {
       const emptyNode = this.addNode('EMPTY', 'empty block');
       return { entry: emptyNode, exit: emptyNode };
     }
 
     let entry: string | null = null;
     let previous: string | null = null;
-    for (const statement of statements) {
+    for (const statement of codeStatements) {
       const { entry: currentEntry, exit: currentExit } = blockHandler.update(this.processBlock(statement));
       if (!entry) entry = currentEntry;
       if (previous && currentEntry) this.addEdge(previous, currentEntry);
