@@ -267,9 +267,13 @@ export class CFGBuilder {
     return { entry: gotoNode, exit: null, gotos: [{ node: gotoNode, label: name }] }
   }
   private processLabeledStatement(labelSyntax: Parser.SyntaxNode): BasicBlock {
+    let blockHandler = new BlockHandler();
     let name = this.getChildFieldText(labelSyntax, "label");
     let labelNode = this.addNode("LABEL", name);
-    return { entry: labelNode, exit: labelNode, labels: new Map([[name, labelNode]]) }
+    console.log("label", labelSyntax.namedChildCount);
+    const { entry: labeledEntry, exit: labeledExit } = blockHandler.update(this.processBlock(labelSyntax.namedChildren[1]))
+    if (labeledEntry) this.addEdge(labelNode, labeledEntry)
+    return blockHandler.update({ entry: labelNode, exit: labeledExit, labels: new Map([[name, labelNode]]) });
   }
   private processContinueStatement(continueSyntax: Parser.SyntaxNode): BasicBlock {
     const continueNode = this.addNode("CONTINUE", "CONTINUE");
