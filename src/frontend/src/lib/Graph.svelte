@@ -73,7 +73,7 @@
       .toString()
       .replaceAll(
         "(",
-        "<div style='margin-left:10px;border-left: 1px #888 solid;'>"
+        "<div style='margin-left:10px;border-left: 1px #888 solid;'>",
       )
       .replaceAll(")", "</div>");
 
