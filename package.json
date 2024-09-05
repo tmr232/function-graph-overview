@@ -51,13 +51,13 @@
   "description": "Function Graph Overview",
   "displayName": "Function Graph Overview",
   "icon": "./media/icon.png",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/tmr232/function-graph-overview"
-  },
   "categories": [
     "Visualization"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tmr232/function-graph-overview.git"
+  },
   "preview": true,
   "activationEvents": [],
   "contributes": {
