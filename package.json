@@ -76,7 +76,10 @@
         {
           "type": "webview",
           "id": "functionGraphOverview.overview",
-          "name": "Graph Overview"
+          "name": "Graph Overview",
+          "icon": "./media/svg/view-icon.svg",
+          "contextualTitle": "Graph Overview",
+          "visibility": "visible"
         }
       ]
     }
