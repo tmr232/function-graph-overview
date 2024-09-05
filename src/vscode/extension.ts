@@ -121,7 +121,7 @@ class OverviewViewProvider implements vscode.WebviewViewProvider {
 	}
 
 
-	resolveWebviewView(webviewView: vscode.WebviewView, context: vscode.WebviewViewResolveContext, token: vscode.CancellationToken): Thenable<void> | void {
+	resolveWebviewView(webviewView: vscode.WebviewView, _context: vscode.WebviewViewResolveContext, _token: vscode.CancellationToken): Thenable<void> | void {
 		this._view = webviewView;
 
 		webviewView.webview.options = {

@@ -3,9 +3,9 @@ import { subgraph } from "graphology-operators";
 import { bfsFromNode } from "graphology-traversal";
 import type { CFG } from "./cfg";
 
-export function distanceFromEntry(cfg: CFG): Map<any, number> {
+export function distanceFromEntry(cfg: CFG): Map<string, number> {
     const { graph, entry } = cfg;
-    let levels = new Map();
+    const levels = new Map();
 
     bfsFromNode(graph, entry, (node, attr, depth) => {
         levels.set(node, depth);
@@ -15,14 +15,14 @@ export function distanceFromEntry(cfg: CFG): Map<any, number> {
 }
 
 export type AttrMerger = (nodeAttrs: object, intoAttrs: object) => object;
-function collapseNode(graph: MultiDirectedGraph, node: any, into: any, mergeAttrs?: AttrMerger) {
+function collapseNode(graph: MultiDirectedGraph, node: string, into: string, mergeAttrs?: AttrMerger) {
     graph.forEachEdge(node, (edge, attributes, source, target) => {
         if (target === into) {
             return;
         }
 
-        const replaceNode = (n: any) => (n === node ? into : n);
-        let edgeNodes = [replaceNode(source), replaceNode(target)] as const;
+        const replaceNode = (n: string) => (n === node ? into : n);
+        const edgeNodes = [replaceNode(source), replaceNode(target)] as const;
         graph.addEdge(...edgeNodes, attributes);
     })
     if (mergeAttrs) {
@@ -38,9 +38,9 @@ function collapseNode(graph: MultiDirectedGraph, node: any, into: any, mergeAttr
  * @param graph The graph to simplify
  */
 export function simplifyCFG(cfg: CFG, mergeAttrs?: AttrMerger): CFG {
-    let graph = cfg.graph.copy();
+    const graph = cfg.graph.copy();
 
-    let toCollapse: string[][] = graph.mapEdges((edge, attrs, source, target) => {
+    const toCollapse: string[][] = graph.mapEdges((edge, attrs, source, target) => {
         if (graph.outDegree(source) === 1 && graph.inDegree(target) === 1) {
             return [source, target];
         }
@@ -71,7 +71,7 @@ export function simplifyCFG(cfg: CFG, mergeAttrs?: AttrMerger): CFG {
 
 export function trimFor(cfg: CFG): CFG {
     const { graph, entry } = cfg;
-    let reachable: any[] = [];
+    const reachable: string[] = [];
 
     bfsFromNode(graph, entry, (node) => { reachable.push(node); });
 

@@ -5,7 +5,7 @@ import type { CFG } from "./cfg";
 export function graphToDot(cfg: CFG, verbose: boolean = false): string {
     const graph = cfg.graph;
     let dotContent = `digraph "" {\n    node [shape=box];\n    edge [headport=n tailport=s]\n    bgcolor="transparent"\n`;
-    let levels = distanceFromEntry(cfg);
+    const levels = distanceFromEntry(cfg);
     graph.forEachNode((node) => {
 
         let label = "";
