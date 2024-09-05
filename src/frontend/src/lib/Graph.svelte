@@ -17,6 +17,7 @@
   let graphviz: Graphviz;
   let svg: string = "";
   let ast: string = "";
+  let dot: string = "";
   export let code: string;
   export let verbose: boolean = false;
   export let simplify: boolean = true;
@@ -70,7 +71,10 @@
 
     ast = functionNode
       .toString()
-      .replaceAll("(", "<div style='margin-left:10px;border-left: 1px #888 solid;'>")
+      .replaceAll(
+        "(",
+        "<div style='margin-left:10px;border-left: 1px #888 solid;'>"
+      )
       .replaceAll(")", "</div>");
 
     let builder = new CFGBuilder();
@@ -86,7 +90,7 @@
     if (simplify) {
       cfg = simplifyCFG(cfg, mergeNodeAttrs);
     }
-    const dot = graphToDot(cfg, verbose);
+    dot = graphToDot(cfg, verbose);
     return graphviz.dot(dot);
   }
 
@@ -107,6 +111,10 @@
   <details>
     <summary>AST</summary>
     {@html ast}
+  </details>
+  <details>
+    <summary>DOT</summary>
+    <pre>{dot}</pre>
   </details>
 </div>
 
