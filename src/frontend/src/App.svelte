@@ -1,9 +1,11 @@
 <script>
   import SampleViewer from "./lib/SampleViewer.svelte";
+  import Demo from "./lib/Demo.svelte";
 </script>
 
 <main>
-  <SampleViewer />
+  <!-- <SampleViewer /> -->
+   <Demo/>
 </main>
 
 <style>
