@@ -4,11 +4,17 @@
   import { graphToDot } from "../../../control-flow/render";
   import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
+  import treeSitterGo from "../../../../parsers/tree-sitter-go.wasm?url";
+  import treeSitterCore from "../../../../parsers/tree-sitter.wasm?raw";
 
   async function initializeParser() {
-    await Parser.init();
+    await Parser.init({
+      locateFile(scriptName: string, scriptDirectory: string) {
+        return treeSitterCore;
+      },
+    });
     const parser = new Parser();
-    const Go = await Parser.Language.load("tree-sitter-go.wasm");
+    const Go = await Parser.Language.load(treeSitterGo);
     parser.setLanguage(Go);
     return parser;
   }

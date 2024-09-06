@@ -5,7 +5,7 @@
 
 <main>
   <!-- <SampleViewer /> -->
-   <Demo/>
+  <Demo />
 </main>
 
 <style>
