@@ -1,5 +1,9 @@
 name: Package Extension
-on: push
+on: 
+  push:
+  release:
+    types:
+    - created
 jobs:
   test-and-package:
     name: "Test & Package"
@@ -28,3 +32,9 @@ jobs:
         with:
           name: ${{ env.PACKAGE_NAME }}.vsix
           path: ./${{ env.PACKAGE_NAME }}.vsix
+
+      - name: Publish
+        if: success() && startsWith(github.ref, 'refs/tags/v')
+        run: bun vsce-publish
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
