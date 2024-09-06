@@ -9,6 +9,13 @@
 <main>
   <header>
     <h1>Function Graph Overview</h1>
+    <div class="links">
+      <a href="https://github.com/tmr232/function-graph-overview/">Repo</a>
+      <a
+        href="https://marketplace.visualstudio.com/items?itemName=tamir-bahar.function-graph-overview"
+        >Install</a
+      >
+    </div>
   </header>
   <div>
     <div class="editor">
@@ -42,10 +49,31 @@
     text-align: center;
     filter: drop-shadow(0 0 0.3rem gray);
     background-color: white;
+    position: relative;
   }
   .graph,
   .editor {
     background-color: white;
     filter: drop-shadow(0 0 0.3rem gray);
+  }
+
+  .links a {
+    color: black;
+    padding: 0.5rem;
+  }
+
+  .links a:hover {
+    background-color: lightskyblue;
+    padding: 0.5rem;
+  }
+  .links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    position: absolute;
+    right: 3rem;
+    top: 0;
+    height: 100%;
   }
 </style>
