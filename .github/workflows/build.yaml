@@ -1,9 +1,11 @@
 name: Package Extension
-on: 
+on:
   push:
+    tags-ignore:
+      - "**"
   release:
     types:
-    - created
+      - created
 jobs:
   test-and-package:
     name: "Test & Package"
