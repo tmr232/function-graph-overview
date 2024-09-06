@@ -7,6 +7,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ## [Unreleased]
 
 - Interactive demo website, use `bun demo` to run.
+- Publish demo via Github Pages
+- Updated readme to point to the demo
 
 ## [0.0.1] - 2024-09-05
 
