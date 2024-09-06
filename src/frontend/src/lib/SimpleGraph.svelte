@@ -4,7 +4,8 @@
   import { graphToDot } from "../../../control-flow/render";
   import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
-  import { getFirstFunction, initializeParser } from "./utils";
+
+  import { initializeParser, getFirstFunction } from "./utils";
 
   let parser: Parser;
   let graphviz: Graphviz;
@@ -72,16 +73,13 @@
   {#await initialize() then}
     {@html renderWrapper(code, { simplify, verbose, trim })}
   {/await}
-  <br />
-  <details>
-    <summary>AST</summary>
-    {@html ast}
-  </details>
-  <details>
-    <summary>DOT</summary>
-    <pre>{dot}</pre>
-  </details>
 </div>
 
 <style>
+  .graph {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+  }
 </style>

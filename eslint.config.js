@@ -7,7 +7,7 @@ export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    ignores: ["dist/*", "webview-content/*", "src/frontend"],
+    ignores: ["dist", "webview-content", "src/frontend", "src/demo"],
   },
   {
     rules: {
