@@ -4,20 +4,7 @@
   import { graphToDot } from "../../../control-flow/render";
   import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
-  import treeSitterGo from "../../../../parsers/tree-sitter-go.wasm?url";
-  import treeSitterCore from "../../../../parsers/tree-sitter.wasm?raw";
-
-  async function initializeParser() {
-    await Parser.init({
-      locateFile(scriptName: string, scriptDirectory: string) {
-        return treeSitterCore;
-      },
-    });
-    const parser = new Parser();
-    const Go = await Parser.Language.load(treeSitterGo);
-    parser.setLanguage(Go);
-    return parser;
-  }
+  import { getFirstFunction, initializeParser } from "./utils";
 
   let parser: Parser;
   let graphviz: Graphviz;
@@ -33,34 +20,6 @@
     parser = await initializeParser();
     graphviz = await Graphviz.load();
     return { parser, graphviz };
-  }
-
-  function getFirstFunction(tree: Parser.Tree): Parser.SyntaxNode | null {
-    let functionNode: Parser.SyntaxNode = null;
-    const cursor = tree.walk();
-
-    const funcTypes = [
-      "function_declaration",
-      "method_declaration",
-      "func_literal",
-    ];
-
-    const visitNode = () => {
-      if (funcTypes.includes(cursor.nodeType)) {
-        functionNode = cursor.currentNode;
-        return;
-      }
-
-      if (cursor.gotoFirstChild()) {
-        do {
-          visitNode();
-        } while (cursor.gotoNextSibling());
-        cursor.gotoParent();
-      }
-    };
-
-    visitNode();
-    return functionNode;
   }
 
   interface RenderOptions {

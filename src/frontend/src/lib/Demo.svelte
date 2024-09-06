@@ -1,11 +1,9 @@
 <script lang="ts">
-  import Graph from "./Graph.svelte";
   import CodeMirror from "svelte-codemirror-editor";
   import { go } from "@codemirror/lang-go";
   import SimpleGraph from "./SimpleGraph.svelte";
-  
 
-  let code = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
+  export let code = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
 </script>
 
 <main>
