@@ -196,6 +196,38 @@ export class CFGBuilder {
     return child ? child.text : "";
   }
 
+  private processStatements(statements: Node[]): BasicBlock {
+    const blockHandler = new BlockHandler();
+
+    // Ignore comments
+    const codeStatements = statements.filter((syntax) => {
+      if (syntax.type !== "comment") {
+        return true;
+      }
+
+      return (
+        this.markerPattern && Boolean(syntax.text.match(this.markerPattern))
+      );
+    });
+
+    if (codeStatements.length === 0) {
+      const emptyNode = this.addNode("EMPTY", "empty block");
+      return { entry: emptyNode, exit: emptyNode };
+    }
+
+    let entry: string | null = null;
+    let previous: string | null = null;
+    for (const statement of codeStatements) {
+      const { entry: currentEntry, exit: currentExit } = blockHandler.update(
+        this.processBlock(statement),
+      );
+      if (!entry) entry = currentEntry;
+      if (previous && currentEntry) this.addEdge(previous, currentEntry);
+      previous = currentExit;
+    }
+    return blockHandler.update({ entry, exit: previous });
+  }
+
   private processBlock(node: Node | null): BasicBlock {
     if (!node) return { entry: null, exit: null };
 
@@ -391,37 +423,7 @@ export class CFGBuilder {
     return { entry: breakNode, exit: null, breaks: [breakNode] };
   }
 
-  private processStatements(statements: Node[]): BasicBlock {
-    const blockHandler = new BlockHandler();
 
-    // Ignore comments
-    const codeStatements = statements.filter((syntax) => {
-      if (syntax.type !== "comment") {
-        return true;
-      }
-
-      return (
-        this.markerPattern && Boolean(syntax.text.match(this.markerPattern))
-      );
-    });
-
-    if (codeStatements.length === 0) {
-      const emptyNode = this.addNode("EMPTY", "empty block");
-      return { entry: emptyNode, exit: emptyNode };
-    }
-
-    let entry: string | null = null;
-    let previous: string | null = null;
-    for (const statement of codeStatements) {
-      const { entry: currentEntry, exit: currentExit } = blockHandler.update(
-        this.processBlock(statement),
-      );
-      if (!entry) entry = currentEntry;
-      if (previous && currentEntry) this.addEdge(previous, currentEntry);
-      previous = currentExit;
-    }
-    return blockHandler.update({ entry, exit: previous });
-  }
 
   private processIfStatement(
     ifNode: Node,
