@@ -124,6 +124,7 @@ export function mergeNodeAttrs(from: GraphNode, into: GraphNode): GraphNode {
 }
 interface Case {
   conditionEntry: string | null;
+  conditionExit: string | null;
   consequenceEntry: string | null;
   consequenceExit: string | null;
   alternativeExit: string;
@@ -251,6 +252,13 @@ export class CFGBuilder {
         this.addEdge(thisCase.consequenceExit, mergeNode);
       }
 
+      if (thisCase.consequenceEntry && thisCase.conditionExit)
+        this.addEdge(
+          thisCase.conditionExit,
+          thisCase.consequenceEntry,
+          "consequence",
+        );
+
       // Update for next case
       fallthrough = thisCase.hasFallthrough ? thisCase.consequenceExit : null;
       previous = thisCase.isDefault ? null : thisCase.alternativeExit;
@@ -290,13 +298,11 @@ export class CFGBuilder {
           this.processStatements(consequence),
         );
 
-        if (consequenceNode.entry)
-          this.addEdge(conditionNode, consequenceNode.entry, "consequence");
-
         cases.push({
+          conditionEntry: conditionNode,
+          conditionExit: conditionNode,
           consequenceEntry: consequenceNode.entry,
           consequenceExit: consequenceNode.exit,
-          conditionEntry: conditionNode,
           alternativeExit: conditionNode,
           hasFallthrough,
           isDefault,
