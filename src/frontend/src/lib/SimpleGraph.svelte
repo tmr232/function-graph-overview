@@ -42,7 +42,6 @@
         "<div style='margin-left:10px;border-left: 1px #888 solid;'>",
       )
       .replaceAll(")", "</div>");
-
     let builder = new CFGBuilder();
     let cfg = builder.buildCFG(functionNode);
     if (!cfg) {

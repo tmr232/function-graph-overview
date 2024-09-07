@@ -122,7 +122,14 @@ export function mergeNodeAttrs(from: GraphNode, into: GraphNode): GraphNode {
     lines: from.lines + into.lines,
   };
 }
-
+interface Case {
+  conditionEntry: string | null;
+  consequenceEntry: string | null;
+  consequenceExit: string | null;
+  alternativeExit: string;
+  hasFallthrough: boolean;
+  isDefault: boolean;
+}
 export class CFGBuilder {
   private graph: MultiDirectedGraph<GraphNode, GraphEdge>;
   private entry: string;
@@ -191,7 +198,8 @@ export class CFGBuilder {
       case "for_statement":
         return this.processForStatement(node);
       case "expression_switch_statement":
-        return this.processSwitchStatement(node);
+        // return this.processSwitchStatement(node);
+        return this.processSwitchlike2(node);
       case "return_statement": {
         const returnNode = this.addNode("RETURN", node.text);
         return { entry: returnNode, exit: null };
@@ -213,6 +221,107 @@ export class CFGBuilder {
         return { entry: newNode, exit: newNode };
       }
     }
+  }
+
+  private buildSwitch(
+    cases: Case[],
+    mergeNode: string,
+    switchHeadNode: string,
+  ) {
+    // We treat the head of the switch as a fallthrough to simplify the code.
+    let fallthrough: string | null = null;
+    let previous: string | null = null;
+    console.log("Build switch", "head", switchHeadNode);
+    if (cases[0]?.conditionEntry) {
+      this.addEdge(switchHeadNode, cases[0].conditionEntry);
+    }
+    cases.forEach((thisCase) => {
+      console.log("thisCase", thisCase, previous, fallthrough);
+      if (fallthrough && thisCase.consequenceEntry) {
+        this.addEdge(fallthrough, thisCase.consequenceEntry);
+      }
+      if (previous && thisCase.conditionEntry) {
+        this.addEdge(
+          previous,
+          thisCase.conditionEntry,
+          "alternative" as EdgeType,
+        );
+      }
+      if (!thisCase.hasFallthrough && thisCase.consequenceExit) {
+        this.addEdge(thisCase.consequenceExit, mergeNode);
+      }
+
+      // Update for next case
+      fallthrough = thisCase.hasFallthrough ? thisCase.consequenceExit : null;
+      previous = thisCase.isDefault ? null : thisCase.alternativeExit;
+    });
+
+    if (previous) {
+      this.addEdge(previous, mergeNode, "alternative");
+    }
+  }
+
+  private collectCases(
+    switchSyntax: Parser.SyntaxNode,
+    blockHandler: BlockHandler,
+  ): Case[] {
+    const cases: Case[] = [];
+    const caseTypes = [
+      "default_case",
+      "communication_case",
+      "type_case",
+      "expression_case",
+    ];
+    switchSyntax.namedChildren
+      .filter((child) => caseTypes.includes(child.type))
+      .forEach((caseSyntax) => {
+        const isDefault = caseSyntax.type === "default_case";
+
+        const consequence = caseSyntax.namedChildren.slice(isDefault ? 0 : 1);
+        const hasFallthrough = consequence
+          .map((node) => node.type)
+          .includes("fallthrough_statement");
+
+        const conditionNode = this.addNode(
+          "CASE_CONDITION",
+          isDefault ? "default" : (caseSyntax.firstNamedChild?.text ?? ""),
+        );
+        const consequenceNode = blockHandler.update(
+          this.processStatements(consequence),
+        );
+
+        if (consequenceNode.entry)
+          this.addEdge(conditionNode, consequenceNode.entry, "consequence");
+
+        cases.push({
+          consequenceEntry: consequenceNode.entry,
+          consequenceExit: consequenceNode.exit,
+          conditionEntry: conditionNode,
+          alternativeExit: conditionNode,
+          hasFallthrough,
+          isDefault,
+        });
+      });
+
+    return cases;
+  }
+
+  private processSwitchlike2(switchSyntax: Parser.SyntaxNode): BasicBlock {
+    const blockHandler = new BlockHandler();
+
+    const cases = this.collectCases(switchSyntax, blockHandler);
+    const headNode = this.addNode(
+      "SWITCH_CONDITION",
+      this.getChildFieldText(switchSyntax, "value"),
+    );
+    const mergeNode: string = this.addNode("SWITCH_MERGE", "");
+    this.buildSwitch(cases, mergeNode, headNode);
+
+    blockHandler.forEachBreak((breakNode) => {
+      this.addEdge(breakNode, mergeNode);
+    });
+
+    return blockHandler.update({ entry: headNode, exit: mergeNode });
   }
 
   private processSwitchlike(
