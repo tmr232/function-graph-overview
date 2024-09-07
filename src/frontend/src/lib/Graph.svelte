@@ -15,6 +15,7 @@
   export let verbose: boolean = false;
   export let simplify: boolean = true;
   export let trim: boolean = true;
+  export let flatSwitch: boolean = false;
 
   async function initialize() {
     parser = await initializeParser();
@@ -26,6 +27,7 @@
     readonly simplify: boolean;
     readonly verbose: boolean;
     readonly trim: boolean;
+    readonly flatSwitch: boolean;
   }
 
   function renderCode(code: string, options: RenderOptions) {
@@ -42,7 +44,7 @@
       )
       .replaceAll(")", "</div>");
     console.log(functionNode.childForFieldName("name").text);
-    let builder = new CFGBuilder();
+    let builder = new CFGBuilder({ flatSwitch });
     let cfg = builder.buildCFG(functionNode);
     if (!cfg) {
       return;
@@ -70,7 +72,7 @@
 
 <div class="graph">
   {#await initialize() then}
-    {@html renderWrapper(code, { simplify, verbose, trim })}
+    {@html renderWrapper(code, { simplify, verbose, trim, flatSwitch })}
   {/await}
   <br />
   <details>

@@ -131,17 +131,23 @@ interface Case {
   hasFallthrough: boolean;
   isDefault: boolean;
 }
+
+interface BuilderOptions {
+  flatSwitch?: boolean;
+}
+
 export class CFGBuilder {
   private graph: MultiDirectedGraph<GraphNode, GraphEdge>;
   private entry: string;
   private nodeId: number;
   private readonly flatSwitch: boolean;
 
-  constructor() {
+  constructor(options: BuilderOptions) {
     this.graph = new MultiDirectedGraph();
     this.nodeId = 0;
     this.entry = null;
-    this.flatSwitch = false;
+
+    this.flatSwitch = options.flatSwitch ?? false;
   }
 
   public buildCFG(functionNode: Node): CFG {
@@ -201,7 +207,6 @@ export class CFGBuilder {
       case "for_statement":
         return this.processForStatement(node);
       case "expression_switch_statement":
-        // return this.processSwitchStatement(node);
         return this.processSwitchlike2(node);
       case "return_statement": {
         const returnNode = this.addNode("RETURN", node.text);
@@ -216,9 +221,9 @@ export class CFGBuilder {
       case "goto_statement":
         return this.processGotoStatement(node);
       case "type_switch_statement":
-        return this.processTypeSwitchStatement(node);
+        return this.processSwitchlike2(node);
       case "select_statement":
-        return this.processSelectStatement(node);
+        return this.processSwitchlike2(node);
       default: {
         const newNode = this.addNode("STATEMENT", node.text);
         return { entry: newNode, exit: newNode };
