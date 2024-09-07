@@ -72,6 +72,11 @@
           "type": "boolean",
           "default": "true",
           "description": "Simplify the graph by collapsing trivial paths."
+        },
+        "functionGraphOverview.flatSwitch": {
+          "type": "boolean",
+          "default": "false",
+          "description": "Flatten switches, so that all cases are direct descendants of the root."
         }
       }
     },

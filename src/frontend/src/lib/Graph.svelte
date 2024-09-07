@@ -16,6 +16,8 @@
   export let simplify: boolean = true;
   export let trim: boolean = true;
   export let flatSwitch: boolean = false;
+  export let showDot: boolean = false;
+  export let showAST: boolean = false;
 
   async function initialize() {
     parser = await initializeParser();
@@ -70,20 +72,33 @@
   }
 </script>
 
-<div class="graph">
+<div class="results">
   {#await initialize() then}
-    {@html renderWrapper(code, { simplify, verbose, trim, flatSwitch })}
+    <div class="graph">
+      {@html renderWrapper(code, { simplify, verbose, trim, flatSwitch })}
+    </div>
   {/await}
-  <br />
-  <details>
-    <summary>AST</summary>
-    {@html ast}
-  </details>
-  <details>
-    <summary>DOT</summary>
-    <pre>{dot}</pre>
-  </details>
+  {#if showAST}
+    <br />
+    <details>
+      <summary>AST</summary>
+      {@html ast}
+    </details>
+  {/if}
+  {#if showDot}
+    <br />
+    <details>
+      <summary>DOT</summary>
+      <pre>{dot}</pre>
+    </details>
+  {/if}
 </div>
 
 <style>
+  .graph {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+  }
 </style>

@@ -116,8 +116,12 @@ export async function activate(context: vscode.ExtensionContext) {
           );
           console.log("Currently in", name);
         }
-
-        const builder = new CFGBuilder();
+        const flatSwitch = Boolean(
+          vscode.workspace
+            .getConfiguration("functionGraphOverview")
+            .get("flatSwitch"),
+        );
+        const builder = new CFGBuilder({ flatSwitch });
         let cfg = builder.buildCFG(node);
         cfg = trimFor(cfg);
         if (

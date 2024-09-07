@@ -29,7 +29,15 @@
 <div class="container">
   {#each Object.entries(goSamples) as [name, code] (name)}
     <div class="code"><pre>{code}</pre></div>
-    <Graph {code} {simplify} {verbose} {trim} {flatSwitch} />
+    <Graph
+      {code}
+      {simplify}
+      {verbose}
+      {trim}
+      {flatSwitch}
+      showAST={true}
+      showDot={true}
+    />
   {/each}
 </div>
 
