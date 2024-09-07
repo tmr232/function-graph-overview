@@ -6,6 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.3] - 2024-09-07
+
 - Learned Go's `fallthrough` keyword
 - Learned an option to draw flat-switches (where all cases are direct descendants of the switch head)
 - Added utilities for basic reachability testing
