@@ -1,9 +1,12 @@
 <script lang="ts">
   import CodeMirror from "svelte-codemirror-editor";
   import { go } from "@codemirror/lang-go";
-  import SimpleGraph from "./SimpleGraph.svelte";
+  import Graph from "./Graph.svelte";
 
   export let code = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
+
+  let simplify = true;
+  let flatSwitch = false;
 </script>
 
 <main>
@@ -28,7 +31,14 @@
     </div>
   </div>
   <div class="graph">
-    <SimpleGraph {code} />
+    <div class="controls">
+      <input type="checkbox" id="simplify" bind:checked={simplify} />
+      <label for="simplify">Simplify</label>
+
+      <input type="checkbox" id="flatSwitch" bind:checked={flatSwitch} />
+      <label for="flatSwitch">Flat Switch</label>
+    </div>
+    <Graph {code} {simplify} {flatSwitch} />
   </div>
 </main>
 
@@ -50,6 +60,11 @@
     filter: drop-shadow(0 0 0.3rem gray);
     background-color: white;
     position: relative;
+  }
+  .controls {
+    font-family: Arial, Helvetica, sans-serif;
+    margin-top: 1rem;
+    margin-left: 1rem;
   }
   .graph,
   .editor {
