@@ -423,8 +423,6 @@ export class CFGBuilder {
     return { entry: breakNode, exit: null, breaks: [breakNode] };
   }
 
-
-
   private processIfStatement(
     ifNode: Node,
     mergeNode: string | null = null,
