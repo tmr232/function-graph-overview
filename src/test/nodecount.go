@@ -47,3 +47,30 @@ label:
 		g()
 	}
 }
+
+/*
+nodes: 1,
+reaches: [
+	["a", "b"]
+]
+*/
+func trivialReachability() {
+	// CFG: a
+	// CFG: b
+}
+
+/*
+reaches: [
+	["A", "B"]
+]
+*/
+func hasFallthrough() {
+	switch 1 {
+	case 1:
+		// CFG: A
+		fallthrough
+	case 2:
+		// CFG: B
+		"Include me!"
+	}
+}

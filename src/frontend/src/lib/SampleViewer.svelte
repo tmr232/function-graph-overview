@@ -10,6 +10,7 @@
   let simplify: boolean = true;
   let verbose: boolean = false;
   let trim: boolean = true;
+  let flatSwitch: boolean = false;
 </script>
 
 <div class="controls">
@@ -21,11 +22,14 @@
 
   <input type="checkbox" id="trim" bind:checked={trim} />
   <label for="trim">Trim</label>
+
+  <input type="checkbox" id="flatSwitch" bind:checked={flatSwitch} />
+  <label for="flatSwitch">Flat Switch</label>
 </div>
 <div class="container">
   {#each Object.entries(goSamples) as [name, code] (name)}
     <div class="code"><pre>{code}</pre></div>
-    <Graph {code} {simplify} {verbose} {trim} />
+    <Graph {code} {simplify} {verbose} {trim} {flatSwitch} />
   {/each}
 </div>
 

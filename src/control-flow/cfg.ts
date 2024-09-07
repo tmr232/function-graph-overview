@@ -4,6 +4,7 @@ import Parser from "web-tree-sitter";
 type Node = Parser.SyntaxNode;
 
 type NodeType =
+  | "MARKER_COMMENT"
   | "LOOP_HEAD"
   | "LOOP_EXIT"
   | "SELECT"
@@ -35,6 +36,7 @@ interface GraphNode {
   type: NodeType;
   code: string;
   lines: number;
+  markers: string[];
 }
 
 interface GraphEdge {
@@ -55,15 +57,6 @@ interface BasicBlock {
   labels?: Map<string, string>;
   // Target label
   gotos?: Goto[];
-}
-
-interface SwitchlikeProps {
-  nodeType: NodeType;
-  mergeType: NodeType;
-  mergeCode: string;
-  caseName: string;
-  caseFieldName: string;
-  caseTypeName: NodeType;
 }
 
 export interface CFG {
@@ -122,16 +115,35 @@ export function mergeNodeAttrs(from: GraphNode, into: GraphNode): GraphNode {
     lines: from.lines + into.lines,
   };
 }
+interface Case {
+  conditionEntry: string | null;
+  conditionExit: string | null;
+  consequenceEntry: string | null;
+  consequenceExit: string | null;
+  alternativeExit: string;
+  hasFallthrough: boolean;
+  isDefault: boolean;
+}
+
+interface BuilderOptions {
+  flatSwitch?: boolean;
+  markerPattern?: RegExp;
+}
 
 export class CFGBuilder {
   private graph: MultiDirectedGraph<GraphNode, GraphEdge>;
   private entry: string;
   private nodeId: number;
+  private readonly flatSwitch: boolean;
+  private readonly markerPattern: RegExp | null;
 
-  constructor() {
+  constructor(options?: BuilderOptions) {
     this.graph = new MultiDirectedGraph();
     this.nodeId = 0;
     this.entry = null;
+
+    this.flatSwitch = options?.flatSwitch ?? false;
+    this.markerPattern = options?.markerPattern ?? null;
   }
 
   public buildCFG(functionNode: Node): CFG {
@@ -156,8 +168,12 @@ export class CFGBuilder {
 
   private addNode(type: NodeType, code: string, lines: number = 1): string {
     const id = `node${this.nodeId++}`;
-    this.graph.addNode(id, { type, code, lines });
+    this.graph.addNode(id, { type, code, lines, markers: [] });
     return id;
+  }
+
+  private addMarker(node: string, marker: string) {
+    this.graph.getNodeAttributes(node).markers.push(marker);
   }
 
   private addEdge(
@@ -180,6 +196,38 @@ export class CFGBuilder {
     return child ? child.text : "";
   }
 
+  private processStatements(statements: Node[]): BasicBlock {
+    const blockHandler = new BlockHandler();
+
+    // Ignore comments
+    const codeStatements = statements.filter((syntax) => {
+      if (syntax.type !== "comment") {
+        return true;
+      }
+
+      return (
+        this.markerPattern && Boolean(syntax.text.match(this.markerPattern))
+      );
+    });
+
+    if (codeStatements.length === 0) {
+      const emptyNode = this.addNode("EMPTY", "empty block");
+      return { entry: emptyNode, exit: emptyNode };
+    }
+
+    let entry: string | null = null;
+    let previous: string | null = null;
+    for (const statement of codeStatements) {
+      const { entry: currentEntry, exit: currentExit } = blockHandler.update(
+        this.processBlock(statement),
+      );
+      if (!entry) entry = currentEntry;
+      if (previous && currentEntry) this.addEdge(previous, currentEntry);
+      previous = currentExit;
+    }
+    return blockHandler.update({ entry, exit: previous });
+  }
+
   private processBlock(node: Node | null): BasicBlock {
     if (!node) return { entry: null, exit: null };
 
@@ -191,7 +239,9 @@ export class CFGBuilder {
       case "for_statement":
         return this.processForStatement(node);
       case "expression_switch_statement":
-        return this.processSwitchStatement(node);
+      case "type_switch_statement":
+      case "select_statement":
+        return this.processSwitchlike(node);
       case "return_statement": {
         const returnNode = this.addNode("RETURN", node.text);
         return { entry: returnNode, exit: null };
@@ -204,113 +254,141 @@ export class CFGBuilder {
         return this.processLabeledStatement(node);
       case "goto_statement":
         return this.processGotoStatement(node);
-      case "type_switch_statement":
-        return this.processTypeSwitchStatement(node);
-      case "select_statement":
-        return this.processSelectStatement(node);
+      case "comment":
+        return this.processComment(node);
       default: {
         const newNode = this.addNode("STATEMENT", node.text);
         return { entry: newNode, exit: newNode };
       }
     }
   }
+  private processComment(commentSyntax: Parser.SyntaxNode): BasicBlock {
+    // We only ever ger here when marker comments are enabled,
+    // and only for marker comments as the rest are filtered out.
+    const commentNode = this.addNode("MARKER_COMMENT", commentSyntax.text);
+    if (this.markerPattern) {
+      const marker = commentSyntax.text.match(this.markerPattern)?.[1];
+      if (marker) this.addMarker(commentNode, marker);
+    }
+    return { entry: commentNode, exit: commentNode };
+  }
 
-  private processSwitchlike(
-    switchlikeSyntax: Parser.SyntaxNode,
-    props: SwitchlikeProps,
-  ): BasicBlock {
-    const {
-      nodeType,
-      mergeType,
-      mergeCode,
-      caseName,
-      caseTypeName,
-      caseFieldName,
-    } = props;
+  private buildSwitch(
+    cases: Case[],
+    mergeNode: string,
+    switchHeadNode: string,
+  ) {
+    let fallthrough: string | null = null;
+    let previous: string | null = null;
+    if (!this.flatSwitch && cases[0]?.conditionEntry) {
+      this.addEdge(switchHeadNode, cases[0].conditionEntry);
+    }
+    cases.forEach((thisCase) => {
+      if (this.flatSwitch) {
+        if (thisCase.consequenceEntry) {
+          this.addEdge(switchHeadNode, thisCase.consequenceEntry);
+          if (fallthrough) {
+            this.addEdge(fallthrough, thisCase.consequenceEntry);
+          }
+        }
+      } else {
+        if (fallthrough && thisCase.consequenceEntry) {
+          this.addEdge(fallthrough, thisCase.consequenceEntry);
+        }
+        if (previous && thisCase.conditionEntry) {
+          this.addEdge(
+            previous,
+            thisCase.conditionEntry,
+            "alternative" as EdgeType,
+          );
+        }
 
-    const blockHandler = new BlockHandler();
-    const valueNode = this.addNode(
-      nodeType,
-      this.getChildFieldText(switchlikeSyntax, "value"),
-    );
-    const mergeNode = this.addNode(mergeType, mergeCode);
+        if (thisCase.consequenceEntry && thisCase.conditionExit)
+          this.addEdge(
+            thisCase.conditionExit,
+            thisCase.consequenceEntry,
+            "consequence",
+          );
 
-    let previous = { node: valueNode, branchType: "regular" as EdgeType };
-    switchlikeSyntax.namedChildren
-      .filter((child) => child.type === caseName)
-      .forEach((caseNode) => {
-        const caseType = this.getChildFieldText(caseNode, caseFieldName);
-        const caseConditionNode = this.addNode(caseTypeName, caseType);
+        // Update for next case
+        previous = thisCase.isDefault ? null : thisCase.alternativeExit;
+      }
 
-        const caseBlock = blockHandler.update(
-          this.processStatements(caseNode.namedChildren.slice(1)),
+      // Fallthrough is the same for both flat and non-flat layouts.
+      if (!thisCase.hasFallthrough && thisCase.consequenceExit) {
+        this.addEdge(thisCase.consequenceExit, mergeNode);
+      }
+      // Update for next case
+      fallthrough = thisCase.hasFallthrough ? thisCase.consequenceExit : null;
+    });
+    // Connect the last node to the merge node.
+    // No need to handle `fallthrough` here as it is not allowed for the last case.
+    if (previous) {
+      this.addEdge(previous, mergeNode, "alternative");
+    }
+  }
+
+  private collectCases(
+    switchSyntax: Parser.SyntaxNode,
+    blockHandler: BlockHandler,
+  ): Case[] {
+    const cases: Case[] = [];
+    const caseTypes = [
+      "default_case",
+      "communication_case",
+      "type_case",
+      "expression_case",
+    ];
+    switchSyntax.namedChildren
+      .filter((child) => caseTypes.includes(child.type))
+      .forEach((caseSyntax) => {
+        const isDefault = caseSyntax.type === "default_case";
+
+        const consequence = caseSyntax.namedChildren.slice(isDefault ? 0 : 1);
+        const hasFallthrough = consequence
+          .map((node) => node.type)
+          .includes("fallthrough_statement");
+
+        const conditionNode = this.addNode(
+          "CASE_CONDITION",
+          isDefault ? "default" : (caseSyntax.firstNamedChild?.text ?? ""),
         );
-        if (caseBlock.entry) {
-          this.addEdge(caseConditionNode, caseBlock.entry, "consequence");
-        }
-        if (caseBlock.exit) {
-          this.addEdge(caseBlock.exit, mergeNode);
-        }
+        const consequenceNode = blockHandler.update(
+          this.processStatements(consequence),
+        );
 
-        this.addEdge(previous.node, caseConditionNode, previous.branchType);
-        previous = {
-          node: caseConditionNode,
-          branchType: "alternative",
-        };
+        cases.push({
+          conditionEntry: conditionNode,
+          conditionExit: conditionNode,
+          consequenceEntry: consequenceNode.entry,
+          consequenceExit: consequenceNode.exit,
+          alternativeExit: conditionNode,
+          hasFallthrough,
+          isDefault,
+        });
       });
 
-    const defaultCase = switchlikeSyntax.namedChildren.find(
-      (child) => child.type === "default_case",
+    return cases;
+  }
+
+  private processSwitchlike(switchSyntax: Parser.SyntaxNode): BasicBlock {
+    const blockHandler = new BlockHandler();
+
+    const cases = this.collectCases(switchSyntax, blockHandler);
+    const headNode = this.addNode(
+      "SWITCH_CONDITION",
+      this.getChildFieldText(switchSyntax, "value"),
     );
-    if (defaultCase !== undefined) {
-      const defaultBlock = blockHandler.update(
-        this.processStatements(defaultCase.namedChildren),
-      );
-      this.addEdge(previous.node, defaultBlock.entry, previous.branchType);
-      this.addEdge(defaultBlock.entry, mergeNode);
-    } else {
-      this.addEdge(previous.node, mergeNode, previous.branchType);
-    }
+    const mergeNode: string = this.addNode("SWITCH_MERGE", "");
+    this.buildSwitch(cases, mergeNode, headNode);
 
     blockHandler.forEachBreak((breakNode) => {
       this.addEdge(breakNode, mergeNode);
     });
 
-    return blockHandler.update({ entry: valueNode, exit: mergeNode });
+    return blockHandler.update({ entry: headNode, exit: mergeNode });
   }
 
-  private processSelectStatement(selectSyntax: Parser.SyntaxNode): BasicBlock {
-    return this.processSwitchlike(selectSyntax, {
-      caseFieldName: "communication",
-      caseName: "communication_case",
-      caseTypeName: "COMMUNICATION_CASE",
-      mergeCode: "MERGE",
-      mergeType: "SELECT_MERGE",
-      nodeType: "SELECT",
-    });
-  }
-  private processTypeSwitchStatement(
-    switchSyntax: Parser.SyntaxNode,
-  ): BasicBlock {
-    return this.processSwitchlike(switchSyntax, {
-      caseFieldName: "value",
-      caseName: "type_case",
-      caseTypeName: "TYPE_CASE",
-      mergeCode: "MERGE",
-      mergeType: "TYPE_SWITCH_MERGE",
-      nodeType: "TYPE_SWITCH_VALUE",
-    });
-  }
-  private processSwitchStatement(switchSyntax: Node): BasicBlock {
-    return this.processSwitchlike(switchSyntax, {
-      caseFieldName: "value",
-      caseName: "expression_case",
-      caseTypeName: "CASE_CONDITION",
-      mergeCode: "MERGE",
-      mergeType: "SWITCH_MERGE",
-      nodeType: "SWITCH_CONDITION",
-    });
-  }
   private processGotoStatement(gotoSyntax: Parser.SyntaxNode): BasicBlock {
     const name = gotoSyntax.firstNamedChild.text;
     const gotoNode = this.addNode("GOTO", name);
@@ -343,32 +421,6 @@ export class CFGBuilder {
   private processBreakStatement(_breakSyntax: Parser.SyntaxNode): BasicBlock {
     const breakNode = this.addNode("BREAK", "BREAK");
     return { entry: breakNode, exit: null, breaks: [breakNode] };
-  }
-
-  private processStatements(statements: Node[]): BasicBlock {
-    const blockHandler = new BlockHandler();
-
-    // Ignore comments
-    const codeStatements = statements.filter(
-      (syntax) => syntax.type !== "comment",
-    );
-
-    if (codeStatements.length === 0) {
-      const emptyNode = this.addNode("EMPTY", "empty block");
-      return { entry: emptyNode, exit: emptyNode };
-    }
-
-    let entry: string | null = null;
-    let previous: string | null = null;
-    for (const statement of codeStatements) {
-      const { entry: currentEntry, exit: currentExit } = blockHandler.update(
-        this.processBlock(statement),
-      );
-      if (!entry) entry = currentEntry;
-      if (previous && currentEntry) this.addEdge(previous, currentEntry);
-      previous = currentExit;
-    }
-    return blockHandler.update({ entry, exit: previous });
   }
 
   private processIfStatement(
