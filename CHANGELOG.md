@@ -6,6 +6,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+- Learned Go's `fallthrough` keyword
+- Learned an option to draw flat-switches (where all cases are direct descendants of the switch head)
+
 ## [0.0.2] - 2024-09-06
 
 - Interactive demo website, use `bun demo` to run.
