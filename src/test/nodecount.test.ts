@@ -4,6 +4,10 @@ import goSampleCode from "./nodecount.go" with { type: "text" };
 import treeSitterGo from "../../parsers/tree-sitter-go.wasm?url";
 import { CFGBuilder, type CFG } from "../control-flow/cfg";
 import { simplifyCFG } from "../control-flow/graph-ops";
+import type { MultiDirectedGraph } from "graphology";
+import { bfsFromNode } from "graphology-traversal";
+
+const markerPattern: RegExp = /CFG: (\w+)/;
 
 async function initializeParser() {
   await Parser.init();
@@ -17,7 +21,8 @@ const parser = await initializeParser();
 const tree = parser.parse(goSampleCode);
 
 interface Requirements {
-  nodes: number;
+  nodes?: number;
+  reaches?: [string, string][];
 }
 interface TestFunction {
   name: string;
@@ -81,6 +86,27 @@ function buildSimpleCFG(functionNode: Parser.SyntaxNode): CFG {
   return simplifyCFG(buildCFG(functionNode));
 }
 
+function buildMarkerCFG(functionNode: Parser.SyntaxNode): CFG {
+  const builder = new CFGBuilder({ markerPattern });
+  return builder.buildCFG(functionNode);
+
+}
+
+function pathExists(graph: MultiDirectedGraph, source: string, target: string): boolean {
+  let foundTarget = false;
+  bfsFromNode(graph, source, (node) => {
+    foundTarget ||= node == target;
+    return foundTarget;
+  })
+  return foundTarget;
+}
+
+function getMarkerMap(cfg: CFG): Map<string, string> {
+  const markerMap: Map<string, string> = new Map();
+  cfg.graph.forEachNode((node, { markers }) => { markers?.forEach(marker => markerMap.set(marker, node)) })
+  return markerMap;
+}
+
 const testFunctions = [...iterTestFunctions(tree)];
 const testMap = new Map(
   testFunctions.map((testFunc) => [testFunc.name, testFunc]),
@@ -90,6 +116,26 @@ test.each(testNames)("Node count for %s", (name) => {
   const testFunc = testMap.get(name) as TestFunction;
   expect(testFunc).toBeDefined();
 
-  const cfg = buildSimpleCFG(testFunc.function);
-  expect(cfg.graph.order).toBe(testFunc.reqs.nodes);
+  if (testFunc.reqs.nodes) {
+    const cfg = buildSimpleCFG(testFunc.function);
+    expect(cfg.graph.order).toBe(testFunc.reqs.nodes);
+  }
+});
+
+test.each(testNames)("Reachability for %s", (name) => {
+  const testFunc = testMap.get(name) as TestFunction;
+  expect(testFunc).toBeDefined();
+
+  if (testFunc.reqs.reaches) {
+    const cfg = buildMarkerCFG(testFunc.function);
+    const markerMap = getMarkerMap(cfg);
+    const getNode = (marker: string) => {
+      const node = markerMap.get(marker);
+      if (node) {
+        return node;
+      }
+      throw new Error(`No node found for marker ${marker}`)
+    }
+    testFunc.reqs.reaches.forEach(([source, target]) => expect(pathExists(cfg.graph, getNode(source), getNode(target))).toBe(true))
+  }
 });

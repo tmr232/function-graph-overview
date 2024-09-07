@@ -47,3 +47,11 @@ label:
 		g()
 	}
 }
+
+/*
+reaches: [["a", "b"]]
+*/
+func trivialReachability() {
+	// CFG: a
+	// CFG: b
+}

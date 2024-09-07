@@ -4,6 +4,7 @@ import Parser from "web-tree-sitter";
 type Node = Parser.SyntaxNode;
 
 type NodeType =
+  | "MARKER_COMMENT"
   | "LOOP_HEAD"
   | "LOOP_EXIT"
   | "SELECT"
@@ -35,6 +36,7 @@ interface GraphNode {
   type: NodeType;
   code: string;
   lines: number;
+  markers: string[];
 }
 
 interface GraphEdge {
@@ -125,6 +127,7 @@ interface Case {
 
 interface BuilderOptions {
   flatSwitch?: boolean;
+  markerPattern?:RegExp;
 }
 
 export class CFGBuilder {
@@ -132,13 +135,15 @@ export class CFGBuilder {
   private entry: string;
   private nodeId: number;
   private readonly flatSwitch: boolean;
+  private readonly markerPattern: RegExp | null;
 
-  constructor(options: BuilderOptions) {
+  constructor(options?: BuilderOptions) {
     this.graph = new MultiDirectedGraph();
     this.nodeId = 0;
     this.entry = null;
 
-    this.flatSwitch = options.flatSwitch ?? false;
+    this.flatSwitch = options?.flatSwitch ?? false;
+    this.markerPattern = options?.markerPattern ?? null;
   }
 
   public buildCFG(functionNode: Node): CFG {
@@ -163,8 +168,12 @@ export class CFGBuilder {
 
   private addNode(type: NodeType, code: string, lines: number = 1): string {
     const id = `node${this.nodeId++}`;
-    this.graph.addNode(id, { type, code, lines });
+    this.graph.addNode(id, { type, code, lines, markers: [] });
     return id;
+  }
+
+  private addMarker(node: string, marker: string) {
+    this.graph.getNodeAttributes(node).markers.push(marker);
   }
 
   private addEdge(
@@ -213,11 +222,23 @@ export class CFGBuilder {
         return this.processLabeledStatement(node);
       case "goto_statement":
         return this.processGotoStatement(node);
+      case "comment":
+        return this.processComment(node);
       default: {
         const newNode = this.addNode("STATEMENT", node.text);
         return { entry: newNode, exit: newNode };
       }
     }
+  }
+  private processComment(commentSyntax: Parser.SyntaxNode): BasicBlock {
+    // We only ever ger here when marker comments are enabled, 
+    // and only for marker comments as the rest are filtered out.
+    const commentNode = this.addNode("MARKER_COMMENT", commentSyntax.text);
+    if (this.markerPattern) {
+      const marker = commentSyntax.text.match(this.markerPattern)?.[1];
+      if (marker) this.addMarker(commentNode, marker);
+    }
+    return { entry: commentNode, exit: commentNode };
   }
 
   private buildSwitch(
@@ -375,7 +396,13 @@ export class CFGBuilder {
 
     // Ignore comments
     const codeStatements = statements.filter(
-      (syntax) => syntax.type !== "comment",
+      (syntax) => {
+        if (syntax.type !== "comment") {
+          return true;
+        }
+
+        return this.markerPattern && Boolean(syntax.text.match(this.markerPattern));
+      }
     );
 
     if (codeStatements.length === 0) {
