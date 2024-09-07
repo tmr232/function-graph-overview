@@ -49,7 +49,10 @@ label:
 }
 
 /*
-reaches: [["a", "b"]]
+nodes: 1,
+reaches: [
+	["a", "b"]
+]
 */
 func trivialReachability() {
 	// CFG: a

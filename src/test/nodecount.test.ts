@@ -34,10 +34,8 @@ function parseComment(text: string): Requirements {
   const jsonContent = text
     .slice(2, -2)
     .trim()
-    .replaceAll(/^/gm, '"')
-    .replaceAll(/:/gm, '":')
-    .replaceAll(/$/gm, ",")
-    .replaceAll(/,$/gm, "");
+    .replaceAll(/^(?=\w)/gm, '"')
+    .replaceAll(/:/gm, '":');
   return JSON.parse(`{${jsonContent}}`);
 }
 
@@ -89,21 +87,26 @@ function buildSimpleCFG(functionNode: Parser.SyntaxNode): CFG {
 function buildMarkerCFG(functionNode: Parser.SyntaxNode): CFG {
   const builder = new CFGBuilder({ markerPattern });
   return builder.buildCFG(functionNode);
-
 }
 
-function pathExists(graph: MultiDirectedGraph, source: string, target: string): boolean {
+function pathExists(
+  graph: MultiDirectedGraph,
+  source: string,
+  target: string,
+): boolean {
   let foundTarget = false;
   bfsFromNode(graph, source, (node) => {
     foundTarget ||= node == target;
     return foundTarget;
-  })
+  });
   return foundTarget;
 }
 
 function getMarkerMap(cfg: CFG): Map<string, string> {
   const markerMap: Map<string, string> = new Map();
-  cfg.graph.forEachNode((node, { markers }) => { markers?.forEach(marker => markerMap.set(marker, node)) })
+  cfg.graph.forEachNode((node, { markers }) => {
+    markers?.forEach((marker) => markerMap.set(marker, node));
+  });
   return markerMap;
 }
 
@@ -112,7 +115,15 @@ const testMap = new Map(
   testFunctions.map((testFunc) => [testFunc.name, testFunc]),
 );
 const testNames = [...testMap.keys()];
-test.each(testNames)("Node count for %s", (name) => {
+
+function testsFor(reqName: string): string[] {
+  return testNames.filter((name) => {
+    const testFunc = testMap.get(name) as TestFunction;
+    return Object.hasOwn(testFunc.reqs, reqName);
+  });
+}
+
+test.each(testsFor("nodes"))("Node count for %s", (name) => {
   const testFunc = testMap.get(name) as TestFunction;
   expect(testFunc).toBeDefined();
 
@@ -122,7 +133,7 @@ test.each(testNames)("Node count for %s", (name) => {
   }
 });
 
-test.each(testNames)("Reachability for %s", (name) => {
+test.each(testsFor("reaches"))("Reachability for %s", (name) => {
   const testFunc = testMap.get(name) as TestFunction;
   expect(testFunc).toBeDefined();
 
@@ -134,8 +145,12 @@ test.each(testNames)("Reachability for %s", (name) => {
       if (node) {
         return node;
       }
-      throw new Error(`No node found for marker ${marker}`)
-    }
-    testFunc.reqs.reaches.forEach(([source, target]) => expect(pathExists(cfg.graph, getNode(source), getNode(target))).toBe(true))
+      throw new Error(`No node found for marker ${marker}`);
+    };
+    testFunc.reqs.reaches.forEach(([source, target]) =>
+      expect(pathExists(cfg.graph, getNode(source), getNode(target))).toBe(
+        true,
+      ),
+    );
   }
 });

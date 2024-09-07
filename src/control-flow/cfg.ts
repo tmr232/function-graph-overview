@@ -127,7 +127,7 @@ interface Case {
 
 interface BuilderOptions {
   flatSwitch?: boolean;
-  markerPattern?:RegExp;
+  markerPattern?: RegExp;
 }
 
 export class CFGBuilder {
@@ -231,7 +231,7 @@ export class CFGBuilder {
     }
   }
   private processComment(commentSyntax: Parser.SyntaxNode): BasicBlock {
-    // We only ever ger here when marker comments are enabled, 
+    // We only ever ger here when marker comments are enabled,
     // and only for marker comments as the rest are filtered out.
     const commentNode = this.addNode("MARKER_COMMENT", commentSyntax.text);
     if (this.markerPattern) {
@@ -395,15 +395,15 @@ export class CFGBuilder {
     const blockHandler = new BlockHandler();
 
     // Ignore comments
-    const codeStatements = statements.filter(
-      (syntax) => {
-        if (syntax.type !== "comment") {
-          return true;
-        }
-
-        return this.markerPattern && Boolean(syntax.text.match(this.markerPattern));
+    const codeStatements = statements.filter((syntax) => {
+      if (syntax.type !== "comment") {
+        return true;
       }
-    );
+
+      return (
+        this.markerPattern && Boolean(syntax.text.match(this.markerPattern))
+      );
+    });
 
     if (codeStatements.length === 0) {
       const emptyNode = this.addNode("EMPTY", "empty block");
