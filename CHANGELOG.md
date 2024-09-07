@@ -11,6 +11,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Learned Go's `fallthrough` keyword
 - Learned an option to draw flat-switches (where all cases are direct descendants of the switch head)
 - Added utilities for basic reachability testing
+- Expose `simplify` and `flat switch` settings in demo
+- Expose `flat switch` setting in extension
 
 ## [0.0.2] - 2024-09-06
 
