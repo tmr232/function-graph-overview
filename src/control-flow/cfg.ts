@@ -198,11 +198,9 @@ export class CFGBuilder {
       case "for_statement":
         return this.processForStatement(node);
       case "expression_switch_statement":
-        return this.processSwitchlike2(node);
       case "type_switch_statement":
-        return this.processSwitchlike2(node);
       case "select_statement":
-        return this.processSwitchlike2(node);
+        return this.processSwitchlike(node);
       case "return_statement": {
         const returnNode = this.addNode("RETURN", node.text);
         return { entry: returnNode, exit: null };
@@ -320,7 +318,7 @@ export class CFGBuilder {
     return cases;
   }
 
-  private processSwitchlike2(switchSyntax: Parser.SyntaxNode): BasicBlock {
+  private processSwitchlike(switchSyntax: Parser.SyntaxNode): BasicBlock {
     const blockHandler = new BlockHandler();
 
     const cases = this.collectCases(switchSyntax, blockHandler);
