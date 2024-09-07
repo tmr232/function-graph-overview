@@ -135,11 +135,13 @@ export class CFGBuilder {
   private graph: MultiDirectedGraph<GraphNode, GraphEdge>;
   private entry: string;
   private nodeId: number;
+  private readonly flatSwitch: boolean;
 
   constructor() {
     this.graph = new MultiDirectedGraph();
     this.nodeId = 0;
     this.entry = null;
+    this.flatSwitch = false;
   }
 
   public buildCFG(functionNode: Node): CFG {
@@ -229,41 +231,51 @@ export class CFGBuilder {
     mergeNode: string,
     switchHeadNode: string,
   ) {
-    // We treat the head of the switch as a fallthrough to simplify the code.
     let fallthrough: string | null = null;
     let previous: string | null = null;
-    console.log("Build switch", "head", switchHeadNode);
-    if (cases[0]?.conditionEntry) {
+    if (!this.flatSwitch && cases[0]?.conditionEntry) {
       this.addEdge(switchHeadNode, cases[0].conditionEntry);
     }
     cases.forEach((thisCase) => {
-      console.log("thisCase", thisCase, previous, fallthrough);
-      if (fallthrough && thisCase.consequenceEntry) {
-        this.addEdge(fallthrough, thisCase.consequenceEntry);
+      if (this.flatSwitch) {
+        if (thisCase.consequenceEntry) {
+          this.addEdge(switchHeadNode, thisCase.consequenceEntry);
+          if (fallthrough) {
+            this.addEdge(fallthrough, thisCase.consequenceEntry);
+          }
+        }
+      } else {
+        if (fallthrough && thisCase.consequenceEntry) {
+          this.addEdge(fallthrough, thisCase.consequenceEntry);
+        }
+        if (previous && thisCase.conditionEntry) {
+          this.addEdge(
+            previous,
+            thisCase.conditionEntry,
+            "alternative" as EdgeType,
+          );
+        }
+
+        if (thisCase.consequenceEntry && thisCase.conditionExit)
+          this.addEdge(
+            thisCase.conditionExit,
+            thisCase.consequenceEntry,
+            "consequence",
+          );
+
+        // Update for next case
+        previous = thisCase.isDefault ? null : thisCase.alternativeExit;
       }
-      if (previous && thisCase.conditionEntry) {
-        this.addEdge(
-          previous,
-          thisCase.conditionEntry,
-          "alternative" as EdgeType,
-        );
-      }
+
+      // Fallthrough is the same for both flat and non-flat layouts.
       if (!thisCase.hasFallthrough && thisCase.consequenceExit) {
         this.addEdge(thisCase.consequenceExit, mergeNode);
       }
-
-      if (thisCase.consequenceEntry && thisCase.conditionExit)
-        this.addEdge(
-          thisCase.conditionExit,
-          thisCase.consequenceEntry,
-          "consequence",
-        );
-
       // Update for next case
       fallthrough = thisCase.hasFallthrough ? thisCase.consequenceExit : null;
-      previous = thisCase.isDefault ? null : thisCase.alternativeExit;
     });
-
+    // Connect the last node to the merge node.
+    // No need to handle `fallthrough` here as it is not allowed for the last case.
     if (previous) {
       this.addEdge(previous, mergeNode, "alternative");
     }
