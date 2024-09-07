@@ -57,15 +57,6 @@ interface BasicBlock {
   gotos?: Goto[];
 }
 
-interface SwitchlikeProps {
-  nodeType: NodeType;
-  mergeType: NodeType;
-  mergeCode: string;
-  caseName: string;
-  caseFieldName: string;
-  caseTypeName: NodeType;
-}
-
 export interface CFG {
   graph: MultiDirectedGraph<GraphNode, GraphEdge>;
   entry: string;
@@ -208,6 +199,10 @@ export class CFGBuilder {
         return this.processForStatement(node);
       case "expression_switch_statement":
         return this.processSwitchlike2(node);
+      case "type_switch_statement":
+        return this.processSwitchlike2(node);
+      case "select_statement":
+        return this.processSwitchlike2(node);
       case "return_statement": {
         const returnNode = this.addNode("RETURN", node.text);
         return { entry: returnNode, exit: null };
@@ -220,10 +215,6 @@ export class CFGBuilder {
         return this.processLabeledStatement(node);
       case "goto_statement":
         return this.processGotoStatement(node);
-      case "type_switch_statement":
-        return this.processSwitchlike2(node);
-      case "select_statement":
-        return this.processSwitchlike2(node);
       default: {
         const newNode = this.addNode("STATEMENT", node.text);
         return { entry: newNode, exit: newNode };
@@ -347,120 +338,6 @@ export class CFGBuilder {
     return blockHandler.update({ entry: headNode, exit: mergeNode });
   }
 
-  private processSwitchlike(
-    switchlikeSyntax: Parser.SyntaxNode,
-    props: SwitchlikeProps,
-  ): BasicBlock {
-    const {
-      nodeType,
-      mergeType,
-      mergeCode,
-      caseName,
-      caseTypeName,
-      caseFieldName,
-    } = props;
-
-    const blockHandler = new BlockHandler();
-    const valueNode = this.addNode(
-      nodeType,
-      this.getChildFieldText(switchlikeSyntax, "value"),
-    );
-    const mergeNode = this.addNode(mergeType, mergeCode);
-
-    let previous = { node: valueNode, branchType: "regular" as EdgeType };
-    let fallthrough: string | null = null;
-    switchlikeSyntax.namedChildren
-      .filter((child) => child.type === caseName)
-      .forEach((caseNode) => {
-        const caseType = this.getChildFieldText(caseNode, caseFieldName);
-        const caseConditionNode = this.addNode(caseTypeName, caseType);
-        const hasFallthrough = caseNode.namedChildren
-          .map((node) => node.type)
-          .includes("fallthrough_statement");
-
-        const caseBlock = blockHandler.update(
-          this.processStatements(caseNode.namedChildren.slice(1)),
-        );
-        if (caseBlock.entry) {
-          this.addEdge(caseConditionNode, caseBlock.entry, "consequence");
-        }
-        if (caseBlock.exit && !hasFallthrough) {
-          // We only link to the merge node if we don't have a fallthrough statement!
-          this.addEdge(caseBlock.exit, mergeNode);
-        }
-
-        this.addEdge(previous.node, caseConditionNode, previous.branchType);
-
-        // If a fallthrough exists from the previous case, we add an edge for it
-        if (fallthrough && caseBlock.entry) {
-          this.addEdge(fallthrough, caseBlock.entry);
-        }
-
-        // If we have a `fallthrough` statement, we want to link this case to the next one
-        if (hasFallthrough) {
-          fallthrough = caseBlock.exit;
-        } else {
-          fallthrough = null;
-        }
-
-        previous = {
-          node: caseConditionNode,
-          branchType: "alternative",
-        };
-      });
-
-    const defaultCase = switchlikeSyntax.namedChildren.find(
-      (child) => child.type === "default_case",
-    );
-    if (defaultCase !== undefined) {
-      const defaultBlock = blockHandler.update(
-        this.processStatements(defaultCase.namedChildren),
-      );
-      this.addEdge(previous.node, defaultBlock.entry, previous.branchType);
-      this.addEdge(defaultBlock.entry, mergeNode);
-    } else {
-      this.addEdge(previous.node, mergeNode, previous.branchType);
-    }
-
-    blockHandler.forEachBreak((breakNode) => {
-      this.addEdge(breakNode, mergeNode);
-    });
-
-    return blockHandler.update({ entry: valueNode, exit: mergeNode });
-  }
-
-  private processSelectStatement(selectSyntax: Parser.SyntaxNode): BasicBlock {
-    return this.processSwitchlike(selectSyntax, {
-      caseFieldName: "communication",
-      caseName: "communication_case",
-      caseTypeName: "COMMUNICATION_CASE",
-      mergeCode: "MERGE",
-      mergeType: "SELECT_MERGE",
-      nodeType: "SELECT",
-    });
-  }
-  private processTypeSwitchStatement(
-    switchSyntax: Parser.SyntaxNode,
-  ): BasicBlock {
-    return this.processSwitchlike(switchSyntax, {
-      caseFieldName: "value",
-      caseName: "type_case",
-      caseTypeName: "TYPE_CASE",
-      mergeCode: "MERGE",
-      mergeType: "TYPE_SWITCH_MERGE",
-      nodeType: "TYPE_SWITCH_VALUE",
-    });
-  }
-  private processSwitchStatement(switchSyntax: Node): BasicBlock {
-    return this.processSwitchlike(switchSyntax, {
-      caseFieldName: "value",
-      caseName: "expression_case",
-      caseTypeName: "CASE_CONDITION",
-      mergeCode: "MERGE",
-      mergeType: "SWITCH_MERGE",
-      nodeType: "SWITCH_CONDITION",
-    });
-  }
   private processGotoStatement(gotoSyntax: Parser.SyntaxNode): BasicBlock {
     const name = gotoSyntax.firstNamedChild.text;
     const gotoNode = this.addNode("GOTO", name);
