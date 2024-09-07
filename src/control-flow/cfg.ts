@@ -236,11 +236,15 @@ export class CFGBuilder {
     const mergeNode = this.addNode(mergeType, mergeCode);
 
     let previous = { node: valueNode, branchType: "regular" as EdgeType };
+    let fallthrough: string | null = null;
     switchlikeSyntax.namedChildren
       .filter((child) => child.type === caseName)
       .forEach((caseNode) => {
         const caseType = this.getChildFieldText(caseNode, caseFieldName);
         const caseConditionNode = this.addNode(caseTypeName, caseType);
+        const hasFallthrough = caseNode.namedChildren
+          .map((node) => node.type)
+          .includes("fallthrough_statement");
 
         const caseBlock = blockHandler.update(
           this.processStatements(caseNode.namedChildren.slice(1)),
@@ -248,11 +252,25 @@ export class CFGBuilder {
         if (caseBlock.entry) {
           this.addEdge(caseConditionNode, caseBlock.entry, "consequence");
         }
-        if (caseBlock.exit) {
+        if (caseBlock.exit && !hasFallthrough) {
+          // We only link to the merge node if we don't have a fallthrough statement!
           this.addEdge(caseBlock.exit, mergeNode);
         }
 
         this.addEdge(previous.node, caseConditionNode, previous.branchType);
+
+        // If a fallthrough exists from the previous case, we add an edge for it
+        if (fallthrough && caseBlock.entry) {
+          this.addEdge(fallthrough, caseBlock.entry);
+        }
+
+        // If we have a `fallthrough` statement, we want to link this case to the next one
+        if (hasFallthrough) {
+          fallthrough = caseBlock.exit;
+        } else {
+          fallthrough = null;
+        }
+
         previous = {
           node: caseConditionNode,
           branchType: "alternative",
