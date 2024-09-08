@@ -441,25 +441,32 @@ export class CFGBuilder {
       this.processBlock(consequenceChild),
     );
 
+    if (thenEntry) this.addEdge(conditionNode, thenEntry, "consequence");
+    if (thenExit) this.addEdge(thenExit, mergeNode, "regular");
+
     const alternativeChild = ifNode.childForFieldName("alternative");
-    const elseIf = alternativeChild?.type === "if_statement";
-    const { entry: elseEntry, exit: elseExit } = (() => {
+
+    if (alternativeChild) {
+      // We have an else or else-if
+      const maybeElseIf = alternativeChild.firstNamedChild;
+      const elseIf = maybeElseIf?.type === "if_statement";
       if (elseIf) {
-        return blockHandler.update(
-          this.processIfStatement(alternativeChild, mergeNode),
+        const { entry: elseEntry } = blockHandler.update(
+          this.processIfStatement(maybeElseIf, mergeNode),
         );
+        if (elseEntry) this.addEdge(conditionNode, elseEntry, "alternative");
+        // No need to connect the exit as it's already linked to the else node.
       } else {
-        return blockHandler.update(this.processBlock(alternativeChild));
+        // Normal else
+        const { entry: elseEntry, exit: elseExit } = blockHandler.update(
+          this.processBlock(alternativeChild),
+        );
+        if (elseEntry) this.addEdge(conditionNode, elseEntry, "alternative");
+        // This was processed like any other block, so we need to link the merge node.
+        if (elseExit) this.addEdge(elseExit, mergeNode, "regular");
       }
-    })();
-
-    this.addEdge(conditionNode, thenEntry || mergeNode, "consequence");
-    if (thenExit) this.addEdge(thenExit, mergeNode);
-
-    if (elseEntry) {
-      this.addEdge(conditionNode, elseEntry, "alternative");
-      if (elseExit && !elseIf) this.addEdge(elseExit, mergeNode);
     } else {
+      // No else clause
       this.addEdge(conditionNode, mergeNode, "alternative");
     }
 

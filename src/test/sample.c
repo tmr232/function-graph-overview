@@ -16,7 +16,8 @@ void simpleIf()
 }
 
 /*
-nodes: 6
+nodes: 6,
+exits: 1
 */
 void ifElse()
 {

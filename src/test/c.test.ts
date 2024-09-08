@@ -23,6 +23,7 @@ const tree = parser.parse(goSampleCode);
 
 interface Requirements {
   nodes?: number;
+  exits?: number;
   reaches?: [string, string][];
 }
 interface TestFunction {
@@ -130,8 +131,21 @@ test.each(testsFor("nodes"))("Node count for %s", (name) => {
 
   if (testFunc.reqs.nodes) {
     const cfg = buildSimpleCFG(testFunc.function);
-    console.log(graphToDot(cfg));
+    console.log(graphToDot(cfg, true));
     expect(cfg.graph.order).toBe(testFunc.reqs.nodes);
+  }
+});
+
+test.each(testsFor("exits"))("Exit count for %s", (name) => {
+  const testFunc = testMap.get(name) as TestFunction;
+  expect(testFunc).toBeDefined();
+
+  if (testFunc.reqs.exits) {
+    const cfg = buildSimpleCFG(testFunc.function);
+    const exitNodes = cfg.graph.filterNodes(
+      (node) => cfg.graph.outDegree(node) === 0,
+    );
+    expect(exitNodes.length).toBe(1);
   }
 });
 
