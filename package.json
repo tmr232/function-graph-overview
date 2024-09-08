@@ -25,6 +25,7 @@
     "prettier-plugin-svelte": "^3.2.6",
     "svelte": "^4.2.18",
     "svelte-codemirror-editor": "^1.4.1",
+    "tree-sitter-c": "^0.23.0",
     "tree-sitter-cli": "^0.23.0",
     "tree-sitter-go": "^0.23.0",
     "typescript-eslint": "^8.4.0",
@@ -46,7 +47,8 @@
     "demo": "bun run --cwd ./src/demo/ vite",
     "build-demo": "bun run --cwd ./src/demo/ vite build --outDir ../../dist/demo --base '/function-graph-overview/'",
     "format": "bun prettier . --write",
-    "lint": "bun format && bun run eslint"
+    "lint": "bun format && bun run eslint",
+    "generate-parsers": "bun run ./scripts/generate-parsers.ts"
   },
   "//": "START EXTENSION ATTRIBUTES",
   "publisher": "tamir-bahar",

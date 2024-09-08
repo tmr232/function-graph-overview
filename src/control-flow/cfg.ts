@@ -113,6 +113,7 @@ export function mergeNodeAttrs(from: GraphNode, into: GraphNode): GraphNode {
     type: from.type,
     code: `${from.code}\n${into.code}`,
     lines: from.lines + into.lines,
+    markers: [...from.markers, ...into.markers],
   };
 }
 interface Case {
