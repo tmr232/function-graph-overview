@@ -1,8 +1,6 @@
 import { MultiDirectedGraph } from "graphology";
 import Parser from "web-tree-sitter";
 
-type Node = Parser.SyntaxNode;
-
 type NodeType =
   | "MARKER_COMMENT"
   | "LOOP_HEAD"
@@ -147,7 +145,7 @@ export class CFGBuilder {
     this.markerPattern = options?.markerPattern ?? null;
   }
 
-  public buildCFG(functionNode: Node): CFG {
+  public buildCFG(functionNode: Parser.SyntaxNode): CFG {
     const bodyNode = functionNode.childForFieldName("body");
     if (bodyNode) {
       const blockHandler = new BlockHandler();
@@ -187,12 +185,15 @@ export class CFGBuilder {
     }
   }
 
-  private getChildFieldText(node: Node, fieldName: string): string {
+  private getChildFieldText(
+    node: Parser.SyntaxNode,
+    fieldName: string,
+  ): string {
     const child = node.childForFieldName(fieldName);
     return child ? child.text : "";
   }
 
-  private processStatements(statements: Node[]): BasicBlock {
+  private processStatements(statements: Parser.SyntaxNode[]): BasicBlock {
     const blockHandler = new BlockHandler();
 
     // Ignore comments
@@ -224,7 +225,7 @@ export class CFGBuilder {
     return blockHandler.update({ entry, exit: previous });
   }
 
-  private processBlock(node: Node | null): BasicBlock {
+  private processBlock(node: Parser.SyntaxNode | null): BasicBlock {
     if (!node) return { entry: null, exit: null };
 
     switch (node.type) {
@@ -387,7 +388,7 @@ export class CFGBuilder {
   }
 
   private processGotoStatement(gotoSyntax: Parser.SyntaxNode): BasicBlock {
-    const name = gotoSyntax.firstNamedChild.text;
+    const name = gotoSyntax.firstNamedChild?.text as string;
     const gotoNode = this.addNode("GOTO", name);
     return {
       entry: gotoNode,
@@ -421,7 +422,7 @@ export class CFGBuilder {
   }
 
   private processIfStatement(
-    ifNode: Node,
+    ifNode: Parser.SyntaxNode,
     mergeNode: string | null = null,
   ): BasicBlock {
     const blockHandler = new BlockHandler();
@@ -464,7 +465,7 @@ export class CFGBuilder {
     return blockHandler.update({ entry: conditionNode, exit: mergeNode });
   }
 
-  private processForStatement(forNode: Node): BasicBlock {
+  private processForStatement(forNode: Parser.SyntaxNode): BasicBlock {
     const blockHandler = new BlockHandler();
     switch (forNode.namedChildCount) {
       // One child means only loop body, two children means loop head.
