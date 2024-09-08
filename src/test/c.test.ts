@@ -1,23 +1,24 @@
 import { expect, test } from "bun:test";
-import Parser from "web-tree-sitter";
-import goSampleCode from "./nodecount.go" with { type: "text" };
-import treeSitterGo from "../../parsers/tree-sitter-go.wasm?url";
-import { CFGBuilder, type CFG } from "../control-flow/cfg";
+import Parser, { type QueryCapture } from "web-tree-sitter";
+import goSampleCode from "./sample.c" with { type: "text" };
+import treeSitterC from "../../parsers/tree-sitter-c.wasm?url";
+import { CFGBuilder, type CFG } from "../control-flow/cfg-c";
 import { simplifyCFG } from "../control-flow/graph-ops";
 import type { MultiDirectedGraph } from "graphology";
 import { bfsFromNode } from "graphology-traversal";
+import { graphToDot } from "../control-flow/render";
 
 const markerPattern: RegExp = /CFG: (\w+)/;
 
-async function initializeParser() {
+async function initializeParser(): Promise<[Parser, Parser.Language]> {
   await Parser.init();
   const parser = new Parser();
-  const Go = await Parser.Language.load(treeSitterGo);
-  parser.setLanguage(Go);
-  return parser;
+  const C = await Parser.Language.load(treeSitterC);
+  parser.setLanguage(C);
+  return [parser, C];
 }
 
-const parser = await initializeParser();
+const [parser, language] = await initializeParser();
 const tree = parser.parse(goSampleCode);
 
 interface Requirements {
@@ -39,39 +40,39 @@ function parseComment(text: string): Requirements {
   return JSON.parse(`{${jsonContent}}`);
 }
 
+function makeCaptureObject(captures: QueryCapture[]): {
+  [key: string]: Parser.SyntaxNode;
+} {
+  const obj: { [key: string]: Parser.SyntaxNode } = {};
+  for (const capture of captures) {
+    obj[capture.name] = capture.node;
+  }
+  return obj;
+}
+
 function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
-  const funcTypes = [
-    "function_declaration",
-    "method_declaration",
-    "func_literal",
-  ];
+  const testFuncQuery = language.query(`
+    (
+  (comment) @comment
+  (function_definition (
+		(function_declarator (identifier) @name)
+        body: (compound_statement) @body
+        )
+  ) @func
+)
+  `);
+  const matches = testFuncQuery.matches(tree.rootNode);
 
-  for (let i = 0; i < tree.rootNode.childCount - 1; i++) {
-    const commentNode = tree.rootNode.children[i];
-    const functionNode = tree.rootNode.children[i + 1];
-
-    if (!funcTypes.includes(functionNode.type)) {
-      continue;
+  for (const match of matches) {
+    const { comment, func, name } = makeCaptureObject(match.captures) as {
+      comment?: Parser.SyntaxNode;
+      func?: Parser.SyntaxNode;
+      name?: Parser.SyntaxNode;
+    };
+    if (!comment || !func || !name) {
+      throw new Error("Failed pasring function!");
     }
-    const functionName = functionNode.childForFieldName("name")?.text as string;
-
-    if (commentNode.type != "comment") {
-      throw new Error(`function without comment: ${functionName}`);
-    }
-
-    try {
-      yield {
-        function: functionNode,
-        reqs: parseComment(commentNode.text),
-        name: functionName,
-      };
-    } catch (error) {
-      if (error instanceof SyntaxError) {
-        throw new Error(`invalid JSON comment on ${functionName}`);
-      } else {
-        throw error;
-      }
-    }
+    yield { function: func, reqs: parseComment(comment.text), name: name.text };
   }
 }
 
@@ -129,6 +130,7 @@ test.each(testsFor("nodes"))("Node count for %s", (name) => {
 
   if (testFunc.reqs.nodes) {
     const cfg = buildSimpleCFG(testFunc.function);
+    console.log(graphToDot(cfg));
     expect(cfg.graph.order).toBe(testFunc.reqs.nodes);
   }
 });
