@@ -182,11 +182,6 @@ export class CFGBuilder {
     target: string,
     type: EdgeType = "regular",
   ): void {
-    if (source === undefined) {
-      throw new Error("Undefined source");
-    } else if (target === undefined) {
-      throw new Error("Undefined target");
-    }
     if (!this.graph.hasEdge(source, target)) {
       this.graph.addEdge(source, target, { type });
     }
@@ -324,6 +319,7 @@ export class CFGBuilder {
     });
     // Connect the last node to the merge node.
     // No need to handle `fallthrough` here as it is not allowed for the last case.
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (previous) {
       this.addEdge(previous, mergeNode, "alternative");
     }

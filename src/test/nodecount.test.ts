@@ -105,7 +105,7 @@ function pathExists(
 function getMarkerMap(cfg: CFG): Map<string, string> {
   const markerMap: Map<string, string> = new Map();
   cfg.graph.forEachNode((node, { markers }) => {
-    markers?.forEach((marker) => markerMap.set(marker, node));
+    markers.forEach((marker) => markerMap.set(marker, node));
   });
   return markerMap;
 }

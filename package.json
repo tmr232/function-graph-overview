@@ -46,7 +46,7 @@
     "web": "bun run --cwd ./src/frontend/ vite",
     "demo": "bun run --cwd ./src/demo/ vite",
     "build-demo": "bun run --cwd ./src/demo/ vite build --outDir ../../dist/demo --base '/function-graph-overview/'",
-    "format": "bun prettier . --write",
+    "format": "bun prettier . --write --log-level silent",
     "lint": "bun format && bun run eslint",
     "generate-parsers": "bun run ./scripts/generate-parsers.ts"
   },
