@@ -3,20 +3,8 @@ import { TestManager } from "./commentTestUtils";
 import { testFunctions as testFuncsForGo } from "./collect-go";
 import { testFunctions as testFuncsForC } from "./collect-c";
 
-const testManagerForC = new TestManager({
-  testFunctions: [...testFuncsForC],
+const testManager = new TestManager({
+  testFunctions: [...testFuncsForC, ...testFuncsForGo],
 });
 
-test.each(testManagerForC.allTests)(
-  testManagerForC.nameFormat,
-  testManagerForC.invoke,
-);
-
-const testManagerForGo = new TestManager({
-  testFunctions: [...testFuncsForGo],
-});
-
-test.each(testManagerForGo.allTests)(
-  testManagerForGo.nameFormat,
-  testManagerForGo.invoke,
-);
+test.each(testManager.allTests)(testManager.nameFormat, testManager.invoke);
