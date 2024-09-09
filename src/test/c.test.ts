@@ -8,6 +8,15 @@ import type { MultiDirectedGraph } from "graphology";
 import { bfsFromNode } from "graphology-traversal";
 import { graphToDot } from "../control-flow/render";
 
+/*
+TODO: Write a script that collects all the test code and generates a webpage
+      showing it.
+      - Toggle to show only failing tests
+      - The usual display toggles
+      - Ability to show markers instead of node content
+      - Shows the reason the test failed (in text!)
+*/
+
 const markerPattern: RegExp = /CFG: (\w+)/;
 
 async function initializeParser(): Promise<[Parser, Parser.Language]> {
@@ -145,7 +154,7 @@ test.each(testsFor("exits"))("Exit count for %s", (name) => {
     const exitNodes = cfg.graph.filterNodes(
       (node) => cfg.graph.outDegree(node) === 0,
     );
-    expect(exitNodes.length).toBe(1);
+    expect(exitNodes).toHaveLength(testFunc.reqs.exits);
   }
 });
 
