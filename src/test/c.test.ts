@@ -3,7 +3,7 @@ import Parser, { type QueryCapture } from "web-tree-sitter";
 import goSampleCode from "./sample.c" with { type: "text" };
 import treeSitterC from "../../parsers/tree-sitter-c.wasm?url";
 import { CFGBuilder, type CFG } from "../control-flow/cfg-c";
-import { simplifyCFG } from "../control-flow/graph-ops";
+import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
 import type { MultiDirectedGraph } from "graphology";
 import { bfsFromNode } from "graphology-traversal";
 import { graphToDot } from "../control-flow/render";
@@ -88,7 +88,7 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
 
 function buildCFG(functionNode: Parser.SyntaxNode): CFG {
   const builder = new CFGBuilder();
-  return builder.buildCFG(functionNode);
+  return trimFor(builder.buildCFG(functionNode));
 }
 
 function buildSimpleCFG(functionNode: Parser.SyntaxNode): CFG {
@@ -140,7 +140,7 @@ test.each(testsFor("nodes"))("Node count for %s", (name) => {
 
   if (testFunc.reqs.nodes) {
     const cfg = buildSimpleCFG(testFunc.function);
-    console.log(graphToDot(cfg, true));
+    console.log(graphToDot(cfg));
     expect(cfg.graph.order).toBe(testFunc.reqs.nodes);
   }
 });

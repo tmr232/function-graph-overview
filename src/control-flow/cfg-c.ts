@@ -229,7 +229,7 @@ export class CFGBuilder {
     if (!node) return { entry: null, exit: null };
 
     switch (node.type) {
-      case "block":
+      case "compound_statement":
         return this.processStatements(node.namedChildren);
       case "if_statement":
         return this.processIfStatement(node);
@@ -475,50 +475,95 @@ export class CFGBuilder {
 
   private processForStatement(forNode: Parser.SyntaxNode): BasicBlock {
     const blockHandler = new BlockHandler();
-    switch (forNode.namedChildCount) {
-      // One child means only loop body, two children means loop head.
-      case 1: {
-        const headNode = this.addNode("LOOP_HEAD", "loop head");
-        const { entry: bodyEntry, exit: bodyExit } = blockHandler.update(
-          this.processBlock(forNode.firstNamedChild),
-        );
-        if (bodyEntry) this.addEdge(headNode, bodyEntry);
-        if (bodyExit) this.addEdge(bodyExit, headNode);
-        const exitNode = this.addNode("LOOP_EXIT", "loop exit");
-        blockHandler.forEachBreak((breakNode) => {
-          this.addEdge(breakNode, exitNode);
-        });
-
-        blockHandler.forEachContinue((continueNode) => {
-          this.addEdge(continueNode, headNode);
-        });
-        return blockHandler.update({ entry: headNode, exit: exitNode });
-      }
-      // TODO: Handle the case where there is no loop condition, only init and update.
-      case 2: {
-        const headNode = this.addNode("LOOP_HEAD", "loop head");
-        const { entry: bodyEntry, exit: bodyExit } = blockHandler.update(
-          this.processBlock(forNode.namedChildren[1]),
-        );
-        const exitNode = this.addNode("LOOP_EXIT", "loop exit");
-        if (bodyEntry) {
-          this.addEdge(headNode, bodyEntry, "consequence");
+    const language = forNode.tree.getLanguage();
+    const query = language.query(`
+      (for_statement
+	        initializer: (_)? @init
+          condition: (_)? @cond
+          update: (_)? @update
+          body: (_) @body) @for
+      `);
+    const matches = query.matches(forNode);
+    const match = (() => {
+      for (const match of matches) {
+        for (const capture of match.captures) {
+          if (capture.name === "for" && capture.node.id === forNode.id) {
+            return match;
+          }
         }
-        this.addEdge(headNode, exitNode, "alternative");
-        if (bodyExit) this.addEdge(bodyExit, headNode);
-        blockHandler.forEachBreak((breakNode) => {
-          this.addEdge(breakNode, exitNode);
-        });
-
-        blockHandler.forEachContinue((continueNode) => {
-          this.addEdge(continueNode, headNode);
-        });
-        return blockHandler.update({ entry: headNode, exit: exitNode });
       }
-      default:
-        throw new Error(
-          `Unsupported for type: ${forNode.firstNamedChild?.type}`,
-        );
+      throw new Error("No match found!");
+    })();
+
+    const getSyntax = (name: string): Parser.SyntaxNode | null =>
+      match.captures.filter((capture) => capture.name === name)[0]?.node;
+
+    const initSyntax = getSyntax("init");
+    const condSyntax = getSyntax("cond");
+    const updateSyntax = getSyntax("update");
+    const bodySyntax = getSyntax("body");
+
+    const getBlock = (syntax: Parser.SyntaxNode | null) =>
+      syntax ? blockHandler.update(this.processBlock(syntax)) : null;
+
+    const initBlock = getBlock(initSyntax);
+    const condBlock = getBlock(condSyntax);
+    const updateBlock = getBlock(updateSyntax);
+    const bodyBlock = getBlock(bodySyntax);
+
+    const entryNode = this.addNode("EMPTY", "loop head");
+    const exitNode = this.addNode("FOR_EXIT", "loop exit");
+    const headNode = this.addNode("LOOP_HEAD", "loop head");
+    const headBlock = { entry: headNode, exit: headNode };
+
+    const chain = (entry: string | null, blocks: (BasicBlock | null)[]) => {
+      let prevExit: string | null = entry;
+      for (const block of blocks) {
+        if (!block) continue;
+        if (prevExit && block.entry) this.addEdge(prevExit, block.entry);
+        prevExit = block.exit;
+      }
+      return prevExit;
+    };
+
+    /*
+    entry -> init -> cond +-> body -> head -> update -> cond
+                          --> exit
+
+    top = chain(entry, init,)
+
+    if cond:
+        chain(top, cond)
+        cond +-> body
+        cond --> exit
+        chain(body, head, update, cond)
+    else:
+        chain(top, body, head, update, body)
+
+    chain(continue, head)
+    chain(break, exit)
+    */
+    const topExit = chain(entryNode, [initBlock]);
+    if (condBlock) {
+      chain(topExit, [condBlock]);
+      if (condBlock.exit) {
+        if (bodyBlock?.entry)
+          this.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
+        this.addEdge(condBlock.exit, exitNode, "alternative");
+        chain(bodyBlock?.exit ?? null, [headBlock, updateBlock, condBlock]);
+      }
+    } else {
+      chain(topExit, [bodyBlock, headBlock, updateBlock, bodyBlock]);
     }
+
+    blockHandler.forEachContinue((continueNode) => {
+      this.addEdge(continueNode, headNode);
+    });
+
+    blockHandler.forEachBreak((breakNode) => {
+      this.addEdge(breakNode, exitNode);
+    });
+
+    return blockHandler.update({ entry: entryNode, exit: exitNode });
   }
 }
