@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import Parser, { type QueryCapture } from "web-tree-sitter";
+import Parser from "web-tree-sitter";
 import goSampleCode from "./sample.c" with { type: "text" };
 import treeSitterC from "../../parsers/tree-sitter-c.wasm?url";
 import { CFGBuilder, type CFG } from "../control-flow/cfg-c";
@@ -50,16 +50,6 @@ function parseComment(text: string): Requirements {
   return JSON.parse(`{${jsonContent}}`);
 }
 
-function makeCaptureObject(captures: QueryCapture[]): {
-  [key: string]: Parser.SyntaxNode;
-} {
-  const obj: { [key: string]: Parser.SyntaxNode } = {};
-  for (const capture of captures) {
-    obj[capture.name] = capture.node;
-  }
-  return obj;
-}
-
 function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
   const testFuncQuery = language.query(`
     (
@@ -69,20 +59,18 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
         body: (compound_statement) @body
         )
   ) @func
-)
+)+
   `);
   const matches = testFuncQuery.matches(tree.rootNode);
-
   for (const match of matches) {
-    const { comment, func, name } = makeCaptureObject(match.captures) as {
-      comment?: Parser.SyntaxNode;
-      func?: Parser.SyntaxNode;
-      name?: Parser.SyntaxNode;
-    };
-    if (!comment || !func || !name) {
-      throw new Error("Failed pasring function!");
+    for (let i = 0; i < match.captures.length; i += 4) {
+      const captures = match.captures.slice(i);
+      yield {
+        function: captures[1].node,
+        reqs: parseComment(captures[0].node.text),
+        name: captures[2].node.text,
+      };
     }
-    yield { function: func, reqs: parseComment(comment.text), name: name.text };
   }
 }
 
@@ -121,51 +109,17 @@ function getMarkerMap(cfg: CFG): Map<string, string> {
   return markerMap;
 }
 
-interface TestCollectorOptions {
-  testFunctions: TestFunction[];
-}
-class TestManager {
-  private readonly testFunctions: TestFunction[];
-  private readonly testMap: Map<string, TestFunction>;
-
-  constructor(options: TestCollectorOptions) {
-    this.testFunctions = options.testFunctions;
-    this.testMap = new Map(
-      this.testFunctions.map((testFunc) => [testFunc.name, testFunc]),
-    );
-  }
-
-  public getTestFunc(name: string): TestFunction {
-    const testFunc = this.testMap.get(name);
-    if (testFunc) return testFunc;
-    throw new Error(`Missing func ${name}`);
-  }
-
-  public testsFor(reqName: string): [string, TestFunction][] {
-    return [...this.testMap.entries()].filter(([_name, testFunc]) => {
-      return Object.hasOwn(testFunc.reqs, reqName);
-    });
-  }
-}
-
-const testManager = new TestManager({
-  testFunctions: [...iterTestFunctions(tree)],
-});
-
-test.each(testManager.testsFor("nodes"))(
-  "Node count for %s",
-  (name, testFunc) => {
+const requirementTests: {
+  [key: string]: ((testFunc: TestFunction) => void) | undefined;
+} = {
+  nodes(testFunc: TestFunction) {
     if (testFunc.reqs.nodes) {
       const cfg = buildSimpleCFG(testFunc.function);
       console.log(graphToDot(cfg));
       expect(cfg.graph.order).toBe(testFunc.reqs.nodes);
     }
   },
-);
-
-test.each(testManager.testsFor("exits"))(
-  "Exit count for %s",
-  (name, testFunc) => {
+  exits(testFunc: TestFunction) {
     if (testFunc.reqs.exits) {
       const cfg = buildSimpleCFG(testFunc.function);
       const exitNodes = cfg.graph.filterNodes(
@@ -174,11 +128,7 @@ test.each(testManager.testsFor("exits"))(
       expect(exitNodes).toHaveLength(testFunc.reqs.exits);
     }
   },
-);
-
-test.each(testManager.testsFor("reaches"))(
-  "Reachability for %s",
-  (name, testFunc) => {
+  reaches(testFunc: TestFunction) {
     if (testFunc.reqs.reaches) {
       const cfg = buildMarkerCFG(testFunc.function);
       const markerMap = getMarkerMap(cfg);
@@ -196,4 +146,42 @@ test.each(testManager.testsFor("reaches"))(
       );
     }
   },
-);
+};
+
+interface TestCollectorOptions {
+  testFunctions: TestFunction[];
+}
+class TestManager {
+  private readonly testFunctions: TestFunction[];
+  private readonly testMap: Map<string, TestFunction>;
+
+  constructor(options: TestCollectorOptions) {
+    this.testFunctions = options.testFunctions;
+    this.testMap = new Map(
+      this.testFunctions.map((testFunc) => [testFunc.name, testFunc]),
+    );
+  }
+
+  public allTests() {
+    const tests = [];
+    for (const testFunc of this.testFunctions) {
+      for (const [key, _value] of Object.entries(testFunc.reqs)) {
+        const testName = `${testFunc.name}: ${key}`;
+        const reqHandler = requirementTests[key];
+        if (!reqHandler) {
+          continue;
+        }
+        tests.push([testName, testFunc, reqHandler]);
+      }
+    }
+    return tests;
+  }
+}
+
+const testManager = new TestManager({
+  testFunctions: [...iterTestFunctions(tree)],
+});
+
+test.each(testManager.allTests())("%s", (_name, testFunc, reqHandler) => {
+  reqHandler(testFunc);
+});
