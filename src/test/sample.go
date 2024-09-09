@@ -74,3 +74,45 @@ func hasFallthrough() {
 		"Include me!"
 	}
 }
+
+/*
+exits: 0
+*/
+func forever() {
+	for {
+	}
+}
+
+/*
+exits: 1
+*/
+func forCond() {
+	for x == 1 {
+	}
+}
+
+/*
+exits: 1
+*/
+func forCStyle() {
+	for a := 1; a < 2; a += 1 {
+	}
+}
+
+/*
+exits: 1
+*/
+func forRange() {
+	for a := range b {
+	}
+}
+
+/*
+exits: 1
+*/
+func typeSwitch() {
+	switch v.(type) {
+	case int:
+	case bool:
+	}
+}

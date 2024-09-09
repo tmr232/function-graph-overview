@@ -121,22 +121,38 @@ function getMarkerMap(cfg: CFG): Map<string, string> {
   return markerMap;
 }
 
-const testFunctions = [...iterTestFunctions(tree)];
-const testMap = new Map(
-  testFunctions.map((testFunc) => [testFunc.name, testFunc]),
-);
-const testNames = [...testMap.keys()];
 
-function testsFor(reqName: string): string[] {
-  return testNames.filter((name) => {
-    const testFunc = testMap.get(name) as TestFunction;
-    return Object.hasOwn(testFunc.reqs, reqName);
-  });
+interface TestCollectorOptions {
+  testFunctions: TestFunction[]
+}
+class TestManager {
+  private readonly testFunctions: TestFunction[];
+  private readonly testMap: Map<string, TestFunction>;
+
+  constructor(options: TestCollectorOptions) {
+    this.testFunctions = options.testFunctions;
+    this.testMap = new Map(
+      this.testFunctions.map((testFunc) => [testFunc.name, testFunc]),
+    );
+  }
+
+  public getTestFunc(name: string): TestFunction {
+    const testFunc = this.testMap.get(name);
+    if (testFunc) return testFunc;
+    throw new Error(`Missing func ${name}`);
+  }
+
+  public testsFor(reqName: string): string[] {
+    return [...this.testMap.entries()].filter(([_name, testFunc]) => {
+      return Object.hasOwn(testFunc.reqs, reqName);
+    }).map(([name, _testFunc]) => name);
+  }
 }
 
-test.each(testsFor("nodes"))("Node count for %s", (name) => {
-  const testFunc = testMap.get(name) as TestFunction;
-  expect(testFunc).toBeDefined();
+const testManager = new TestManager({ testFunctions: [...iterTestFunctions(tree)] });
+
+test.each(testManager.testsFor("nodes"))("Node count for %s", (name) => {
+  const testFunc = testManager.getTestFunc(name);
 
   if (testFunc.reqs.nodes) {
     const cfg = buildSimpleCFG(testFunc.function);
@@ -145,9 +161,8 @@ test.each(testsFor("nodes"))("Node count for %s", (name) => {
   }
 });
 
-test.each(testsFor("exits"))("Exit count for %s", (name) => {
-  const testFunc = testMap.get(name) as TestFunction;
-  expect(testFunc).toBeDefined();
+test.each(testManager.testsFor("exits"))("Exit count for %s", (name) => {
+  const testFunc = testManager.getTestFunc(name);
 
   if (testFunc.reqs.exits) {
     const cfg = buildSimpleCFG(testFunc.function);
@@ -158,9 +173,8 @@ test.each(testsFor("exits"))("Exit count for %s", (name) => {
   }
 });
 
-test.each(testsFor("reaches"))("Reachability for %s", (name) => {
-  const testFunc = testMap.get(name) as TestFunction;
-  expect(testFunc).toBeDefined();
+test.each(testManager.testsFor("reaches"))("Reachability for %s", (name) => {
+  const testFunc = testManager.getTestFunc(name);
 
   if (testFunc.reqs.reaches) {
     const cfg = buildMarkerCFG(testFunc.function);
