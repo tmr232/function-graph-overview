@@ -53,7 +53,7 @@ void forLoop() {
 }
 
 /*
-nodes: 3,
+nodes: 4,
 exits: 1
 */
 void whileLoop() {
@@ -62,6 +62,7 @@ void whileLoop() {
 }
 
 /*
+nodes: 3,
 exits: 1
 */
 void doWhile() {
