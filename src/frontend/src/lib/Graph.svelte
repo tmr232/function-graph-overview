@@ -1,6 +1,7 @@
 <script lang="ts">
   import Parser from "web-tree-sitter";
-  import { CFGBuilder, mergeNodeAttrs } from "../../../control-flow/cfg";
+  import { newCFGBuilder } from "../../../control-flow/cfg";
+  import { mergeNodeAttrs } from "../../../control-flow/cfg-defs";
   import { graphToDot } from "../../../control-flow/render";
   import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
@@ -46,7 +47,7 @@
       )
       .replaceAll(")", "</div>");
     console.log(functionNode.childForFieldName("name").text);
-    let builder = new CFGBuilder({ flatSwitch });
+    let builder = newCFGBuilder("Go", { flatSwitch });
     let cfg = builder.buildCFG(functionNode);
     if (!cfg) {
       return;

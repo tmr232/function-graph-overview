@@ -112,16 +112,12 @@ export class CFGBuilder {
     if (!node) return { entry: null, exit: null };
 
     switch (node.type) {
-      case "compound_statement":
+      case "block":
         return this.processStatements(node.namedChildren);
       case "if_statement":
         return this.processIfStatement(node);
       case "for_statement":
         return this.processForStatement(node);
-      case "while_statement":
-        return this.processWhileStatement(node);
-      case "do_statement":
-        return this.processDoStatement(node);
       case "expression_switch_statement":
       case "type_switch_statement":
       case "select_statement":
@@ -313,7 +309,6 @@ export class CFGBuilder {
     mergeNode: string | null = null,
   ): BasicBlock {
     const blockHandler = new BlockHandler();
-
     const conditionChild = ifNode.childForFieldName("condition");
     const conditionNode = this.addNode(
       "CONDITION",
@@ -328,32 +323,25 @@ export class CFGBuilder {
       this.processBlock(consequenceChild),
     );
 
-    if (thenEntry) this.addEdge(conditionNode, thenEntry, "consequence");
-    if (thenExit) this.addEdge(thenExit, mergeNode, "regular");
-
     const alternativeChild = ifNode.childForFieldName("alternative");
-
-    if (alternativeChild) {
-      // We have an else or else-if
-      const maybeElseIf = alternativeChild.firstNamedChild;
-      const elseIf = maybeElseIf?.type === "if_statement";
+    const elseIf = alternativeChild?.type === "if_statement";
+    const { entry: elseEntry, exit: elseExit } = (() => {
       if (elseIf) {
-        const { entry: elseEntry } = blockHandler.update(
-          this.processIfStatement(maybeElseIf, mergeNode),
+        return blockHandler.update(
+          this.processIfStatement(alternativeChild, mergeNode),
         );
-        if (elseEntry) this.addEdge(conditionNode, elseEntry, "alternative");
-        // No need to connect the exit as it's already linked to the else node.
       } else {
-        // Normal else
-        const { entry: elseEntry, exit: elseExit } = blockHandler.update(
-          this.processBlock(alternativeChild),
-        );
-        if (elseEntry) this.addEdge(conditionNode, elseEntry, "alternative");
-        // This was processed like any other block, so we need to link the merge node.
-        if (elseExit) this.addEdge(elseExit, mergeNode, "regular");
+        return blockHandler.update(this.processBlock(alternativeChild));
       }
+    })();
+
+    this.addEdge(conditionNode, thenEntry || mergeNode, "consequence");
+    if (thenExit) this.addEdge(thenExit, mergeNode);
+
+    if (elseEntry) {
+      this.addEdge(conditionNode, elseEntry, "alternative");
+      if (elseExit && !elseIf) this.addEdge(elseExit, mergeNode);
     } else {
-      // No else clause
       this.addEdge(conditionNode, mergeNode, "alternative");
     }
 
@@ -362,203 +350,50 @@ export class CFGBuilder {
 
   private processForStatement(forNode: Parser.SyntaxNode): BasicBlock {
     const blockHandler = new BlockHandler();
-    const language = forNode.tree.getLanguage();
-    const query = language.query(`
-      (for_statement
-	        initializer: (_)? @init
-          condition: (_)? @cond
-          update: (_)? @update
-          body: (_) @body) @for
-      `);
-    const matches = query.matches(forNode);
-    const match = (() => {
-      for (const match of matches) {
-        for (const capture of match.captures) {
-          if (capture.name === "for" && capture.node.id === forNode.id) {
-            return match;
-          }
+    switch (forNode.namedChildCount) {
+      // One child means only loop body, two children means loop head.
+      case 1: {
+        const headNode = this.addNode("LOOP_HEAD", "loop head");
+        const { entry: bodyEntry, exit: bodyExit } = blockHandler.update(
+          this.processBlock(forNode.firstNamedChild),
+        );
+        if (bodyEntry) this.addEdge(headNode, bodyEntry);
+        if (bodyExit) this.addEdge(bodyExit, headNode);
+        const exitNode = this.addNode("LOOP_EXIT", "loop exit");
+        blockHandler.forEachBreak((breakNode) => {
+          this.addEdge(breakNode, exitNode);
+        });
+
+        blockHandler.forEachContinue((continueNode) => {
+          this.addEdge(continueNode, headNode);
+        });
+        return blockHandler.update({ entry: headNode, exit: exitNode });
+      }
+      // TODO: Handle the case where there is no loop condition, only init and update.
+      case 2: {
+        const headNode = this.addNode("LOOP_HEAD", "loop head");
+        const { entry: bodyEntry, exit: bodyExit } = blockHandler.update(
+          this.processBlock(forNode.namedChildren[1]),
+        );
+        const exitNode = this.addNode("LOOP_EXIT", "loop exit");
+        if (bodyEntry) {
+          this.addEdge(headNode, bodyEntry, "consequence");
         }
+        this.addEdge(headNode, exitNode, "alternative");
+        if (bodyExit) this.addEdge(bodyExit, headNode);
+        blockHandler.forEachBreak((breakNode) => {
+          this.addEdge(breakNode, exitNode);
+        });
+
+        blockHandler.forEachContinue((continueNode) => {
+          this.addEdge(continueNode, headNode);
+        });
+        return blockHandler.update({ entry: headNode, exit: exitNode });
       }
-      throw new Error("No match found!");
-    })();
-
-    const getSyntax = (name: string): Parser.SyntaxNode | null =>
-      match.captures.filter((capture) => capture.name === name)[0]?.node;
-
-    const initSyntax = getSyntax("init");
-    const condSyntax = getSyntax("cond");
-    const updateSyntax = getSyntax("update");
-    const bodySyntax = getSyntax("body");
-
-    const getBlock = (syntax: Parser.SyntaxNode | null) =>
-      syntax ? blockHandler.update(this.processBlock(syntax)) : null;
-
-    const initBlock = getBlock(initSyntax);
-    const condBlock = getBlock(condSyntax);
-    const updateBlock = getBlock(updateSyntax);
-    const bodyBlock = getBlock(bodySyntax);
-
-    const entryNode = this.addNode("EMPTY", "loop head");
-    const exitNode = this.addNode("FOR_EXIT", "loop exit");
-    const headNode = this.addNode("LOOP_HEAD", "loop head");
-    const headBlock = { entry: headNode, exit: headNode };
-
-    const chain = (entry: string | null, blocks: (BasicBlock | null)[]) => {
-      let prevExit: string | null = entry;
-      for (const block of blocks) {
-        if (!block) continue;
-        if (prevExit && block.entry) this.addEdge(prevExit, block.entry);
-        prevExit = block.exit;
-      }
-      return prevExit;
-    };
-
-    /*
-    entry -> init -> cond +-> body -> head -> update -> cond
-                          --> exit
-
-    top = chain(entry, init,)
-
-    if cond:
-        chain(top, cond)
-        cond +-> body
-        cond --> exit
-        chain(body, head, update, cond)
-    else:
-        chain(top, body, head, update, body)
-
-    chain(continue, head)
-    chain(break, exit)
-    */
-    const topExit = chain(entryNode, [initBlock]);
-    if (condBlock) {
-      chain(topExit, [condBlock]);
-      if (condBlock.exit) {
-        if (bodyBlock?.entry)
-          this.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
-        this.addEdge(condBlock.exit, exitNode, "alternative");
-        chain(bodyBlock?.exit ?? null, [headBlock, updateBlock, condBlock]);
-      }
-    } else {
-      chain(topExit, [bodyBlock, headBlock, updateBlock, bodyBlock]);
+      default:
+        throw new Error(
+          `Unsupported for type: ${forNode.firstNamedChild?.type}`,
+        );
     }
-
-    blockHandler.forEachContinue((continueNode) => {
-      this.addEdge(continueNode, headNode);
-    });
-
-    blockHandler.forEachBreak((breakNode) => {
-      this.addEdge(breakNode, exitNode);
-    });
-
-    return blockHandler.update({ entry: entryNode, exit: exitNode });
-  }
-
-  private processWhileStatement(whileSyntax: Parser.SyntaxNode): BasicBlock {
-    const blockHandler = new BlockHandler();
-    const language = whileSyntax.tree.getLanguage();
-    const query = language.query(`
-    (while_statement
-        condition: (_) @cond
-        body: (_) @body
-        ) @while
-    `);
-    const matches = query.matches(whileSyntax);
-    const match = (() => {
-      for (const match of matches) {
-        for (const capture of match.captures) {
-          if (capture.name === "while" && capture.node.id === whileSyntax.id) {
-            return match;
-          }
-        }
-      }
-      throw new Error("No match found!");
-    })();
-
-    const getSyntax = (name: string): Parser.SyntaxNode | null =>
-      match.captures.filter((capture) => capture.name === name)[0]?.node;
-
-    const condSyntax = getSyntax("cond");
-    const bodySyntax = getSyntax("body");
-
-    const getBlock = (syntax: Parser.SyntaxNode | null) =>
-      syntax ? blockHandler.update(this.processBlock(syntax)) : null;
-
-    const condBlock = getBlock(condSyntax) as BasicBlock;
-    const bodyBlock = getBlock(bodySyntax) as BasicBlock;
-
-    const exitNode = this.addNode("FOR_EXIT", "loop exit");
-
-    if (condBlock.exit) {
-      if (bodyBlock.entry)
-        this.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
-      this.addEdge(condBlock.exit, exitNode, "alternative");
-    }
-    if (condBlock.entry && bodyBlock.exit)
-      this.addEdge(bodyBlock.exit, condBlock.entry);
-
-    blockHandler.forEachContinue((continueNode) => {
-      if (condBlock.entry) this.addEdge(continueNode, condBlock.entry);
-    });
-
-    blockHandler.forEachBreak((breakNode) => {
-      this.addEdge(breakNode, exitNode);
-    });
-
-    return blockHandler.update({ entry: condBlock.entry, exit: exitNode });
-  }
-
-  private processDoStatement(whileSyntax: Parser.SyntaxNode): BasicBlock {
-    const blockHandler = new BlockHandler();
-    const language = whileSyntax.tree.getLanguage();
-    const query = language.query(`
-    (do_statement
-        body: (_) @body
-        condition: (_) @cond
-        ) @while
-    `);
-    const matches = query.matches(whileSyntax);
-    const match = (() => {
-      for (const match of matches) {
-        for (const capture of match.captures) {
-          if (capture.name === "while" && capture.node.id === whileSyntax.id) {
-            return match;
-          }
-        }
-      }
-      throw new Error("No match found!");
-    })();
-
-    const getSyntax = (name: string): Parser.SyntaxNode | null =>
-      match.captures.filter((capture) => capture.name === name)[0]?.node;
-
-    const condSyntax = getSyntax("cond");
-    const bodySyntax = getSyntax("body");
-
-    const getBlock = (syntax: Parser.SyntaxNode | null) =>
-      syntax ? blockHandler.update(this.processBlock(syntax)) : null;
-
-    const condBlock = getBlock(condSyntax) as BasicBlock;
-    const bodyBlock = getBlock(bodySyntax) as BasicBlock;
-
-    const exitNode = this.addNode("FOR_EXIT", "loop exit");
-
-    if (condBlock.exit) {
-      if (bodyBlock.entry)
-        this.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
-      this.addEdge(condBlock.exit, exitNode, "alternative");
-    }
-    if (condBlock.entry && bodyBlock.exit)
-      this.addEdge(bodyBlock.exit, condBlock.entry);
-
-    blockHandler.forEachContinue((continueNode) => {
-      if (condBlock.entry) this.addEdge(continueNode, condBlock.entry);
-    });
-
-    blockHandler.forEachBreak((breakNode) => {
-      this.addEdge(breakNode, exitNode);
-    });
-
-    return blockHandler.update({ entry: bodyBlock.entry, exit: exitNode });
   }
 }

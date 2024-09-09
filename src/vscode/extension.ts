@@ -3,9 +3,9 @@
 import * as vscode from "vscode";
 import Parser, { type SyntaxNode } from "web-tree-sitter";
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
-import { CFGBuilder } from "../control-flow/cfg";
 import { graphToDot } from "../control-flow/render";
 import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
+import { newCFGBuilder } from "../control-flow/cfg";
 
 let graphviz: Graphviz;
 
@@ -121,7 +121,7 @@ export async function activate(context: vscode.ExtensionContext) {
             .getConfiguration("functionGraphOverview")
             .get("flatSwitch"),
         );
-        const builder = new CFGBuilder({ flatSwitch });
+        const builder = newCFGBuilder("Go", { flatSwitch });
         let cfg = builder.buildCFG(node);
         cfg = trimFor(cfg);
         if (

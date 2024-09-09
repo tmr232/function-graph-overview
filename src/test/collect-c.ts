@@ -3,7 +3,6 @@ import goSampleCode from "./sample.c" with { type: "text" };
 import treeSitterC from "../../parsers/tree-sitter-c.wasm?url";
 import { parseComment, type TestFunction } from "./commentTestUtils";
 
-
 /*
 TODO: Write a script that collects all the test code and generates a webpage
       showing it.
@@ -13,7 +12,6 @@ TODO: Write a script that collects all the test code and generates a webpage
       - Shows the reason the test failed (in text!)
 */
 
-
 async function initializeParser(): Promise<[Parser, Parser.Language]> {
   await Parser.init();
   const parser = new Parser();
@@ -21,7 +19,6 @@ async function initializeParser(): Promise<[Parser, Parser.Language]> {
   parser.setLanguage(C);
   return [parser, C];
 }
-
 
 function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
   const testFuncQuery = language.query(`
@@ -42,12 +39,12 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
         function: captures[1].node,
         reqs: parseComment(captures[0].node.text),
         name: captures[2].node.text,
+        language: "C",
       };
     }
   }
 }
 
-
 const [parser, language] = await initializeParser();
 const tree = parser.parse(goSampleCode);
-export const testFunctions = [...iterTestFunctions(tree)]
+export const testFunctions = [...iterTestFunctions(tree)];

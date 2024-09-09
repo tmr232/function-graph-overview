@@ -1,7 +1,7 @@
 import { MultiDirectedGraph } from "graphology";
 import { subgraph } from "graphology-operators";
 import { bfsFromNode } from "graphology-traversal";
-import type { CFG } from "./cfg";
+import type { CFG } from "./cfg-defs";
 
 export function distanceFromEntry(cfg: CFG): Map<string, number> {
   const { graph, entry } = cfg;

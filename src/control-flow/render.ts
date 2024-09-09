@@ -1,5 +1,5 @@
 import { distanceFromEntry } from "./graph-ops";
-import type { CFG } from "./cfg";
+import type { CFG } from "./cfg-defs";
 
 export function graphToDot(cfg: CFG, verbose: boolean = false): string {
   const graph = cfg.graph;

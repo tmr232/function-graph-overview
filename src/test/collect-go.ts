@@ -1,8 +1,7 @@
 import Parser from "web-tree-sitter";
 import goSampleCode from "./sample.go" with { type: "text" };
 import treeSitterGo from "../../parsers/tree-sitter-go.wasm?url";
-import { parseComment } from "./commentTestUtils";
-
+import { parseComment, type TestFunction } from "./commentTestUtils";
 
 async function initializeParser() {
   await Parser.init();
@@ -14,18 +13,6 @@ async function initializeParser() {
 
 const parser = await initializeParser();
 const tree = parser.parse(goSampleCode);
-
-interface Requirements {
-  nodes?: number;
-  reaches?: [string, string][];
-}
-interface TestFunction {
-  name: string;
-  function: Parser.SyntaxNode;
-  reqs: Requirements;
-}
-
-
 
 function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
   const funcTypes = [
@@ -52,6 +39,7 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
         function: functionNode,
         reqs: parseComment(commentNode.text),
         name: functionName,
+        language: "Go",
       };
     } catch (error) {
       if (error instanceof SyntaxError) {
@@ -62,6 +50,5 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
     }
   }
 }
-
 
 export const testFunctions = [...iterTestFunctions(tree)];

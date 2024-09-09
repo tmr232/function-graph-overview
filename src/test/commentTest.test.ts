@@ -1,16 +1,22 @@
-import { test } from 'bun:test'
+import { test } from "bun:test";
 import { TestManager } from "./commentTestUtils";
-import { testFunctions as testFuncsForGo } from './collect-go';
-import { testFunctions as testFuncsForC } from './collect-c';
+import { testFunctions as testFuncsForGo } from "./collect-go";
+import { testFunctions as testFuncsForC } from "./collect-c";
 
 const testManagerForC = new TestManager({
-    testFunctions: [...testFuncsForC],
+  testFunctions: [...testFuncsForC],
 });
 
-test.each(testManagerForC.allTests)(testManagerForC.nameFormat, testManagerForC.invoke);
+test.each(testManagerForC.allTests)(
+  testManagerForC.nameFormat,
+  testManagerForC.invoke,
+);
 
 const testManagerForGo = new TestManager({
-    testFunctions: [...testFuncsForGo],
+  testFunctions: [...testFuncsForGo],
 });
 
-test.each(testManagerForGo.allTests)(testManagerForGo.nameFormat, testManagerForGo.invoke);
+test.each(testManagerForGo.allTests)(
+  testManagerForGo.nameFormat,
+  testManagerForGo.invoke,
+);

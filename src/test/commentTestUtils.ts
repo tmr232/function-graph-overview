@@ -1,10 +1,14 @@
 import { expect } from "bun:test";
 import Parser from "web-tree-sitter";
-import { CFGBuilder, type CFG } from "../control-flow/cfg-c";
+import { type CFG } from "../control-flow/cfg-defs";
 import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
 import type { MultiDirectedGraph } from "graphology";
 import { bfsFromNode } from "graphology-traversal";
 import { graphToDot } from "../control-flow/render";
+import {
+  newCFGBuilder,
+  type Language as CFGLanguage,
+} from "../control-flow/cfg";
 
 /*
 TODO: Write a script that collects all the test code and generates a webpage
@@ -17,7 +21,6 @@ TODO: Write a script that collects all the test code and generates a webpage
 
 const markerPattern: RegExp = /CFG: (\w+)/;
 
-
 export interface Requirements {
   nodes?: number;
   exits?: number;
@@ -27,6 +30,7 @@ export interface TestFunction {
   name: string;
   function: Parser.SyntaxNode;
   reqs: Requirements;
+  language: CFGLanguage;
 }
 
 export function parseComment(text: string): Requirements {
@@ -38,18 +42,23 @@ export function parseComment(text: string): Requirements {
   return JSON.parse(`{${jsonContent}}`);
 }
 
-
-function buildCFG(functionNode: Parser.SyntaxNode): CFG {
-  const builder = new CFGBuilder();
+function buildCFG(language: CFGLanguage, functionNode: Parser.SyntaxNode): CFG {
+  const builder = newCFGBuilder(language, {});
   return trimFor(builder.buildCFG(functionNode));
 }
 
-function buildSimpleCFG(functionNode: Parser.SyntaxNode): CFG {
-  return simplifyCFG(buildCFG(functionNode));
+function buildSimpleCFG(
+  language: CFGLanguage,
+  functionNode: Parser.SyntaxNode,
+): CFG {
+  return simplifyCFG(buildCFG(language, functionNode));
 }
 
-function buildMarkerCFG(functionNode: Parser.SyntaxNode): CFG {
-  const builder = new CFGBuilder({ markerPattern });
+function buildMarkerCFG(
+  language: CFGLanguage,
+  functionNode: Parser.SyntaxNode,
+): CFG {
+  const builder = newCFGBuilder(language, { markerPattern });
   return builder.buildCFG(functionNode);
 }
 
@@ -80,14 +89,14 @@ const requirementTests: {
 } = {
   nodes(testFunc: TestFunction) {
     if (testFunc.reqs.nodes) {
-      const cfg = buildSimpleCFG(testFunc.function);
+      const cfg = buildSimpleCFG(testFunc.language, testFunc.function);
       console.log(graphToDot(cfg));
       expect(cfg.graph.order).toBe(testFunc.reqs.nodes);
     }
   },
   exits(testFunc: TestFunction) {
     if (testFunc.reqs.exits) {
-      const cfg = buildSimpleCFG(testFunc.function);
+      const cfg = buildSimpleCFG(testFunc.language, testFunc.function);
       const exitNodes = cfg.graph.filterNodes(
         (node) => cfg.graph.outDegree(node) === 0,
       );
@@ -96,7 +105,7 @@ const requirementTests: {
   },
   reaches(testFunc: TestFunction) {
     if (testFunc.reqs.reaches) {
-      const cfg = buildMarkerCFG(testFunc.function);
+      const cfg = buildMarkerCFG(testFunc.language, testFunc.function);
       const markerMap = getMarkerMap(cfg);
       const getNode = (marker: string) => {
         const node = markerMap.get(marker);
@@ -126,7 +135,6 @@ export class TestManager {
     reqHandler(testFunc);
   };
 
-
   constructor(options: TestManagerOptions) {
     this.testFunctions = options.testFunctions;
     this.testMap = new Map(
@@ -138,7 +146,7 @@ export class TestManager {
     const tests = [];
     for (const testFunc of this.testFunctions) {
       for (const [key, _value] of Object.entries(testFunc.reqs)) {
-        const testName = `${testFunc.name}: ${key}`;
+        const testName = `${testFunc.language}: ${testFunc.name}: ${key}`;
         const reqHandler = requirementTests[key];
         if (!reqHandler) {
           continue;
@@ -149,5 +157,3 @@ export class TestManager {
     return tests;
   }
 }
-
-
