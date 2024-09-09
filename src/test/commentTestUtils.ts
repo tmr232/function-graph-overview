@@ -1,7 +1,5 @@
-import { expect, test } from "bun:test";
+import { expect } from "bun:test";
 import Parser from "web-tree-sitter";
-import goSampleCode from "./sample.c" with { type: "text" };
-import treeSitterC from "../../parsers/tree-sitter-c.wasm?url";
 import { CFGBuilder, type CFG } from "../control-flow/cfg-c";
 import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
 import type { MultiDirectedGraph } from "graphology";
@@ -19,29 +17,19 @@ TODO: Write a script that collects all the test code and generates a webpage
 
 const markerPattern: RegExp = /CFG: (\w+)/;
 
-async function initializeParser(): Promise<[Parser, Parser.Language]> {
-  await Parser.init();
-  const parser = new Parser();
-  const C = await Parser.Language.load(treeSitterC);
-  parser.setLanguage(C);
-  return [parser, C];
-}
 
-const [parser, language] = await initializeParser();
-const tree = parser.parse(goSampleCode);
-
-interface Requirements {
+export interface Requirements {
   nodes?: number;
   exits?: number;
   reaches?: [string, string][];
 }
-interface TestFunction {
+export interface TestFunction {
   name: string;
   function: Parser.SyntaxNode;
   reqs: Requirements;
 }
 
-function parseComment(text: string): Requirements {
+export function parseComment(text: string): Requirements {
   const jsonContent = text
     .slice(2, -2)
     .trim()
@@ -50,29 +38,6 @@ function parseComment(text: string): Requirements {
   return JSON.parse(`{${jsonContent}}`);
 }
 
-function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
-  const testFuncQuery = language.query(`
-    (
-  (comment) @comment
-  (function_definition (
-		(function_declarator (identifier) @name)
-        body: (compound_statement) @body
-        )
-  ) @func
-)+
-  `);
-  const matches = testFuncQuery.matches(tree.rootNode);
-  for (const match of matches) {
-    for (let i = 0; i < match.captures.length; i += 4) {
-      const captures = match.captures.slice(i);
-      yield {
-        function: captures[1].node,
-        reqs: parseComment(captures[0].node.text),
-        name: captures[2].node.text,
-      };
-    }
-  }
-}
 
 function buildCFG(functionNode: Parser.SyntaxNode): CFG {
   const builder = new CFGBuilder();
@@ -109,8 +74,9 @@ function getMarkerMap(cfg: CFG): Map<string, string> {
   return markerMap;
 }
 
+type RequirementHandler = (testFunc: TestFunction) => void;
 const requirementTests: {
-  [key: string]: ((testFunc: TestFunction) => void) | undefined;
+  [key: string]: RequirementHandler | undefined;
 } = {
   nodes(testFunc: TestFunction) {
     if (testFunc.reqs.nodes) {
@@ -148,21 +114,27 @@ const requirementTests: {
   },
 };
 
-interface TestCollectorOptions {
+interface TestManagerOptions {
   testFunctions: TestFunction[];
 }
-class TestManager {
+export class TestManager {
   private readonly testFunctions: TestFunction[];
   private readonly testMap: Map<string, TestFunction>;
+  public readonly nameFormat = "%s";
+  // @ts-expect-error: Implicit any type
+  public readonly invoke = (_name, testFunc, reqHandler) => {
+    reqHandler(testFunc);
+  };
 
-  constructor(options: TestCollectorOptions) {
+
+  constructor(options: TestManagerOptions) {
     this.testFunctions = options.testFunctions;
     this.testMap = new Map(
       this.testFunctions.map((testFunc) => [testFunc.name, testFunc]),
     );
   }
 
-  public allTests() {
+  public get allTests() {
     const tests = [];
     for (const testFunc of this.testFunctions) {
       for (const [key, _value] of Object.entries(testFunc.reqs)) {
@@ -178,10 +150,4 @@ class TestManager {
   }
 }
 
-const testManager = new TestManager({
-  testFunctions: [...iterTestFunctions(tree)],
-});
 
-test.each(testManager.allTests())("%s", (_name, testFunc, reqHandler) => {
-  reqHandler(testFunc);
-});
