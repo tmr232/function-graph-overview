@@ -121,9 +121,8 @@ function getMarkerMap(cfg: CFG): Map<string, string> {
   return markerMap;
 }
 
-
 interface TestCollectorOptions {
-  testFunctions: TestFunction[]
+  testFunctions: TestFunction[];
 }
 class TestManager {
   private readonly testFunctions: TestFunction[];
@@ -142,54 +141,59 @@ class TestManager {
     throw new Error(`Missing func ${name}`);
   }
 
-  public testsFor(reqName: string): string[] {
-    return [...this.testMap.entries()].filter(([_name, testFunc]) => {
-      return Object.hasOwn(testFunc.reqs, reqName);
-    }).map(([name, _testFunc]) => name);
-  }
-
-  public testsFor2(reqName: string): [string, TestFunction][] {
+  public testsFor(reqName: string): [string, TestFunction][] {
     return [...this.testMap.entries()].filter(([_name, testFunc]) => {
       return Object.hasOwn(testFunc.reqs, reqName);
     });
   }
 }
 
-const testManager = new TestManager({ testFunctions: [...iterTestFunctions(tree)] });
-
-test.each(testManager.testsFor2("nodes"))("Node count for %s", (name, testFunc) => {
-  if (testFunc.reqs.nodes) {
-    const cfg = buildSimpleCFG(testFunc.function);
-    console.log(graphToDot(cfg));
-    expect(cfg.graph.order).toBe(testFunc.reqs.nodes);
-  }
+const testManager = new TestManager({
+  testFunctions: [...iterTestFunctions(tree)],
 });
 
-test.each(testManager.testsFor2("exits"))("Exit count for %s", (name, testFunc) => {
-  if (testFunc.reqs.exits) {
-    const cfg = buildSimpleCFG(testFunc.function);
-    const exitNodes = cfg.graph.filterNodes(
-      (node) => cfg.graph.outDegree(node) === 0,
-    );
-    expect(exitNodes).toHaveLength(testFunc.reqs.exits);
-  }
-});
+test.each(testManager.testsFor("nodes"))(
+  "Node count for %s",
+  (name, testFunc) => {
+    if (testFunc.reqs.nodes) {
+      const cfg = buildSimpleCFG(testFunc.function);
+      console.log(graphToDot(cfg));
+      expect(cfg.graph.order).toBe(testFunc.reqs.nodes);
+    }
+  },
+);
 
-test.each(testManager.testsFor2("reaches"))("Reachability for %s", (name, testFunc) => {
-  if (testFunc.reqs.reaches) {
-    const cfg = buildMarkerCFG(testFunc.function);
-    const markerMap = getMarkerMap(cfg);
-    const getNode = (marker: string) => {
-      const node = markerMap.get(marker);
-      if (node) {
-        return node;
-      }
-      throw new Error(`No node found for marker ${marker}`);
-    };
-    testFunc.reqs.reaches.forEach(([source, target]) =>
-      expect(pathExists(cfg.graph, getNode(source), getNode(target))).toBe(
-        true,
-      ),
-    );
-  }
-});
+test.each(testManager.testsFor("exits"))(
+  "Exit count for %s",
+  (name, testFunc) => {
+    if (testFunc.reqs.exits) {
+      const cfg = buildSimpleCFG(testFunc.function);
+      const exitNodes = cfg.graph.filterNodes(
+        (node) => cfg.graph.outDegree(node) === 0,
+      );
+      expect(exitNodes).toHaveLength(testFunc.reqs.exits);
+    }
+  },
+);
+
+test.each(testManager.testsFor("reaches"))(
+  "Reachability for %s",
+  (name, testFunc) => {
+    if (testFunc.reqs.reaches) {
+      const cfg = buildMarkerCFG(testFunc.function);
+      const markerMap = getMarkerMap(cfg);
+      const getNode = (marker: string) => {
+        const node = markerMap.get(marker);
+        if (node) {
+          return node;
+        }
+        throw new Error(`No node found for marker ${marker}`);
+      };
+      testFunc.reqs.reaches.forEach(([source, target]) =>
+        expect(pathExists(cfg.graph, getNode(source), getNode(target))).toBe(
+          true,
+        ),
+      );
+    }
+  },
+);
