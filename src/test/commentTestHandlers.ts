@@ -2,7 +2,6 @@ import { type CFG } from "../control-flow/cfg-defs";
 import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
 import type { MultiDirectedGraph } from "graphology";
 import { bfsFromNode } from "graphology-traversal";
-import { graphToDot } from "../control-flow/render";
 import {
   newCFGBuilder,
   type Language as CFGLanguage,
