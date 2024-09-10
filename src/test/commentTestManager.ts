@@ -1,29 +1,31 @@
-import { requirementTests } from "./commentTestHandlers";
+import {
+  requirementTests,
+  type RequirementHandler,
+} from "./commentTestHandlers";
 import type { TestFunction } from "./commentTestTypes";
-import { expect } from "bun:test";
 
 interface TestManagerOptions {
   testFunctions: TestFunction[];
 }
 export class TestManager {
   private readonly testFunctions: TestFunction[];
-  private readonly testMap: Map<string, TestFunction>;
   public readonly nameFormat = "%s";
-  // @ts-expect-error: Implicit any type
-  public readonly invoke = (_name, testFunc, reqHandler) => {
-    const failure: null | string = reqHandler(testFunc);
-    if (failure) {
-      expect().fail(failure);
-    } else {
-      expect().pass();
-    }
-  };
 
   constructor(options: TestManagerOptions) {
     this.testFunctions = options.testFunctions;
-    this.testMap = new Map(
-      this.testFunctions.map((testFunc) => [testFunc.name, testFunc]),
-    );
+  }
+
+  public invokeWith(failureCallback: (failure: string) => void) {
+    return (
+      _name: string,
+      testFunc: TestFunction,
+      reqHandler: RequirementHandler,
+    ) => {
+      const failure: null | string = reqHandler(testFunc);
+      if (failure) {
+        failureCallback(failure);
+      }
+    };
   }
 
   public get allTests() {

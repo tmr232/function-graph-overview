@@ -53,7 +53,7 @@ function getMarkerMap(cfg: CFG): Map<string, string> {
   return markerMap;
 }
 
-type RequirementHandler = (testFunc: TestFunction) => null | string;
+export type RequirementHandler = (testFunc: TestFunction) => null | string;
 export const requirementTests: {
   [key: string]: RequirementHandler | undefined;
 } = {
