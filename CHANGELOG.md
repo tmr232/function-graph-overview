@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+- Improved comment-test framework to allow writing tests for multiple languages
+- Added comment-test in-browser rendering to allow better debugging
+- Add basic support for C
+
 ## [0.0.3] - 2024-09-07
 
 - Learned Go's `fallthrough` keyword
