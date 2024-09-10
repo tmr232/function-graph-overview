@@ -1,29 +1,24 @@
 <script lang="ts">
   import Parser from "web-tree-sitter";
-  import { newCFGBuilder } from "../../../control-flow/cfg";
+  import { newCFGBuilder, type Language } from "../../../control-flow/cfg";
   import { mergeNodeAttrs } from "../../../control-flow/cfg-defs";
   import { graphToDot } from "../../../control-flow/render";
   import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
-  import { getFirstFunction, initializeParser } from "./utils";
+  import { getFirstFunction, initializeParsers, type Parsers } from "./utils";
 
-  let parser: Parser;
+  let parsers: Parsers;
   let graphviz: Graphviz;
-  let svg: string = "";
-  let ast: string = "";
-  let dot: string = "";
   export let code: string;
+  export let language: Language;
   export let verbose: boolean = false;
   export let simplify: boolean = true;
   export let trim: boolean = true;
   export let flatSwitch: boolean = false;
-  export let showDot: boolean = false;
-  export let showAST: boolean = false;
 
   async function initialize() {
-    parser = await initializeParser();
+    parsers = await initializeParsers();
     graphviz = await Graphviz.load();
-    return { parser, graphviz };
   }
 
   interface RenderOptions {
@@ -33,40 +28,34 @@
     readonly flatSwitch: boolean;
   }
 
-  function renderCode(code: string, options: RenderOptions) {
-    const { trim, simplify, verbose } = options;
-    const tree = parser.parse(code);
+  function renderCode(
+    code: string,
+    language: Language,
+    options: RenderOptions,
+  ) {
+    const { trim, simplify, verbose, flatSwitch } = options;
+    const tree = parsers[language].parse(code);
+    const functionSyntax = getFirstFunction(tree);
+    const builder = newCFGBuilder(language, { flatSwitch });
 
-    const functionNode = getFirstFunction(tree);
+    let cfg = builder.buildCFG(functionSyntax);
 
-    ast = functionNode
-      .toString()
-      .replaceAll(
-        "(",
-        "<div style='margin-left:10px;border-left: 1px #888 solid;'>",
-      )
-      .replaceAll(")", "</div>");
-    console.log(functionNode.childForFieldName("name").text);
-    let builder = newCFGBuilder("Go", { flatSwitch });
-    let cfg = builder.buildCFG(functionNode);
-    if (!cfg) {
-      return;
-    }
+    if (!cfg) return "";
+    if (trim) cfg = trimFor(cfg);
+    if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
 
-    if (trim) {
-      cfg = trimFor(cfg);
-    }
+    const dot = graphToDot(cfg, verbose);
 
-    if (simplify) {
-      cfg = simplifyCFG(cfg, mergeNodeAttrs);
-    }
-    dot = graphToDot(cfg, verbose);
     return graphviz.dot(dot);
   }
 
-  function renderWrapper(code: string, options: RenderOptions) {
+  function renderWrapper(
+    code: string,
+    language: Language,
+    options: RenderOptions,
+  ) {
     try {
-      return renderCode(code, options);
+      return renderCode(code, language, options);
     } catch (error) {
       return `<p style='border: 2px red solid;'>${error.toString()}</p>`;
     }
@@ -76,23 +65,14 @@
 <div class="results">
   {#await initialize() then}
     <div class="graph">
-      {@html renderWrapper(code, { simplify, verbose, trim, flatSwitch })}
+      {@html renderWrapper(code, language, {
+        simplify,
+        verbose,
+        trim,
+        flatSwitch,
+      })}
     </div>
   {/await}
-  {#if showAST}
-    <br />
-    <details>
-      <summary>AST</summary>
-      {@html ast}
-    </details>
-  {/if}
-  {#if showDot}
-    <br />
-    <details>
-      <summary>DOT</summary>
-      <pre>{dot}</pre>
-    </details>
-  {/if}
 </div>
 
 <style>

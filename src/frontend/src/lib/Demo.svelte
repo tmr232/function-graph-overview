@@ -1,9 +1,32 @@
 <script lang="ts">
   import CodeMirror from "svelte-codemirror-editor";
   import { go } from "@codemirror/lang-go";
+  import { cpp } from "@codemirror/lang-cpp";
   import Graph from "./Graph.svelte";
+  import type { Language } from "../../../control-flow/cfg";
 
-  export let code = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
+  export let codeGo = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
+  export let codeC = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";
+
+  let languages: {
+    language: Language;
+    text: string;
+  }[] = [
+    { language: "Go" as Language, text: "Go" },
+    { language: "C" as Language, text: "C" },
+  ];
+  let selection = languages[0];
+  let code = codeGo;
+  $: {
+    switch (selection.language) {
+      case "C":
+        code = codeC;
+        break;
+      case "Go":
+        code = codeGo;
+        break;
+    }
+  }
 
   let simplify = true;
   let flatSwitch = false;
@@ -20,14 +43,32 @@
       >
     </div>
   </header>
-  <div>
-    <div class="editor">
-      <CodeMirror
-        bind:value={code}
-        lang={go()}
-        tabSize={4}
-        lineWrapping={true}
-      />
+  <div class="editor">
+    <div class="controls">
+      <select bind:value={selection} on:change={(e) => console.log(selection)}>
+        {#each languages as language}
+          <option value={language}>
+            {language.text}
+          </option>
+        {/each}
+      </select>
+    </div>
+    <div class="codemirror">
+      {#if selection.language === "Go"}
+        <CodeMirror
+          bind:value={codeGo}
+          lang={go()}
+          tabSize={4}
+          lineWrapping={true}
+        />
+      {:else}
+        <CodeMirror
+          bind:value={codeC}
+          lang={cpp()}
+          tabSize={4}
+          lineWrapping={true}
+        />
+      {/if}
     </div>
   </div>
   <div class="graph">
@@ -38,7 +79,7 @@
       <input type="checkbox" id="flatSwitch" bind:checked={flatSwitch} />
       <label for="flatSwitch">Flat Switch</label>
     </div>
-    <Graph {code} {simplify} {flatSwitch} />
+    <Graph {code} language={selection.language} {simplify} {flatSwitch} />
   </div>
 </main>
 
@@ -65,6 +106,10 @@
     font-family: Arial, Helvetica, sans-serif;
     margin-top: 1rem;
     margin-left: 1rem;
+  }
+
+  .codemirror {
+    padding-top: 1rem;
   }
   .graph,
   .editor {
