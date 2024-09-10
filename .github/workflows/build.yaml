@@ -1,6 +1,8 @@
 name: Package Extension
 on:
+  pull_request:
   push:
+    branches: main
     tags-ignore:
       - "**"
   release:

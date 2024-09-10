@@ -1,5 +1,5 @@
 import { distanceFromEntry } from "./graph-ops";
-import type { CFG } from "./cfg";
+import type { CFG } from "./cfg-defs";
 
 export function graphToDot(cfg: CFG, verbose: boolean = false): string {
   const graph = cfg.graph;
@@ -16,6 +16,7 @@ export function graphToDot(cfg: CFG, verbose: boolean = false): string {
 
     // const label = `${graph.getNodeAttribute(node, "line") || ""}`;
     // label = `${levels.get(node)}`;
+    // label = `${graph.getNodeAttribute(node, "markers")}`;
 
     let shape = "box";
     let fillColor = "lightgray";

@@ -1,10 +1,11 @@
 <script>
   import Demo from "../../frontend/src/lib/Demo.svelte";
-  import demoCode from "./assets/demo.go?raw";
+  import demoCodeGo from "./assets/demo.go?raw";
+  import demoCodeC from "./assets/demo.c?raw";
 </script>
 
 <main>
-  <Demo code={demoCode} />
+  <Demo codeGo={demoCodeGo} codeC={demoCodeC} />
 </main>
 
 <style>

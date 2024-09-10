@@ -3,19 +3,65 @@
 import * as vscode from "vscode";
 import Parser, { type SyntaxNode } from "web-tree-sitter";
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
-import { CFGBuilder } from "../control-flow/cfg";
 import { graphToDot } from "../control-flow/render";
 import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
+import { newCFGBuilder, type Language } from "../control-flow/cfg";
 
 let graphviz: Graphviz;
+interface SupportedLanguage {
+  languageId: string;
+  language: Language;
+  parserName: string;
+}
+const supportedLanguages: SupportedLanguage[] = [
+  {
+    languageId: "c",
+    language: "C" as Language,
+    parserName: "tree-sitter-c.wasm",
+  },
+  {
+    languageId: "go",
+    language: "Go" as Language,
+    parserName: "tree-sitter-go.wasm",
+  },
+];
+
+const functionNodeTypes: { [key: string]: string[] } = {
+  go: ["function_declaration", "method_declaration", "func_literal"],
+  c: ["function_definition"],
+};
+
+const supportedLanguageIds = supportedLanguages.map((lang) => lang.languageId);
+const idToLanguage = (languageId: string): Language | null => {
+  for (const lang of supportedLanguages) {
+    if (lang.languageId === languageId) {
+      return lang.language;
+    }
+  }
+  return null;
+};
+
+async function initializeParsers(context: vscode.ExtensionContext) {
+  const parsers: { [key: string]: Parser } = {};
+
+  for (const lang of supportedLanguages) {
+    const languagePath = vscode.Uri.joinPath(
+      context.extensionUri,
+      "parsers",
+      lang.parserName,
+    ).fsPath;
+    parsers[lang.languageId] = await initializeParser(context, languagePath);
+  }
+
+  return parsers;
+}
 
 async function initializeParser(
   context: vscode.ExtensionContext,
   languagePath: string,
 ) {
   await Parser.init({
-    locateFile(scriptName: string, scriptDirectory: string) {
-      console.log("name", scriptName, "dir", scriptDirectory);
+    locateFile(_scriptName: string, _scriptDirectory: string) {
       return vscode.Uri.joinPath(
         context.extensionUri,
         "parsers",
@@ -29,18 +75,21 @@ async function initializeParser(
   return parser;
 }
 
-function getCurrentGoCode(): string | null {
+function getCurrentCode(): { code: string; languageId: string } | null {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     return null;
   }
 
   const document = editor.document;
-  if (document.languageId !== "go") {
+  const languageId = document.languageId;
+  if (!supportedLanguageIds.includes(languageId)) {
     return null;
   }
 
-  return document.getText();
+  const code = document.getText();
+
+  return { code, languageId };
 }
 
 // This method is called when your extension is activated
@@ -63,20 +112,19 @@ export async function activate(context: vscode.ExtensionContext) {
     'Congratulations, your extension "function-graph-overview" is now active!',
   );
 
-  const wasmPath = vscode.Uri.joinPath(
-    context.extensionUri,
-    "parsers",
-    "tree-sitter-go.wasm",
-  );
-  const parser = await initializeParser(context, wasmPath.fsPath);
+  const parsers = await initializeParsers(context);
 
   const cursorMove = vscode.window.onDidChangeTextEditorSelection(
     (event: vscode.TextEditorSelectionChangeEvent) => {
       const editor = event.textEditor;
       const position = editor.selection.active;
 
-      const code = getCurrentGoCode() ?? "";
-      const tree = parser.parse(code);
+      const { code, languageId } = getCurrentCode() ?? {};
+      if (!code || !languageId) {
+        return null;
+      }
+
+      const tree = parsers[languageId].parse(code);
 
       console.log(
         `Cursor position changed: Line ${position.line + 1}, Column ${position.character + 1}`,
@@ -85,14 +133,9 @@ export async function activate(context: vscode.ExtensionContext) {
         row: position.line,
         column: position.character,
       });
-      const funcTypes = [
-        "function_declaration",
-        "method_declaration",
-        "func_literal",
-      ];
 
       while (node) {
-        if (funcTypes.includes(node.type)) {
+        if (functionNodeTypes[languageId].includes(node.type)) {
           break;
         }
         node = node.parent;
@@ -121,7 +164,11 @@ export async function activate(context: vscode.ExtensionContext) {
             .getConfiguration("functionGraphOverview")
             .get("flatSwitch"),
         );
-        const builder = new CFGBuilder({ flatSwitch });
+        const language = idToLanguage(languageId);
+        if (!language) {
+          return;
+        }
+        const builder = newCFGBuilder(language, { flatSwitch });
         let cfg = builder.buildCFG(node);
         cfg = trimFor(cfg);
         if (
