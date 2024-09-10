@@ -60,7 +60,6 @@ export const requirementTests: {
   nodes(testFunc: TestFunction) {
     if (testFunc.reqs.nodes) {
       const cfg = buildSimpleCFG(testFunc.language, testFunc.function);
-      console.log(graphToDot(cfg));
       if (cfg.graph.order !== testFunc.reqs.nodes) {
         return `expected ${testFunc.reqs.nodes} nodes but found ${cfg.graph.order}`;
       }
