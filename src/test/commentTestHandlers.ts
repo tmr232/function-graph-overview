@@ -1,5 +1,3 @@
-import { expect } from "bun:test";
-
 import { type CFG } from "../control-flow/cfg-defs";
 import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
 import type { MultiDirectedGraph } from "graphology";
@@ -10,6 +8,7 @@ import {
   type Language as CFGLanguage,
 } from "../control-flow/cfg";
 import type Parser from "web-tree-sitter";
+import type { TestFunction } from "./commentTestTypes";
 
 const markerPattern: RegExp = /CFG: (\w+)/;
 
@@ -54,7 +53,7 @@ function getMarkerMap(cfg: CFG): Map<string, string> {
   return markerMap;
 }
 
-type RequirementHandler = (testFunc: TestFunction) => void;
+type RequirementHandler = (testFunc: TestFunction) => null | string;
 export const requirementTests: {
   [key: string]: RequirementHandler | undefined;
 } = {
@@ -62,8 +61,11 @@ export const requirementTests: {
     if (testFunc.reqs.nodes) {
       const cfg = buildSimpleCFG(testFunc.language, testFunc.function);
       console.log(graphToDot(cfg));
-      expect(cfg.graph.order).toBe(testFunc.reqs.nodes);
+      if (cfg.graph.order !== testFunc.reqs.nodes) {
+        return `expected ${testFunc.reqs.nodes} nodes but found ${cfg.graph.order}`;
+      }
     }
+    return null;
   },
   exits(testFunc: TestFunction) {
     if (testFunc.reqs.exits) {
@@ -71,8 +73,11 @@ export const requirementTests: {
       const exitNodes = cfg.graph.filterNodes(
         (node) => cfg.graph.outDegree(node) === 0,
       );
-      expect(exitNodes).toHaveLength(testFunc.reqs.exits);
+      if (exitNodes.length != testFunc.reqs.exits) {
+        return `expected ${testFunc.reqs.exits} exits but found ${exitNodes.length}`;
+      }
     }
+    return null;
   },
   reaches(testFunc: TestFunction) {
     if (testFunc.reqs.reaches) {
@@ -85,11 +90,12 @@ export const requirementTests: {
         }
         throw new Error(`No node found for marker ${marker}`);
       };
-      testFunc.reqs.reaches.forEach(([source, target]) =>
-        expect(pathExists(cfg.graph, getNode(source), getNode(target))).toBe(
-          true,
-        ),
-      );
+      for (const [source, target] of testFunc.reqs.reaches) {
+        if (!pathExists(cfg.graph, getNode(source), getNode(target))) {
+          return `expected path from ${source} to ${target} but none was found`;
+        }
+      }
     }
+    return null;
   },
 };

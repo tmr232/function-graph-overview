@@ -1,5 +1,6 @@
 import { requirementTests } from "./commentTestHandlers";
 import type { TestFunction } from "./commentTestTypes";
+import { expect } from "bun:test";
 
 interface TestManagerOptions {
   testFunctions: TestFunction[];
@@ -10,7 +11,12 @@ export class TestManager {
   public readonly nameFormat = "%s";
   // @ts-expect-error: Implicit any type
   public readonly invoke = (_name, testFunc, reqHandler) => {
-    reqHandler(testFunc);
+    const failure: null | string = reqHandler(testFunc);
+    if (failure) {
+      expect().fail(failure);
+    } else {
+      expect().pass();
+    }
   };
 
   constructor(options: TestManagerOptions) {
