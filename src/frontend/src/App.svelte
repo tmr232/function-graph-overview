@@ -1,9 +1,9 @@
 <script>
-  import SampleViewer from "./lib/SampleViewer.svelte";
+  import TestViewer from "./lib/TestViewer.svelte";
 </script>
 
 <main>
-  <SampleViewer />
+  <TestViewer />
 </main>
 
 <style>
