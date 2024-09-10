@@ -1,7 +1,8 @@
 import Parser from "web-tree-sitter";
 import goSampleCode from "./sample.go" with { type: "text" };
 import treeSitterGo from "../../parsers/tree-sitter-go.wasm?url";
-import { parseComment, type TestFunction } from "./commentTestUtils";
+import { parseComment } from "./commentTestUtils";
+import type { TestFunction } from "./commentTestTypes";
 
 async function initializeParser() {
   await Parser.init();
