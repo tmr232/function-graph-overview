@@ -6,11 +6,15 @@
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
   import { getFirstFunction, initializeParsers, type Parsers } from "./utils";
   import { type TestFuncRecord } from "../../../test/commentTestUtils";
+  import { type TestFunction } from "../../../test/commentTestTypes";
+  import { requirementTests } from "../../../test/commentTestHandlers";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
   let ast: string = "";
   let dot: string = "";
+  let visibleTestResults: string = "";
+  export let failed: boolean = false;
   export let record: TestFuncRecord;
   export let verbose: boolean = false;
   export let simplify: boolean = true;
@@ -23,6 +27,29 @@
     parsers = await initializeParsers();
     graphviz = await Graphviz.load();
     return {};
+  }
+
+  function runTest(record: TestFuncRecord) {
+    const tree = parsers[record.language].parse(record.code);
+    const testFunc: TestFunction = {
+      function: getFirstFunction(tree),
+      language: record.language,
+      name: record.name,
+      reqs: record.reqs,
+    };
+    const testResults = [];
+    for (const [key, value] of Object.entries(testFunc.reqs)) {
+      const reqHandler = requirementTests[key];
+      if (!reqHandler) {
+        continue;
+      }
+      testResults.push({
+        reqName: key,
+        reqValue: value,
+        failure: reqHandler(testFunc),
+      });
+    }
+    return testResults;
   }
 
   interface RenderOptions {
@@ -56,6 +83,10 @@
     if (trim) cfg = trimFor(cfg);
     if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
 
+    const testResults = runTest(record);
+    visibleTestResults = JSON.stringify(testResults);
+    failed = !!testResults.filter((result) => result.failure).length;
+    console.log(failed);
     dot = graphToDot(cfg, verbose);
     ast = formatAST(functionSyntax.toString());
 
@@ -71,12 +102,15 @@
   }
 </script>
 
-<div class="results">
+<div class="results" class:failed class:passed={!failed}>
   {#await initialize() then}
     <div class="graph">
       {@html renderWrapper(record, { simplify, verbose, trim, flatSwitch })}
     </div>
   {/await}
+  <p>
+    {visibleTestResults}
+  </p>
   {#if showAST}
     <br />
     <details>
@@ -99,5 +133,8 @@
     align-items: center;
     justify-content: center;
     padding: 1em;
+  }
+  .failed {
+    background-color: #fdd;
   }
 </style>

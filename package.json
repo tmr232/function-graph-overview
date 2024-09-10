@@ -43,7 +43,7 @@
     "package": "bun run build && bun run vsce-package",
     "publish": "bun run package && bun run vsce-publish",
     "clean": "rm -r ./dist",
-    "web": "bun run --cwd ./src/frontend/ vite",
+    "web": "bun run ./scripts/collect-comment-tests.ts && bun run --cwd ./src/frontend/ vite",
     "demo": "bun run --cwd ./src/demo/ vite",
     "build-demo": "bun run --cwd ./src/demo/ vite build --outDir ../../dist/demo --base '/function-graph-overview/'",
     "format": "bun prettier . --write --log-level silent",
