@@ -69,3 +69,44 @@ void doWhile() {
     do {
     } while (x());
 }
+
+/*
+nodes: 4,
+exits: 1
+*/
+void gotoA() {
+label:
+    if (x) {
+        goto label;
+    }
+}
+
+/*
+nodes: 7,
+exits: 1,
+reaches: [["1","3"]]
+*/
+void switch_1() {
+    switch (x) {
+    case 1:
+        // CFG: 1
+        "include me!";
+    case 2:
+    case 3:
+        // CFG: 3
+        "Include me!";
+    }
+}
+
+/*
+nodes: 7,
+exits: 1
+*/
+void switch_2() {
+    switch (x) {
+    case 1:
+        break;
+    case 2:
+    case 3:
+    }
+}

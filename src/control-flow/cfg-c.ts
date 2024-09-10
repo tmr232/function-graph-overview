@@ -122,9 +122,7 @@ export class CFGBuilder {
         return this.processWhileStatement(node);
       case "do_statement":
         return this.processDoStatement(node);
-      case "expression_switch_statement":
-      case "type_switch_statement":
-      case "select_statement":
+      case "switch_statement":
         return this.processSwitchlike(node);
       case "return_statement": {
         const returnNode = this.addNode("RETURN", node.text);
@@ -211,6 +209,10 @@ export class CFGBuilder {
     if (previous) {
       this.addEdge(previous, mergeNode, "alternative");
     }
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (fallthrough) {
+      this.addEdge(fallthrough, mergeNode, "regular");
+    }
   }
 
   private collectCases(
@@ -218,35 +220,38 @@ export class CFGBuilder {
     blockHandler: BlockHandler,
   ): Case[] {
     const cases: Case[] = [];
-    const caseTypes = [
-      "default_case",
-      "communication_case",
-      "type_case",
-      "expression_case",
-    ];
-    switchSyntax.namedChildren
+    const caseTypes = ["case_statement"];
+    switchSyntax.namedChildren[1].namedChildren
       .filter((child) => caseTypes.includes(child.type))
       .forEach((caseSyntax) => {
         const isDefault = caseSyntax.type === "default_case";
 
         const consequence = caseSyntax.namedChildren.slice(isDefault ? 0 : 1);
-        const hasFallthrough = consequence
-          .map((node) => node.type)
-          .includes("fallthrough_statement");
+        const hasFallthrough = true;
 
         const conditionNode = this.addNode(
           "CASE_CONDITION",
           isDefault ? "default" : (caseSyntax.firstNamedChild?.text ?? ""),
         );
-        const consequenceNode = blockHandler.update(
+        // let consequenceBlock;
+        // if (consequence.length) {
+        //   consequenceBlock = blockHandler.update(
+        //     this.processStatements(consequence),
+        //   );
+        // } else {
+        //   const consequenceNode = this.addNode("EMPTY", "empty case body");
+        //   consequenceBlock = { entry: consequenceNode, exit: consequenceNode };
+        // }
+
+        const consequenceBlock = blockHandler.update(
           this.processStatements(consequence),
         );
 
         cases.push({
           conditionEntry: conditionNode,
           conditionExit: conditionNode,
-          consequenceEntry: consequenceNode.entry,
-          consequenceExit: consequenceNode.exit,
+          consequenceEntry: consequenceBlock.entry,
+          consequenceExit: consequenceBlock.exit,
           alternativeExit: conditionNode,
           hasFallthrough,
           isDefault,

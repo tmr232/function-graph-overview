@@ -16,7 +16,7 @@ export function graphToDot(cfg: CFG, verbose: boolean = false): string {
 
     // const label = `${graph.getNodeAttribute(node, "line") || ""}`;
     // label = `${levels.get(node)}`;
-    label = `${graph.getNodeAttribute(node, "markers")}`;
+    // label = `${graph.getNodeAttribute(node, "markers")}`;
 
     let shape = "box";
     let fillColor = "lightgray";

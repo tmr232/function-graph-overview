@@ -83,12 +83,12 @@
     if (trim) cfg = trimFor(cfg);
     if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
 
+    dot = graphToDot(cfg, verbose);
+    ast = formatAST(functionSyntax.toString());
+
     const testResults = runTest(record);
     visibleTestResults = JSON.stringify(testResults);
     failed = !!testResults.filter((result) => result.failure).length;
-    console.log(failed);
-    dot = graphToDot(cfg, verbose);
-    ast = formatAST(functionSyntax.toString());
 
     return graphviz.dot(dot);
   }
