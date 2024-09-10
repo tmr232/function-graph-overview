@@ -19,6 +19,7 @@ Note that the demo only supports a single function and ignores the cursor locati
 ## Supported Languages
 
 - Go
+- C
 
 ## Development
 
