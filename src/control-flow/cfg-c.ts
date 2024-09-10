@@ -233,15 +233,6 @@ export class CFGBuilder {
           "CASE_CONDITION",
           isDefault ? "default" : (caseSyntax.firstNamedChild?.text ?? ""),
         );
-        // let consequenceBlock;
-        // if (consequence.length) {
-        //   consequenceBlock = blockHandler.update(
-        //     this.processStatements(consequence),
-        //   );
-        // } else {
-        //   const consequenceNode = this.addNode("EMPTY", "empty case body");
-        //   consequenceBlock = { entry: consequenceNode, exit: consequenceNode };
-        // }
 
         const consequenceBlock = blockHandler.update(
           this.processStatements(consequence),
