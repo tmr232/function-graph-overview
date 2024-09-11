@@ -1,36 +1,40 @@
-import { testFunctions as testFuncsForGo } from "../src/test/collect-go";
-import { testFunctions as testFuncsForC } from "../src/test/collect-c";
 import { intoRecords } from "../src/test/commentTestUtils";
 import { watch } from "fs";
-
-const records = intoRecords([...testFuncsForC, ...testFuncsForGo]);
-
 import { parseArgs } from "util";
+import { collectTests, testsDir } from "../src/test/commentTestCollector";
+
+
 
 const { values } = parseArgs({
-  args: Bun.argv,
-  options: {
-    watch: {
-      type: "boolean",
-      default: false,
+    args: Bun.argv,
+    options: {
+        watch: {
+            type: "boolean",
+            default: false,
+        },
     },
-  },
-  strict: true,
-  allowPositionals: false,
+    strict: true,
+    allowPositionals: true,
 });
 
-if (!values.watch) {
-  Bun.write("./dist/tests/commentTests.json", JSON.stringify(records));
-} else {
-  const watcher = watch("../src/test/samples", (event, filename) => {
-    console.log(`Detected ${event} in ${filename}`);
-  });
+async function generateJson() {
 
-  process.on("SIGINT", () => {
-    // close watcher when Ctrl-C is pressed
-    console.log("Closing watcher...");
-    watcher.close();
+    const records = intoRecords(await collectTests());
+    Bun.write("./dist/tests/commentTests.json", JSON.stringify(records));
+}
 
-    process.exit(0);
-  });
+generateJson();
+if (values.watch) {
+    const watcher = watch(testsDir, async (event, filename) => {
+        console.log(`${event}: ${filename}, regenerating commentTests.json`);
+        await generateJson();
+    });
+
+    process.on("SIGINT", () => {
+        // close watcher when Ctrl-C is pressed
+        console.log("Closing watcher...");
+        watcher.close();
+
+        process.exit(0);
+    });
 }
