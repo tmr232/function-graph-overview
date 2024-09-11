@@ -49,7 +49,7 @@ def ForElse():
     for x in y:
         pass
     else:
-        pass
+        return
 
 # exits: 1
 def ForElseBreak():
