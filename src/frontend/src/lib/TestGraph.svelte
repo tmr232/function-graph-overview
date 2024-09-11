@@ -1,63 +1,15 @@
 <script lang="ts">
-  import { newCFGBuilder } from "../../../control-flow/cfg";
-  import { mergeNodeAttrs } from "../../../control-flow/cfg-defs";
-  import { graphToDot } from "../../../control-flow/render";
-  import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
-  import { Graphviz } from "@hpcc-js/wasm-graphviz";
-  import { getFirstFunction, initializeParsers, type Parsers } from "./utils";
+  import { processRecord, type RenderOptions } from "./utils";
   import { type TestFuncRecord } from "../../../test/commentTestUtils";
-  import { type TestFunction } from "../../../test/commentTestTypes";
-  import { requirementTests } from "../../../test/commentTestHandlers";
 
-  let parsers: Parsers;
-  let graphviz: Graphviz;
   let ast: string = "";
   let dot: string = "";
   let visibleTestResults: string = "";
-  export let failed: boolean = false;
   export let record: TestFuncRecord;
   export let verbose: boolean = false;
   export let simplify: boolean = true;
   export let trim: boolean = true;
   export let flatSwitch: boolean = false;
-  export let showDot: boolean = false;
-  export let showAST: boolean = false;
-
-  async function initialize() {
-    parsers = await initializeParsers();
-    graphviz = await Graphviz.load();
-    return {};
-  }
-
-  function runTest(record: TestFuncRecord) {
-    const tree = parsers[record.language].parse(record.code);
-    const testFunc: TestFunction = {
-      function: getFirstFunction(tree),
-      language: record.language,
-      name: record.name,
-      reqs: record.reqs,
-    };
-    const testResults = [];
-    for (const [key, value] of Object.entries(testFunc.reqs)) {
-      const reqHandler = requirementTests[key];
-      if (!reqHandler) {
-        continue;
-      }
-      testResults.push({
-        reqName: key,
-        reqValue: value,
-        failure: reqHandler(testFunc),
-      });
-    }
-    return testResults;
-  }
-
-  interface RenderOptions {
-    readonly simplify: boolean;
-    readonly verbose: boolean;
-    readonly trim: boolean;
-    readonly flatSwitch: boolean;
-  }
 
   function formatAST(ast: string): string {
     return ast
@@ -72,25 +24,10 @@
     record: TestFuncRecord,
     options: RenderOptions,
   ): string {
-    const { trim, simplify, verbose, flatSwitch } = options;
-    const tree = parsers[record.language].parse(record.code);
-    const functionSyntax = getFirstFunction(tree);
-    const builder = newCFGBuilder(record.language, { flatSwitch });
-
-    let cfg = builder.buildCFG(functionSyntax);
-
-    if (!cfg) return "";
-    if (trim) cfg = trimFor(cfg);
-    if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
-
-    dot = graphToDot(cfg, verbose);
-    ast = formatAST(functionSyntax.toString());
-
-    const testResults = runTest(record);
-    visibleTestResults = JSON.stringify(testResults);
-    failed = !!testResults.filter((result) => result.failure).length;
-
-    return graphviz.dot(dot);
+    const results = processRecord(record, options);
+    dot = results.dot;
+    ast = formatAST(results.ast);
+    return results.svg;
   }
 
   function renderWrapper(record: TestFuncRecord, options: RenderOptions) {
@@ -102,29 +39,23 @@
   }
 </script>
 
-<div class="results" class:failed class:passed={!failed}>
-  {#await initialize() then}
-    <div class="graph">
-      {@html renderWrapper(record, { simplify, verbose, trim, flatSwitch })}
-    </div>
-  {/await}
+<div class="results">
+  <div class="graph">
+    {@html renderWrapper(record, { simplify, verbose, trim, flatSwitch })}
+  </div>
   <p>
     {visibleTestResults}
   </p>
-  {#if showAST}
-    <br />
-    <details>
-      <summary>AST</summary>
-      {@html ast}
-    </details>
-  {/if}
-  {#if showDot}
-    <br />
-    <details>
-      <summary>DOT</summary>
-      <pre>{dot}</pre>
-    </details>
-  {/if}
+  <br />
+  <details>
+    <summary>AST</summary>
+    {@html ast}
+  </details>
+  <br />
+  <details>
+    <summary>DOT</summary>
+    <pre>{dot}</pre>
+  </details>
 </div>
 
 <style>
@@ -133,8 +64,5 @@
     align-items: center;
     justify-content: center;
     padding: 1em;
-  }
-  .failed {
-    background-color: #fdd;
   }
 </style>
