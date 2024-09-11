@@ -306,60 +306,100 @@ export class CFGBuilder {
 
   private processIfStatement(
     ifNode: Parser.SyntaxNode,
-    mergeNode: string | null = null,
   ): BasicBlock {
     const blockHandler = new BlockHandler();
+    const match = this.matchQuery(ifNode, "if", `
+      (if_statement
+          condition: (_) @if-cond
+          consequence: (block) @then
+          alternative: [
+              (elif_clause 
+                  condition: (_) @elif-cond
+                  consequence: (block) @elif)
+              (else_clause (block) @else)
+                            ]*
+      ) @if
+      `);
 
-    const conditionChild = ifNode.childForFieldName("condition");
-    const conditionNode = this.addNode(
-      "CONDITION",
-      conditionChild ? conditionChild.text : "Unknown condition",
-    );
+    const condSyntax = this.getSyntax(match, "if-cond");
+    const thenSyntax = this.getSyntax(match, "then");
+    const elifCondSyntaxMany = this.getSyntaxMany(match, "elif-cond");
+    const elifSyntaxMany = this.getSyntaxMany(match, "elif");
+    const elseSyntax = this.getSyntax(match, "else");
 
-    mergeNode ??= this.addNode("MERGE", "MERGE");
+    const getBlock = this.blockGetter(blockHandler);
 
-    const consequenceChild = ifNode.childForFieldName("consequence");
+    const condBlock = getBlock(condSyntax);
+    const thenBlock = getBlock(thenSyntax);
+    const elifCondBlocks = elifCondSyntaxMany.map(syntax => getBlock(syntax));
+    const elifBlocks = elifSyntaxMany.map(syntax => getBlock(syntax));
+    const elseBlock = getBlock(elseSyntax);
 
-    const { entry: thenEntry, exit: thenExit } = blockHandler.update(
-      this.processBlock(consequenceChild),
-    );
+    const mergeNode = this.addNode("MERGE", "if merge");
+    const headNode = this.addNode("CONDITION", "if condition");
 
-    if (thenEntry) this.addEdge(conditionNode, thenEntry, "consequence");
-    if (thenExit) this.addEdge(thenExit, mergeNode, "regular");
+    if (condBlock?.entry) this.addEdge(headNode, condBlock.entry);
 
-    const alternativeChild = ifNode.childForFieldName("alternative");
+    const conds = [condBlock, ...elifCondBlocks];
+    const consequences = [thenBlock, ...elifBlocks];
+    let previous: null | BasicBlock = null;
+    for (let i = 0; i < conds.length; ++i) {
+      const conditionBlock = conds[i];
+      const consequenceBlock = consequences[i];
 
-    if (alternativeChild) {
-      // We have an else or else-if
-      const maybeElseIf = alternativeChild.firstNamedChild;
-      const elseIf = maybeElseIf?.type === "if_statement";
-      if (elseIf) {
-        const { entry: elseEntry } = blockHandler.update(
-          this.processIfStatement(maybeElseIf, mergeNode),
-        );
-        if (elseEntry) this.addEdge(conditionNode, elseEntry, "alternative");
-        // No need to connect the exit as it's already linked to the else node.
-      } else {
-        // Normal else
-        const { entry: elseEntry, exit: elseExit } = blockHandler.update(
-          this.processBlock(alternativeChild),
-        );
-        if (elseEntry) this.addEdge(conditionNode, elseEntry, "alternative");
-        // This was processed like any other block, so we need to link the merge node.
-        if (elseExit) this.addEdge(elseExit, mergeNode, "regular");
-      }
-    } else {
-      // No else clause
-      this.addEdge(conditionNode, mergeNode, "alternative");
+      if (previous?.exit && conditionBlock?.entry) this.addEdge(previous.exit, conditionBlock.entry, "alternative");
+      if (conditionBlock?.exit && consequenceBlock?.entry) this.addEdge(conditionBlock.exit, consequenceBlock.entry, "consequence");
+      if (consequenceBlock?.exit) this.addEdge(consequenceBlock.exit, mergeNode);
+
+      previous = conditionBlock;
+    }
+    if (elseBlock) {
+      if (previous?.exit && elseBlock.entry) this.addEdge(previous.exit, elseBlock.entry, "alternative");
+      if (elseBlock.exit) this.addEdge(elseBlock.exit, mergeNode);
+    } else if (previous?.exit) {
+      this.addEdge(previous.exit, mergeNode, "alternative");
     }
 
-    return blockHandler.update({ entry: conditionNode, exit: mergeNode });
+    return blockHandler.update({ entry: headNode, exit: mergeNode });
+  }
+
+  private matchQuery(syntax: Parser.SyntaxNode, mainName: string, queryString: string) {
+    const language = syntax.tree.getLanguage();
+    const query = language.query(queryString);
+    const matches = query.matches(syntax);
+    const match = (() => {
+      for (const match of matches) {
+        console.log(match);
+        for (const capture of match.captures) {
+          console.log(capture.name)
+          if (capture.name === mainName && capture.node.id === syntax.id) {
+            return match;
+          }
+        }
+      }
+      throw new Error("No match found!");
+    })();
+    return match;
+  }
+
+
+  private getSyntax(match: Parser.QueryMatch, name: string): Parser.SyntaxNode {
+    return this.getSyntaxMany(match, name)[0];
+  }
+
+  private getSyntaxMany(match: Parser.QueryMatch, name: string): Parser.SyntaxNode[] {
+    return match.captures.filter((capture) => capture.name === name).map((capture) => capture.node);
+  }
+
+  private blockGetter(blockHandler: BlockHandler) {
+    const getBlock = (syntax: Parser.SyntaxNode | null) =>
+      syntax ? blockHandler.update(this.processBlock(syntax)) : null;
+    return getBlock;
   }
 
   private processForStatement(forNode: Parser.SyntaxNode): BasicBlock {
     const blockHandler = new BlockHandler();
-    const language = forNode.tree.getLanguage();
-    const query = language.query(`
+    const match = this.matchQuery(forNode, "for", `
       [(for_statement
           body: (_) @body
           alternative: (else_clause (block) @else)
@@ -368,26 +408,13 @@ export class CFGBuilder {
           body: (_) @body
       )] @for
       `);
-    const matches = query.matches(forNode);
-    const match = (() => {
-      for (const match of matches) {
-        for (const capture of match.captures) {
-          if (capture.name === "for" && capture.node.id === forNode.id) {
-            return match;
-          }
-        }
-      }
-      throw new Error("No match found!");
-    })();
 
-    const getSyntax = (name: string): Parser.SyntaxNode | null =>
-      match.captures.filter((capture) => capture.name === name)[0]?.node;
 
-    const bodySyntax = getSyntax("body");
-    const elseSyntax = getSyntax("else");
 
-    const getBlock = (syntax: Parser.SyntaxNode | null) =>
-      syntax ? blockHandler.update(this.processBlock(syntax)) : null;
+    const bodySyntax = this.getSyntax(match, "body");
+    const elseSyntax = this.getSyntax(match, "else");
+
+    const getBlock = this.blockGetter(blockHandler);
 
     const bodyBlock = getBlock(bodySyntax);
     const elseBlock = getBlock(elseSyntax);

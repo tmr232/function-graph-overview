@@ -9,21 +9,23 @@ def If():
         pass
     pass
 
-# nodes: 5
+# nodes: 4
 def IfElse():
     if x:
-        pass
+        f()
     else:
-        pass
+        g()
+    h()
 
-# nodes: 7
+# nodes: 6
 def IfElifElse():
     if x:
-        pass
+        f()
     elif y:
-        pass
+        g()
     else:
-        pass
+        h()
+    x()
 
 # nodes: 4,
 # exits: 1
