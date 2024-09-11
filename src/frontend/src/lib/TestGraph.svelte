@@ -23,16 +23,18 @@
   function renderRecord(
     record: TestFuncRecord,
     options: RenderOptions,
-  ): string {
+  ): { svg: string; error: Error | undefined } {
     const results = processRecord(record, options);
-    dot = results.dot;
+    dot = results.dot ?? "";
     ast = formatAST(results.ast);
-    return results.svg;
+    return { svg: results.svg ?? "", error: results.error };
   }
 
   function renderWrapper(record: TestFuncRecord, options: RenderOptions) {
     try {
-      return renderRecord(record, options);
+      const { svg, error } = renderRecord(record, options);
+      if (error) throw error;
+      return svg;
     } catch (error) {
       return `<p style='border: 2px red solid;'>${error.toString()}</p>`;
     }

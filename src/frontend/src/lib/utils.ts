@@ -2,6 +2,7 @@ import Parser from "web-tree-sitter";
 
 import treeSitterGo from "../../../../parsers/tree-sitter-go.wasm?url";
 import treeSitterC from "../../../../parsers/tree-sitter-c.wasm?url";
+import treeSitterPython from "../../../../parsers/tree-sitter-python.wasm?url";
 import treeSitterCore from "../../../../parsers/tree-sitter.wasm?url";
 import { newCFGBuilder, type Language } from "../../../control-flow/cfg";
 import type { TestFuncRecord } from "../../../test/commentTestUtils";
@@ -24,6 +25,8 @@ async function initializeParser(language: Language) {
         return Parser.Language.load(treeSitterC);
       case "Go":
         return Parser.Language.load(treeSitterGo);
+      case "Python":
+        return Parser.Language.load(treeSitterPython);
     }
   })();
   parser.setLanguage(parserLanguage);
@@ -33,11 +36,13 @@ async function initializeParser(language: Language) {
 export interface Parsers {
   Go: Parser;
   C: Parser;
+  Python: Parser;
 }
 export async function initializeParsers(): Promise<Parsers> {
   return {
     Go: await initializeParser("Go"),
     C: await initializeParser("C"),
+    Python: await initializeParser("Python"),
   };
 }
 
@@ -50,7 +55,7 @@ export function getFirstFunction(tree: Parser.Tree): Parser.SyntaxNode | null {
     "function_declaration",
     "method_declaration",
     "func_literal",
-    // C
+    // C, Python
     "function_definition",
   ];
 
@@ -74,8 +79,10 @@ export function getFirstFunction(tree: Parser.Tree): Parser.SyntaxNode | null {
 
 const parsers: Parsers = await initializeParsers();
 const graphviz: Graphviz = await Graphviz.load();
-interface TestResults {
-  reqName: string; reqValue: any; failure: string | null;
+export interface TestResults {
+  reqName: string;
+  reqValue: any;
+  failure: string | null;
 }
 export function runTest(record: TestFuncRecord): TestResults[] {
   const tree = parsers[record.language].parse(record.code);
@@ -109,24 +116,28 @@ export interface RenderOptions {
 export function processRecord(
   record: TestFuncRecord,
   options: RenderOptions,
-): { dot: string, ast: string, testResults: TestResults[], failed: boolean, svg: string } | null {
+): { dot?: string; ast: string; svg?: string; error?: Error } {
   const { trim, simplify, verbose, flatSwitch } = options;
   const tree = parsers[record.language].parse(record.code);
   const functionSyntax = getFirstFunction(tree);
   const builder = newCFGBuilder(record.language, { flatSwitch });
 
-  let cfg = builder.buildCFG(functionSyntax);
+  const ast = functionSyntax.toString();
+
+  let cfg;
+
+  try {
+    cfg = builder.buildCFG(functionSyntax);
+  } catch (error) {
+    return { ast, error };
+  }
 
   if (!cfg) return null;
   if (trim) cfg = trimFor(cfg);
   if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
 
   const dot = graphToDot(cfg, verbose);
-  const ast = functionSyntax.toString();
   const svg = graphviz.dot(dot);
 
-  const testResults = runTest(record);
-  const failed = !!testResults.filter((result) => result.failure).length;
-
-  return { dot, ast, testResults, failed, svg }
+  return { dot, ast, svg };
 }

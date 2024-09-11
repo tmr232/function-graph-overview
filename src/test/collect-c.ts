@@ -3,7 +3,6 @@ import treeSitterC from "../../parsers/tree-sitter-c.wasm?url";
 import { parseComment } from "./commentTestUtils";
 import type { TestFunction } from "./commentTestTypes";
 
-
 async function initializeParser(): Promise<[Parser, Parser.Language]> {
   await Parser.init();
   const parser = new Parser();

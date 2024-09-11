@@ -2,11 +2,26 @@
   import testRecordsJson from "../../../../dist/tests/commentTests.json?json";
   import type { TestFuncRecord } from "../../../test/commentTestUtils";
   import TestGraph from "./TestGraph.svelte";
-  import { runTest } from "./utils";
+  import { runTest, type TestResults } from "./utils";
   const testRecords = testRecordsJson as TestFuncRecord[];
 
   const testResults = testRecords.map((record) => {
-    const results = runTest(record);
+    let results: TestResults[];
+    try {
+      results = runTest(record);
+    } catch (error) {
+      console.trace(
+        `\nFailed running tests for ${record.language}: ${record.name}\n`,
+        error,
+      );
+      results = [
+        {
+          reqName: "Tests",
+          reqValue: "Failed to complete",
+          failure: `${error}`,
+        },
+      ];
+    }
     return {
       record,
       failed: !results.every((result) => result.failure === null),
@@ -51,6 +66,7 @@
     {#each testResults as { record, failed, results } (record)}
       {#if failed || showAll}
         <div class="code-side" data-failed={failed}>
+          <div class="test-name">{record.language}: {record.name}</div>
           <div class="code"><pre>{record.code}</pre></div>
           <div class="results">
             {#each results as { reqName, reqValue, failure } (reqName)}

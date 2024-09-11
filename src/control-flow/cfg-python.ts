@@ -360,11 +360,13 @@ export class CFGBuilder {
     const blockHandler = new BlockHandler();
     const language = forNode.tree.getLanguage();
     const query = language.query(`
+      [(for_statement
+          body: (_) @body
+          alternative: (_) @else
+      )
       (for_statement
-	        initializer: (_)? @init
-          condition: (_)? @cond
-          update: (_)? @update
-          body: (_) @body) @for
+          body: (_) @body
+      )] @for
       `);
     const matches = query.matches(forNode);
     const match = (() => {
@@ -381,62 +383,33 @@ export class CFGBuilder {
     const getSyntax = (name: string): Parser.SyntaxNode | null =>
       match.captures.filter((capture) => capture.name === name)[0]?.node;
 
-    const initSyntax = getSyntax("init");
-    const condSyntax = getSyntax("cond");
-    const updateSyntax = getSyntax("update");
     const bodySyntax = getSyntax("body");
+    const elseSyntax = getSyntax("else");
 
     const getBlock = (syntax: Parser.SyntaxNode | null) =>
       syntax ? blockHandler.update(this.processBlock(syntax)) : null;
 
-    const initBlock = getBlock(initSyntax);
-    const condBlock = getBlock(condSyntax);
-    const updateBlock = getBlock(updateSyntax);
     const bodyBlock = getBlock(bodySyntax);
+    const elseBlock = getBlock(elseSyntax);
 
-    const entryNode = this.addNode("EMPTY", "loop head");
     const exitNode = this.addNode("FOR_EXIT", "loop exit");
     const headNode = this.addNode("LOOP_HEAD", "loop head");
     const headBlock = { entry: headNode, exit: headNode };
 
-    const chain = (entry: string | null, blocks: (BasicBlock | null)[]) => {
-      let prevExit: string | null = entry;
-      for (const block of blocks) {
-        if (!block) continue;
-        if (prevExit && block.entry) this.addEdge(prevExit, block.entry);
-        prevExit = block.exit;
-      }
-      return prevExit;
-    };
-
     /*
-    entry -> init -> cond +-> body -> head -> update -> cond
-                          --> exit
-
-    top = chain(entry, init,)
-
-    if cond:
-        chain(top, cond)
-        cond +-> body
-        cond --> exit
-        chain(body, head, update, cond)
-    else:
-        chain(top, body, head, update, body)
-
-    chain(continue, head)
-    chain(break, exit)
+    head +-> body -> head
+         --> else / exit
+    break -> exit
+    continue -> head
     */
-    const topExit = chain(entryNode, [initBlock]);
-    if (condBlock) {
-      chain(topExit, [condBlock]);
-      if (condBlock.exit) {
-        if (bodyBlock?.entry)
-          this.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
-        this.addEdge(condBlock.exit, exitNode, "alternative");
-        chain(bodyBlock?.exit ?? null, [headBlock, updateBlock, condBlock]);
-      }
+    if (bodyBlock?.entry)
+      this.addEdge(headBlock.exit, bodyBlock.entry, "consequence");
+    if (bodyBlock?.exit) this.addEdge(bodyBlock.exit, headBlock.entry);
+    if (elseBlock) {
+      if (elseBlock.entry) this.addEdge(headBlock.exit, elseBlock.entry);
+      if (elseBlock.exit) this.addEdge(elseBlock.exit, exitNode);
     } else {
-      chain(topExit, [bodyBlock, headBlock, updateBlock, bodyBlock]);
+      this.addEdge(headBlock.exit, exitNode, "alternative");
     }
 
     blockHandler.forEachContinue((continueNode) => {
@@ -447,7 +420,7 @@ export class CFGBuilder {
       this.addEdge(breakNode, exitNode);
     });
 
-    return blockHandler.update({ entry: entryNode, exit: exitNode });
+    return blockHandler.update({ entry: headNode, exit: exitNode });
   }
 
   private processWhileStatement(whileSyntax: Parser.SyntaxNode): BasicBlock {

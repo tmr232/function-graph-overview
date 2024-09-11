@@ -6,30 +6,31 @@ import type { TestFunction } from "./commentTestTypes";
 
 export const testsDir = import.meta.dir + "/commentTestSamples";
 const languages: {
-    ext: string;
-    getTestFuncs: (code: string) => Generator<TestFunction>;
+  ext: string;
+  getTestFuncs: (code: string) => Generator<TestFunction>;
 }[] = [
-        { ext: "c", getTestFuncs: getTestFuncsForC },
-        { ext: "go", getTestFuncs: getTestFuncsForGo },
-        { ext: "py", getTestFuncs: getTestsForPython }
-    ];
+  { ext: "c", getTestFuncs: getTestFuncsForC },
+  { ext: "go", getTestFuncs: getTestFuncsForGo },
+  { ext: "py", getTestFuncs: getTestsForPython },
+];
 
-const sampleGlob = new Glob(`**/*.{${languages.map(({ ext }) => ext).join(",")}}`);
-
+const sampleGlob = new Glob(
+  `**/*.{${languages.map(({ ext }) => ext).join(",")}}`,
+);
 
 const extToFuncs = new Map(
-    languages.map(({ ext, getTestFuncs: iterTestFuncs }) => [ext, iterTestFuncs]),
+  languages.map(({ ext, getTestFuncs: iterTestFuncs }) => [ext, iterTestFuncs]),
 );
 
 export async function collectTests(): Promise<TestFunction[]> {
-    const allTestFuncs = [];
-    for await (const file of sampleGlob.scan(testsDir)) {
-        const ext = file.split(".").slice(-1)[0];
-        const getTestFuncs = extToFuncs.get(ext);
-        if (!getTestFuncs) continue;
-        const code = await Bun.file(`${testsDir}/${file}`).text();
-        const testFuncs = getTestFuncs(code);
-        allTestFuncs.push(...testFuncs);
-    }
-    return allTestFuncs;
+  const allTestFuncs = [];
+  for await (const file of sampleGlob.scan(testsDir)) {
+    const ext = file.split(".").slice(-1)[0];
+    const getTestFuncs = extToFuncs.get(ext);
+    if (!getTestFuncs) continue;
+    const code = await Bun.file(`${testsDir}/${file}`).text();
+    const testFuncs = getTestFuncs(code);
+    allTestFuncs.push(...testFuncs);
+  }
+  return allTestFuncs;
 }

@@ -3,7 +3,6 @@ import treeSitterPython from "../../parsers/tree-sitter-python.wasm?url";
 import { parseComment } from "./commentTestUtils";
 import type { TestFunction } from "./commentTestTypes";
 
-
 async function initializeParser(): Promise<[Parser, Parser.Language]> {
   await Parser.init();
   const parser = new Parser();
@@ -30,7 +29,11 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
   const matches = testFuncQuery.matches(tree.rootNode);
 
   for (const match of matches) {
-    for (let i = 0; i < match.captures.length; i += testFuncQuery.captureNames.length - 1) {
+    for (
+      let i = 0;
+      i < match.captures.length;
+      i += testFuncQuery.captureNames.length - 1
+    ) {
       const captures = match.captures;
       const comments = [];
       for (; captures[i].name === "comment"; ++i) {
@@ -40,8 +43,8 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
         function: captures[i].node,
         reqs: parseComment(comments.join("\n")),
         name: captures[i + 1].node.text,
-        language: "Python"
-      }
+        language: "Python",
+      };
     }
   }
 }
