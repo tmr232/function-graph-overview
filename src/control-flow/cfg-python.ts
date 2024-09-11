@@ -42,7 +42,7 @@ export class CFGBuilder {
 
       const startNode = this.addNode("START", "START");
       // `entry` will be non-null for any valid code
-      this.addEdge(startNode, entry);
+      if (entry) this.addEdge(startNode, entry);
       this.entry = startNode;
     }
     return { graph: this.graph, entry: this.entry };
@@ -362,7 +362,7 @@ export class CFGBuilder {
     const query = language.query(`
       [(for_statement
           body: (_) @body
-          alternative: (_) @else
+          alternative: (else_clause (block) @else)
       )
       (for_statement
           body: (_) @body
@@ -406,7 +406,7 @@ export class CFGBuilder {
       this.addEdge(headBlock.exit, bodyBlock.entry, "consequence");
     if (bodyBlock?.exit) this.addEdge(bodyBlock.exit, headBlock.entry);
     if (elseBlock) {
-      if (elseBlock.entry) this.addEdge(headBlock.exit, elseBlock.entry);
+      if (elseBlock.entry) this.addEdge(headBlock.exit, elseBlock.entry, "alternative");
       if (elseBlock.exit) this.addEdge(elseBlock.exit, exitNode);
     } else {
       this.addEdge(headBlock.exit, exitNode, "alternative");
