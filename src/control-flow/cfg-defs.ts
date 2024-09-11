@@ -104,7 +104,6 @@ export class BlockHandler {
       labels: this.labels,
     };
   }
-
 }
 
 export function mergeNodeAttrs(from: GraphNode, into: GraphNode): GraphNode {

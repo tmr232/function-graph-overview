@@ -304,11 +304,12 @@ export class CFGBuilder {
     return { entry: breakNode, exit: null, breaks: [breakNode] };
   }
 
-  private processIfStatement(
-    ifNode: Parser.SyntaxNode,
-  ): BasicBlock {
+  private processIfStatement(ifNode: Parser.SyntaxNode): BasicBlock {
     const blockHandler = new BlockHandler();
-    const match = this.matchQuery(ifNode, "if", `
+    const match = this.matchQuery(
+      ifNode,
+      "if",
+      `
       (if_statement
           condition: (_) @if-cond
           consequence: (block) @then
@@ -319,7 +320,8 @@ export class CFGBuilder {
               (else_clause (block) @else)
                             ]*
       ) @if
-      `);
+      `,
+    );
 
     const condSyntax = this.getSyntax(match, "if-cond");
     const thenSyntax = this.getSyntax(match, "then");
@@ -331,8 +333,8 @@ export class CFGBuilder {
 
     const condBlock = getBlock(condSyntax);
     const thenBlock = getBlock(thenSyntax);
-    const elifCondBlocks = elifCondSyntaxMany.map(syntax => getBlock(syntax));
-    const elifBlocks = elifSyntaxMany.map(syntax => getBlock(syntax));
+    const elifCondBlocks = elifCondSyntaxMany.map((syntax) => getBlock(syntax));
+    const elifBlocks = elifSyntaxMany.map((syntax) => getBlock(syntax));
     const elseBlock = getBlock(elseSyntax);
 
     const mergeNode = this.addNode("MERGE", "if merge");
@@ -347,14 +349,22 @@ export class CFGBuilder {
       const conditionBlock = conds[i];
       const consequenceBlock = consequences[i];
 
-      if (previous?.exit && conditionBlock?.entry) this.addEdge(previous.exit, conditionBlock.entry, "alternative");
-      if (conditionBlock?.exit && consequenceBlock?.entry) this.addEdge(conditionBlock.exit, consequenceBlock.entry, "consequence");
-      if (consequenceBlock?.exit) this.addEdge(consequenceBlock.exit, mergeNode);
+      if (previous?.exit && conditionBlock?.entry)
+        this.addEdge(previous.exit, conditionBlock.entry, "alternative");
+      if (conditionBlock?.exit && consequenceBlock?.entry)
+        this.addEdge(
+          conditionBlock.exit,
+          consequenceBlock.entry,
+          "consequence",
+        );
+      if (consequenceBlock?.exit)
+        this.addEdge(consequenceBlock.exit, mergeNode);
 
       previous = conditionBlock;
     }
     if (elseBlock) {
-      if (previous?.exit && elseBlock.entry) this.addEdge(previous.exit, elseBlock.entry, "alternative");
+      if (previous?.exit && elseBlock.entry)
+        this.addEdge(previous.exit, elseBlock.entry, "alternative");
       if (elseBlock.exit) this.addEdge(elseBlock.exit, mergeNode);
     } else if (previous?.exit) {
       this.addEdge(previous.exit, mergeNode, "alternative");
@@ -363,15 +373,17 @@ export class CFGBuilder {
     return blockHandler.update({ entry: headNode, exit: mergeNode });
   }
 
-  private matchQuery(syntax: Parser.SyntaxNode, mainName: string, queryString: string) {
+  private matchQuery(
+    syntax: Parser.SyntaxNode,
+    mainName: string,
+    queryString: string,
+  ) {
     const language = syntax.tree.getLanguage();
     const query = language.query(queryString);
     const matches = query.matches(syntax);
     const match = (() => {
       for (const match of matches) {
-        console.log(match);
         for (const capture of match.captures) {
-          console.log(capture.name)
           if (capture.name === mainName && capture.node.id === syntax.id) {
             return match;
           }
@@ -382,13 +394,17 @@ export class CFGBuilder {
     return match;
   }
 
-
   private getSyntax(match: Parser.QueryMatch, name: string): Parser.SyntaxNode {
     return this.getSyntaxMany(match, name)[0];
   }
 
-  private getSyntaxMany(match: Parser.QueryMatch, name: string): Parser.SyntaxNode[] {
-    return match.captures.filter((capture) => capture.name === name).map((capture) => capture.node);
+  private getSyntaxMany(
+    match: Parser.QueryMatch,
+    name: string,
+  ): Parser.SyntaxNode[] {
+    return match.captures
+      .filter((capture) => capture.name === name)
+      .map((capture) => capture.node);
   }
 
   private blockGetter(blockHandler: BlockHandler) {
@@ -399,7 +415,10 @@ export class CFGBuilder {
 
   private processForStatement(forNode: Parser.SyntaxNode): BasicBlock {
     const blockHandler = new BlockHandler();
-    const match = this.matchQuery(forNode, "for", `
+    const match = this.matchQuery(
+      forNode,
+      "for",
+      `
       [(for_statement
           body: (_) @body
           alternative: (else_clause (block) @else)
@@ -407,9 +426,8 @@ export class CFGBuilder {
       (for_statement
           body: (_) @body
       )] @for
-      `);
-
-
+      `,
+    );
 
     const bodySyntax = this.getSyntax(match, "body");
     const elseSyntax = this.getSyntax(match, "else");
@@ -433,7 +451,8 @@ export class CFGBuilder {
       this.addEdge(headBlock.exit, bodyBlock.entry, "consequence");
     if (bodyBlock?.exit) this.addEdge(bodyBlock.exit, headBlock.entry);
     if (elseBlock) {
-      if (elseBlock.entry) this.addEdge(headBlock.exit, elseBlock.entry, "alternative");
+      if (elseBlock.entry)
+        this.addEdge(headBlock.exit, elseBlock.entry, "alternative");
       if (elseBlock.exit) this.addEdge(elseBlock.exit, exitNode);
     } else {
       this.addEdge(headBlock.exit, exitNode, "alternative");
