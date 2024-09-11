@@ -56,6 +56,7 @@ export function graphToDot(cfg: CFG, verbose: boolean = false): string {
     // if (graph.getNodeAttribute(source, "line") > graph.getNodeAttribute(target, "line")) {
     //     penwidth = 2;
     // }
+    // TODO: Use line numbers to detect backlinks
     if ((levels.get(source) ?? 0) > (levels.get(target) ?? 0)) {
       penwidth = 2;
     }

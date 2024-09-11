@@ -1,10 +1,9 @@
 import { test, expect } from "bun:test";
-import { testFunctions as testFuncsForGo } from "./collect-go";
-import { testFunctions as testFuncsForC } from "./collect-c";
 import { TestManager } from "./commentTestManager";
+import { collectTests } from "./commentTestCollector";
 
 const testManager = new TestManager({
-  testFunctions: [...testFuncsForC, ...testFuncsForGo],
+  testFunctions: await collectTests(),
 });
 
 test.each(testManager.allTests)(

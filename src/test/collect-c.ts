@@ -1,7 +1,7 @@
 import Parser from "web-tree-sitter";
-import goSampleCode from "./sample.c" with { type: "text" };
 import treeSitterC from "../../parsers/tree-sitter-c.wasm?url";
-import { parseComment, type TestFunction } from "./commentTestUtils";
+import { parseComment } from "./commentTestUtils";
+import type { TestFunction } from "./commentTestTypes";
 
 /*
 TODO: Write a script that collects all the test code and generates a webpage
@@ -18,6 +18,12 @@ async function initializeParser(): Promise<[Parser, Parser.Language]> {
   const C = await Parser.Language.load(treeSitterC);
   parser.setLanguage(C);
   return [parser, C];
+}
+const [parser, language] = await initializeParser();
+
+export function getTestFuncs(code: string): Generator<TestFunction> {
+  const tree = parser.parse(code);
+  return iterTestFunctions(tree);
 }
 
 function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
@@ -44,7 +50,3 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
     }
   }
 }
-
-const [parser, language] = await initializeParser();
-const tree = parser.parse(goSampleCode);
-export const testFunctions = [...iterTestFunctions(tree)];

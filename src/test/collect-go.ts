@@ -1,5 +1,4 @@
 import Parser from "web-tree-sitter";
-import goSampleCode from "./sample.go" with { type: "text" };
 import treeSitterGo from "../../parsers/tree-sitter-go.wasm?url";
 import { parseComment } from "./commentTestUtils";
 import type { TestFunction } from "./commentTestTypes";
@@ -13,7 +12,11 @@ async function initializeParser() {
 }
 
 const parser = await initializeParser();
-const tree = parser.parse(goSampleCode);
+
+export function getTestFuncs(code: string): Generator<TestFunction> {
+  const tree = parser.parse(code);
+  return iterTestFunctions(tree);
+}
 
 function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
   const funcTypes = [
@@ -51,5 +54,3 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
     }
   }
 }
-
-export const testFunctions = [...iterTestFunctions(tree)];
