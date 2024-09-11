@@ -112,7 +112,7 @@ export class CFGBuilder {
     if (!node) return { entry: null, exit: null };
 
     switch (node.type) {
-      case "compound_statement":
+      case "block":
         return this.processStatements(node.namedChildren);
       case "if_statement":
         return this.processIfStatement(node);
