@@ -41,7 +41,7 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
     try {
       yield {
         function: functionNode,
-        reqs: parseComment(commentNode.text),
+        reqs: parseComment(commentNode.text.slice(2, -2)),
         name: functionName,
         language: "Go",
       };

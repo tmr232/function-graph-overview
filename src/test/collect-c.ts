@@ -3,14 +3,6 @@ import treeSitterC from "../../parsers/tree-sitter-c.wasm?url";
 import { parseComment } from "./commentTestUtils";
 import type { TestFunction } from "./commentTestTypes";
 
-/*
-TODO: Write a script that collects all the test code and generates a webpage
-      showing it.
-      - Toggle to show only failing tests
-      - The usual display toggles
-      - Ability to show markers instead of node content
-      - Shows the reason the test failed (in text!)
-*/
 
 async function initializeParser(): Promise<[Parser, Parser.Language]> {
   await Parser.init();
@@ -43,7 +35,7 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
       const captures = match.captures.slice(i);
       yield {
         function: captures[1].node,
-        reqs: parseComment(captures[0].node.text),
+        reqs: parseComment(captures[0].node.text.slice(2, -2)),
         name: captures[2].node.text,
         language: "C",
       };

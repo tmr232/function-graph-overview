@@ -3,7 +3,7 @@ import { watch } from "fs";
 import { parseArgs } from "util";
 import { collectTests, testsDir } from "../src/test/commentTestCollector";
 
-
+const watchDir = `${testsDir}/../`;
 
 const { values } = parseArgs({
     args: Bun.argv,
@@ -25,7 +25,7 @@ async function generateJson() {
 
 generateJson();
 if (values.watch) {
-    const watcher = watch(testsDir, async (event, filename) => {
+    const watcher = watch(watchDir, async (event, filename) => {
         console.log(`${event}: ${filename}, regenerating commentTests.json`);
         await generateJson();
     });
