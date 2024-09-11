@@ -1,9 +1,9 @@
 import { intoRecords } from "../src/test/commentTestUtils";
 import { watch } from "fs";
 import { parseArgs } from "util";
-import { collectTests, testsDir } from "../src/test/commentTestCollector";
+import { collectTests } from "../src/test/commentTestCollector";
 
-const codeDir = `${testsDir}/../`;
+const watchDir = import.meta.dir + "/../src";
 
 const { values } = parseArgs({
   args: Bun.argv,
@@ -24,11 +24,7 @@ async function generateJson() {
 
 generateJson();
 if (values.watch) {
-  const codeWatcher = watch(codeDir, async (event, filename) => {
-    console.log(`${event}: ${filename}, regenerating commentTests.json`);
-    await generateJson();
-  });
-  const sampleWatcher = watch(testsDir, async (event, filename) => {
+  const watcher = watch(watchDir, { recursive: true }, async (event, filename) => {
     console.log(`${event}: ${filename}, regenerating commentTests.json`);
     await generateJson();
   });
@@ -36,8 +32,7 @@ if (values.watch) {
   process.on("SIGINT", () => {
     // close watcher when Ctrl-C is pressed
     console.log("Closing watcher...");
-    codeWatcher.close();
-    sampleWatcher.close();
+    watcher.close();
 
     process.exit(0);
   });
