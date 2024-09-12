@@ -35,10 +35,6 @@ export class CFGBuilder {
         this.processStatements(bodyNode.namedChildren),
       );
 
-      blockHandler.processGotos((gotoNode, labelNode) =>
-        this.addEdge(gotoNode, labelNode),
-      );
-
       const startNode = this.addNode("START", "START");
       // `entry` will be non-null for any valid code
       if (entry) this.addEdge(startNode, entry);
@@ -418,59 +414,5 @@ export class CFGBuilder {
     });
 
     return blockHandler.update({ entry: condBlock.entry, exit: exitNode });
-  }
-
-  private processDoStatement(whileSyntax: Parser.SyntaxNode): BasicBlock {
-    const blockHandler = new BlockHandler();
-    const language = whileSyntax.tree.getLanguage();
-    const query = language.query(`
-    (do_statement
-        body: (_) @body
-        condition: (_) @cond
-        ) @while
-    `);
-    const matches = query.matches(whileSyntax);
-    const match = (() => {
-      for (const match of matches) {
-        for (const capture of match.captures) {
-          if (capture.name === "while" && capture.node.id === whileSyntax.id) {
-            return match;
-          }
-        }
-      }
-      throw new Error("No match found!");
-    })();
-
-    const getSyntax = (name: string): Parser.SyntaxNode | null =>
-      match.captures.filter((capture) => capture.name === name)[0]?.node;
-
-    const condSyntax = getSyntax("cond");
-    const bodySyntax = getSyntax("body");
-
-    const getBlock = (syntax: Parser.SyntaxNode | null) =>
-      syntax ? blockHandler.update(this.processBlock(syntax)) : null;
-
-    const condBlock = getBlock(condSyntax) as BasicBlock;
-    const bodyBlock = getBlock(bodySyntax) as BasicBlock;
-
-    const exitNode = this.addNode("FOR_EXIT", "loop exit");
-
-    if (condBlock.exit) {
-      if (bodyBlock.entry)
-        this.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
-      this.addEdge(condBlock.exit, exitNode, "alternative");
-    }
-    if (condBlock.entry && bodyBlock.exit)
-      this.addEdge(bodyBlock.exit, condBlock.entry);
-
-    blockHandler.forEachContinue((continueNode) => {
-      if (condBlock.entry) this.addEdge(continueNode, condBlock.entry);
-    });
-
-    blockHandler.forEachBreak((breakNode) => {
-      this.addEdge(breakNode, exitNode);
-    });
-
-    return blockHandler.update({ entry: bodyBlock.entry, exit: exitNode });
   }
 }
