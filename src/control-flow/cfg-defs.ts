@@ -30,11 +30,17 @@ export type NodeType =
   | "SWITCH_MERGE"
   | "CASE_CONDITION";
 export type EdgeType = "regular" | "consequence" | "alternative";
+
+export type ClusterType = "with";
+export type ClusterId = number;
+export type Cluster = { id: ClusterId, type: ClusterType }
+
 export interface GraphNode {
   type: NodeType;
   code: string;
   lines: number;
   markers: string[];
+  clusters?: Set<ClusterId>;
 }
 
 export interface GraphEdge {
@@ -60,6 +66,7 @@ export interface BasicBlock {
 export interface CFG {
   graph: MultiDirectedGraph<GraphNode, GraphEdge>;
   entry: string;
+  clusters?: Map<ClusterId, Cluster>;
 }
 
 export class BlockHandler {

@@ -5,6 +5,9 @@ import {
   type BasicBlock,
   type BuilderOptions,
   type CFG,
+  type Cluster,
+  type ClusterId,
+  type ClusterType,
   type EdgeType,
   type GraphEdge,
   type GraphNode,
@@ -12,15 +15,15 @@ import {
 } from "./cfg-defs";
 
 export class CFGBuilder {
-  private graph: MultiDirectedGraph<GraphNode, GraphEdge>;
+  private graph: MultiDirectedGraph<GraphNode, GraphEdge> = new MultiDirectedGraph();
   private entry: string;
-  private nodeId: number;
+  private nodeId: number = 0;
+  private clusterId: ClusterId = 0;
   private readonly flatSwitch: boolean;
   private readonly markerPattern: RegExp | null;
+  private activeClusters: Cluster[] = [];
 
   constructor(options?: BuilderOptions) {
-    this.graph = new MultiDirectedGraph();
-    this.nodeId = 0;
     this.entry = null;
 
     this.flatSwitch = options?.flatSwitch ?? false;
@@ -43,9 +46,24 @@ export class CFGBuilder {
     return { graph: this.graph, entry: this.entry };
   }
 
+  private startCluster(type: ClusterType): Cluster {
+    const cluster = { id: this.clusterId++, type };
+    this.activeClusters.push(cluster);
+    return cluster;
+  }
+  private endCluster(_cluster: Cluster) {
+    // We assume that all clusters form a stack.
+    this.activeClusters.pop();
+  }
+
+  private withCluster(type: ClusterType, fn: () => void): void {
+    const cluster = this.startCluster(type);
+    fn();
+    this.endCluster(cluster)
+  }
   private addNode(type: NodeType, code: string, lines: number = 1): string {
     const id = `node${this.nodeId++}`;
-    this.graph.addNode(id, { type, code, lines, markers: [] });
+    this.graph.addNode(id, { type, code, lines, markers: [], clusters: new Set(this.activeClusters.map(({ id }) => id)) });
     return id;
   }
 
@@ -119,12 +137,37 @@ export class CFGBuilder {
         return this.processContinueStatement(node);
       case "comment":
         return this.processComment(node);
+      case "with_statement":
+        return this.processWithStatement(node)
       default: {
         const newNode = this.addNode("STATEMENT", node.text);
         return { entry: newNode, exit: newNode };
       }
     }
   }
+  private processWithStatement(withSyntax: Parser.SyntaxNode): BasicBlock {
+    const blockHandler = new BlockHandler();
+    const match = this.matchQuery(
+      withSyntax,
+      "with",
+      `
+      (with_statement
+        (with_clause) @with_clause
+          body: (block) @body
+      ) @with
+      `,
+    );
+    this.withCluster("with", () => {
+      const bodySyntax = this.getSyntax(match, "body");
+      const getBlock = this.blockGetter(blockHandler);
+      const bodyBlock = getBlock(bodySyntax);
+      if (bodyBlock) {
+        return blockHandler.update(bodyBlock);
+      }
+    })
+    return blockHandler.update({ entry: null, exit: null });
+  }
+
   private processComment(commentSyntax: Parser.SyntaxNode): BasicBlock {
     // We only ever ger here when marker comments are enabled,
     // and only for marker comments as the rest are filtered out.
