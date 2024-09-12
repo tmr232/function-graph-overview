@@ -111,6 +111,14 @@ def Match():
         case 2:
             pass
 
+# exits: 3
+def MatchMultiPattern():
+    match x:
+        case 1,2,3:
+            return
+        case 4,5:
+            return
+
 # exits: 2
 def Return():
     if x:
