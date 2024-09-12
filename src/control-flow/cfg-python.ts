@@ -471,44 +471,37 @@ export class CFGBuilder {
 
   private processWhileStatement(whileSyntax: Parser.SyntaxNode): BasicBlock {
     const blockHandler = new BlockHandler();
-    const language = whileSyntax.tree.getLanguage();
-    const query = language.query(`
+    const match = this.matchQuery(
+      whileSyntax,
+      "while",
+      `
     (while_statement
         condition: (_) @cond
         body: (_) @body
+        alternative: (else_clause (_) @else)?
         ) @while
-    `);
-    const matches = query.matches(whileSyntax);
-    const match = (() => {
-      for (const match of matches) {
-        for (const capture of match.captures) {
-          if (capture.name === "while" && capture.node.id === whileSyntax.id) {
-            return match;
-          }
-        }
-      }
-      throw new Error("No match found!");
-    })();
+    `,
+    );
 
-    const getSyntax = (name: string): Parser.SyntaxNode | null =>
-      match.captures.filter((capture) => capture.name === name)[0]?.node;
+    const condSyntax = this.getSyntax(match, "cond");
+    const bodySyntax = this.getSyntax(match, "body");
+    const elseSyntax = this.getSyntax(match, "else");
 
-    const condSyntax = getSyntax("cond");
-    const bodySyntax = getSyntax("body");
-
-    const getBlock = (syntax: Parser.SyntaxNode | null) =>
-      syntax ? blockHandler.update(this.processBlock(syntax)) : null;
+    const getBlock = this.blockGetter(blockHandler);
 
     const condBlock = getBlock(condSyntax) as BasicBlock;
     const bodyBlock = getBlock(bodySyntax) as BasicBlock;
+    const elseBlock = getBlock(elseSyntax);
 
     const exitNode = this.addNode("FOR_EXIT", "loop exit");
 
     if (condBlock.exit) {
       if (bodyBlock.entry)
         this.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
-      this.addEdge(condBlock.exit, exitNode, "alternative");
+      this.addEdge(condBlock.exit, elseBlock?.entry ?? exitNode, "alternative");
     }
+    if (elseBlock?.exit) this.addEdge(elseBlock.exit, exitNode);
+
     if (condBlock.entry && bodyBlock.exit)
       this.addEdge(bodyBlock.exit, condBlock.entry);
 
