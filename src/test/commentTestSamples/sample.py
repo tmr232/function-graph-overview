@@ -126,3 +126,13 @@ def Return():
     return 2
 
 
+# nodes: 4
+def WithCluster():
+    pass
+    with x:
+        f()
+        g()
+        h()
+    with y:
+        pass
+    pass

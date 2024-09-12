@@ -33,7 +33,7 @@ export type EdgeType = "regular" | "consequence" | "alternative";
 
 export type ClusterType = "with";
 export type ClusterId = number;
-export type Cluster = { id: ClusterId, type: ClusterType }
+export type Cluster = { id: ClusterId; type: ClusterType };
 
 export interface GraphNode {
   type: NodeType;
@@ -113,12 +113,29 @@ export class BlockHandler {
   }
 }
 
-export function mergeNodeAttrs(from: GraphNode, into: GraphNode): GraphNode {
+function maybeSetsEqual<T>(
+  a: Set<T> | undefined,
+  b: Set<T> | undefined,
+): boolean {
+  if (a && b) {
+    return a.symmetricDifference(b).size == 0;
+  }
+  return !a && !b;
+}
+
+export function mergeNodeAttrs(
+  from: GraphNode,
+  into: GraphNode,
+): GraphNode | null {
+  if (!maybeSetsEqual(from.clusters, into.clusters)) {
+    return null;
+  }
   return {
     type: from.type,
     code: `${from.code}\n${into.code}`,
     lines: from.lines + into.lines,
     markers: [...from.markers, ...into.markers],
+    clusters: from.clusters?.union(into.clusters ?? new Set()),
   };
 }
 export interface Case {

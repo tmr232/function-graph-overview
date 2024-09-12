@@ -14,13 +14,33 @@ export function distanceFromEntry(cfg: CFG): Map<string, number> {
   return levels;
 }
 
-export type AttrMerger = (nodeAttrs: object, intoAttrs: object) => object;
+/// Can return null to indicate that the merge is not allowed.
+/// The function MUST NOT modify the input arguments.
+export type AttrMerger = (
+  nodeAttrs: object,
+  intoAttrs: object,
+) => object | null;
 function collapseNode(
   graph: MultiDirectedGraph,
   node: string,
   into: string,
   mergeAttrs?: AttrMerger,
 ) {
+  if (mergeAttrs) {
+    const attrs = mergeAttrs(
+      graph.getNodeAttributes(node),
+      graph.getNodeAttributes(into),
+    );
+    if (attrs === null) {
+      // We can't merge the nodes, so we bail.
+      return;
+    }
+
+    for (const [name, value] of Object.entries(attrs)) {
+      graph.setNodeAttribute(into, name, value);
+    }
+  }
+
   graph.forEachEdge(node, (edge, attributes, source, target) => {
     if (target === into) {
       return;
@@ -30,15 +50,7 @@ function collapseNode(
     const edgeNodes = [replaceNode(source), replaceNode(target)] as const;
     graph.addEdge(...edgeNodes, attributes);
   });
-  if (mergeAttrs) {
-    const attrs = mergeAttrs(
-      graph.getNodeAttributes(node),
-      graph.getNodeAttributes(into),
-    );
-    for (const [name, value] of Object.entries(attrs)) {
-      graph.setNodeAttribute(into, name, value);
-    }
-  }
+
   graph.dropNode(node);
 }
 /**

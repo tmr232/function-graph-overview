@@ -15,7 +15,8 @@ import {
 } from "./cfg-defs";
 
 export class CFGBuilder {
-  private graph: MultiDirectedGraph<GraphNode, GraphEdge> = new MultiDirectedGraph();
+  private graph: MultiDirectedGraph<GraphNode, GraphEdge> =
+    new MultiDirectedGraph();
   private entry: string;
   private nodeId: number = 0;
   private clusterId: ClusterId = 0;
@@ -56,14 +57,23 @@ export class CFGBuilder {
     this.activeClusters.pop();
   }
 
-  private withCluster(type: ClusterType, fn: () => void): void {
+  private withCluster<T>(type: ClusterType, fn: () => T): T {
     const cluster = this.startCluster(type);
-    fn();
-    this.endCluster(cluster)
+    try {
+      return fn();
+    } finally {
+      this.endCluster(cluster);
+    }
   }
   private addNode(type: NodeType, code: string, lines: number = 1): string {
     const id = `node${this.nodeId++}`;
-    this.graph.addNode(id, { type, code, lines, markers: [], clusters: new Set(this.activeClusters.map(({ id }) => id)) });
+    this.graph.addNode(id, {
+      type,
+      code,
+      lines,
+      markers: [],
+      clusters: new Set(this.activeClusters.map(({ id }) => id)),
+    });
     return id;
   }
 
@@ -138,7 +148,7 @@ export class CFGBuilder {
       case "comment":
         return this.processComment(node);
       case "with_statement":
-        return this.processWithStatement(node)
+        return this.processWithStatement(node);
       default: {
         const newNode = this.addNode("STATEMENT", node.text);
         return { entry: newNode, exit: newNode };
@@ -157,15 +167,22 @@ export class CFGBuilder {
       ) @with
       `,
     );
-    this.withCluster("with", () => {
+    const getBlock = this.blockGetter(blockHandler);
+
+    const withClauseSyntax = this.getSyntax(match, "with_clause");
+    const withClauseBlock = getBlock(withClauseSyntax) as BasicBlock;
+    return this.withCluster("with", () => {
       const bodySyntax = this.getSyntax(match, "body");
-      const getBlock = this.blockGetter(blockHandler);
-      const bodyBlock = getBlock(bodySyntax);
-      if (bodyBlock) {
-        return blockHandler.update(bodyBlock);
-      }
-    })
-    return blockHandler.update({ entry: null, exit: null });
+      const bodyBlock = getBlock(bodySyntax) as BasicBlock;
+
+      if (withClauseBlock.exit && bodyBlock.entry)
+        this.addEdge(withClauseBlock.exit, bodyBlock.entry);
+
+      return blockHandler.update({
+        entry: withClauseBlock.entry,
+        exit: bodyBlock.exit,
+      });
+    });
   }
 
   private processComment(commentSyntax: Parser.SyntaxNode): BasicBlock {
