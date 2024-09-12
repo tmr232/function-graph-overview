@@ -67,14 +67,6 @@ export class CFGBuilder {
     }
   }
 
-  private getChildFieldText(
-    node: Parser.SyntaxNode,
-    fieldName: string,
-  ): string {
-    const child = node.childForFieldName(fieldName);
-    return child ? child.text : "";
-  }
-
   private processStatements(statements: Parser.SyntaxNode[]): BasicBlock {
     const blockHandler = new BlockHandler();
 
