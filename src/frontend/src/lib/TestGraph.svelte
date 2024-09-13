@@ -1,6 +1,7 @@
 <script lang="ts">
   import { processRecord, type RenderOptions } from "./utils";
   import { type TestFuncRecord } from "../../../test/commentTestUtils";
+  import * as LZString from "lz-string";
 
   let ast: string = "";
   let dot: string = "";
@@ -39,6 +40,10 @@
       return `<p style='border: 2px red solid;'>${error.toString()}</p>`;
     }
   }
+
+  function editDotLink(dot: string): string {
+    return `https://dreampuf.github.io/GraphvizOnline/?compressed=${LZString.compressToEncodedURIComponent(dot)}`;
+  }
 </script>
 
 <div class="results">
@@ -55,7 +60,7 @@
   </details>
   <br />
   <details>
-    <summary>DOT</summary>
+    <summary>DOT <a href={editDotLink(dot)} target="_blank">Edit</a></summary>
     <pre>{dot}</pre>
   </details>
 </div>
