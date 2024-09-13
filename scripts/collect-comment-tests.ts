@@ -18,8 +18,8 @@ const { values } = parseArgs({
 });
 
 async function generateJson() {
-  const records = intoRecords(await collectTests());
   try {
+    const records = intoRecords(await collectTests());
     Bun.write("./dist/tests/commentTests.json", JSON.stringify(records));
   } catch (error) {
     console.log(error);

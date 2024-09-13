@@ -131,8 +131,8 @@ def Return():
 def WithCluster():
     pass
     with x:
-        f()
-        g()
+        if f():
+            g()
         h()
     with y:
         pass

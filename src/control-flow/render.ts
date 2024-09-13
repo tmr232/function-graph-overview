@@ -101,19 +101,22 @@ function renderNode(graph: CFGGraph, node: string, verbose: boolean): string {
 function renderHierarchy(cfg: CFG, hierarchy: hGraph, verbose: boolean = false) {
   let dotContent = `digraph "" {\n    node [shape=box];\n    edge [headport=n tailport=s]\n    bgcolor="transparent"\n`;
 
-  const graph = cfg.graph;
+  const topGraph = cfg.graph;
 
   console.log("hierarchy", hierarchy);
 
-  // First we define all the nodes
-  graph.forEachNode((node) => {
-    dotContent += renderNode(graph, node, verbose);
-  });
+  // // First we define all the nodes
+  // graph.forEachNode((node) => {
+  //   dotContent += renderNode(graph, node, verbose);
+  // });
 
   // Then we start drawing the subgraphs
   for (const child of Object.values(hierarchy.children)) {
-    dotContent += renderSubgraphs(child);
+    dotContent += renderSubgraphs(child, verbose, topGraph);
   }
+  hierarchy.graph.forEachNode((node) => {
+    dotContent += renderNode(topGraph, node, verbose);
+  });
   hierarchy.graph.forEachEdge((_edge, _attributes, source, target) => {
     dotContent += `${source} -> ${target};\n`
   })
@@ -123,10 +126,13 @@ function renderHierarchy(cfg: CFG, hierarchy: hGraph, verbose: boolean = false) 
   return dotContent;
 }
 
-function renderSubgraphs(hierarchy: hGraph) {
+function renderSubgraphs(hierarchy: hGraph, verbose: boolean, topGraph: CFGGraph) {
   let dotContent = `subgraph cluster_${hierarchy.id ?? "toplevel"} {\n`
+  hierarchy.graph.forEachNode((node) => {
+    dotContent += renderNode(topGraph, node, verbose);
+  });
   for (const child of Object.values(hierarchy.children)) {
-    dotContent += `\n${renderSubgraphs(child)}\n`;
+    dotContent += `\n${renderSubgraphs(child, verbose, topGraph)}\n`;
   }
   hierarchy.graph.forEachEdge((_edge, _attributes, source, target) => {
     dotContent += `${source} -> ${target};\n`
