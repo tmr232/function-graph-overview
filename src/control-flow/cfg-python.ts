@@ -82,7 +82,7 @@ export class CFGBuilder {
       code,
       lines,
       markers: [],
-      cluster
+      cluster,
     });
     return id;
   }

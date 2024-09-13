@@ -1,12 +1,15 @@
 import { distanceFromEntry } from "./graph-ops";
-import type {
-  CFG,
-  CFGGraph,
-  Cluster,
-  ClusterId,
-} from "./cfg-defs";
+import type { CFG, CFGGraph, Cluster, ClusterId } from "./cfg-defs";
 import { subgraph } from "graphology-operators";
 
+/**
+ * Break a subgraph out of a parent graph
+ * @param graph Graph to break up
+ * @param nodes The nodes to include in the inner graph
+ * @returns Inner graph containing only the provided nodes & their edges,
+ *          and an outer graph with the inner edges removed.
+ *          Note that the inner nodes will remain in the outer graph.
+ */
 function breakoutNodes(
   graph: CFGGraph,
   nodes: string[],
@@ -49,24 +52,18 @@ function buildHierarchy(cfg: CFG): Hierarchy {
 
   // The clusters must be sorted to simplify building the hierarchy.
   // If they are not, we need to ensure we don't overwrite the children object of a parent with existing children.
-  for (const [cluster, nodes] of [...clusterNodes.entries()].toSorted(([clusterA, _nodesA], [clusterB, _nodesB]) => clusterA.depth - clusterB.depth)) {
+  for (const [cluster, nodes] of [...clusterNodes.entries()].toSorted(
+    ([clusterA, _nodesA], [clusterB, _nodesB]) =>
+      clusterA.depth - clusterB.depth,
+  )) {
     let currentParent = hierarchy;
     for (const parent of getParents(cluster)) {
-      currentParent = currentParent.children[parent.id] ??= {
-        graph: currentParent.graph,
-        children: {},
-        cluster: parent,
-      };
+      // Since we're going down the hierarchy, we know the parents always exist.
+      currentParent = currentParent.children[parent.id];
     }
     const { outer, inner } = breakoutNodes(hierarchy.graph, nodes);
     hierarchy.graph = outer;
-    console.log("\n----");
-    console.log("currentParent", currentParent.cluster?.id ?? "toplevel");
-    console.log("currentCluster", cluster.id);
-    console.log("currentNodes", nodes);
-    console.log("currentGraphNodes", inner.nodes());
-    console.log("toplevelGraphNodes", outer.nodes());
-    showHierarchy(hierarchy);
+    // We know we can savely create this as we're going from shallow to deep.
     currentParent.children[cluster.id] = {
       graph: inner,
       children: {},
@@ -74,27 +71,32 @@ function buildHierarchy(cfg: CFG): Hierarchy {
     };
   }
 
-
-  cfg.graph.forEachNode((node, { cluster }) => {
-    console.log(node, cluster?.id ?? "toplevel");
-  });
-  for (const [cluster, nodes] of clusterNodes.entries()) {
-    console.log(cluster.id, nodes);
-  }
-  for (const cluster of clusterNodes.keys()) {
-    console.log(cluster.id, getParents(cluster).map(c => c.id))
-  }
-  showHierarchy(hierarchy);
+  // cfg.graph.forEachNode((node, { cluster }) => {
+  //   console.log(node, cluster?.id ?? "toplevel");
+  // });
+  // for (const [cluster, nodes] of clusterNodes.entries()) {
+  //   console.log(cluster.id, nodes);
+  // }
+  // for (const cluster of clusterNodes.keys()) {
+  //   console.log(cluster.id, getParents(cluster).map(c => c.id))
+  // }
+  // showHierarchy(hierarchy);
   return hierarchy;
 }
 
 function showHierarchy(hierarchy: Hierarchy) {
   const stack: [Hierarchy, number][] = [[hierarchy, 0]];
-  const spaces = '                                           ';
-  for (let [current, depth] = stack.pop() ?? []; current !== undefined && depth !== undefined; [current, depth] = stack.pop() ?? []) {
-    console.log(`${spaces.slice(0, depth * 4)}${current.cluster?.id ?? "toplevel"}-${current.cluster?.type ?? "X"}: ${current.graph.nodes()}`);
+  const spaces = "                                           ";
+  for (
+    let [current, depth] = stack.pop() ?? [];
+    current !== undefined && depth !== undefined;
+    [current, depth] = stack.pop() ?? []
+  ) {
+    console.log(
+      `${spaces.slice(0, depth * 4)}${current.cluster?.id ?? "toplevel"}-${current.cluster?.type ?? "X"}: ${current.graph.nodes()}`,
+    );
     const children = [...Object.values(current.children)];
-    const next: [Hierarchy, number][] = children.map(h => [h, depth + 1]);
+    const next: [Hierarchy, number][] = children.map((h) => [h, depth + 1]);
     stack.push(...next);
   }
 }
@@ -163,20 +165,22 @@ function renderHierarchy(
 }
 
 function formatStyle(style: { [attribute: string]: number | string }): string {
-  return [...Object.entries(style)].map(([name, value]) => {
-    switch (typeof value) {
-      case "number":
-        return `${name}=${value};\n`;
-      case "string":
-        return `${name}="${value}";\n`
-    }
-  }).join("");
+  return [...Object.entries(style)]
+    .map(([name, value]) => {
+      switch (typeof value) {
+        case "number":
+          return `${name}=${value};\n`;
+        case "string":
+          return `${name}="${value}";\n`;
+      }
+    })
+    .join("");
 }
 
 function clusterStyle(cluster: Cluster): string {
   const isSelfNested = cluster.type === cluster.parent?.type;
   const penwidth = isSelfNested ? 6 : 0;
-  const color = "white"
+  const color = "white";
   switch (cluster.type) {
     case "with":
       return formatStyle({ penwidth, color, bgcolor: "#ffddff" });
