@@ -137,3 +137,19 @@ def WithCluster():
     with y:
         pass
     pass
+
+
+# render: true
+def WithNestedCluster():
+    with x:
+        if f():
+            g()
+        h()
+    with y:
+        if z:
+            with z:
+                match a:
+                    case 1:pass
+                    case 2:pass
+        else:
+            return
