@@ -36,22 +36,17 @@ function processClusters(cfg: CFG) {
     return hierarchy;
   }
 
-  // Sort from deepest to shallowest
-  const clusters = cfg.clusters.toSorted((a, b) => b.depth - a.depth);
   const clusterNodes = new Map();
   cfg.graph.forEachNode((node, { cluster }) => {
     if (cluster) {
-      const nodesList = clusterNodes.get(cluster.id);
+      const nodesList = clusterNodes.get(cluster);
       if (nodesList) nodesList.push(node);
-      else clusterNodes.set(cluster.id, [node]);
+      else clusterNodes.set(cluster, [node]);
     }
   });
 
-  console.log("node clusters", clusterNodes);
 
-  // Starting from the top-most cluster
-  for (const cluster of clusters.toReversed()) {
-    // Get to the parent of the current cluster
+  for (const [cluster, nodes] of clusterNodes.entries()) {
     let currentParent = hierarchy;
     for (const parent of getParents(cluster)) {
       currentParent = currentParent.children[parent.id] ??= {
@@ -60,18 +55,48 @@ function processClusters(cfg: CFG) {
         id: parent.id,
       };
     }
-    // Break out the nodes and update the graphs
     const { outer, inner } = breakoutNodes(
-      currentParent.graph,
-      clusterNodes.get(cluster.id),
+      hierarchy.graph,
+      nodes,
     );
-    currentParent.graph = outer;
+    hierarchy.graph = outer;
     currentParent.children[cluster.id] = {
       graph: inner,
       children: {},
       id: cluster.id,
     };
   }
+
+  // const stack = [hierarchy];
+  // for (let current = stack.pop(); current; current = stack.pop()) {
+  //   console.log(`${current.id ?? "toplevel"}: ${current.graph.nodes()}`)
+  //   stack.push(...Object.values(current.children))
+  // }
+
+
+  // // Starting from the top-most cluster
+  // for (const cluster of clusters.toReversed()) {
+  //   // Get to the parent of the current cluster
+  //   let currentParent = hierarchy;
+  //   for (const parent of getParents(cluster)) {
+  //     currentParent = currentParent.children[parent.id] ??= {
+  //       graph: currentParent.graph,
+  //       children: {},
+  //       id: parent.id,
+  //     };
+  //   }
+  //   // Break out the nodes and update the graphs
+  //   const { outer, inner } = breakoutNodes(
+  //     currentParent.graph,
+  //     clusterNodes.get(cluster.id),
+  //   );
+  //   currentParent.graph = outer;
+  //   currentParent.children[cluster.id] = {
+  //     graph: inner,
+  //     children: {},
+  //     id: cluster.id,
+  //   };
+  // }
 
   return hierarchy;
 }
@@ -122,7 +147,7 @@ function renderHierarchy(
 
   const topGraph = cfg.graph;
 
-  console.log("hierarchy", hierarchy);
+  // console.log("hierarchy", hierarchy);
 
   // // First we define all the nodes
   // graph.forEachNode((node) => {

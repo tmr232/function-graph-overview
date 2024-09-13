@@ -103,6 +103,7 @@ export const requirementTests: {
       try {
         graphToDot(cfg);
       } catch (error) {
+        console.trace(error);
         return `failed to render due to ${error}`;
       }
     }
