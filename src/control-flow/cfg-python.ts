@@ -45,19 +45,26 @@ export class CFGBuilder {
       if (entry) this.addEdge(startNode, entry);
       this.entry = startNode;
     }
-    debugger;
     return { graph: this.graph, entry: this.entry, clusters: this.clusters };
   }
 
   private startCluster(type: ClusterType): Cluster {
-    const parent = this.activeClusters.length === 0 ? undefined : this.activeClusters[this.activeClusters.length - 1];
-    const cluster = { id: this.clusterId++, type, parent, depth: this.activeClusters.length + 1 };
+    const parent =
+      this.activeClusters.length === 0
+        ? undefined
+        : this.activeClusters[this.activeClusters.length - 1];
+    const cluster = {
+      id: this.clusterId++,
+      type,
+      parent,
+      depth: this.activeClusters.length + 1,
+    };
     this.clusters.push(cluster);
-    console.log("clusters", this.clusters)
+    console.log("clusters", this.clusters);
     this.activeClusters.push(cluster);
     console.log(cluster);
     console.log("Ha?", cluster, this.clusters, this.activeClusters);
-    console.log("active", this.activeClusters)
+    console.log("active", this.activeClusters);
     return cluster;
   }
   private endCluster(_cluster: Cluster) {
@@ -75,13 +82,16 @@ export class CFGBuilder {
   }
   private addNode(type: NodeType, code: string, lines: number = 1): string {
     const id = `node${this.nodeId++}`;
-    console.log("active", this.activeClusters)
+    console.log("active", this.activeClusters);
     this.graph.addNode(id, {
       type,
       code,
       lines,
       markers: [],
-      cluster: this.activeClusters.length === 0 ? undefined : this.activeClusters[this.activeClusters.length - 1],
+      cluster:
+        this.activeClusters.length === 0
+          ? undefined
+          : this.activeClusters[this.activeClusters.length - 1],
     });
     return id;
   }

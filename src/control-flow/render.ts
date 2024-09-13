@@ -2,7 +2,10 @@ import { distanceFromEntry } from "./graph-ops";
 import type { CFG, CFGGraph, Cluster, ClusterId } from "./cfg-defs";
 import { subgraph } from "graphology-operators";
 
-function breakoutNodes(graph: CFGGraph, nodes: string[]): { outer: CFGGraph, inner: CFGGraph } {
+function breakoutNodes(
+  graph: CFGGraph,
+  nodes: string[],
+): { outer: CFGGraph; inner: CFGGraph } {
   const outerGraph = graph.copy();
   const innerGraph = subgraph(graph, nodes);
   innerGraph.forEachEdge((_edge, _attributes, source, target) => {
@@ -11,7 +14,9 @@ function breakoutNodes(graph: CFGGraph, nodes: string[]): { outer: CFGGraph, inn
   return { outer: outerGraph, inner: innerGraph };
 }
 type hGraph = {
-  graph: CFGGraph, children: { [key: ClusterId]: hGraph }, id?: ClusterId
+  graph: CFGGraph;
+  children: { [key: ClusterId]: hGraph };
+  id?: ClusterId;
 };
 function processClusters(cfg: CFG) {
   /*
@@ -42,7 +47,6 @@ function processClusters(cfg: CFG) {
     }
   });
 
-
   console.log("node clusters", clusterNodes);
 
   // Starting from the top-most cluster
@@ -50,12 +54,23 @@ function processClusters(cfg: CFG) {
     // Get to the parent of the current cluster
     let currentParent = hierarchy;
     for (const parent of getParents(cluster)) {
-      currentParent = currentParent.children[parent.id] ??= { graph: currentParent.graph, children: {}, id: parent.id };
+      currentParent = currentParent.children[parent.id] ??= {
+        graph: currentParent.graph,
+        children: {},
+        id: parent.id,
+      };
     }
     // Break out the nodes and update the graphs
-    const { outer, inner } = breakoutNodes(currentParent.graph, clusterNodes.get(cluster.id));
+    const { outer, inner } = breakoutNodes(
+      currentParent.graph,
+      clusterNodes.get(cluster.id),
+    );
     currentParent.graph = outer;
-    currentParent.children[cluster.id] = { graph: inner, children: {}, id: cluster.id };
+    currentParent.children[cluster.id] = {
+      graph: inner,
+      children: {},
+      id: cluster.id,
+    };
   }
 
   return hierarchy;
@@ -74,7 +89,7 @@ function renderNode(graph: CFGGraph, node: string, verbose: boolean): string {
   let label = "";
   if (verbose) {
     label = `${node} ${graph.getNodeAttributes(node).type} ${graph.getNodeAttributes(node).code}`;
-    label = `${graph.getNodeAttribute(node, "cluster")?.id}`
+    label = `${graph.getNodeAttribute(node, "cluster")?.id}`;
   }
   let shape = "box";
   let fillColor = "lightgray";
@@ -98,7 +113,11 @@ function renderNode(graph: CFGGraph, node: string, verbose: boolean): string {
   return `    ${node} [label="${label}" shape="${shape}" fillcolor="${fillColor}" style="filled" height=${height}];\n`;
 }
 
-function renderHierarchy(cfg: CFG, hierarchy: hGraph, verbose: boolean = false) {
+function renderHierarchy(
+  cfg: CFG,
+  hierarchy: hGraph,
+  verbose: boolean = false,
+) {
   let dotContent = `digraph "" {\n    node [shape=box];\n    edge [headport=n tailport=s]\n    bgcolor="transparent"\n`;
 
   const topGraph = cfg.graph;
@@ -119,15 +138,19 @@ function renderHierarchy(cfg: CFG, hierarchy: hGraph, verbose: boolean = false) 
   });
   hierarchy.graph.forEachEdge((edge, _attributes, source, target) => {
     dotContent += renderEdge(edge, source, target, topGraph);
-  })
+  });
   // And eventually we draw all non-subgraph edges - are there any?
 
   dotContent += "}";
   return dotContent;
 }
 
-function renderSubgraphs(hierarchy: hGraph, verbose: boolean, topGraph: CFGGraph) {
-  let dotContent = `subgraph cluster_${hierarchy.id ?? "toplevel"} {\n`
+function renderSubgraphs(
+  hierarchy: hGraph,
+  verbose: boolean,
+  topGraph: CFGGraph,
+) {
+  let dotContent = `subgraph cluster_${hierarchy.id ?? "toplevel"} {\n`;
   hierarchy.graph.forEachNode((node) => {
     dotContent += renderNode(topGraph, node, verbose);
   });
@@ -136,7 +159,7 @@ function renderSubgraphs(hierarchy: hGraph, verbose: boolean, topGraph: CFGGraph
   }
   hierarchy.graph.forEachEdge((edge, _attributes, source, target) => {
     dotContent += renderEdge(edge, source, target, topGraph);
-  })
+  });
   dotContent += "\n}";
   return dotContent;
 }
@@ -217,7 +240,12 @@ export function graphToDot(cfg: CFG, verbose: boolean = false): string {
   return dotContent;
 }
 
-function renderEdge(edge: string, source: string, target: string, topGraph: CFGGraph) {
+function renderEdge(
+  edge: string,
+  source: string,
+  target: string,
+  topGraph: CFGGraph,
+) {
   const attributes = topGraph.getEdgeAttributes(edge);
   const penwidth = 1;
   let color = "blue";

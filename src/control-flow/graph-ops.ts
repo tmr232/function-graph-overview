@@ -1,7 +1,7 @@
 import { MultiDirectedGraph } from "graphology";
 import { subgraph } from "graphology-operators";
 import { bfsFromNode } from "graphology-traversal";
-import type { CFG } from "./cfg-defs";
+import type { CFG, GraphNode } from "./cfg-defs";
 
 export function distanceFromEntry(cfg: CFG): Map<string, number> {
   const { graph, entry } = cfg;
@@ -17,11 +17,11 @@ export function distanceFromEntry(cfg: CFG): Map<string, number> {
 /// Can return null to indicate that the merge is not allowed.
 /// The function MUST NOT modify the input arguments.
 export type AttrMerger = (
-  nodeAttrs: object,
-  intoAttrs: object,
-) => object | null;
+  nodeAttrs: GraphNode,
+  intoAttrs: GraphNode,
+) => GraphNode | null;
 function collapseNode(
-  graph: MultiDirectedGraph,
+  graph: MultiDirectedGraph<GraphNode>,
   node: string,
   into: string,
   mergeAttrs?: AttrMerger,
@@ -37,9 +37,7 @@ function collapseNode(
     }
 
     for (const [name, value] of Object.entries(attrs)) {
-      console.log("before", graph.getNodeAttributes(into));
-      graph.setNodeAttribute(into, name, value);
-      console.log("after", graph.getNodeAttributes(into));
+      graph.setNodeAttribute(into, name as keyof GraphNode, value);
     }
   }
 
@@ -104,11 +102,11 @@ export function trimFor(cfg: CFG): CFG {
   return newCFG;
 }
 
-
-function evolve<T extends { [key: string]: any }>(obj: T, attrs: { [key: string]: any }): T {
+function evolve<T extends { [key: string]: unknown }>(
+  obj: T,
+  attrs: { [key: string]: unknown },
+): T {
   const newObj = structuredClone(obj);
-  for (const [name, value] of Object.entries(attrs)) {
-    newObj[name] = value;
-  }
+  Object.assign(newObj, attrs);
   return newObj;
 }

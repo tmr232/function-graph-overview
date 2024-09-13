@@ -1,4 +1,4 @@
-import { type CFG } from "../control-flow/cfg-defs";
+import { mergeNodeAttrs, type CFG } from "../control-flow/cfg-defs";
 import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
 import type { MultiDirectedGraph } from "graphology";
 import { bfsFromNode } from "graphology-traversal";
@@ -21,7 +21,7 @@ function buildSimpleCFG(
   language: CFGLanguage,
   functionNode: Parser.SyntaxNode,
 ): CFG {
-  return simplifyCFG(buildCFG(language, functionNode));
+  return simplifyCFG(buildCFG(language, functionNode), mergeNodeAttrs);
 }
 
 function buildMarkerCFG(
@@ -101,13 +101,11 @@ export const requirementTests: {
     if (testFunc.reqs.render) {
       const cfg = buildCFG(testFunc.language, testFunc.function);
       try {
-        debugger;
         graphToDot(cfg);
       } catch (error) {
-        return `failed to render due to ${error}`
+        return `failed to render due to ${error}`;
       }
     }
     return null;
-  }
-
+  },
 };
