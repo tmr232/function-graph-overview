@@ -76,15 +76,13 @@ export class CFGBuilder {
   }
   private addNode(type: NodeType, code: string, lines: number = 1): string {
     const id = `node${this.nodeId++}`;
+    const cluster = this.activeClusters[this.activeClusters.length - 1];
     this.graph.addNode(id, {
       type,
       code,
       lines,
       markers: [],
-      cluster:
-        this.activeClusters.length === 0
-          ? undefined
-          : this.activeClusters[this.activeClusters.length - 1],
+      cluster
     });
     return id;
   }
@@ -204,11 +202,10 @@ export class CFGBuilder {
       const finallyBlock = this.withCluster("finally", () =>
         getBlock(finallySyntax),
       );
-
       const entryNode = this.addNode("EMPTY", "try-head");
       const exitNode = this.addNode("MERGE", "try-merge");
 
-      if (bodyBlock.entry) this.addEdge(entryNode, bodyBlock.entry);
+      // if (bodyBlock.entry) this.addEdge(entryNode, bodyBlock.entry);
       if (finallyBlock) {
         if (finallyBlock.entry && bodyBlock.exit)
           this.addEdge(bodyBlock.exit, finallyBlock.entry);
@@ -216,7 +213,7 @@ export class CFGBuilder {
       } else {
         if (bodyBlock.exit) this.addEdge(bodyBlock.exit, exitNode);
       }
-      return blockHandler.update({ entry: entryNode, exit: exitNode });
+      return blockHandler.update({ entry: bodyBlock.entry, exit: exitNode });
     });
   }
   private processWithStatement(withSyntax: Parser.SyntaxNode): BasicBlock {

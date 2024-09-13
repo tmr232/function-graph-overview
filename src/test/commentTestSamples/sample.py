@@ -140,7 +140,7 @@ def WithCluster():
 
 
 # render: true,
-# exits: 0
+# exits: 2
 def WithNestedCluster():
     with x:
         if f():
@@ -156,7 +156,8 @@ def WithNestedCluster():
             return
 
 
-# exits: 1
+# exits: 1,
+# render: true
 def try_finally():
     try:
         if x:
