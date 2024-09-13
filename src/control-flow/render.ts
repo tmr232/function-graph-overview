@@ -1,5 +1,11 @@
 import { distanceFromEntry } from "./graph-ops";
-import type { CFG, CFGGraph, Cluster, ClusterId } from "./cfg-defs";
+import type {
+  CFG,
+  CFGGraph,
+  Cluster,
+  ClusterId,
+  ClusterType,
+} from "./cfg-defs";
 import { subgraph } from "graphology-operators";
 
 function breakoutNodes(
@@ -13,12 +19,12 @@ function breakoutNodes(
   });
   return { outer: outerGraph, inner: innerGraph };
 }
-type hGraph = {
+type Hierarchy = {
   graph: CFGGraph;
-  children: { [key: ClusterId]: hGraph };
-  id?: ClusterId;
+  children: { [key: ClusterId]: Hierarchy };
+  cluster?: Cluster;
 };
-function processClusters(cfg: CFG) {
+function buildHierarchy(cfg: CFG): Hierarchy {
   /*
   1. Go through the nodes and collect the clusterset->node mapping
     a. Clustersets should be converted to array and sorted
@@ -31,7 +37,7 @@ function processClusters(cfg: CFG) {
 
   Second option is better.
   */
-  const hierarchy: hGraph = { graph: cfg.graph, children: {} };
+  const hierarchy: Hierarchy = { graph: cfg.graph, children: {} };
 
   const clusterNodes = new Map();
   cfg.graph.forEachNode((node, { cluster }) => {
@@ -48,7 +54,7 @@ function processClusters(cfg: CFG) {
       currentParent = currentParent.children[parent.id] ??= {
         graph: currentParent.graph,
         children: {},
-        id: parent.id,
+        cluster: parent,
       };
     }
     const { outer, inner } = breakoutNodes(hierarchy.graph, nodes);
@@ -56,7 +62,7 @@ function processClusters(cfg: CFG) {
     currentParent.children[cluster.id] = {
       graph: inner,
       children: {},
-      id: cluster.id,
+      cluster: cluster,
     };
   }
 
@@ -102,7 +108,7 @@ function renderNode(graph: CFGGraph, node: string, verbose: boolean): string {
 
 function renderHierarchy(
   cfg: CFG,
-  hierarchy: hGraph,
+  hierarchy: Hierarchy,
   verbose: boolean = false,
 ) {
   let dotContent = `digraph "" {\n    node [shape=box];\n    edge [headport=n tailport=s]\n    bgcolor="transparent"\n`;
@@ -126,12 +132,20 @@ function renderHierarchy(
   return dotContent;
 }
 
+function clusterStyle(type: ClusterType): string {
+  switch (type) {
+    case "with":
+      return 'color="purple";\npenwidth=3;\n#bgcolor="#ffaaff66";\n';
+  }
+}
+
 function renderSubgraphs(
-  hierarchy: hGraph,
+  hierarchy: Hierarchy,
   verbose: boolean,
   topGraph: CFGGraph,
 ) {
-  let dotContent = `subgraph cluster_${hierarchy.id ?? "toplevel"} {\n`;
+  let dotContent = `subgraph cluster_${hierarchy.cluster?.id ?? "toplevel"} {\n`;
+  if (hierarchy.cluster) dotContent += clusterStyle(hierarchy.cluster.type);
   hierarchy.graph.forEachNode((node) => {
     dotContent += renderNode(topGraph, node, verbose);
   });
@@ -146,7 +160,7 @@ function renderSubgraphs(
 }
 
 export function graphToDot(cfg: CFG, verbose: boolean = false): string {
-  const hierarchy = processClusters(cfg);
+  const hierarchy = buildHierarchy(cfg);
   return renderHierarchy(cfg, hierarchy, verbose);
 
   const graph = cfg.graph;
