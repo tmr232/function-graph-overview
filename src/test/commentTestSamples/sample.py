@@ -139,7 +139,8 @@ def WithCluster():
     pass
 
 
-# render: true
+# render: true,
+# exits: 0
 def WithNestedCluster():
     with x:
         if f():

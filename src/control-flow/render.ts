@@ -32,9 +32,6 @@ function processClusters(cfg: CFG) {
   Second option is better.
   */
   const hierarchy: hGraph = { graph: cfg.graph, children: {} };
-  if (!cfg.clusters) {
-    return hierarchy;
-  }
 
   const clusterNodes = new Map();
   cfg.graph.forEachNode((node, { cluster }) => {
@@ -45,7 +42,6 @@ function processClusters(cfg: CFG) {
     }
   });
 
-
   for (const [cluster, nodes] of clusterNodes.entries()) {
     let currentParent = hierarchy;
     for (const parent of getParents(cluster)) {
@@ -55,10 +51,7 @@ function processClusters(cfg: CFG) {
         id: parent.id,
       };
     }
-    const { outer, inner } = breakoutNodes(
-      hierarchy.graph,
-      nodes,
-    );
+    const { outer, inner } = breakoutNodes(hierarchy.graph, nodes);
     hierarchy.graph = outer;
     currentParent.children[cluster.id] = {
       graph: inner,
@@ -66,37 +59,6 @@ function processClusters(cfg: CFG) {
       id: cluster.id,
     };
   }
-
-  // const stack = [hierarchy];
-  // for (let current = stack.pop(); current; current = stack.pop()) {
-  //   console.log(`${current.id ?? "toplevel"}: ${current.graph.nodes()}`)
-  //   stack.push(...Object.values(current.children))
-  // }
-
-
-  // // Starting from the top-most cluster
-  // for (const cluster of clusters.toReversed()) {
-  //   // Get to the parent of the current cluster
-  //   let currentParent = hierarchy;
-  //   for (const parent of getParents(cluster)) {
-  //     currentParent = currentParent.children[parent.id] ??= {
-  //       graph: currentParent.graph,
-  //       children: {},
-  //       id: parent.id,
-  //     };
-  //   }
-  //   // Break out the nodes and update the graphs
-  //   const { outer, inner } = breakoutNodes(
-  //     currentParent.graph,
-  //     clusterNodes.get(cluster.id),
-  //   );
-  //   currentParent.graph = outer;
-  //   currentParent.children[cluster.id] = {
-  //     graph: inner,
-  //     children: {},
-  //     id: cluster.id,
-  //   };
-  // }
 
   return hierarchy;
 }
@@ -147,24 +109,18 @@ function renderHierarchy(
 
   const topGraph = cfg.graph;
 
-  // console.log("hierarchy", hierarchy);
-
-  // // First we define all the nodes
-  // graph.forEachNode((node) => {
-  //   dotContent += renderNode(graph, node, verbose);
-  // });
-
-  // Then we start drawing the subgraphs
+  // First we draw all subgraphs
   for (const child of Object.values(hierarchy.children)) {
     dotContent += renderSubgraphs(child, verbose, topGraph);
   }
+
+  // Then everything that remains - connecting edges and non-clustered nodes
   hierarchy.graph.forEachNode((node) => {
     dotContent += renderNode(topGraph, node, verbose);
   });
   hierarchy.graph.forEachEdge((edge, _attributes, source, target) => {
     dotContent += renderEdge(edge, source, target, topGraph);
   });
-  // And eventually we draw all non-subgraph edges - are there any?
 
   dotContent += "}";
   return dotContent;

@@ -72,7 +72,6 @@ export type CFGGraph = MultiDirectedGraph<GraphNode, GraphEdge>;
 export interface CFG {
   graph: CFGGraph;
   entry: string;
-  clusters?: Cluster[];
 }
 
 export class BlockHandler {

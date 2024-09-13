@@ -58,7 +58,7 @@ export const requirementTests: {
   [key: string]: RequirementHandler | undefined;
 } = {
   nodes(testFunc: TestFunction) {
-    if (testFunc.reqs.nodes) {
+    if (testFunc.reqs.nodes !== undefined) {
       const cfg = buildSimpleCFG(testFunc.language, testFunc.function);
       if (cfg.graph.order !== testFunc.reqs.nodes) {
         return `expected ${testFunc.reqs.nodes} nodes but found ${cfg.graph.order}`;
@@ -67,7 +67,7 @@ export const requirementTests: {
     return null;
   },
   exits(testFunc: TestFunction) {
-    if (testFunc.reqs.exits) {
+    if (testFunc.reqs.exits !== undefined) {
       const cfg = buildSimpleCFG(testFunc.language, testFunc.function);
       const exitNodes = cfg.graph.filterNodes(
         (node) => cfg.graph.outDegree(node) === 0,
@@ -79,7 +79,7 @@ export const requirementTests: {
     return null;
   },
   reaches(testFunc: TestFunction) {
-    if (testFunc.reqs.reaches) {
+    if (testFunc.reqs.reaches !== undefined) {
       const cfg = buildMarkerCFG(testFunc.language, testFunc.function);
       const markerMap = getMarkerMap(cfg);
       const getNode = (marker: string) => {
@@ -98,7 +98,7 @@ export const requirementTests: {
     return null;
   },
   render(testFunc: TestFunction) {
-    if (testFunc.reqs.render) {
+    if (testFunc.reqs.render !== undefined) {
       const cfg = buildCFG(testFunc.language, testFunc.function);
       try {
         graphToDot(cfg);

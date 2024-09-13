@@ -23,7 +23,6 @@ export class CFGBuilder {
   private readonly flatSwitch: boolean;
   private readonly markerPattern: RegExp | null;
   private activeClusters: Cluster[] = [];
-  private clusters: Cluster[] = [];
 
   constructor(options?: BuilderOptions) {
     this.entry = null;
@@ -45,7 +44,7 @@ export class CFGBuilder {
       if (entry) this.addEdge(startNode, entry);
       this.entry = startNode;
     }
-    return { graph: this.graph, entry: this.entry, clusters: this.clusters };
+    return { graph: this.graph, entry: this.entry };
   }
 
   private startCluster(type: ClusterType): Cluster {
@@ -59,12 +58,7 @@ export class CFGBuilder {
       parent,
       depth: this.activeClusters.length + 1,
     };
-    this.clusters.push(cluster);
-    console.log("clusters", this.clusters);
     this.activeClusters.push(cluster);
-    console.log(cluster);
-    console.log("Ha?", cluster, this.clusters, this.activeClusters);
-    console.log("active", this.activeClusters);
     return cluster;
   }
   private endCluster(_cluster: Cluster) {
@@ -82,7 +76,6 @@ export class CFGBuilder {
   }
   private addNode(type: NodeType, code: string, lines: number = 1): string {
     const id = `node${this.nodeId++}`;
-    console.log("active", this.activeClusters);
     this.graph.addNode(id, {
       type,
       code,

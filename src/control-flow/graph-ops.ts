@@ -7,7 +7,7 @@ export function distanceFromEntry(cfg: CFG): Map<string, number> {
   const { graph, entry } = cfg;
   const levels = new Map();
 
-  bfsFromNode(graph, entry, (node, attr, depth) => {
+  bfsFromNode(graph, entry, (node, _attr, depth) => {
     levels.set(node, depth);
   });
 
@@ -97,12 +97,10 @@ export function trimFor(cfg: CFG): CFG {
     reachable.push(node);
   });
 
-  const newCFG = structuredClone(cfg);
-  newCFG.graph = subgraph(graph, reachable);
-  return newCFG;
+  return evolve(cfg, { graph: subgraph(graph, reachable) });
 }
 
-function evolve<T extends { [key: string]: unknown }>(
+function evolve<T extends object>(
   obj: T,
   attrs: { [key: string]: unknown },
 ): T {
