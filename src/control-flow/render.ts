@@ -1,6 +1,7 @@
 import { distanceFromEntry } from "./graph-ops";
 import type { CFG, CFGGraph, Cluster, ClusterId } from "./cfg-defs";
 import { subgraph } from "graphology-operators";
+import { MultiDirectedGraph } from "graphology";
 
 /**
  * Break a subgraph out of a parent graph
@@ -58,8 +59,13 @@ function buildHierarchy(cfg: CFG): Hierarchy {
   )) {
     let currentParent = hierarchy;
     for (const parent of getParents(cluster)) {
-      // Since we're going down the hierarchy, we know the parents always exist.
-      currentParent = currentParent.children[parent.id];
+      // We can't be sure the parents exist as some clusters may have no nodes of their own.
+      currentParent = currentParent.children[parent.id] ??= {
+        // Clusters only get a graph when breaking out nodes.
+        graph: new MultiDirectedGraph(),
+        children: {},
+        cluster: parent,
+      };
     }
     const { outer, inner } = breakoutNodes(hierarchy.graph, nodes);
     hierarchy.graph = outer;
@@ -71,6 +77,7 @@ function buildHierarchy(cfg: CFG): Hierarchy {
     };
   }
 
+  //
   // cfg.graph.forEachNode((node, { cluster }) => {
   //   console.log(node, cluster?.id ?? "toplevel");
   // });

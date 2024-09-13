@@ -156,7 +156,7 @@ def WithNestedCluster():
             return
 
 
-# exits: 1,
+# exits: 2,
 # render: true
 def try_finally():
     try:

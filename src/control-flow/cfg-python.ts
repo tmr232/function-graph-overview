@@ -202,18 +202,12 @@ export class CFGBuilder {
       const finallyBlock = this.withCluster("finally", () =>
         getBlock(finallySyntax),
       );
-      const entryNode = this.addNode("EMPTY", "try-head");
-      const exitNode = this.addNode("MERGE", "try-merge");
 
-      // if (bodyBlock.entry) this.addEdge(entryNode, bodyBlock.entry);
-      if (finallyBlock) {
-        if (finallyBlock.entry && bodyBlock.exit)
-          this.addEdge(bodyBlock.exit, finallyBlock.entry);
-        if (finallyBlock.exit) this.addEdge(finallyBlock.exit, exitNode);
-      } else {
-        if (bodyBlock.exit) this.addEdge(bodyBlock.exit, exitNode);
-      }
-      return blockHandler.update({ entry: bodyBlock.entry, exit: exitNode });
+      if (bodyBlock.exit && finallyBlock?.entry) this.addEdge(bodyBlock.exit, finallyBlock.entry);
+      return blockHandler.update({
+        entry: bodyBlock.entry,
+        exit: finallyBlock?.exit ?? bodyBlock.exit,
+      });
     });
   }
   private processWithStatement(withSyntax: Parser.SyntaxNode): BasicBlock {
