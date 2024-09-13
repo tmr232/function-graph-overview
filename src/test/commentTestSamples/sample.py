@@ -154,3 +154,13 @@ def WithNestedCluster():
                     case 2:pass
         else:
             return
+
+
+# exits: 1
+def try_finally():
+    try:
+        if x:
+            return
+        pass
+    finally:
+        pass

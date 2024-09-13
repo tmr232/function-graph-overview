@@ -161,11 +161,63 @@ export class CFGBuilder {
         return this.processComment(node);
       case "with_statement":
         return this.processWithStatement(node);
+      case "try_statement":
+        return this.processTryStatement(node);
       default: {
         const newNode = this.addNode("STATEMENT", node.text);
         return { entry: newNode, exit: newNode };
       }
     }
+  }
+  private processTryStatement(trySyntax: Parser.SyntaxNode): BasicBlock {
+    /*
+    Here's an idea - I can duplicate the finally blocks!
+    Then if there's a return, I stick the finally before it.
+    In other cases, the finally is after the end of the try-body.
+    This is probably the best course of action.
+    */
+    const blockHandler = new BlockHandler();
+    const match = this.matchQuery(
+      trySyntax,
+      "try",
+      `
+      (try_statement
+        body: (block) @try-body
+          (except_clause 
+            (_)? @except-pattern
+            (block) @except-body
+          )* @except
+          (else_clause body: (block) @else-body)? @else
+          (finally_clause (block) @finally-body)? @finally
+      ) @try
+      `,
+    );
+
+    const getBlock = this.blockGetter(blockHandler);
+
+    const bodySyntax = this.getSyntax(match, "try-body");
+    const finallySyntax = this.getSyntax(match, "finally-body");
+    return this.withCluster("try-complex", () => {
+      const bodyBlock = this.withCluster("try", () =>
+        getBlock(bodySyntax),
+      ) as BasicBlock;
+      const finallyBlock = this.withCluster("finally", () =>
+        getBlock(finallySyntax),
+      );
+
+      const entryNode = this.addNode("EMPTY", "try-head");
+      const exitNode = this.addNode("MERGE", "try-merge");
+
+      if (bodyBlock.entry) this.addEdge(entryNode, bodyBlock.entry);
+      if (finallyBlock) {
+        if (finallyBlock.entry && bodyBlock.exit)
+          this.addEdge(bodyBlock.exit, finallyBlock.entry);
+        if (finallyBlock.exit) this.addEdge(finallyBlock.exit, exitNode);
+      } else {
+        if (bodyBlock.exit) this.addEdge(bodyBlock.exit, exitNode);
+      }
+      return blockHandler.update({ entry: entryNode, exit: exitNode });
+    });
   }
   private processWithStatement(withSyntax: Parser.SyntaxNode): BasicBlock {
     const blockHandler = new BlockHandler();

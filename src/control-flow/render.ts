@@ -136,6 +136,14 @@ function clusterStyle(type: ClusterType): string {
   switch (type) {
     case "with":
       return 'color="purple";\npenwidth=3;\n#bgcolor="#ffaaff66";\n';
+    case "try-complex":
+      return 'penwidth=0;\nbgcolor="#ddddff";\n';
+    case "try":
+      return 'bgcolor="#ddffdd";\n';
+    case "finally":
+      return 'bgcolor="#ffffdd";\n';
+    default:
+      return "";
   }
 }
 

@@ -31,7 +31,13 @@ export type NodeType =
   | "CASE_CONDITION";
 export type EdgeType = "regular" | "consequence" | "alternative";
 
-export type ClusterType = "with";
+export type ClusterType =
+  | "with"
+  | "try"
+  | "except"
+  | "else"
+  | "finally"
+  | "try-complex";
 export type ClusterId = number;
 export type Cluster = {
   id: ClusterId;
