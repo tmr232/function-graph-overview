@@ -117,8 +117,8 @@ function renderHierarchy(cfg: CFG, hierarchy: hGraph, verbose: boolean = false) 
   hierarchy.graph.forEachNode((node) => {
     dotContent += renderNode(topGraph, node, verbose);
   });
-  hierarchy.graph.forEachEdge((_edge, _attributes, source, target) => {
-    dotContent += `${source} -> ${target};\n`
+  hierarchy.graph.forEachEdge((edge, _attributes, source, target) => {
+    dotContent += renderEdge(edge, source, target, topGraph);
   })
   // And eventually we draw all non-subgraph edges - are there any?
 
@@ -134,8 +134,8 @@ function renderSubgraphs(hierarchy: hGraph, verbose: boolean, topGraph: CFGGraph
   for (const child of Object.values(hierarchy.children)) {
     dotContent += `\n${renderSubgraphs(child, verbose, topGraph)}\n`;
   }
-  hierarchy.graph.forEachEdge((_edge, _attributes, source, target) => {
-    dotContent += `${source} -> ${target};\n`
+  hierarchy.graph.forEachEdge((edge, _attributes, source, target) => {
+    dotContent += renderEdge(edge, source, target, topGraph);
   })
   dotContent += "\n}";
   return dotContent;
@@ -215,4 +215,21 @@ export function graphToDot(cfg: CFG, verbose: boolean = false): string {
 
   dotContent += "}";
   return dotContent;
+}
+
+function renderEdge(edge: string, source: string, target: string, topGraph: CFGGraph) {
+  const attributes = topGraph.getEdgeAttributes(edge);
+  const penwidth = 1;
+  let color = "blue";
+  switch (attributes.type) {
+    case "consequence":
+      color = "green";
+      break;
+    case "alternative":
+      color = "red";
+      break;
+    default:
+      color = "blue";
+  }
+  return `    ${source} -> ${target} [penwidth=${penwidth} color=${color}];\n`;
 }
