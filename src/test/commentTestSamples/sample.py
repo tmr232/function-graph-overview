@@ -126,7 +126,8 @@ def Return():
     return 2
 
 
-# nodes: 4
+# nodes: 4,
+# render: true
 def WithCluster():
     pass
     with x:

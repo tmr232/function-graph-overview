@@ -37,7 +37,9 @@ function collapseNode(
     }
 
     for (const [name, value] of Object.entries(attrs)) {
+      console.log("before", graph.getNodeAttributes(into));
       graph.setNodeAttribute(into, name, value);
+      console.log("after", graph.getNodeAttributes(into));
     }
   }
 
@@ -86,8 +88,7 @@ export function simplifyCFG(cfg: CFG, mergeAttrs?: AttrMerger): CFG {
   } catch (error) {
     console.log(error);
   }
-
-  return { graph, entry };
+  return evolve(cfg, { graph, entry });
 }
 
 export function trimFor(cfg: CFG): CFG {
@@ -98,5 +99,16 @@ export function trimFor(cfg: CFG): CFG {
     reachable.push(node);
   });
 
-  return { graph: subgraph(graph, reachable), entry };
+  const newCFG = structuredClone(cfg);
+  newCFG.graph = subgraph(graph, reachable);
+  return newCFG;
+}
+
+
+function evolve<T extends { [key: string]: any }>(obj: T, attrs: { [key: string]: any }): T {
+  const newObj = structuredClone(obj);
+  for (const [name, value] of Object.entries(attrs)) {
+    newObj[name] = value;
+  }
+  return newObj;
 }

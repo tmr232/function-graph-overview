@@ -8,6 +8,7 @@ import {
 } from "../control-flow/cfg";
 import type Parser from "web-tree-sitter";
 import type { TestFunction } from "./commentTestTypes";
+import { graphToDot } from "../control-flow/render";
 
 const markerPattern: RegExp = /CFG: (\w+)/;
 
@@ -96,4 +97,17 @@ export const requirementTests: {
     }
     return null;
   },
+  render(testFunc: TestFunction) {
+    if (testFunc.reqs.render) {
+      const cfg = buildCFG(testFunc.language, testFunc.function);
+      try {
+        debugger;
+        graphToDot(cfg);
+      } catch (error) {
+        return `failed to render due to ${error}`
+      }
+    }
+    return null;
+  }
+
 };

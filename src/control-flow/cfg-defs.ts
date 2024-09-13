@@ -33,14 +33,14 @@ export type EdgeType = "regular" | "consequence" | "alternative";
 
 export type ClusterType = "with";
 export type ClusterId = number;
-export type Cluster = { id: ClusterId; type: ClusterType };
+export type Cluster = { id: ClusterId; type: ClusterType, parent?: Cluster, depth: number };
 
 export interface GraphNode {
   type: NodeType;
   code: string;
   lines: number;
   markers: string[];
-  clusters?: Set<ClusterId>;
+  cluster?: Cluster;
 }
 
 export interface GraphEdge {
@@ -63,10 +63,11 @@ export interface BasicBlock {
   gotos?: Goto[];
 }
 
+export type CFGGraph = MultiDirectedGraph<GraphNode, GraphEdge>
 export interface CFG {
-  graph: MultiDirectedGraph<GraphNode, GraphEdge>;
+  graph: CFGGraph;
   entry: string;
-  clusters?: Map<ClusterId, Cluster>;
+  clusters?: Cluster[];
 }
 
 export class BlockHandler {
@@ -127,7 +128,7 @@ export function mergeNodeAttrs(
   from: GraphNode,
   into: GraphNode,
 ): GraphNode | null {
-  if (!maybeSetsEqual(from.clusters, into.clusters)) {
+  if (from.cluster !== into.cluster) {
     return null;
   }
   return {
@@ -135,7 +136,7 @@ export function mergeNodeAttrs(
     code: `${from.code}\n${into.code}`,
     lines: from.lines + into.lines,
     markers: [...from.markers, ...into.markers],
-    clusters: from.clusters?.union(into.clusters ?? new Set()),
+    cluster: from.cluster,
   };
 }
 export interface Case {
