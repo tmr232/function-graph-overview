@@ -164,7 +164,7 @@ def raise_exception():
 
 # render: true,
 # exits: 1,
-# nodes: 5
+# nodes: 6
 def raise_again():
     try:
         raise x
@@ -183,7 +183,7 @@ def yield_value():
         yield x
     
 
-# exits: 2,
+# exits: 1,
 # nodes: 4,
 # render: true
 def try_except():

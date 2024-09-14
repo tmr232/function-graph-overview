@@ -2,34 +2,45 @@
   import testRecordsJson from "../../../../dist/tests/commentTests.json?json";
   import type { TestFuncRecord } from "../../../test/commentTestUtils";
   import TestGraph from "./TestGraph.svelte";
-  import { runTest, type TestResults } from "./utils";
+  import {
+    runTest,
+    type TestResults,
+    initialize as initializeUtils,
+  } from "./utils";
+
   const testRecords = testRecordsJson as TestFuncRecord[];
 
-  const testResults = testRecords.map((record) => {
-    let results: TestResults[];
-    try {
-      results = runTest(record);
-    } catch (error) {
-      console.trace(
-        `\nFailed running tests for ${record.language}: ${record.name}\n`,
-        error,
-      );
-      results = [
-        {
-          reqName: "Tests",
-          reqValue: "Failed to complete",
-          failure: `${error}`,
-        },
-      ];
-    }
-    return {
-      record,
-      failed: !results.every((result) => result.failure === null),
-      results,
-    };
-  });
+  async function runAllTests() {
+    await initializeUtils();
 
-  const failCount = testResults.filter(({ failed }) => failed).length;
+    const testResults = testRecords.map((record) => {
+      let results: TestResults[];
+      try {
+        results = runTest(record);
+      } catch (error) {
+        console.trace(
+          `\nFailed running tests for ${record.language}: ${record.name}\n`,
+          error,
+        );
+        results = [
+          {
+            reqName: "Tests",
+            reqValue: "Failed to complete",
+            failure: `${error}`,
+          },
+        ];
+      }
+      return {
+        record,
+        failed: !results.every((result) => result.failure === null),
+        results,
+      };
+    });
+
+    const failCount = testResults.filter(({ failed }) => failed).length;
+
+    return { testResults, failCount };
+  }
 
   let simplify: boolean = true;
   let verbose: boolean = false;
@@ -54,35 +65,37 @@
   <input type="checkbox" id="showAll" bind:checked={showAll} />
   <label for="showAll">Show All</label>
 </div>
-<div class="content">
-  <div class="summary" class:green={failCount === 0} class:red={failCount}>
-    {#if failCount === 0}
-      All tests pass.
-    {:else}
-      {failCount} failing test{failCount > 1 ? "s" : ""}.
-    {/if}
-  </div>
-  <div class="container">
-    {#each testResults as { record, failed, results } (record)}
-      {#if failed || showAll}
-        <div class="code-side" data-failed={failed}>
-          <div class="test-name">{record.language}: {record.name}</div>
-          <div class="code"><pre>{record.code}</pre></div>
-          <div class="results">
-            {#each results as { reqName, reqValue, failure } (reqName)}
-              {#if failure !== null}
-                <div class="result">
-                  {reqName}: {reqValue}; {failure}
-                </div>
-              {/if}
-            {/each}
-          </div>
-        </div>
-        <TestGraph {record} {simplify} {verbose} {trim} {flatSwitch} />
+{#await runAllTests() then { failCount, testResults }}
+  <div class="content">
+    <div class="summary" class:green={failCount === 0} class:red={failCount}>
+      {#if failCount === 0}
+        All tests pass.
+      {:else}
+        {failCount} failing test{failCount > 1 ? "s" : ""}.
       {/if}
-    {/each}
+    </div>
+    <div class="container">
+      {#each testResults as { record, failed, results } (record)}
+        {#if failed || showAll}
+          <div class="code-side" data-failed={failed}>
+            <div class="test-name">{record.language}: {record.name}</div>
+            <div class="code"><pre>{record.code}</pre></div>
+            <div class="results">
+              {#each results as { reqName, reqValue, failure } (reqName)}
+                {#if failure !== null}
+                  <div class="result">
+                    {reqName}: {reqValue}; {failure}
+                  </div>
+                {/if}
+              {/each}
+            </div>
+          </div>
+          <TestGraph {record} {simplify} {verbose} {trim} {flatSwitch} />
+        {/if}
+      {/each}
+    </div>
   </div>
-</div>
+{/await}
 
 <style>
   .content {

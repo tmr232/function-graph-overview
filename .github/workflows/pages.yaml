@@ -1,5 +1,6 @@
 name: Github Pages
 on:
+  pull_request:
   push:
     branches: "main"
 
@@ -20,6 +21,7 @@ jobs:
         with:
           path: ./dist/demo
   deploy:
+    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment

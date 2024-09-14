@@ -224,6 +224,9 @@ export class CFGBuilder {
     const exceptSyntaxMany = this.getSyntaxMany(match, "except-body");
     const elseSyntax = this.getSyntax(match, "else-body");
     const finallySyntax = this.getSyntax(match, "finally-body");
+
+    const mergeNode = this.addNode("MERGE", "merge try-complex");
+
     return this.withCluster("try-complex", (tryComplexCluster) => {
       const bodyBlock = this.withCluster("try", () =>
         getBlock(bodySyntax),
@@ -281,29 +284,37 @@ export class CFGBuilder {
         return finallyBlock;
       });
 
-      let complexExit: string | null = bodyBlock.exit;
+      // This is the exit we get to if we don't have an exception
+      let happyExit: string | null = bodyBlock.exit;
 
       // Connect the body to the `else` block
       if (bodyBlock.exit && elseBlock?.entry) {
         this.addEdge(bodyBlock.exit, elseBlock.entry);
-        complexExit = elseBlock.exit;
+        happyExit = elseBlock.exit;
       }
 
       if (finallyBlock?.entry) {
         // Connect `try` to `finally`
         const toFinally = elseBlock?.exit ?? bodyBlock.exit;
         if (toFinally) this.addEdge(toFinally, finallyBlock.entry);
-        complexExit = finallyBlock.exit;
+        happyExit = finallyBlock.exit;
         // Connect `except` to `finally`
         exceptBlocks.forEach((exceptBlock) => {
           if (exceptBlock.exit)
             this.addEdge(exceptBlock.exit, finallyBlock.entry as string);
         });
+      } else {
+        // We need to connect the `except` blocks to the merge node
+        exceptBlocks.forEach((exceptBlock) => {
+          if (exceptBlock.exit) this.addEdge(exceptBlock.exit, mergeNode);
+        });
       }
+
+      if (happyExit) this.addEdge(happyExit, mergeNode);
 
       return blockHandler.update({
         entry: bodyBlock.entry,
-        exit: complexExit,
+        exit: mergeNode,
       });
     });
   }
