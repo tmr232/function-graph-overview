@@ -35,13 +35,15 @@ export class CFGBuilder {
     const bodyNode = functionNode.childForFieldName("body");
     if (bodyNode) {
       const blockHandler = new BlockHandler();
-      const { entry } = blockHandler.update(
+      const { entry, exit } = blockHandler.update(
         this.processStatements(bodyNode.namedChildren),
       );
 
       const startNode = this.addNode("START", "START");
+      const endNode = this.addNode("RETURN", "implicit return");
       // `entry` will be non-null for any valid code
       if (entry) this.addEdge(startNode, entry);
+      if (exit) this.addEdge(exit, endNode)
       this.entry = startNode;
     }
     return { graph: this.graph, entry: this.entry };

@@ -165,3 +165,13 @@ def try_finally():
         pass
     finally:
         pass
+
+# exits: 5,
+# render: true
+def try_finally():
+    try:
+        with x:
+            return
+        pass
+    finally:
+        pass
