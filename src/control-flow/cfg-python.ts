@@ -87,6 +87,15 @@ export class CFGBuilder {
     return id;
   }
 
+  private cloneNode(node: string): string {
+    const id = `node${this.nodeId++}`;
+    const originalAttrs = this.graph.getNodeAttributes(node);
+    const nodeAttrs = structuredClone(originalAttrs);
+    nodeAttrs.cluster = originalAttrs.cluster;
+    this.graph.addNode(id, nodeAttrs);
+    return id;
+  }
+
   private addMarker(node: string, marker: string) {
     this.graph.getNodeAttributes(node).markers.push(marker);
   }
@@ -166,10 +175,8 @@ export class CFGBuilder {
     }
   }
   private processReturnStatement(returnSyntax: Parser.SyntaxNode): BasicBlock {
-    {
-      const returnNode = this.addNode("RETURN", returnSyntax.text);
-      return { entry: returnNode, exit: null, returns: [returnNode] };
-    }
+    const returnNode = this.addNode("RETURN", returnSyntax.text);
+    return { entry: returnNode, exit: null, returns: [returnNode] };
   }
   private processTryStatement(trySyntax: Parser.SyntaxNode): BasicBlock {
     /*
@@ -203,15 +210,41 @@ export class CFGBuilder {
       const bodyBlock = this.withCluster("try", () =>
         getBlock(bodySyntax),
       ) as BasicBlock;
-      const finallyBlock = this.withCluster("finally", () =>
-        getBlock(finallySyntax),
-      );
+
+      const finallyBlock = this.withCluster("finally", () => {
+        // Handle all the return statements from the try block
+        if (finallySyntax) {
+          // This is only relevant if there's a finally block.
+          blockHandler.forEachReturn((returnNode) => {
+            // We create a new finally block for each return node,
+            // so that we can link them.
+            const duplicateFinallyBlock = getBlock(finallySyntax) as BasicBlock;
+            // We also clone the return node, to place it _after_ the finally block
+            const returnNodeClone = this.cloneNode(returnNode);
+
+            if (duplicateFinallyBlock.entry) this.addEdge(returnNode, duplicateFinallyBlock.entry);
+            if (duplicateFinallyBlock.exit) this.addEdge(duplicateFinallyBlock.exit, returnNodeClone)
+
+            // We return the cloned return node as the new return node, in case we're nested
+            // in a scope that will process it.
+            return returnNodeClone;
+          });
+        }
+
+        // Handle the finally-block for the trivial case, where we just pass through the try block
+        // This must happen AFTER handling the return statements, as the finally block may add return
+        // statements of its own.
+        const finallyBlock = getBlock(finallySyntax);
+        return finallyBlock;
+      });
 
       if (bodyBlock.exit && finallyBlock?.entry) this.addEdge(bodyBlock.exit, finallyBlock.entry);
+
       return blockHandler.update({
         entry: bodyBlock.entry,
         exit: finallyBlock?.exit ?? bodyBlock.exit,
       });
+
     });
   }
   private processWithStatement(withSyntax: Parser.SyntaxNode): BasicBlock {
@@ -413,7 +446,7 @@ export class CFGBuilder {
     return match;
   }
 
-  private getSyntax(match: Parser.QueryMatch, name: string): Parser.SyntaxNode {
+  private getSyntax(match: Parser.QueryMatch, name: string): Parser.SyntaxNode | undefined {
     return this.getSyntaxMany(match, name)[0];
   }
 
@@ -427,7 +460,7 @@ export class CFGBuilder {
   }
 
   private blockGetter(blockHandler: BlockHandler) {
-    const getBlock = (syntax: Parser.SyntaxNode | null) =>
+    const getBlock = (syntax: Parser.SyntaxNode | null | undefined) =>
       syntax ? blockHandler.update(this.processBlock(syntax)) : null;
     return getBlock;
   }

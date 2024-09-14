@@ -77,7 +77,7 @@ function buildHierarchy(cfg: CFG): Hierarchy {
     };
   }
 
-  //
+
   // cfg.graph.forEachNode((node, { cluster }) => {
   //   console.log(node, cluster?.id ?? "toplevel");
   // });
@@ -121,7 +121,9 @@ function renderNode(graph: CFGGraph, node: string, verbose: boolean): string {
   let label = "";
   if (verbose) {
     label = `${node} ${graph.getNodeAttributes(node).type} ${graph.getNodeAttributes(node).code}`;
-    label = `${graph.getNodeAttribute(node, "cluster")?.id}`;
+
+    const clusterAttrs = graph.getNodeAttribute(node, "cluster")
+    label = `${clusterAttrs?.id} ${clusterAttrs?.type}\n${label}`;
   }
   let shape = "box";
   let fillColor = "lightgray";
