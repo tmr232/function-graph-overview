@@ -20,6 +20,9 @@ Note that the demo only supports a single function and ignores the cursor locati
 
 - Go
 - C
+- Python (experimental, only in the [interactive demo](https://tmr232.github.io/function-graph-overview/?language=2))
+  - Since this adds _a lot_ of new visualization types, this is marked "experimental"
+    as it is very likely to change.
 
 ## Development
 
