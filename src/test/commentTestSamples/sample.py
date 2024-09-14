@@ -156,6 +156,42 @@ def WithNestedCluster():
             return
 
 
+
+# exits: 0,
+# render: true
+def try_except():
+    try:
+        f()
+    except:
+        g()
+    return
+
+# exits: 0,
+# render: true
+def try_except_finally():
+    try:
+        f()
+    except:
+        g()
+    finally:
+        h()
+    return
+
+# exits: 0,
+# render: true
+def try_many_except_finally():
+    try:
+        f()
+    except a:
+        g()
+    except b:
+        aa()
+    except: return
+    finally:
+        h()
+    return
+
+
 # exits: 5,
 # render: true
 def try_finally():
@@ -175,3 +211,4 @@ def try_with_finally():
         pass
     finally:
         pass
+

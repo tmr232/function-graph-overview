@@ -136,7 +136,7 @@ export function processRecord(
   if (trim) cfg = trimFor(cfg);
   if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
 
-  const dot = graphToDot(cfg, verbose);
+  const dot = graphviz.dot(graphToDot(cfg, verbose), "canon");
   const svg = graphviz.dot(dot);
 
   return { dot, ast, svg };

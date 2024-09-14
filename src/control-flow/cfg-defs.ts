@@ -29,7 +29,7 @@ export type NodeType =
   | "SWITCH_CONDITION"
   | "SWITCH_MERGE"
   | "CASE_CONDITION";
-export type EdgeType = "regular" | "consequence" | "alternative";
+export type EdgeType = "regular" | "consequence" | "alternative" | "exception";
 
 export type ClusterType =
   | "with"

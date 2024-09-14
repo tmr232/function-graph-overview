@@ -172,37 +172,6 @@ function renderHierarchy(
   return dotContent;
 }
 
-function formatStyle(style: { [attribute: string]: number | string }): string {
-  return [...Object.entries(style)]
-    .map(([name, value]) => {
-      switch (typeof value) {
-        case "number":
-          return `${name}=${value};\n`;
-        case "string":
-          return `${name}="${value}";\n`;
-      }
-    })
-    .join("");
-}
-
-function clusterStyle(cluster: Cluster): string {
-  const isSelfNested = cluster.type === cluster.parent?.type;
-  const penwidth = isSelfNested ? 6 : 0;
-  const color = "white";
-  switch (cluster.type) {
-    case "with":
-      return formatStyle({ penwidth, color, bgcolor: "#ffddff" });
-    case "try-complex":
-      return formatStyle({ penwidth, color, bgcolor: "#ddddff" });
-    case "try":
-      return formatStyle({ penwidth, color, bgcolor: "#ddffdd" });
-    case "finally":
-      return formatStyle({ penwidth, color, bgcolor: "#ffffdd" });
-    default:
-      return "";
-  }
-}
-
 function renderSubgraphs(
   hierarchy: Hierarchy,
   verbose: boolean,
@@ -300,6 +269,42 @@ export function graphToDot(cfg: CFG, verbose: boolean = false): string {
   return dotContent;
 }
 
+type DotAttributes = { [attribute: string]: number | string | undefined };
+function formatStyle(style: DotAttributes): string {
+  return [...Object.entries(style)]
+    .map(([name, value]) => {
+      switch (typeof value) {
+        case "number":
+          return `${name}=${value};\n`;
+        case "string":
+          return `${name}="${value}";\n`;
+        case "undefined":
+          return "";
+      }
+    })
+    .join("");
+}
+
+function clusterStyle(cluster: Cluster): string {
+  const isSelfNested = cluster.type === cluster.parent?.type;
+  const penwidth = isSelfNested ? 6 : 0;
+  const color = "white";
+  switch (cluster.type) {
+    case "with":
+      return formatStyle({ penwidth, color, bgcolor: "#ffddff" });
+    case "try-complex":
+      return formatStyle({ penwidth, color, bgcolor: "#ddddff" });
+    case "try":
+      return formatStyle({ penwidth, color, bgcolor: "#ddffdd" });
+    case "finally":
+      return formatStyle({ penwidth, color, bgcolor: "#ffffdd" });
+    case "except":
+      return formatStyle({ penwidth, color, bgcolor: "#ffdddd" });
+    default:
+      return "";
+  }
+}
+
 function renderEdge(
   edge: string,
   source: string,
@@ -307,17 +312,26 @@ function renderEdge(
   topGraph: CFGGraph,
 ) {
   const attributes = topGraph.getEdgeAttributes(edge);
-  const penwidth = 1;
-  let color = "blue";
+  const dotAttrs: DotAttributes = {};
+  dotAttrs.penwidth = 1;
+  dotAttrs.color = "blue";
   switch (attributes.type) {
     case "consequence":
-      color = "green";
+      dotAttrs.color = "green";
       break;
     case "alternative":
-      color = "red";
+      dotAttrs.color = "red";
+      break;
+    case "regular":
+      dotAttrs.color = "blue";
+      break;
+    case "exception":
+      dotAttrs.style = "invis";
+      dotAttrs.headport = "e";
+      dotAttrs.tailport = "w";
       break;
     default:
-      color = "blue";
+      dotAttrs.color = "fuchsia";
   }
-  return `    ${source} -> ${target} [penwidth=${penwidth} color=${color}];\n`;
+  return `    ${source} -> ${target} [${formatStyle(dotAttrs)}];\n`;
 }

@@ -208,11 +208,28 @@ export class CFGBuilder {
     const getBlock = this.blockGetter(blockHandler);
 
     const bodySyntax = this.getSyntax(match, "try-body");
+    const exceptSyntaxMany = this.getSyntaxMany(match, "except-body");
     const finallySyntax = this.getSyntax(match, "finally-body");
     return this.withCluster("try-complex", (tryComplexCluster) => {
       const bodyBlock = this.withCluster("try", () =>
         getBlock(bodySyntax),
       ) as BasicBlock;
+
+      // We handle `except` blocks before the `finally` block to support `return` handling.
+      const exceptBlocks = exceptSyntaxMany.map((exceptSyntax) =>
+        this.withCluster("except", () => getBlock(exceptSyntax) as BasicBlock),
+      );
+      // We attach the except-blocks to the top of the `try` body.
+      // In the rendering, we will connect them to the side of the node, and use invisible lines for it.
+      if (bodyBlock.entry) {
+        const headNode = bodyBlock.entry;
+        exceptBlocks.forEach((exceptBlock) => {
+          if (exceptBlock.entry) {
+            // Yes, this is effectively a head-to-head link. But that's ok.
+            this.addEdge(headNode, exceptBlock.entry, "exception");
+          }
+        });
+      }
 
       const finallyBlock = this.withCluster("finally", () => {
         // Handle all the return statements from the try block
@@ -223,7 +240,7 @@ export class CFGBuilder {
             // so that we can link them.
             const duplicateFinallyBlock = getBlock(finallySyntax) as BasicBlock;
             // We also clone the return node, to place it _after_ the finally block
-            // We also override the cluster node, pulling it up to the `try-complex`, 
+            // We also override the cluster node, pulling it up to the `try-complex`,
             // as the return is neither in a `try`, `except`, or `finally` context.
             const returnNodeClone = this.cloneNode(returnNode, {
               cluster: tryComplexCluster,
@@ -247,8 +264,16 @@ export class CFGBuilder {
         return finallyBlock;
       });
 
-      if (bodyBlock.exit && finallyBlock?.entry)
-        this.addEdge(bodyBlock.exit, finallyBlock.entry);
+      if (finallyBlock?.entry) {
+        // Connect `try` to `finally`
+        if (bodyBlock.exit) this.addEdge(bodyBlock.exit, finallyBlock.entry);
+
+        // Connect `except` to `finally`
+        exceptBlocks.forEach((exceptBlock) => {
+          if (exceptBlock.exit)
+            this.addEdge(exceptBlock.exit, finallyBlock.entry as string);
+        });
+      }
 
       return blockHandler.update({
         entry: bodyBlock.entry,
