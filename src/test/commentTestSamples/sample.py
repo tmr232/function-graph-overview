@@ -168,7 +168,7 @@ def try_finally():
 
 # exits: 5,
 # render: true
-def try_finally():
+def try_with_finally():
     try:
         with x:
             return
