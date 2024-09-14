@@ -5,7 +5,7 @@
   import { python } from "@codemirror/lang-python";
   import Graph from "./Graph.svelte";
   import type { Language } from "../../../control-flow/cfg";
-
+  import * as LZString from "lz-string";
   export let codeGo = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
   export let codeC = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";
   export let codePython = "def example():\n    if x:\n        return";
@@ -18,7 +18,21 @@
     { language: "C" as Language, text: "C" },
     { language: "Python" as Language, text: "Python (experimental)" },
   ];
-  let selection = languages[0];
+
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has("go")) {
+    codeGo = LZString.decompressFromEncodedURIComponent(urlParams.get("go"));
+  }
+  if (urlParams.has("c")) {
+    codeC = LZString.decompressFromEncodedURIComponent(urlParams.get("c"));
+  }
+  if (urlParams.has("python")) {
+    codePython = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("python"),
+    );
+  }
+
+  let selection = languages[parseInt(urlParams.get("language")) || 0];
   let code = codeGo;
   $: {
     switch (selection.language) {
@@ -36,6 +50,21 @@
 
   let simplify = true;
   let flatSwitch = false;
+
+  function share() {
+    const compressedCode = LZString.compressToEncodedURIComponent(code);
+    const codeName = selection.language.toLowerCase();
+    const language = languages.findIndex((lang) => lang == selection);
+    const query = `?language=${language}&${codeName}=${compressedCode}`;
+    const newUrl =
+      window.location.protocol +
+      "//" +
+      window.location.host +
+      window.location.pathname +
+      query;
+    navigator.clipboard.writeText(newUrl);
+    window.open(newUrl, "_blank").focus();
+  }
 </script>
 
 <main>
@@ -58,6 +87,7 @@
           </option>
         {/each}
       </select>
+      <button on:click={share}>Share (experimental)</button>
     </div>
     <div class="codemirror">
       {#if selection.language === "Go"}
