@@ -2,11 +2,13 @@
   import CodeMirror from "svelte-codemirror-editor";
   import { go } from "@codemirror/lang-go";
   import { cpp } from "@codemirror/lang-cpp";
+  import { python } from "@codemirror/lang-python";
   import Graph from "./Graph.svelte";
   import type { Language } from "../../../control-flow/cfg";
 
   export let codeGo = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
   export let codeC = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";
+  export let codePython = "def example():\n    if x:\n        return";
 
   let languages: {
     language: Language;
@@ -14,6 +16,7 @@
   }[] = [
     { language: "Go" as Language, text: "Go" },
     { language: "C" as Language, text: "C" },
+    { language: "Python" as Language, text: "Python (experimental)" },
   ];
   let selection = languages[0];
   let code = codeGo;
@@ -24,6 +27,9 @@
         break;
       case "Go":
         code = codeGo;
+        break;
+      case "Python":
+        code = codePython;
         break;
     }
   }
@@ -61,10 +67,17 @@
           tabSize={4}
           lineWrapping={true}
         />
-      {:else}
+      {:else if selection.language === "C"}
         <CodeMirror
           bind:value={codeC}
           lang={cpp()}
+          tabSize={4}
+          lineWrapping={true}
+        />
+      {:else if selection.language === "Python"}
+        <CodeMirror
+          bind:value={codePython}
+          lang={python()}
           tabSize={4}
           lineWrapping={true}
         />
