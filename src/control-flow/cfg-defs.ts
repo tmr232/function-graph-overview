@@ -2,6 +2,8 @@ import { MultiDirectedGraph } from "graphology";
 import type Parser from "web-tree-sitter";
 
 export type NodeType =
+  | "YIELD"
+  | "RAISE"
   | "MARKER_COMMENT"
   | "LOOP_HEAD"
   | "LOOP_EXIT"

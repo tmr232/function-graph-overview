@@ -156,6 +156,29 @@ def WithNestedCluster():
             return
 
 
+# render: true,
+# exits: 999
+def raise_exception():
+    raise
+
+# render: true,
+# exits: 999
+def raise_again():
+    try:
+        raise x
+    except: 
+        if x:
+            pass
+    else: 
+        if x:
+            pass
+
+# render: true,
+# exits: 3
+def yield_value():
+    for x in y:
+        yield x
+    
 
 # exits: 0,
 # render: true

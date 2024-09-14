@@ -171,11 +171,24 @@ export class CFGBuilder {
         return this.processWithStatement(node);
       case "try_statement":
         return this.processTryStatement(node);
-      default: {
-        const newNode = this.addNode("STATEMENT", node.text);
-        return { entry: newNode, exit: newNode };
-      }
+      case "raise_statement":
+        return this.processRaiseStatement(node);
+      default:
+        return this.defaultProcessStatement(node);
     }
+  }
+  private defaultProcessStatement(syntax: Parser.SyntaxNode): BasicBlock {
+    // const match = this.matchQuery(syntax, "yield", `(yield) @yield`);
+    // if (match.captures.length > 0) {
+    //   const yieldNode = this.addNode("YIELD", syntax.text);
+    //   return { entry: yieldNode, exit: yieldNode };
+    // }
+    const newNode = this.addNode("STATEMENT", syntax.text);
+    return { entry: newNode, exit: newNode };
+  }
+  private processRaiseStatement(raiseSyntax: Parser.SyntaxNode): BasicBlock {
+    const raiseNode = this.addNode("RAISE", raiseSyntax.text);
+    return { entry: raiseNode, exit: null };
   }
   private processReturnStatement(returnSyntax: Parser.SyntaxNode): BasicBlock {
     const returnNode = this.addNode("RETURN", returnSyntax.text);

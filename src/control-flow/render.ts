@@ -116,35 +116,6 @@ function getParents(cluster: Cluster) {
   return parents.toReversed();
 }
 
-function renderNode(graph: CFGGraph, node: string, verbose: boolean): string {
-  let label = "";
-  if (verbose) {
-    label = `${node} ${graph.getNodeAttributes(node).type} ${graph.getNodeAttributes(node).code}`;
-
-    const clusterAttrs = graph.getNodeAttribute(node, "cluster");
-    label = `${clusterAttrs?.id} ${clusterAttrs?.type}\n${label}`;
-  }
-  let shape = "box";
-  let fillColor = "lightgray";
-  let minHeight = 0.2;
-  if (graph.degree(node) === 0) {
-    minHeight = 0.5;
-  } else if (graph.inDegree(node) === 0) {
-    shape = "invhouse";
-    fillColor = "#48AB30";
-    minHeight = 0.5;
-  } else if (graph.outDegree(node) === 0) {
-    shape = "house";
-    fillColor = "#AB3030";
-    minHeight = 0.5;
-  }
-
-  const height = Math.max(
-    graph.getNodeAttribute(node, "lines") * 0.3,
-    minHeight,
-  );
-  return `    ${node} [label="${label}" shape="${shape}" fillcolor="${fillColor}" style="filled" height=${height}];\n`;
-}
 
 function renderHierarchy(
   cfg: CFG,
@@ -334,4 +305,47 @@ function renderEdge(
       dotAttrs.color = "fuchsia";
   }
   return `    ${source} -> ${target} [${formatStyle(dotAttrs)}];\n`;
+}
+
+function renderNode(graph: CFGGraph, node: string, verbose: boolean): string {
+  const dotAttrs: DotAttributes = {};
+  dotAttrs.style = "filled"
+  dotAttrs.label = "";
+  const nodeAttrs = graph.getNodeAttributes(node);
+  if (verbose) {
+    dotAttrs.label = `${node} ${nodeAttrs.type} ${graph.getNodeAttributes(node).code}`;
+
+    const clusterAttrs = graph.getNodeAttribute(node, "cluster");
+    dotAttrs.label = `${clusterAttrs?.id} ${clusterAttrs?.type}\n${dotAttrs.label}`;
+  }
+  dotAttrs.shape = "box";
+  dotAttrs.fillcolor = "lightgray";
+  let minHeight = 0.2;
+  if (graph.degree(node) === 0) {
+    dotAttrs.minHeight = 0.5;
+  } else if (graph.inDegree(node) === 0) {
+    dotAttrs.shape = "invhouse";
+    dotAttrs.fillcolor = "#48AB30";
+    minHeight = 0.5;
+  } else if (graph.outDegree(node) === 0) {
+    dotAttrs.shape = "house";
+    dotAttrs.fillcolor = "#AB3030";
+    minHeight = 0.5;
+  }
+  switch (nodeAttrs.type) {
+    case "RAISE":
+      dotAttrs.shape = "triangle";
+      dotAttrs.fillcolor = "#fdd";
+      break;
+    case "YIELD":
+      dotAttrs.shallow = "hexagon";
+      dotAttrs.fillcolor = "aqua";
+      break;
+  }
+
+  dotAttrs.height = Math.max(
+    graph.getNodeAttribute(node, "lines") * 0.3,
+    minHeight,
+  );
+  return `    ${node} [${formatStyle(dotAttrs)}];\n`;
 }
