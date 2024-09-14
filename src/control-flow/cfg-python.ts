@@ -147,10 +147,8 @@ export class CFGBuilder {
         return this.processWhileStatement(node);
       case "match_statement":
         return this.processMatchStatement(node);
-      case "return_statement": {
-        const returnNode = this.addNode("RETURN", node.text);
-        return { entry: returnNode, exit: null };
-      }
+      case "return_statement":
+        return this.processReturnStatement(node);
       case "break_statement":
         return this.processBreakStatement(node);
       case "continue_statement":
@@ -165,6 +163,12 @@ export class CFGBuilder {
         const newNode = this.addNode("STATEMENT", node.text);
         return { entry: newNode, exit: newNode };
       }
+    }
+  }
+  private processReturnStatement(returnSyntax: Parser.SyntaxNode): BasicBlock {
+    {
+      const returnNode = this.addNode("RETURN", returnSyntax.text);
+      return { entry: returnNode, exit: null, returns: [returnNode] };
     }
   }
   private processTryStatement(trySyntax: Parser.SyntaxNode): BasicBlock {
