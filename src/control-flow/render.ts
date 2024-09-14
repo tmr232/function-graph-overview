@@ -77,7 +77,6 @@ function buildHierarchy(cfg: CFG): Hierarchy {
     };
   }
 
-
   // cfg.graph.forEachNode((node, { cluster }) => {
   //   console.log(node, cluster?.id ?? "toplevel");
   // });
@@ -122,7 +121,7 @@ function renderNode(graph: CFGGraph, node: string, verbose: boolean): string {
   if (verbose) {
     label = `${node} ${graph.getNodeAttributes(node).type} ${graph.getNodeAttributes(node).code}`;
 
-    const clusterAttrs = graph.getNodeAttribute(node, "cluster")
+    const clusterAttrs = graph.getNodeAttribute(node, "cluster");
     label = `${clusterAttrs?.id} ${clusterAttrs?.type}\n${label}`;
   }
   let shape = "box";
@@ -209,11 +208,9 @@ function renderSubgraphs(
   verbose: boolean,
   topGraph: CFGGraph,
 ) {
-  let dotContent = ""
-  if (hierarchy.cluster?.type !== "try") {
-    dotContent += `subgraph cluster_${hierarchy.cluster?.id ?? "toplevel"} {\n`;
-    if (hierarchy.cluster) dotContent += clusterStyle(hierarchy.cluster);
-  }
+  let dotContent = "";
+  dotContent += `subgraph cluster_${hierarchy.cluster?.id ?? "toplevel"} {\n`;
+  if (hierarchy.cluster) dotContent += clusterStyle(hierarchy.cluster);
   hierarchy.graph.forEachNode((node) => {
     dotContent += renderNode(topGraph, node, verbose);
   });
@@ -223,9 +220,7 @@ function renderSubgraphs(
   hierarchy.graph.forEachEdge((edge, _attributes, source, target) => {
     dotContent += renderEdge(edge, source, target, topGraph);
   });
-  if (hierarchy.cluster?.type !== "try") {
-    dotContent += "\n}";
-  }
+  dotContent += "\n}";
   return dotContent;
 }
 

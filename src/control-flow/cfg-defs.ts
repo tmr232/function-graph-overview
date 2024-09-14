@@ -89,7 +89,7 @@ export class BlockHandler {
   private gotos: Array<{ label: string; node: string }> = [];
   /**
    * All the returns encountered so far.
-   * 
+   *
    * This is needed for `finally` clauses in exception handling,
    * as the return is moved/duplicated to the end of the finally clause.
    * This means that when processing returns, we expect to get a new set
@@ -112,7 +112,7 @@ export class BlockHandler {
   }
 
   public forEachReturn(callback: (returnNode: string) => string) {
-    this.returns = this.returns.map(callback)
+    this.returns = this.returns.map(callback);
   }
 
   public processGotos(callback: (gotoNode: string, labelNode: string) => void) {

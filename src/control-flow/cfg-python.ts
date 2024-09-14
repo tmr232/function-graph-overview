@@ -43,7 +43,7 @@ export class CFGBuilder {
       const endNode = this.addNode("RETURN", "implicit return");
       // `entry` will be non-null for any valid code
       if (entry) this.addEdge(startNode, entry);
-      if (exit) this.addEdge(exit, endNode)
+      if (exit) this.addEdge(exit, endNode);
       this.entry = startNode;
     }
     return { graph: this.graph, entry: this.entry };
@@ -68,10 +68,10 @@ export class CFGBuilder {
     this.activeClusters.pop();
   }
 
-  private withCluster<T>(type: ClusterType, fn: () => T): T {
+  private withCluster<T>(type: ClusterType, fn: (cluster: Cluster) => T): T {
     const cluster = this.startCluster(type);
     try {
-      return fn();
+      return fn(cluster);
     } finally {
       this.endCluster(cluster);
     }
@@ -89,11 +89,12 @@ export class CFGBuilder {
     return id;
   }
 
-  private cloneNode(node: string): string {
+  private cloneNode(node: string, overrides?: { cluster: Cluster }): string {
     const id = `node${this.nodeId++}`;
     const originalAttrs = this.graph.getNodeAttributes(node);
     const nodeAttrs = structuredClone(originalAttrs);
     nodeAttrs.cluster = originalAttrs.cluster;
+    Object.assign(nodeAttrs, overrides);
     this.graph.addNode(id, nodeAttrs);
     return id;
   }
@@ -208,7 +209,7 @@ export class CFGBuilder {
 
     const bodySyntax = this.getSyntax(match, "try-body");
     const finallySyntax = this.getSyntax(match, "finally-body");
-    return this.withCluster("try-complex", () => {
+    return this.withCluster("try-complex", (tryComplexCluster) => {
       const bodyBlock = this.withCluster("try", () =>
         getBlock(bodySyntax),
       ) as BasicBlock;
@@ -222,10 +223,16 @@ export class CFGBuilder {
             // so that we can link them.
             const duplicateFinallyBlock = getBlock(finallySyntax) as BasicBlock;
             // We also clone the return node, to place it _after_ the finally block
-            const returnNodeClone = this.cloneNode(returnNode);
+            // We also override the cluster node, pulling it up to the `try-complex`, 
+            // as the return is neither in a `try`, `except`, or `finally` context.
+            const returnNodeClone = this.cloneNode(returnNode, {
+              cluster: tryComplexCluster,
+            });
 
-            if (duplicateFinallyBlock.entry) this.addEdge(returnNode, duplicateFinallyBlock.entry);
-            if (duplicateFinallyBlock.exit) this.addEdge(duplicateFinallyBlock.exit, returnNodeClone)
+            if (duplicateFinallyBlock.entry)
+              this.addEdge(returnNode, duplicateFinallyBlock.entry);
+            if (duplicateFinallyBlock.exit)
+              this.addEdge(duplicateFinallyBlock.exit, returnNodeClone);
 
             // We return the cloned return node as the new return node, in case we're nested
             // in a scope that will process it.
@@ -240,13 +247,13 @@ export class CFGBuilder {
         return finallyBlock;
       });
 
-      if (bodyBlock.exit && finallyBlock?.entry) this.addEdge(bodyBlock.exit, finallyBlock.entry);
+      if (bodyBlock.exit && finallyBlock?.entry)
+        this.addEdge(bodyBlock.exit, finallyBlock.entry);
 
       return blockHandler.update({
         entry: bodyBlock.entry,
         exit: finallyBlock?.exit ?? bodyBlock.exit,
       });
-
     });
   }
   private processWithStatement(withSyntax: Parser.SyntaxNode): BasicBlock {
@@ -448,7 +455,10 @@ export class CFGBuilder {
     return match;
   }
 
-  private getSyntax(match: Parser.QueryMatch, name: string): Parser.SyntaxNode | undefined {
+  private getSyntax(
+    match: Parser.QueryMatch,
+    name: string,
+  ): Parser.SyntaxNode | undefined {
     return this.getSyntaxMany(match, name)[0];
   }
 
