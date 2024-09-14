@@ -17,7 +17,7 @@ function buildCFG(language: CFGLanguage, functionNode: Parser.SyntaxNode): CFG {
   return trimFor(builder.buildCFG(functionNode));
 }
 
-function buildSimpleCFG(
+export function buildSimpleCFG(
   language: CFGLanguage,
   functionNode: Parser.SyntaxNode,
 ): CFG {

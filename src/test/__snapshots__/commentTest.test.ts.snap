@@ -1,0 +1,3632 @@
+// Bun Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`C: trivial: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+minHeight=0.5;
+height=0.6;
+];
+}"
+`;
+
+exports[`C: simpleIf: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node0 -> node2 [penwidth=1;
+color="green";
+];
+    node2 -> node1 [penwidth=1;
+color="blue";
+];
+    node0 -> node1 [penwidth=1;
+color="red";
+];
+}"
+`;
+
+exports[`C: ifElse: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node4 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node0 -> node2 [penwidth=1;
+color="green";
+];
+    node2 -> node1 [penwidth=1;
+color="blue";
+];
+    node3 -> node4 [penwidth=1;
+color="green";
+];
+    node4 -> node1 [penwidth=1;
+color="blue";
+];
+    node3 -> node5 [penwidth=1;
+color="red";
+];
+    node5 -> node1 [penwidth=1;
+color="blue";
+];
+    node0 -> node3 [penwidth=1;
+color="red";
+];
+}"
+`;
+
+exports[`C: forever: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node1 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node1 -> node3 [penwidth=1;
+color="blue";
+];
+    node3 -> node3 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`C: forever2: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.8999999999999999;
+];
+    node0 -> node1 [penwidth=1;
+color="blue";
+];
+    node1 -> node1 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`C: forLoop: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.8999999999999999;
+];
+    node0 -> node1 [penwidth=1;
+color="blue";
+];
+    node1 -> node5 [penwidth=1;
+color="red";
+];
+    node2 -> node1 [penwidth=1;
+color="blue";
+];
+    node1 -> node2 [penwidth=1;
+color="green";
+];
+}"
+`;
+
+exports[`C: whileLoop: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node3 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node0 -> node2 [penwidth=1;
+color="red";
+];
+    node1 -> node0 [penwidth=1;
+color="blue";
+];
+    node3 -> node0 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`C: doWhile: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node3 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node0 -> node2 [penwidth=1;
+color="red";
+];
+    node0 -> node0 [penwidth=1;
+color="green";
+];
+    node3 -> node0 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`C: gotoA: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node4 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node1 -> node3 [penwidth=1;
+color="green";
+];
+    node1 -> node2 [penwidth=1;
+color="red";
+];
+    node3 -> node1 [penwidth=1;
+color="blue";
+];
+    node4 -> node1 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`C: switch_1: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node7 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node1 -> node3 [penwidth=1;
+color="blue";
+];
+    node0 -> node2 [penwidth=1;
+color="red";
+];
+    node2 -> node3 [penwidth=1;
+color="green";
+];
+    node3 -> node5 [penwidth=1;
+color="blue";
+];
+    node2 -> node4 [penwidth=1;
+color="red";
+];
+    node4 -> node5 [penwidth=1;
+color="green";
+];
+    node4 -> node7 [penwidth=1;
+color="red";
+];
+    node5 -> node7 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`C: switch_2: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node7 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node0 -> node2 [penwidth=1;
+color="red";
+];
+    node2 -> node3 [penwidth=1;
+color="green";
+];
+    node3 -> node5 [penwidth=1;
+color="blue";
+];
+    node2 -> node4 [penwidth=1;
+color="red";
+];
+    node4 -> node5 [penwidth=1;
+color="green";
+];
+    node4 -> node7 [penwidth=1;
+color="red";
+];
+    node5 -> node7 [penwidth=1;
+color="blue";
+];
+    node1 -> node7 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Go: trivial: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+minHeight=0.5;
+height=0.6;
+];
+}"
+`;
+
+exports[`Go: ifThen: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node0 -> node2 [penwidth=1;
+color="green";
+];
+    node2 -> node1 [penwidth=1;
+color="blue";
+];
+    node0 -> node1 [penwidth=1;
+color="red";
+];
+}"
+`;
+
+exports[`Go: Switch: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node9 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node6 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node7 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node1 -> node9 [penwidth=1;
+color="blue";
+];
+    node0 -> node2 [penwidth=1;
+color="red";
+];
+    node2 -> node3 [penwidth=1;
+color="green";
+];
+    node3 -> node9 [penwidth=1;
+color="blue";
+];
+    node2 -> node4 [penwidth=1;
+color="red";
+];
+    node4 -> node5 [penwidth=1;
+color="green";
+];
+    node5 -> node9 [penwidth=1;
+color="blue";
+];
+    node4 -> node6 [penwidth=1;
+color="red";
+];
+    node6 -> node7 [penwidth=1;
+color="green";
+];
+    node7 -> node9 [penwidth=1;
+color="blue";
+];
+    node6 -> node9 [penwidth=1;
+color="red";
+];
+}"
+`;
+
+exports[`Go: switchAndLabelsAndGoto: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node10 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node5 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node6 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node12 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.8999999999999999;
+];
+    node7 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node14 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node15 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node13 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node0 -> node2 [penwidth=1;
+color="red";
+];
+    node2 -> node4 [penwidth=1;
+color="red";
+];
+    node4 -> node5 [penwidth=1;
+color="green";
+];
+    node4 -> node6 [penwidth=1;
+color="red";
+];
+    node6 -> node7 [penwidth=1;
+color="green";
+];
+    node12 -> node14 [penwidth=1;
+color="green";
+];
+    node14 -> node13 [penwidth=1;
+color="blue";
+];
+    node12 -> node15 [penwidth=1;
+color="red";
+];
+    node15 -> node13 [penwidth=1;
+color="blue";
+];
+    node1 -> node10 [penwidth=1;
+color="blue";
+];
+    node5 -> node10 [penwidth=1;
+color="blue";
+];
+    node7 -> node10 [penwidth=1;
+color="blue";
+];
+    node6 -> node10 [penwidth=1;
+color="red";
+];
+    node2 -> node12 [penwidth=1;
+color="green";
+];
+}"
+`;
+
+exports[`Go: trivialReachability: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+minHeight=0.5;
+height=0.6;
+];
+}"
+`;
+
+exports[`Go: hasFallthrough: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node1 -> node3 [penwidth=1;
+color="blue";
+];
+    node0 -> node2 [penwidth=1;
+color="red";
+];
+    node2 -> node3 [penwidth=1;
+color="green";
+];
+    node3 -> node5 [penwidth=1;
+color="blue";
+];
+    node2 -> node5 [penwidth=1;
+color="red";
+];
+}"
+`;
+
+exports[`Go: forever: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node3 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node1 -> node1 [penwidth=1;
+color="blue";
+];
+    node3 -> node1 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Go: forCond: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node3 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node0 -> node2 [penwidth=1;
+color="red";
+];
+    node1 -> node0 [penwidth=1;
+color="blue";
+];
+    node3 -> node0 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Go: forCStyle: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node3 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node0 -> node2 [penwidth=1;
+color="red";
+];
+    node1 -> node0 [penwidth=1;
+color="blue";
+];
+    node3 -> node0 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Go: forRange: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node3 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node0 -> node2 [penwidth=1;
+color="red";
+];
+    node1 -> node0 [penwidth=1;
+color="blue";
+];
+    node3 -> node0 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Go: typeSwitch: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node1 -> node5 [penwidth=1;
+color="blue";
+];
+    node0 -> node2 [penwidth=1;
+color="red";
+];
+    node2 -> node3 [penwidth=1;
+color="green";
+];
+    node3 -> node5 [penwidth=1;
+color="blue";
+];
+    node2 -> node5 [penwidth=1;
+color="red";
+];
+}"
+`;
+
+exports[`Python: trivial: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+minHeight=0.5;
+height=0.8999999999999999;
+];
+}"
+`;
+
+exports[`Python: If: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node6 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.8999999999999999;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node1 -> node6 [penwidth=1;
+color="blue";
+];
+    node0 -> node6 [penwidth=1;
+color="red";
+];
+}"
+`;
+
+exports[`Python: IfElse: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node7 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.8999999999999999;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node0 -> node2 [penwidth=1;
+color="red";
+];
+    node1 -> node7 [penwidth=1;
+color="blue";
+];
+    node2 -> node7 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Python: IfElifElse: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node9 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.8999999999999999;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node0 -> node2 [penwidth=1;
+color="red";
+];
+    node2 -> node3 [penwidth=1;
+color="green";
+];
+    node2 -> node4 [penwidth=1;
+color="red";
+];
+    node1 -> node9 [penwidth=1;
+color="blue";
+];
+    node3 -> node9 [penwidth=1;
+color="blue";
+];
+    node4 -> node9 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Python: For: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node3 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 -> node0 [penwidth=1;
+color="green";
+];
+    node0 -> node2 [penwidth=1;
+color="blue";
+];
+    node3 -> node2 [penwidth=1;
+color="blue";
+];
+    node2 -> node4 [penwidth=1;
+color="red";
+];
+}"
+`;
+
+exports[`Python: ForContinue: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node7 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node6 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node8 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node4 -> node6 [penwidth=1;
+color="blue";
+];
+    node1 -> node6 [penwidth=1;
+color="blue";
+];
+    node7 -> node6 [penwidth=1;
+color="blue";
+];
+    node6 -> node0 [penwidth=1;
+color="green";
+];
+    node6 -> node8 [penwidth=1;
+color="red";
+];
+    node0 -> node4 [penwidth=1;
+color="red";
+];
+}"
+`;
+
+exports[`Python: ForBreak: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node6 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node5 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node7 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node0 -> node2 [penwidth=1;
+color="red";
+];
+    node2 -> node5 [penwidth=1;
+color="blue";
+];
+    node6 -> node5 [penwidth=1;
+color="blue";
+];
+    node5 -> node0 [penwidth=1;
+color="green";
+];
+    node5 -> node7 [penwidth=1;
+color="red";
+];
+    node1 -> node7 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Python: ForElse: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node4 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node3 -> node0 [penwidth=1;
+color="green";
+];
+    node0 -> node3 [penwidth=1;
+color="blue";
+];
+    node3 -> node1 [penwidth=1;
+color="red";
+];
+    node4 -> node3 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Python: ForElseBreak: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node7 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node6 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node8 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node0 -> node2 [penwidth=1;
+color="red";
+];
+    node2 -> node6 [penwidth=1;
+color="blue";
+];
+    node6 -> node4 [penwidth=1;
+color="red";
+];
+    node7 -> node6 [penwidth=1;
+color="blue";
+];
+    node6 -> node0 [penwidth=1;
+color="green";
+];
+    node4 -> node8 [penwidth=1;
+color="blue";
+];
+    node1 -> node8 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Python: ForElseBreakReturn: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node7 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node6 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node8 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.8999999999999999;
+];
+    node0 -> node2 [penwidth=1;
+color="red";
+];
+    node2 -> node6 [penwidth=1;
+color="blue";
+];
+    node6 -> node4 [penwidth=1;
+color="red";
+];
+    node7 -> node6 [penwidth=1;
+color="blue";
+];
+    node6 -> node0 [penwidth=1;
+color="green";
+];
+    node0 -> node8 [penwidth=1;
+color="green";
+];
+}"
+`;
+
+exports[`Python: While: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node3 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node1 -> node0 [penwidth=1;
+color="blue";
+];
+    node3 -> node0 [penwidth=1;
+color="blue";
+];
+    node0 -> node4 [penwidth=1;
+color="red";
+];
+}"
+`;
+
+exports[`Python: WhileContinue: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node7 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node8 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="green";
+];
+    node5 -> node0 [penwidth=1;
+color="blue";
+];
+    node2 -> node0 [penwidth=1;
+color="blue";
+];
+    node7 -> node0 [penwidth=1;
+color="blue";
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node0 -> node8 [penwidth=1;
+color="red";
+];
+    node1 -> node5 [penwidth=1;
+color="red";
+];
+}"
+`;
+
+exports[`Python: WhileBreak: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node6 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node7 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 -> node2 [penwidth=1;
+color="green";
+];
+    node1 -> node3 [penwidth=1;
+color="red";
+];
+    node3 -> node0 [penwidth=1;
+color="blue";
+];
+    node6 -> node0 [penwidth=1;
+color="blue";
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node0 -> node7 [penwidth=1;
+color="red";
+];
+    node2 -> node7 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Python: WhileElse: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node4 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.8999999999999999;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node1 -> node0 [penwidth=1;
+color="blue";
+];
+    node4 -> node0 [penwidth=1;
+color="blue";
+];
+    node0 -> node5 [penwidth=1;
+color="red";
+];
+}"
+`;
+
+exports[`Python: WhileElseBreak: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node8 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node6 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node9 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node5 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="green";
+];
+    node0 -> node6 [penwidth=1;
+color="red";
+];
+    node5 -> node0 [penwidth=1;
+color="blue";
+];
+    node8 -> node0 [penwidth=1;
+color="blue";
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node6 -> node9 [penwidth=1;
+color="blue";
+];
+    node2 -> node9 [penwidth=1;
+color="blue";
+];
+    node1 -> node5 [penwidth=1;
+color="red";
+];
+}"
+`;
+
+exports[`Python: Match: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node7 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node3 -> node2 [penwidth=1;
+color="green";
+];
+    node0 -> node3 [penwidth=1;
+color="red";
+];
+    node0 -> node7 [penwidth=1;
+color="red";
+];
+    node2 -> node7 [penwidth=1;
+color="blue";
+];
+    node4 -> node7 [penwidth=1;
+color="blue";
+];
+    node3 -> node4 [penwidth=1;
+color="red";
+];
+}"
+`;
+
+exports[`Python: MatchMultiPattern: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node7 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node4 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node3 -> node2 [penwidth=1;
+color="green";
+];
+    node0 -> node3 [penwidth=1;
+color="red";
+];
+    node0 -> node7 [penwidth=1;
+color="red";
+];
+    node3 -> node4 [penwidth=1;
+color="red";
+];
+}"
+`;
+
+exports[`Python: Return: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node1 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node4 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node0 -> node4 [penwidth=1;
+color="red";
+];
+}"
+`;
+
+exports[`Python: WithCluster: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+subgraph cluster_0 {
+penwidth=0;
+color="white";
+bgcolor="#ffddff";
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node6 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node2 -> node3 [penwidth=1;
+color="green";
+];
+    node3 -> node6 [penwidth=1;
+color="blue";
+];
+    node2 -> node6 [penwidth=1;
+color="red";
+];
+
+}subgraph cluster_1 {
+penwidth=0;
+color="white";
+bgcolor="#ffddff";
+    node8 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}    node1 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node6 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node7 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node8 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node11 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node7 -> node8 [penwidth=1;
+color="blue";
+];
+    node6 -> node7 [penwidth=1;
+color="blue";
+];
+    node1 -> node2 [penwidth=1;
+color="blue";
+];
+    node8 -> node11 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Python: WithNestedCluster: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+subgraph cluster_0 {
+penwidth=0;
+color="white";
+bgcolor="#ffddff";
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="green";
+];
+    node2 -> node5 [penwidth=1;
+color="blue";
+];
+    node1 -> node5 [penwidth=1;
+color="red";
+];
+
+}subgraph cluster_1 {
+penwidth=0;
+color="white";
+bgcolor="#ffddff";
+    node7 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node8 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node15 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node16 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+subgraph cluster_2 {
+penwidth=6;
+color="white";
+bgcolor="#ffddff";
+    node9 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node10 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node12 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node11 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node13 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node9 -> node10 [penwidth=1;
+color="red";
+];
+    node12 -> node11 [penwidth=1;
+color="green";
+];
+    node11 -> node10 [penwidth=1;
+color="blue";
+];
+    node9 -> node12 [penwidth=1;
+color="red";
+];
+    node13 -> node10 [penwidth=1;
+color="blue";
+];
+    node12 -> node13 [penwidth=1;
+color="red";
+];
+
+}
+    node7 -> node8 [penwidth=1;
+color="green";
+];
+    node7 -> node15 [penwidth=1;
+color="red";
+];
+
+}    node0 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node6 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node7 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node8 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node15 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node9 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node10 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node12 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node16 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node11 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node19 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node13 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node8 -> node9 [penwidth=1;
+color="blue";
+];
+    node10 -> node16 [penwidth=1;
+color="blue";
+];
+    node5 -> node6 [penwidth=1;
+color="blue";
+];
+    node16 -> node19 [penwidth=1;
+color="blue";
+];
+    node0 -> node1 [penwidth=1;
+color="blue";
+];
+    node6 -> node7 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Python: raise_exception: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node1 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="triangle";
+fillcolor="#fdd";
+height=0.5;
+];
+    node1 -> node0 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Python: raise_again: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+subgraph cluster_0 {
+penwidth=0;
+color="white";
+bgcolor="#ddddff";
+
+subgraph cluster_1 {
+penwidth=0;
+color="white";
+bgcolor="#ddffdd";
+    node0 [style="filled";
+label="";
+shape="triangle";
+fillcolor="#fdd";
+height=0.3;
+];
+
+}
+
+subgraph cluster_2 {
+penwidth=0;
+color="white";
+bgcolor="#ffdddd";
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node1 -> node2 [penwidth=1;
+color="green";
+];
+    node2 -> node3 [penwidth=1;
+color="blue";
+];
+    node1 -> node3 [penwidth=1;
+color="red";
+];
+
+}
+
+}    node9 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="triangle";
+fillcolor="#fdd";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node9 -> node0 [penwidth=1;
+color="blue";
+];
+    node0 -> node1 [penwidth=1;
+color="blue";
+style="invis";
+headport="e";
+tailport="w";
+];
+}"
+`;
+
+exports[`Python: yield_value: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node3 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node0 [style="filled";
+label="";
+shape="hexagon";
+fillcolor="deepskyblue";
+orientation=90;
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 -> node0 [penwidth=1;
+color="green";
+];
+    node0 -> node2 [penwidth=1;
+color="blue";
+];
+    node3 -> node2 [penwidth=1;
+color="blue";
+];
+    node2 -> node4 [penwidth=1;
+color="red";
+];
+}"
+`;
+
+exports[`Python: try_except: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+subgraph cluster_0 {
+penwidth=0;
+color="white";
+bgcolor="#ddddff";
+
+subgraph cluster_1 {
+penwidth=0;
+color="white";
+bgcolor="#ddffdd";
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+subgraph cluster_2 {
+penwidth=0;
+color="white";
+bgcolor="#ffdddd";
+    node1 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+
+}
+
+}    node3 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node2 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node0 -> node1 [penwidth=1;
+color="blue";
+style="invis";
+headport="e";
+tailport="w";
+];
+    node0 -> node2 [penwidth=1;
+color="blue";
+];
+    node3 -> node0 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Python: try_except_finally: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+subgraph cluster_0 {
+penwidth=0;
+color="white";
+bgcolor="#ddddff";
+
+subgraph cluster_1 {
+penwidth=0;
+color="white";
+bgcolor="#ddffdd";
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+subgraph cluster_2 {
+penwidth=0;
+color="white";
+bgcolor="#ffdddd";
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+subgraph cluster_3 {
+penwidth=0;
+color="white";
+bgcolor="#ffffdd";
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+}    node4 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node0 -> node1 [penwidth=1;
+color="blue";
+style="invis";
+headport="e";
+tailport="w";
+];
+    node0 -> node2 [penwidth=1;
+color="blue";
+];
+    node1 -> node2 [penwidth=1;
+color="blue";
+];
+    node2 -> node3 [penwidth=1;
+color="blue";
+];
+    node4 -> node0 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Python: try_many_except_finally: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+subgraph cluster_0 {
+penwidth=0;
+color="white";
+bgcolor="#ddddff";
+    node5 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+
+subgraph cluster_1 {
+penwidth=0;
+color="white";
+bgcolor="#ddffdd";
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+subgraph cluster_2 {
+penwidth=0;
+color="white";
+bgcolor="#ffdddd";
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+subgraph cluster_3 {
+penwidth=0;
+color="white";
+bgcolor="#ffdddd";
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+subgraph cluster_4 {
+penwidth=0;
+color="white";
+bgcolor="#ffdddd";
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+subgraph cluster_5 {
+penwidth=0;
+color="white";
+bgcolor="#ffffdd";
+    node6 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+}    node8 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node6 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node7 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node5 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node0 -> node1 [penwidth=1;
+color="blue";
+style="invis";
+headport="e";
+tailport="w";
+];
+    node0 -> node2 [penwidth=1;
+color="blue";
+style="invis";
+headport="e";
+tailport="w";
+];
+    node0 -> node3 [penwidth=1;
+color="blue";
+style="invis";
+headport="e";
+tailport="w";
+];
+    node3 -> node4 [penwidth=1;
+color="blue";
+];
+    node4 -> node5 [penwidth=1;
+color="blue";
+];
+    node0 -> node6 [penwidth=1;
+color="blue";
+];
+    node1 -> node6 [penwidth=1;
+color="blue";
+];
+    node2 -> node6 [penwidth=1;
+color="blue";
+];
+    node6 -> node7 [penwidth=1;
+color="blue";
+];
+    node8 -> node0 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Python: try_except_else_finally: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+subgraph cluster_0 {
+penwidth=0;
+color="white";
+bgcolor="#ddddff";
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+subgraph cluster_1 {
+penwidth=0;
+color="white";
+bgcolor="#ddffdd";
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+subgraph cluster_2 {
+penwidth=0;
+color="white";
+bgcolor="#ffdddd";
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+subgraph cluster_3 {
+penwidth=0;
+color="white";
+bgcolor="#ffffdd";
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+}    node4 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node0 -> node1 [penwidth=1;
+color="blue";
+style="invis";
+headport="e";
+tailport="w";
+];
+    node0 -> node2 [penwidth=1;
+color="blue";
+];
+    node2 -> node3 [penwidth=1;
+color="blue";
+];
+    node1 -> node3 [penwidth=1;
+color="blue";
+];
+    node4 -> node0 [penwidth=1;
+color="blue";
+];
+    node3 -> node5 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Python: massive_try_except_else_finally: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+subgraph cluster_0 {
+penwidth=0;
+color="white";
+bgcolor="#ddddff";
+    node8 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node9 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node10 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node11 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+subgraph cluster_1 {
+penwidth=0;
+color="white";
+bgcolor="#ddffdd";
+
+subgraph cluster_2 {
+penwidth=0;
+color="white";
+bgcolor="#ddddff";
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+subgraph cluster_3 {
+penwidth=0;
+color="white";
+bgcolor="#ddffdd";
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+subgraph cluster_4 {
+penwidth=0;
+color="white";
+bgcolor="#ffdddd";
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+subgraph cluster_5 {
+penwidth=0;
+color="white";
+bgcolor="#ffffdd";
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+}
+
+}
+
+subgraph cluster_6 {
+penwidth=0;
+color="white";
+bgcolor="#ffdddd";
+
+subgraph cluster_7 {
+penwidth=0;
+color="white";
+bgcolor="#ddddff";
+    node6 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+subgraph cluster_8 {
+penwidth=0;
+color="white";
+bgcolor="#ddffdd";
+    node4 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+subgraph cluster_9 {
+penwidth=0;
+color="white";
+bgcolor="#ffdddd";
+    node5 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+subgraph cluster_10 {
+penwidth=0;
+color="white";
+bgcolor="#ffffdd";
+    node7 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+}
+
+}
+
+subgraph cluster_11 {
+penwidth=6;
+color="white";
+bgcolor="#ddddff";
+
+subgraph cluster_12 {
+penwidth=0;
+color="white";
+bgcolor="#ddffdd";
+    node13 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+subgraph cluster_13 {
+penwidth=0;
+color="white";
+bgcolor="#ffffdd";
+    node14 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+}
+
+subgraph cluster_14 {
+penwidth=0;
+color="white";
+bgcolor="#ffffdd";
+    node15 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+subgraph cluster_15 {
+penwidth=0;
+color="white";
+bgcolor="#ffddff";
+    node18 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node16 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node17 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node18 -> node16 [penwidth=1;
+color="green";
+];
+    node16 -> node18 [penwidth=1;
+color="blue";
+];
+    node18 -> node17 [penwidth=1;
+color="red";
+];
+
+}
+
+}
+    node8 -> node9 [penwidth=1;
+color="green";
+];
+    node9 -> node11 [penwidth=1;
+color="blue";
+];
+    node8 -> node10 [penwidth=1;
+color="red";
+];
+    node10 -> node11 [penwidth=1;
+color="blue";
+];
+
+}    node19 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node6 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node7 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node8 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node15 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node9 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node10 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node18 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node11 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node16 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node17 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node13 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node20 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node14 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node0 -> node1 [penwidth=1;
+color="blue";
+style="invis";
+headport="e";
+tailport="w";
+];
+    node0 -> node2 [penwidth=1;
+color="blue";
+];
+    node2 -> node3 [penwidth=1;
+color="blue";
+];
+    node1 -> node3 [penwidth=1;
+color="blue";
+];
+    node4 -> node5 [penwidth=1;
+color="blue";
+style="invis";
+headport="e";
+tailport="w";
+];
+    node4 -> node6 [penwidth=1;
+color="blue";
+];
+    node6 -> node7 [penwidth=1;
+color="blue";
+];
+    node5 -> node7 [penwidth=1;
+color="blue";
+];
+    node0 -> node4 [penwidth=1;
+color="blue";
+style="invis";
+headport="e";
+tailport="w";
+];
+    node13 -> node14 [penwidth=1;
+color="blue";
+];
+    node11 -> node13 [penwidth=1;
+color="blue";
+];
+    node15 -> node18 [penwidth=1;
+color="blue";
+];
+    node14 -> node15 [penwidth=1;
+color="blue";
+];
+    node7 -> node15 [penwidth=1;
+color="blue";
+];
+    node19 -> node0 [penwidth=1;
+color="blue";
+];
+    node17 -> node20 [penwidth=1;
+color="blue";
+];
+    node3 -> node8 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Python: try_finally: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+subgraph cluster_0 {
+penwidth=0;
+color="white";
+bgcolor="#ddddff";
+    node6 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+
+subgraph cluster_1 {
+penwidth=0;
+color="white";
+bgcolor="#ddffdd";
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node0 -> node1 [penwidth=1;
+color="green";
+];
+    node0 -> node4 [penwidth=1;
+color="red";
+];
+
+}
+
+subgraph cluster_2 {
+penwidth=0;
+color="white";
+bgcolor="#ffffdd";
+    node5 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node7 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+}    node8 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node6 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node7 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node9 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node1 -> node5 [penwidth=1;
+color="blue";
+];
+    node5 -> node6 [penwidth=1;
+color="blue";
+];
+    node4 -> node7 [penwidth=1;
+color="blue";
+];
+    node7 -> node9 [penwidth=1;
+color="blue";
+];
+    node8 -> node0 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`Python: try_with_finally: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+subgraph cluster_0 {
+penwidth=0;
+color="white";
+bgcolor="#ddddff";
+    node4 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+
+subgraph cluster_1 {
+penwidth=0;
+color="white";
+bgcolor="#ddffdd";
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+subgraph cluster_2 {
+penwidth=0;
+color="white";
+bgcolor="#ffddff";
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+}
+
+subgraph cluster_3 {
+penwidth=0;
+color="white";
+bgcolor="#ffffdd";
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+
+}
+
+}    node6 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node0 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node0 -> node1 [penwidth=1;
+color="blue";
+];
+    node1 -> node3 [penwidth=1;
+color="blue";
+];
+    node3 -> node4 [penwidth=1;
+color="blue";
+];
+    node6 -> node0 [penwidth=1;
+color="blue";
+];
+}"
+`;

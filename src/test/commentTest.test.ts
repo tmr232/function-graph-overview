@@ -11,3 +11,12 @@ test.each(testManager.allTests)(
   // @ts-expect-error: Mismatch between function types
   testManager.invokeWith((failure: string) => expect().fail(failure)),
 );
+
+test.each(testManager.snapshotTests)(
+  testManager.nameFormat,
+  (_name, handler) => {
+    // @ts-expect-error: Mismatch between function types
+    const dot = handler();
+    expect(dot).toMatchSnapshot();
+  },
+);
