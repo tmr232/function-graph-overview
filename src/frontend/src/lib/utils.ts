@@ -77,13 +77,19 @@ export function getFirstFunction(tree: Parser.Tree): Parser.SyntaxNode | null {
   return functionNode;
 }
 
-const parsers: Parsers = await initializeParsers();
-const graphviz: Graphviz = await Graphviz.load();
+let parsers: Parsers;
+let graphviz: Graphviz;
+export async function initialize() {
+  parsers = await initializeParsers();
+  graphviz = await Graphviz.load();
+  return { parsers, graphviz };
+}
 export interface TestResults {
   reqName: string;
   reqValue: any;
   failure: string | null;
 }
+
 export function runTest(record: TestFuncRecord): TestResults[] {
   const tree = parsers[record.language].parse(record.code);
   const testFunc: TestFunction = {

@@ -5,7 +5,11 @@
   import { graphToDot } from "../../../control-flow/render";
   import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
-  import { getFirstFunction, initializeParsers, type Parsers } from "./utils";
+  import {
+    getFirstFunction,
+    initialize as initializeUtils,
+    type Parsers,
+  } from "./utils";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
@@ -17,8 +21,9 @@
   export let flatSwitch: boolean = false;
 
   async function initialize() {
-    parsers = await initializeParsers();
-    graphviz = await Graphviz.load();
+    const utils = await initializeUtils();
+    parsers = utils.parsers;
+    graphviz = utils.graphviz;
   }
 
   interface RenderOptions {
