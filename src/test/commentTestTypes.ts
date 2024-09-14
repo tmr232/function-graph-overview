@@ -4,6 +4,7 @@ export interface Requirements {
   nodes?: number;
   exits?: number;
   reaches?: [string, string][];
+  render?: boolean;
 }
 export interface TestFunction {
   name: string;

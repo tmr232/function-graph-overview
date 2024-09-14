@@ -1,14 +1,22 @@
 import { test, expect } from "bun:test";
-import { testFunctions as testFuncsForGo } from "./collect-go";
-import { testFunctions as testFuncsForC } from "./collect-c";
 import { TestManager } from "./commentTestManager";
+import { collectTests } from "./commentTestCollector";
 
 const testManager = new TestManager({
-  testFunctions: [...testFuncsForC, ...testFuncsForGo],
+  testFunctions: await collectTests(),
 });
 
 test.each(testManager.allTests)(
   testManager.nameFormat,
   // @ts-expect-error: Mismatch between function types
   testManager.invokeWith((failure: string) => expect().fail(failure)),
+);
+
+test.each(testManager.snapshotTests)(
+  testManager.nameFormat,
+  (_name, handler) => {
+    // @ts-expect-error: Mismatch between function types
+    const dot = handler();
+    expect(dot).toMatchSnapshot();
+  },
 );

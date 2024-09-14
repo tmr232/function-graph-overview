@@ -11,7 +11,6 @@ TODO: Write a script that collects all the test code and generates a webpage
 
 export function parseComment(text: string): Requirements {
   const jsonContent = text
-    .slice(2, -2)
     .trim()
     .replaceAll(/^(?=\w)/gm, '"')
     .replaceAll(/:/gm, '":');

@@ -1,26 +1,46 @@
 import { MultiDirectedGraph } from "graphology";
 import { subgraph } from "graphology-operators";
 import { bfsFromNode } from "graphology-traversal";
-import type { CFG } from "./cfg-defs";
+import type { CFG, GraphNode } from "./cfg-defs";
 
 export function distanceFromEntry(cfg: CFG): Map<string, number> {
   const { graph, entry } = cfg;
   const levels = new Map();
 
-  bfsFromNode(graph, entry, (node, attr, depth) => {
+  bfsFromNode(graph, entry, (node, _attr, depth) => {
     levels.set(node, depth);
   });
 
   return levels;
 }
 
-export type AttrMerger = (nodeAttrs: object, intoAttrs: object) => object;
+/// Can return null to indicate that the merge is not allowed.
+/// The function MUST NOT modify the input arguments.
+export type AttrMerger = (
+  nodeAttrs: GraphNode,
+  intoAttrs: GraphNode,
+) => GraphNode | null;
 function collapseNode(
-  graph: MultiDirectedGraph,
+  graph: MultiDirectedGraph<GraphNode>,
   node: string,
   into: string,
   mergeAttrs?: AttrMerger,
 ) {
+  if (mergeAttrs) {
+    const attrs = mergeAttrs(
+      graph.getNodeAttributes(node),
+      graph.getNodeAttributes(into),
+    );
+    if (attrs === null) {
+      // We can't merge the nodes, so we bail.
+      return;
+    }
+
+    for (const [name, value] of Object.entries(attrs)) {
+      graph.setNodeAttribute(into, name as keyof GraphNode, value);
+    }
+  }
+
   graph.forEachEdge(node, (edge, attributes, source, target) => {
     if (target === into) {
       return;
@@ -30,15 +50,7 @@ function collapseNode(
     const edgeNodes = [replaceNode(source), replaceNode(target)] as const;
     graph.addEdge(...edgeNodes, attributes);
   });
-  if (mergeAttrs) {
-    const attrs = mergeAttrs(
-      graph.getNodeAttributes(node),
-      graph.getNodeAttributes(into),
-    );
-    for (const [name, value] of Object.entries(attrs)) {
-      graph.setNodeAttribute(into, name, value);
-    }
-  }
+
   graph.dropNode(node);
 }
 /**
@@ -74,8 +86,7 @@ export function simplifyCFG(cfg: CFG, mergeAttrs?: AttrMerger): CFG {
   } catch (error) {
     console.log(error);
   }
-
-  return { graph, entry };
+  return evolve(cfg, { graph, entry });
 }
 
 export function trimFor(cfg: CFG): CFG {
@@ -86,5 +97,14 @@ export function trimFor(cfg: CFG): CFG {
     reachable.push(node);
   });
 
-  return { graph: subgraph(graph, reachable), entry };
+  return evolve(cfg, { graph: subgraph(graph, reachable) });
+}
+
+function evolve<T extends object>(
+  obj: T,
+  attrs: { [key: string]: unknown },
+): T {
+  const newObj = structuredClone(obj);
+  Object.assign(newObj, attrs);
+  return newObj;
 }

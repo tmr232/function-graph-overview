@@ -2,6 +2,8 @@ import { MultiDirectedGraph } from "graphology";
 import type Parser from "web-tree-sitter";
 
 export type NodeType =
+  | "YIELD"
+  | "THROW"
   | "MARKER_COMMENT"
   | "LOOP_HEAD"
   | "LOOP_EXIT"
@@ -29,12 +31,29 @@ export type NodeType =
   | "SWITCH_CONDITION"
   | "SWITCH_MERGE"
   | "CASE_CONDITION";
-export type EdgeType = "regular" | "consequence" | "alternative";
+export type EdgeType = "regular" | "consequence" | "alternative" | "exception";
+
+export type ClusterType =
+  | "with"
+  | "try"
+  | "except"
+  | "else"
+  | "finally"
+  | "try-complex";
+export type ClusterId = number;
+export type Cluster = {
+  id: ClusterId;
+  type: ClusterType;
+  parent?: Cluster;
+  depth: number;
+};
+
 export interface GraphNode {
   type: NodeType;
   code: string;
   lines: number;
   markers: string[];
+  cluster?: Cluster;
 }
 
 export interface GraphEdge {
@@ -55,10 +74,13 @@ export interface BasicBlock {
   labels?: Map<string, string>;
   // Target label
   gotos?: Goto[];
+  // Return statements in the block. Needed for exception handling.
+  returns?: string[];
 }
 
+export type CFGGraph = MultiDirectedGraph<GraphNode, GraphEdge>;
 export interface CFG {
-  graph: MultiDirectedGraph<GraphNode, GraphEdge>;
+  graph: CFGGraph;
   entry: string;
 }
 
@@ -67,7 +89,20 @@ export class BlockHandler {
   private continues: string[] = [];
   private labels: Map<string, string> = new Map();
   private gotos: Array<{ label: string; node: string }> = [];
+  /**
+   * All the returns encountered so far.
+   *
+   * This is needed for `finally` clauses in exception handling,
+   * as the return is moved/duplicated to the end of the finally clause.
+   * This means that when processing returns, we expect to get a new set
+   * of returns.
+   */
+  private returns: Array<string> = [];
 
+  /**
+   * Operate on all collected breaks and clear them.
+   * @param callback Handles the breaks, linking them to the relevant nodes.
+   */
   public forEachBreak(callback: (breakNode: string) => void) {
     this.breaks.forEach(callback);
     this.breaks = [];
@@ -76,6 +111,10 @@ export class BlockHandler {
   public forEachContinue(callback: (continueNode: string) => void) {
     this.continues.forEach(callback);
     this.continues = [];
+  }
+
+  public forEachReturn(callback: (returnNode: string) => string) {
+    this.returns = this.returns.map(callback);
   }
 
   public processGotos(callback: (gotoNode: string, labelNode: string) => void) {
@@ -90,9 +129,10 @@ export class BlockHandler {
   }
 
   public update(block: BasicBlock): BasicBlock {
-    this.breaks.push(...(block.breaks || []));
-    this.continues.push(...(block.continues || []));
-    this.gotos.push(...(block.gotos || []));
+    this.breaks.push(...(block.breaks ?? []));
+    this.continues.push(...(block.continues ?? []));
+    this.gotos.push(...(block.gotos ?? []));
+    this.returns.push(...(block.returns ?? []));
     block.labels?.forEach((value, key) => this.labels.set(key, value));
 
     return {
@@ -102,16 +142,28 @@ export class BlockHandler {
       continues: this.continues,
       gotos: this.gotos,
       labels: this.labels,
+      returns: this.returns,
     };
   }
 }
 
-export function mergeNodeAttrs(from: GraphNode, into: GraphNode): GraphNode {
+export function mergeNodeAttrs(
+  from: GraphNode,
+  into: GraphNode,
+): GraphNode | null {
+  if (from.cluster !== into.cluster) {
+    return null;
+  }
+  const noMergeTypes: NodeType[] = ["YIELD", "THROW"];
+  if (noMergeTypes.includes(from.type) || noMergeTypes.includes(into.type)) {
+    return null;
+  }
   return {
     type: from.type,
     code: `${from.code}\n${into.code}`,
     lines: from.lines + into.lines,
     markers: [...from.markers, ...into.markers],
+    cluster: from.cluster,
   };
 }
 export interface Case {

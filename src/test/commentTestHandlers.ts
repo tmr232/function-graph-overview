@@ -1,4 +1,4 @@
-import { type CFG } from "../control-flow/cfg-defs";
+import { mergeNodeAttrs, type CFG } from "../control-flow/cfg-defs";
 import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
 import type { MultiDirectedGraph } from "graphology";
 import { bfsFromNode } from "graphology-traversal";
@@ -8,6 +8,7 @@ import {
 } from "../control-flow/cfg";
 import type Parser from "web-tree-sitter";
 import type { TestFunction } from "./commentTestTypes";
+import { graphToDot } from "../control-flow/render";
 
 const markerPattern: RegExp = /CFG: (\w+)/;
 
@@ -16,11 +17,11 @@ function buildCFG(language: CFGLanguage, functionNode: Parser.SyntaxNode): CFG {
   return trimFor(builder.buildCFG(functionNode));
 }
 
-function buildSimpleCFG(
+export function buildSimpleCFG(
   language: CFGLanguage,
   functionNode: Parser.SyntaxNode,
 ): CFG {
-  return simplifyCFG(buildCFG(language, functionNode));
+  return simplifyCFG(buildCFG(language, functionNode), mergeNodeAttrs);
 }
 
 function buildMarkerCFG(
@@ -57,7 +58,7 @@ export const requirementTests: {
   [key: string]: RequirementHandler | undefined;
 } = {
   nodes(testFunc: TestFunction) {
-    if (testFunc.reqs.nodes) {
+    if (testFunc.reqs.nodes !== undefined) {
       const cfg = buildSimpleCFG(testFunc.language, testFunc.function);
       if (cfg.graph.order !== testFunc.reqs.nodes) {
         return `expected ${testFunc.reqs.nodes} nodes but found ${cfg.graph.order}`;
@@ -66,7 +67,7 @@ export const requirementTests: {
     return null;
   },
   exits(testFunc: TestFunction) {
-    if (testFunc.reqs.exits) {
+    if (testFunc.reqs.exits !== undefined) {
       const cfg = buildSimpleCFG(testFunc.language, testFunc.function);
       const exitNodes = cfg.graph.filterNodes(
         (node) => cfg.graph.outDegree(node) === 0,
@@ -78,7 +79,7 @@ export const requirementTests: {
     return null;
   },
   reaches(testFunc: TestFunction) {
-    if (testFunc.reqs.reaches) {
+    if (testFunc.reqs.reaches !== undefined) {
       const cfg = buildMarkerCFG(testFunc.language, testFunc.function);
       const markerMap = getMarkerMap(cfg);
       const getNode = (marker: string) => {
@@ -92,6 +93,18 @@ export const requirementTests: {
         if (!pathExists(cfg.graph, getNode(source), getNode(target))) {
           return `expected path from ${source} to ${target} but none was found`;
         }
+      }
+    }
+    return null;
+  },
+  render(testFunc: TestFunction) {
+    if (testFunc.reqs.render !== undefined) {
+      const cfg = buildCFG(testFunc.language, testFunc.function);
+      try {
+        graphToDot(cfg);
+      } catch (error) {
+        console.trace(error);
+        return `failed to render due to ${error}`;
       }
     }
     return null;

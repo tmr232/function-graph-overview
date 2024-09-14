@@ -1,4 +1,6 @@
+import { graphToDot } from "../control-flow/render";
 import {
+  buildSimpleCFG,
   requirementTests,
   type RequirementHandler,
 } from "./commentTestHandlers";
@@ -41,5 +43,17 @@ export class TestManager {
       }
     }
     return tests;
+  }
+
+  public get snapshotTests() {
+    return this.testFunctions.map((testFunc) => {
+      const testName = `${testFunc.language}: ${testFunc.name}: DOT Snapshot`;
+      const handler = () => {
+        const cfg = buildSimpleCFG(testFunc.language, testFunc.function);
+        const dot = graphToDot(cfg);
+        return dot;
+      };
+      return [testName, handler];
+    });
   }
 }

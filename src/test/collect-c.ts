@@ -1,16 +1,7 @@
 import Parser from "web-tree-sitter";
-import goSampleCode from "./sample.c" with { type: "text" };
 import treeSitterC from "../../parsers/tree-sitter-c.wasm?url";
-import { parseComment, type TestFunction } from "./commentTestUtils";
-
-/*
-TODO: Write a script that collects all the test code and generates a webpage
-      showing it.
-      - Toggle to show only failing tests
-      - The usual display toggles
-      - Ability to show markers instead of node content
-      - Shows the reason the test failed (in text!)
-*/
+import { parseComment } from "./commentTestUtils";
+import type { TestFunction } from "./commentTestTypes";
 
 async function initializeParser(): Promise<[Parser, Parser.Language]> {
   await Parser.init();
@@ -18,6 +9,12 @@ async function initializeParser(): Promise<[Parser, Parser.Language]> {
   const C = await Parser.Language.load(treeSitterC);
   parser.setLanguage(C);
   return [parser, C];
+}
+const [parser, language] = await initializeParser();
+
+export function getTestFuncs(code: string): Generator<TestFunction> {
+  const tree = parser.parse(code);
+  return iterTestFunctions(tree);
 }
 
 function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
@@ -37,14 +34,10 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
       const captures = match.captures.slice(i);
       yield {
         function: captures[1].node,
-        reqs: parseComment(captures[0].node.text),
+        reqs: parseComment(captures[0].node.text.slice(2, -2)),
         name: captures[2].node.text,
         language: "C",
       };
     }
   }
 }
-
-const [parser, language] = await initializeParser();
-const tree = parser.parse(goSampleCode);
-export const testFunctions = [...iterTestFunctions(tree)];
