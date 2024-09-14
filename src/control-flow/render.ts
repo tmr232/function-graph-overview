@@ -209,8 +209,11 @@ function renderSubgraphs(
   verbose: boolean,
   topGraph: CFGGraph,
 ) {
-  let dotContent = `subgraph cluster_${hierarchy.cluster?.id ?? "toplevel"} {\n`;
-  if (hierarchy.cluster) dotContent += clusterStyle(hierarchy.cluster);
+  let dotContent = ""
+  if (hierarchy.cluster?.type !== "try") {
+    dotContent += `subgraph cluster_${hierarchy.cluster?.id ?? "toplevel"} {\n`;
+    if (hierarchy.cluster) dotContent += clusterStyle(hierarchy.cluster);
+  }
   hierarchy.graph.forEachNode((node) => {
     dotContent += renderNode(topGraph, node, verbose);
   });
@@ -220,7 +223,9 @@ function renderSubgraphs(
   hierarchy.graph.forEachEdge((edge, _attributes, source, target) => {
     dotContent += renderEdge(edge, source, target, topGraph);
   });
-  dotContent += "\n}";
+  if (hierarchy.cluster?.type !== "try") {
+    dotContent += "\n}";
+  }
   return dotContent;
 }
 
