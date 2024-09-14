@@ -157,11 +157,14 @@ def WithNestedCluster():
 
 
 # render: true,
-# exits: 999
+# exits: 1,
+# nodes: 2
 def raise_exception():
     raise
 
-# render: true
+# render: true,
+# exits: 1,
+# nodes: 5
 def raise_again():
     try:
         raise x
@@ -173,7 +176,8 @@ def raise_again():
             pass
 
 # render: true,
-# exits: 3
+# exits: 1,
+# nodes: 4
 def yield_value():
     for x in y:
         yield x
