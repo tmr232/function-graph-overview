@@ -192,6 +192,40 @@ def try_many_except_finally():
     return
 
 
+# exits: 0,
+# render: true
+def try_except_else_finally():
+    try: pass
+    except: pass
+    else: pass
+    finally: pass
+
+# exits: 0,
+# render: true
+def massive_try_except_else_finally():
+    try: 
+        try: pass
+        except: pass
+        else: pass
+        finally: pass
+    except:
+        try: pass
+        except: pass
+        else: pass
+        finally: pass
+    else: 
+        if x:
+            pass
+        else:
+            pass
+        try:
+            pass
+        finally: pass
+    finally: 
+        with x:
+            for y in a:
+                pass
+
 # exits: 5,
 # render: true
 def try_finally():

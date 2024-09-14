@@ -209,6 +209,7 @@ export class CFGBuilder {
 
     const bodySyntax = this.getSyntax(match, "try-body");
     const exceptSyntaxMany = this.getSyntaxMany(match, "except-body");
+    const elseSyntax = this.getSyntax(match, "else-body");
     const finallySyntax = this.getSyntax(match, "finally-body");
     return this.withCluster("try-complex", (tryComplexCluster) => {
       const bodyBlock = this.withCluster("try", () =>
@@ -230,6 +231,9 @@ export class CFGBuilder {
           }
         });
       }
+
+      // Create the `else` block before `finally` to handle returns correctly.
+      const elseBlock = getBlock(elseSyntax);
 
       const finallyBlock = this.withCluster("finally", () => {
         // Handle all the return statements from the try block
@@ -264,10 +268,19 @@ export class CFGBuilder {
         return finallyBlock;
       });
 
+      let complexExit: string | null = bodyBlock.exit;
+
+      // Connect the body to the `else` block
+      if (bodyBlock.exit && elseBlock?.entry) {
+        this.addEdge(bodyBlock.exit, elseBlock.entry);
+        complexExit = elseBlock.exit;
+      }
+
       if (finallyBlock?.entry) {
         // Connect `try` to `finally`
-        if (bodyBlock.exit) this.addEdge(bodyBlock.exit, finallyBlock.entry);
-
+        const toFinally = elseBlock?.exit ?? bodyBlock.exit;
+        if (toFinally) this.addEdge(toFinally, finallyBlock.entry);
+        complexExit = finallyBlock.exit;
         // Connect `except` to `finally`
         exceptBlocks.forEach((exceptBlock) => {
           if (exceptBlock.exit)
@@ -277,7 +290,7 @@ export class CFGBuilder {
 
       return blockHandler.update({
         entry: bodyBlock.entry,
-        exit: finallyBlock?.exit ?? bodyBlock.exit,
+        exit: complexExit,
       });
     });
   }
