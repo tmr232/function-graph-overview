@@ -3,7 +3,7 @@ import type Parser from "web-tree-sitter";
 
 export type NodeType =
   | "YIELD"
-  | "RAISE"
+  | "THROW"
   | "MARKER_COMMENT"
   | "LOOP_HEAD"
   | "LOOP_EXIT"
@@ -152,6 +152,10 @@ export function mergeNodeAttrs(
   into: GraphNode,
 ): GraphNode | null {
   if (from.cluster !== into.cluster) {
+    return null;
+  }
+  const noMergeTypes: NodeType[] = ["YIELD", "THROW"];
+  if (noMergeTypes.includes(from.type) || noMergeTypes.includes(into.type)) {
     return null;
   }
   return {

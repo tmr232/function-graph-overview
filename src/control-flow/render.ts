@@ -86,11 +86,11 @@ function buildHierarchy(cfg: CFG): Hierarchy {
   // for (const cluster of clusterNodes.keys()) {
   //   console.log(cluster.id, getParents(cluster).map(c => c.id))
   // }
-  // showHierarchy(hierarchy);
+  // _showHierarchy(hierarchy);
   return hierarchy;
 }
 
-function showHierarchy(hierarchy: Hierarchy) {
+function _showHierarchy(hierarchy: Hierarchy) {
   const stack: [Hierarchy, number][] = [[hierarchy, 0]];
   const spaces = "                                           ";
   for (
@@ -115,7 +115,6 @@ function getParents(cluster: Cluster) {
   }
   return parents.toReversed();
 }
-
 
 function renderHierarchy(
   cfg: CFG,
@@ -309,7 +308,7 @@ function renderEdge(
 
 function renderNode(graph: CFGGraph, node: string, verbose: boolean): string {
   const dotAttrs: DotAttributes = {};
-  dotAttrs.style = "filled"
+  dotAttrs.style = "filled";
   dotAttrs.label = "";
   const nodeAttrs = graph.getNodeAttributes(node);
   if (verbose) {
@@ -333,13 +332,14 @@ function renderNode(graph: CFGGraph, node: string, verbose: boolean): string {
     minHeight = 0.5;
   }
   switch (nodeAttrs.type) {
-    case "RAISE":
+    case "THROW":
       dotAttrs.shape = "triangle";
       dotAttrs.fillcolor = "#fdd";
       break;
     case "YIELD":
-      dotAttrs.shallow = "hexagon";
-      dotAttrs.fillcolor = "aqua";
+      dotAttrs.shape = "hexagon";
+      dotAttrs.orientation = 90;
+      dotAttrs.fillcolor = "deepskyblue";
       break;
   }
 

@@ -161,8 +161,7 @@ def WithNestedCluster():
 def raise_exception():
     raise
 
-# render: true,
-# exits: 999
+# render: true
 def raise_again():
     try:
         raise x
@@ -180,7 +179,8 @@ def yield_value():
         yield x
     
 
-# exits: 0,
+# exits: 2,
+# nodes: 4,
 # render: true
 def try_except():
     try:
@@ -189,7 +189,8 @@ def try_except():
         g()
     return
 
-# exits: 0,
+# exits: 1,
+# nodes: 5,
 # render: true
 def try_except_finally():
     try:
@@ -200,7 +201,8 @@ def try_except_finally():
         h()
     return
 
-# exits: 0,
+# exits: 2,
+# nodes: 9,
 # render: true
 def try_many_except_finally():
     try:
@@ -215,7 +217,8 @@ def try_many_except_finally():
     return
 
 
-# exits: 0,
+# exits: 1,
+# nodes: 6,
 # render: true
 def try_except_else_finally():
     try: pass
@@ -223,7 +226,6 @@ def try_except_else_finally():
     else: pass
     finally: pass
 
-# exits: 0,
 # render: true
 def massive_try_except_else_finally():
     try: 
@@ -249,7 +251,8 @@ def massive_try_except_else_finally():
             for y in a:
                 pass
 
-# exits: 5,
+# exits: 2,
+# nodes: 8,
 # render: true
 def try_finally():
     try:
@@ -259,7 +262,8 @@ def try_finally():
     finally:
         pass
 
-# exits: 5,
+# exits: 1,
+# nodes: 5,
 # render: true
 def try_with_finally():
     try:

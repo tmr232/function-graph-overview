@@ -178,16 +178,16 @@ export class CFGBuilder {
     }
   }
   private defaultProcessStatement(syntax: Parser.SyntaxNode): BasicBlock {
-    // const match = this.matchQuery(syntax, "yield", `(yield) @yield`);
-    // if (match.captures.length > 0) {
-    //   const yieldNode = this.addNode("YIELD", syntax.text);
-    //   return { entry: yieldNode, exit: yieldNode };
-    // }
+    const hasYield = this.matchExistsIn(syntax, "yield", `(yield) @yield`);
+    if (hasYield) {
+      const yieldNode = this.addNode("YIELD", syntax.text);
+      return { entry: yieldNode, exit: yieldNode };
+    }
     const newNode = this.addNode("STATEMENT", syntax.text);
     return { entry: newNode, exit: newNode };
   }
   private processRaiseStatement(raiseSyntax: Parser.SyntaxNode): BasicBlock {
-    const raiseNode = this.addNode("RAISE", raiseSyntax.text);
+    const raiseNode = this.addNode("THROW", raiseSyntax.text);
     return { entry: raiseNode, exit: null };
   }
   private processReturnStatement(returnSyntax: Parser.SyntaxNode): BasicBlock {
@@ -504,6 +504,17 @@ export class CFGBuilder {
       throw new Error("No match found!");
     })();
     return match;
+  }
+
+  private matchExistsIn(
+    syntax: Parser.SyntaxNode,
+    mainName: string,
+    queryString: string,
+  ): boolean {
+    const language = syntax.tree.getLanguage();
+    const query = language.query(queryString);
+    const matches = query.matches(syntax);
+    return matches.length > 0;
   }
 
   private getSyntax(
