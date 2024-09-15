@@ -17,7 +17,6 @@ import {
 export class CFGBuilder {
   private graph: MultiDirectedGraph<GraphNode, GraphEdge> =
     new MultiDirectedGraph();
-  private entry: string;
   private nodeId: number = 0;
   private clusterId: ClusterId = 0;
   private readonly flatSwitch: boolean;
@@ -25,13 +24,13 @@ export class CFGBuilder {
   private activeClusters: Cluster[] = [];
 
   constructor(options?: BuilderOptions) {
-    this.entry = null;
 
     this.flatSwitch = options?.flatSwitch ?? false;
     this.markerPattern = options?.markerPattern ?? null;
   }
 
   public buildCFG(functionNode: Parser.SyntaxNode): CFG {
+    const startNode = this.addNode("START", "START");
     const bodyNode = functionNode.childForFieldName("body");
     if (bodyNode) {
       const blockHandler = new BlockHandler();
@@ -39,14 +38,12 @@ export class CFGBuilder {
         this.processStatements(bodyNode.namedChildren),
       );
 
-      const startNode = this.addNode("START", "START");
       const endNode = this.addNode("RETURN", "implicit return");
       // `entry` will be non-null for any valid code
       if (entry) this.addEdge(startNode, entry);
       if (exit) this.addEdge(exit, endNode);
-      this.entry = startNode;
     }
-    return { graph: this.graph, entry: this.entry };
+    return { graph: this.graph, entry: startNode };
   }
 
   private startCluster(type: ClusterType): Cluster {
