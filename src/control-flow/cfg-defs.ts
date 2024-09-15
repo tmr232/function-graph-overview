@@ -52,6 +52,7 @@ export interface GraphNode {
   type: NodeType;
   code: string;
   lines: number;
+  firstLineNumber?: number;
   markers: string[];
   cluster?: Cluster;
 }
@@ -147,6 +148,18 @@ export class BlockHandler {
   }
 }
 
+function minIfDefined(
+  a: number | undefined,
+  b: number | undefined,
+): number | undefined {
+  if (a === undefined) {
+    return b;
+  }
+  if (b === undefined) {
+    return a;
+  }
+  return Math.min(a, b);
+}
 export function mergeNodeAttrs(
   from: GraphNode,
   into: GraphNode,
@@ -164,6 +177,7 @@ export function mergeNodeAttrs(
     lines: from.lines + into.lines,
     markers: [...from.markers, ...into.markers],
     cluster: from.cluster,
+    firstLineNumber: minIfDefined(from.firstLineNumber, into.firstLineNumber),
   };
 }
 export interface Case {
