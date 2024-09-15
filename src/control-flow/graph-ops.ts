@@ -108,3 +108,24 @@ function evolve<T extends object>(
   Object.assign(newObj, attrs);
   return newObj;
 }
+
+export function detectBacklinks(
+  graph: MultiDirectedGraph,
+  entry: string,
+): { from: string; to: string }[] {
+  const backlinks: { from: string; to: string }[] = [];
+  const stack: { node: string; path: string[] }[] = [{ node: entry, path: [] }];
+  let current;
+  while ((current = stack.pop()) !== undefined) {
+    const { node, path } = current;
+    for (const child of graph.outNeighbors(node)) {
+      if (path.includes(child)) {
+        backlinks.push({ from: node, to: child });
+        continue;
+      }
+      stack.push({ node: child, path: [...path, node] });
+    }
+  }
+
+  return backlinks;
+}

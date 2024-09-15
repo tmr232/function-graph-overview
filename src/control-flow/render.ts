@@ -1,7 +1,25 @@
-import { distanceFromEntry } from "./graph-ops";
+import { detectBacklinks } from "./graph-ops";
 import type { CFG, CFGGraph, Cluster, ClusterId } from "./cfg-defs";
 import { subgraph } from "graphology-operators";
 import { MultiDirectedGraph } from "graphology";
+
+class RenderContext {
+  public readonly verbose: boolean;
+  private readonly backlinks: { from: string; to: string }[];
+
+  constructor(verbose: boolean, backlinks: { from: string; to: string }[]) {
+    this.verbose = verbose;
+    this.backlinks = backlinks;
+  }
+
+  public isBacklink(from: string, to: string): boolean {
+    return (
+      this.backlinks.findIndex(
+        (backlink) => from === backlink.from && to === backlink.to,
+      ) != -1
+    );
+  }
+}
 
 /**
  * Break a subgraph out of a parent graph
@@ -119,7 +137,7 @@ function getParents(cluster: Cluster) {
 function renderHierarchy(
   cfg: CFG,
   hierarchy: Hierarchy,
-  verbose: boolean = false,
+  context: RenderContext,
 ) {
   let dotContent = `digraph "" {\n    node [shape=box];\n    edge [headport=n tailport=s]\n    bgcolor="transparent"\n`;
 
@@ -127,15 +145,15 @@ function renderHierarchy(
 
   // First we draw all subgraphs
   for (const child of Object.values(hierarchy.children)) {
-    dotContent += renderSubgraphs(child, verbose, topGraph);
+    dotContent += renderSubgraphs(child, context, topGraph);
   }
 
   // Then everything that remains - connecting edges and non-clustered nodes
   hierarchy.graph.forEachNode((node) => {
-    dotContent += renderNode(topGraph, node, verbose);
+    dotContent += renderNode(topGraph, node, context);
   });
   hierarchy.graph.forEachEdge((edge, _attributes, source, target) => {
-    dotContent += renderEdge(edge, source, target, topGraph);
+    dotContent += renderEdge(edge, source, target, topGraph, context);
   });
 
   dotContent += "}";
@@ -144,20 +162,20 @@ function renderHierarchy(
 
 function renderSubgraphs(
   hierarchy: Hierarchy,
-  verbose: boolean,
+  context: RenderContext,
   topGraph: CFGGraph,
 ) {
   let dotContent = "";
   dotContent += `subgraph cluster_${hierarchy.cluster?.id ?? "toplevel"} {\n`;
   if (hierarchy.cluster) dotContent += clusterStyle(hierarchy.cluster);
   hierarchy.graph.forEachNode((node) => {
-    dotContent += renderNode(topGraph, node, verbose);
+    dotContent += renderNode(topGraph, node, context);
   });
   for (const child of Object.values(hierarchy.children)) {
-    dotContent += `\n${renderSubgraphs(child, verbose, topGraph)}\n`;
+    dotContent += `\n${renderSubgraphs(child, context, topGraph)}\n`;
   }
   hierarchy.graph.forEachEdge((edge, _attributes, source, target) => {
-    dotContent += renderEdge(edge, source, target, topGraph);
+    dotContent += renderEdge(edge, source, target, topGraph, context);
   });
   dotContent += "\n}";
   return dotContent;
@@ -165,78 +183,8 @@ function renderSubgraphs(
 
 export function graphToDot(cfg: CFG, verbose: boolean = false): string {
   const hierarchy = buildHierarchy(cfg);
-  return renderHierarchy(cfg, hierarchy, verbose);
-
-  const graph = cfg.graph;
-  let dotContent = `digraph "" {\n    node [shape=box];\n    edge [headport=n tailport=s]\n    bgcolor="transparent"\n`;
-  const levels = distanceFromEntry(cfg);
-  /*
-  To draw clusters, we need to do as follows:
-
-  1. Generate a subgraph for every cluster-set, and nest them based on cluster-count
-  2. Remove the inner cluster edges from the parent graph (node need to remain, for the out/in-going edges)
-  3. Draw them all
-  */
-  graph.forEachNode((node) => {
-    let label = "";
-    if (verbose) {
-      label = `${node} ${graph.getNodeAttributes(node).type} ${graph.getNodeAttributes(node).code}`;
-    }
-    // const label = "";
-    //     .replace(/"/g, '\\"')
-    //     .replace(/\n/g, "\\n");
-
-    // const label = `${graph.getNodeAttribute(node, "line") || ""}`;
-    // label = `${levels.get(node)}`;
-    // label = `${graph.getNodeAttribute(node, "markers")}`;
-
-    let shape = "box";
-    let fillColor = "lightgray";
-    let minHeight = 0.2;
-    if (graph.degree(node) === 0) {
-      minHeight = 0.5;
-    } else if (graph.inDegree(node) === 0) {
-      shape = "invhouse";
-      fillColor = "#48AB30";
-      minHeight = 0.5;
-    } else if (graph.outDegree(node) === 0) {
-      shape = "house";
-      fillColor = "#AB3030";
-      minHeight = 0.5;
-    }
-
-    const height = Math.max(
-      graph.getNodeAttribute(node, "lines") * 0.3,
-      minHeight,
-    );
-    dotContent += `    ${node} [label="${label}" shape="${shape}" fillcolor="${fillColor}" style="filled" height=${height}];\n`;
-  });
-
-  graph.forEachEdge((edge, attributes, source, target) => {
-    let penwidth = 1;
-    let color = "blue";
-    switch (attributes.type) {
-      case "consequence":
-        color = "green";
-        break;
-      case "alternative":
-        color = "red";
-        break;
-      default:
-        color = "blue";
-    }
-    // if (graph.getNodeAttribute(source, "line") > graph.getNodeAttribute(target, "line")) {
-    //     penwidth = 2;
-    // }
-    // TODO: Use line numbers to detect backlinks
-    if ((levels.get(source) ?? 0) > (levels.get(target) ?? 0)) {
-      penwidth = 2;
-    }
-    dotContent += `    ${source} -> ${target} [penwidth=${penwidth} color=${color}];\n`;
-  });
-
-  dotContent += "}";
-  return dotContent;
+  const backlinks = detectBacklinks(cfg.graph, cfg.entry);
+  return renderHierarchy(cfg, hierarchy, new RenderContext(verbose, backlinks));
 }
 
 type DotAttributes = { [attribute: string]: number | string | undefined };
@@ -280,10 +228,11 @@ function renderEdge(
   source: string,
   target: string,
   topGraph: CFGGraph,
+  context: RenderContext,
 ) {
   const attributes = topGraph.getEdgeAttributes(edge);
   const dotAttrs: DotAttributes = {};
-  dotAttrs.penwidth = 1;
+  dotAttrs.penwidth = context.isBacklink(source, target) ? 2 : 1;
   dotAttrs.color = "blue";
   switch (attributes.type) {
     case "consequence":
@@ -306,12 +255,16 @@ function renderEdge(
   return `    ${source} -> ${target} [${formatStyle(dotAttrs)}];\n`;
 }
 
-function renderNode(graph: CFGGraph, node: string, verbose: boolean): string {
+function renderNode(
+  graph: CFGGraph,
+  node: string,
+  context: RenderContext,
+): string {
   const dotAttrs: DotAttributes = {};
   dotAttrs.style = "filled";
   dotAttrs.label = "";
   const nodeAttrs = graph.getNodeAttributes(node);
-  if (verbose) {
+  if (context.verbose) {
     dotAttrs.label = `${node} ${nodeAttrs.type} ${graph.getNodeAttributes(node).code}`;
 
     const clusterAttrs = graph.getNodeAttribute(node, "cluster");
