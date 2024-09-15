@@ -12,6 +12,10 @@ import {
   type NodeType,
 } from "./cfg-defs";
 
+interface SwitchOptions {
+  noImplicitDefault: boolean;
+}
+
 export class CFGBuilder {
   private graph: MultiDirectedGraph<GraphNode, GraphEdge>;
   private entry: string;
@@ -120,8 +124,9 @@ export class CFGBuilder {
         return this.processForStatement(node);
       case "expression_switch_statement":
       case "type_switch_statement":
-      case "select_statement":
         return this.processSwitchlike(node);
+      case "select_statement":
+        return this.processSwitchlike(node, { noImplicitDefault: true });
       case "return_statement": {
         const returnNode = this.addNode("RETURN", node.text);
         return { entry: returnNode, exit: null };
@@ -157,9 +162,15 @@ export class CFGBuilder {
     cases: Case[],
     mergeNode: string,
     switchHeadNode: string,
+    options?: SwitchOptions,
   ) {
     let fallthrough: string | null = null;
     let previous: string | null = switchHeadNode;
+    if (options?.noImplicitDefault) {
+      // This prevents the linking of the switch head to the merge node.
+      // It is required for select statements, as they block until satisfied.
+      previous = null;
+    }
     cases.forEach((thisCase) => {
       if (this.flatSwitch) {
         if (thisCase.consequenceEntry) {
@@ -251,7 +262,10 @@ export class CFGBuilder {
     return cases;
   }
 
-  private processSwitchlike(switchSyntax: Parser.SyntaxNode): BasicBlock {
+  private processSwitchlike(
+    switchSyntax: Parser.SyntaxNode,
+    options?: SwitchOptions,
+  ): BasicBlock {
     const blockHandler = new BlockHandler();
 
     const cases = this.collectCases(switchSyntax, blockHandler);
@@ -260,7 +274,7 @@ export class CFGBuilder {
       this.getChildFieldText(switchSyntax, "value"),
     );
     const mergeNode: string = this.addNode("SWITCH_MERGE", "");
-    this.buildSwitch(cases, mergeNode, headNode);
+    this.buildSwitch(cases, mergeNode, headNode, options);
 
     blockHandler.forEachBreak((breakNode) => {
       this.addEdge(breakNode, mergeNode);
