@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "lib": ["ESNext"],
+    "lib": [
+      "ESNext"
+    ],
     "target": "ESNext",
     "module": "ESNext",
     "moduleDetection": "force",
@@ -17,7 +19,12 @@
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
     "paths": {
-      "vscode": ["./mocks/vscode.ts"]
-    }
-  }
+      "vscode": [
+        "./mocks/vscode.ts"
+      ]
+    },
+  },
+  "exclude": [
+    "./webview-content"
+  ]
 }
