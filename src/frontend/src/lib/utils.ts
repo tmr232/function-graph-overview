@@ -11,7 +11,7 @@ import { requirementTests } from "../../../test/commentTestHandlers";
 import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
 import { mergeNodeAttrs } from "../../../control-flow/cfg-defs";
 import { graphToDot } from "../../../control-flow/render";
-import { Graphviz } from "@hpcc-js/wasm-graphviz";
+import { Graphviz, type Format } from "@hpcc-js/wasm-graphviz";
 async function initializeParser(language: Language) {
   await Parser.init({
     locateFile(_scriptName: string, _scriptDirectory: string) {
@@ -47,7 +47,7 @@ export async function initializeParsers(): Promise<Parsers> {
 }
 
 export function getFirstFunction(tree: Parser.Tree): Parser.SyntaxNode | null {
-  let functionNode: Parser.SyntaxNode = null;
+  let functionNode: Parser.SyntaxNode | null = null;
   const cursor = tree.walk();
 
   const funcTypes = [
@@ -93,7 +93,7 @@ export interface TestResults {
 export function runTest(record: TestFuncRecord): TestResults[] {
   const tree = parsers[record.language].parse(record.code);
   const testFunc: TestFunction = {
-    function: getFirstFunction(tree),
+    function: getFirstFunction(tree) as Parser.SyntaxNode,
     language: record.language,
     name: record.name,
     reqs: record.reqs,
@@ -125,8 +125,8 @@ export function processRecord(
 ): { dot?: string; ast: string; svg?: string; error?: Error } {
   const { trim, simplify, verbose, flatSwitch } = options;
   const tree = parsers[record.language].parse(record.code);
-  const functionSyntax = getFirstFunction(tree);
   const builder = newCFGBuilder(record.language, { flatSwitch });
+  const functionSyntax = getFirstFunction(tree) as Parser.SyntaxNode;
 
   const ast = functionSyntax.toString();
 
@@ -135,14 +135,17 @@ export function processRecord(
   try {
     cfg = builder.buildCFG(functionSyntax);
   } catch (error) {
-    return { ast, error };
+    return {
+      ast,
+      error: error instanceof Error ? error : new Error(`${error}`),
+    };
   }
 
-  if (!cfg) return null;
+  if (!cfg) return { ast };
   if (trim) cfg = trimFor(cfg);
   if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
 
-  const dot = graphviz.dot(graphToDot(cfg, verbose), "canon");
+  const dot = graphviz.dot(graphToDot(cfg, verbose), "canon" as Format);
   const svg = graphviz.dot(dot);
 
   return { dot, ast, svg };

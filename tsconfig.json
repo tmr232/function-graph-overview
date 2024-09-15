@@ -19,5 +19,6 @@
     "paths": {
       "vscode": ["./mocks/vscode.ts"]
     }
-  }
+  },
+  "exclude": ["./webview-content"]
 }

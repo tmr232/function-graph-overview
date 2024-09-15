@@ -14,7 +14,6 @@ import {
 
 export class CFGBuilder {
   private graph: MultiDirectedGraph<GraphNode, GraphEdge>;
-  private entry: string;
   private nodeId: number;
   private readonly flatSwitch: boolean;
   private readonly markerPattern: RegExp | null;
@@ -22,30 +21,29 @@ export class CFGBuilder {
   constructor(options?: BuilderOptions) {
     this.graph = new MultiDirectedGraph();
     this.nodeId = 0;
-    this.entry = null;
 
     this.flatSwitch = options?.flatSwitch ?? false;
     this.markerPattern = options?.markerPattern ?? null;
   }
 
   public buildCFG(functionNode: Parser.SyntaxNode): CFG {
-    const bodyNode = functionNode.childForFieldName("body");
-    if (bodyNode) {
+    const startNode = this.addNode("START", "START");
+
+    const bodySyntax = functionNode.childForFieldName("body");
+    if (bodySyntax) {
       const blockHandler = new BlockHandler();
       const { entry } = blockHandler.update(
-        this.processStatements(bodyNode.namedChildren),
+        this.processStatements(bodySyntax.namedChildren),
       );
 
       blockHandler.processGotos((gotoNode, labelNode) =>
         this.addEdge(gotoNode, labelNode),
       );
 
-      const startNode = this.addNode("START", "START");
       // `entry` will be non-null for any valid code
-      this.addEdge(startNode, entry);
-      this.entry = startNode;
+      if (entry) this.addEdge(startNode, entry);
     }
-    return { graph: this.graph, entry: this.entry };
+    return { graph: this.graph, entry: startNode };
   }
 
   private addNode(type: NodeType, code: string, lines: number = 1): string {
