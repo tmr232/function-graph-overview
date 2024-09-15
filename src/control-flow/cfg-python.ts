@@ -24,7 +24,6 @@ export class CFGBuilder {
   private activeClusters: Cluster[] = [];
 
   constructor(options?: BuilderOptions) {
-
     this.flatSwitch = options?.flatSwitch ?? false;
     this.markerPattern = options?.markerPattern ?? null;
   }
