@@ -11,7 +11,7 @@ import { requirementTests } from "../../../test/commentTestHandlers";
 import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
 import { mergeNodeAttrs } from "../../../control-flow/cfg-defs";
 import { graphToDot } from "../../../control-flow/render";
-import { Graphviz } from "@hpcc-js/wasm-graphviz";
+import { Graphviz, type Format } from "@hpcc-js/wasm-graphviz";
 async function initializeParser(language: Language) {
   await Parser.init({
     locateFile(_scriptName: string, _scriptDirectory: string) {
@@ -142,7 +142,7 @@ export function processRecord(
   if (trim) cfg = trimFor(cfg);
   if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
 
-  const dot = graphviz.dot(graphToDot(cfg, verbose), "canon");
+  const dot = graphviz.dot(graphToDot(cfg, verbose), "canon" as Format);
   const svg = graphviz.dot(dot);
 
   return { dot, ast, svg };
