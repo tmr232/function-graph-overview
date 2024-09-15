@@ -409,8 +409,12 @@ export class CFGBuilder {
         this.addEdge(patternNode, consequenceBlock.entry, "consequence");
       if (consequenceBlock?.exit)
         this.addEdge(consequenceBlock.exit, mergeNode, "regular");
-      if (previous) this.addEdge(previous, patternNode, "alternative");
-      previous = patternNode;
+      if (this.flatSwitch) {
+        this.addEdge(previous, patternNode, "regular");
+      } else {
+        if (previous) this.addEdge(previous, patternNode, "alternative");
+        previous = patternNode;
+      }
     }
 
     return blockHandler.update({ entry: subjectBlock.entry, exit: mergeNode });
