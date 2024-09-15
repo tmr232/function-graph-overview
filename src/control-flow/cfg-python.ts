@@ -29,7 +29,7 @@ export class CFGBuilder {
   }
 
   public buildCFG(functionNode: Parser.SyntaxNode): CFG {
-    const startNode = this.addNode("START", "START");
+    const startNode = this.addNode("START", "START", functionNode.startPosition.row);
     const bodyNode = functionNode.childForFieldName("body");
     if (bodyNode) {
       const blockHandler = new BlockHandler();
@@ -37,7 +37,7 @@ export class CFGBuilder {
         this.processStatements(bodyNode.namedChildren),
       );
 
-      const endNode = this.addNode("RETURN", "implicit return");
+      const endNode = this.addNode("RETURN", "implicit return", functionNode.endPosition.row);
       // `entry` will be non-null for any valid code
       if (entry) this.addEdge(startNode, entry);
       if (exit) this.addEdge(exit, endNode);
@@ -72,15 +72,16 @@ export class CFGBuilder {
       this.endCluster(cluster);
     }
   }
-  private addNode(type: NodeType, code: string, lines: number = 1): string {
+  private addNode(type: NodeType, code: string, firstLineNumber?: number): string {
     const id = `node${this.nodeId++}`;
     const cluster = this.activeClusters[this.activeClusters.length - 1];
     this.graph.addNode(id, {
       type,
       code,
-      lines,
+      lines: 1,
       markers: [],
       cluster,
+      firstLineNumber,
     });
     return id;
   }
@@ -176,18 +177,18 @@ export class CFGBuilder {
   private defaultProcessStatement(syntax: Parser.SyntaxNode): BasicBlock {
     const hasYield = this.matchExistsIn(syntax, "yield", `(yield) @yield`);
     if (hasYield) {
-      const yieldNode = this.addNode("YIELD", syntax.text);
+      const yieldNode = this.addNode("YIELD", syntax.text, syntax.startPosition.row);
       return { entry: yieldNode, exit: yieldNode };
     }
-    const newNode = this.addNode("STATEMENT", syntax.text);
+    const newNode = this.addNode("STATEMENT", syntax.text, syntax.startPosition.row);
     return { entry: newNode, exit: newNode };
   }
   private processRaiseStatement(raiseSyntax: Parser.SyntaxNode): BasicBlock {
-    const raiseNode = this.addNode("THROW", raiseSyntax.text);
+    const raiseNode = this.addNode("THROW", raiseSyntax.text, raiseSyntax.startPosition.row);
     return { entry: raiseNode, exit: null };
   }
   private processReturnStatement(returnSyntax: Parser.SyntaxNode): BasicBlock {
-    const returnNode = this.addNode("RETURN", returnSyntax.text);
+    const returnNode = this.addNode("RETURN", returnSyntax.text, returnSyntax.startPosition.row);
     return { entry: returnNode, exit: null, returns: [returnNode] };
   }
   private processTryStatement(trySyntax: Parser.SyntaxNode): BasicBlock {
@@ -221,7 +222,7 @@ export class CFGBuilder {
     const elseSyntax = this.getSyntax(match, "else-body");
     const finallySyntax = this.getSyntax(match, "finally-body");
 
-    const mergeNode = this.addNode("MERGE", "merge try-complex");
+    const mergeNode = this.addNode("MERGE", "merge try-complex", trySyntax.endPosition.row);
 
     return this.withCluster("try-complex", (tryComplexCluster) => {
       const bodyBlock = this.withCluster("try", () =>
@@ -384,7 +385,7 @@ export class CFGBuilder {
     const getBlock = this.blockGetter(blockHandler);
 
     const subjectBlock = getBlock(subjectSyntax) as BasicBlock;
-    const mergeNode = this.addNode("MERGE", "match merge");
+    const mergeNode = this.addNode("MERGE", "match merge", matchSyntax.endPosition.row);
 
     // This is the case where case matches
     if (subjectBlock.exit)
@@ -399,6 +400,7 @@ export class CFGBuilder {
       const patternNode = this.addNode(
         "CASE_CONDITION",
         `case ${patternSyntaxMany.map((pat) => pat.text).join(", ")}:`,
+        consequenceSyntax.startPosition.row
       );
 
       if (consequenceBlock?.entry)
@@ -417,20 +419,20 @@ export class CFGBuilder {
   }
 
   private processContinueStatement(
-    _continueSyntax: Parser.SyntaxNode,
+    continueSyntax: Parser.SyntaxNode,
   ): BasicBlock {
-    const continueNode = this.addNode("CONTINUE", "CONTINUE");
+    const continueNode = this.addNode("CONTINUE", "CONTINUE", continueSyntax.startPosition.row);
     return { entry: continueNode, exit: null, continues: [continueNode] };
   }
-  private processBreakStatement(_breakSyntax: Parser.SyntaxNode): BasicBlock {
-    const breakNode = this.addNode("BREAK", "BREAK");
+  private processBreakStatement(breakSyntax: Parser.SyntaxNode): BasicBlock {
+    const breakNode = this.addNode("BREAK", "BREAK", breakSyntax.startPosition.row);
     return { entry: breakNode, exit: null, breaks: [breakNode] };
   }
 
-  private processIfStatement(ifNode: Parser.SyntaxNode): BasicBlock {
+  private processIfStatement(ifSyntax: Parser.SyntaxNode): BasicBlock {
     const blockHandler = new BlockHandler();
     const match = this.matchQuery(
-      ifNode,
+      ifSyntax,
       "if",
       `
       (if_statement
@@ -460,8 +462,8 @@ export class CFGBuilder {
     const elifBlocks = elifSyntaxMany.map((syntax) => getBlock(syntax));
     const elseBlock = getBlock(elseSyntax);
 
-    const mergeNode = this.addNode("MERGE", "if merge");
-    const headNode = this.addNode("CONDITION", "if condition");
+    const mergeNode = this.addNode("MERGE", "if merge", ifSyntax.endPosition.row);
+    const headNode = this.addNode("CONDITION", "if condition", ifSyntax.startPosition.row);
 
     if (condBlock?.entry) this.addEdge(headNode, condBlock.entry);
 
@@ -574,8 +576,8 @@ export class CFGBuilder {
     const bodyBlock = getBlock(bodySyntax);
     const elseBlock = getBlock(elseSyntax);
 
-    const exitNode = this.addNode("FOR_EXIT", "loop exit");
-    const headNode = this.addNode("LOOP_HEAD", "loop head");
+    const exitNode = this.addNode("FOR_EXIT", "loop exit", forNode.endPosition.row);
+    const headNode = this.addNode("LOOP_HEAD", "loop head", forNode.startPosition.row);
     const headBlock = { entry: headNode, exit: headNode };
 
     /*
@@ -630,7 +632,7 @@ export class CFGBuilder {
     const bodyBlock = getBlock(bodySyntax) as BasicBlock;
     const elseBlock = getBlock(elseSyntax);
 
-    const exitNode = this.addNode("FOR_EXIT", "loop exit");
+    const exitNode = this.addNode("FOR_EXIT", "loop exit", whileSyntax.endPosition.row);
 
     if (condBlock.exit) {
       if (bodyBlock.entry)

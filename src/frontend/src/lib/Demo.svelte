@@ -6,10 +6,12 @@
   import Graph from "./Graph.svelte";
   import type { Language } from "../../../control-flow/cfg";
   import * as LZString from "lz-string";
+  import type { EditorView } from "@codemirror/view";
+  import { EditorSelection } from "@codemirror/state";
   export let codeGo = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
   export let codeC = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";
   export let codePython = "def example():\n    if x:\n        return";
-
+  let editorView: EditorView;
   let languages: {
     language: Language;
     text: string;
@@ -88,6 +90,18 @@
     const svg = graph.getSVG();
     downloadString(svg, "image/svg+xml", "function-graph-overview.svg");
   }
+
+  $: if (editorView && codePython) {
+    editorView.dispatch({
+      // Note that this is an index in the file, not line numbers!
+      // We can have an empty selection (head and anchor are the same)
+      // to get a cursor instead of selection.
+      selection: { head: 20, anchor: 20 },
+      // Ensure the selection is shown in viewport
+      scrollIntoView: true,
+    });
+    console.log(editorView);
+  }
 </script>
 
 <main>
@@ -133,6 +147,7 @@
           lang={python()}
           tabSize={4}
           lineWrapping={true}
+          on:ready={(e) => (editorView = e.detail)}
         />
       {/if}
     </div>

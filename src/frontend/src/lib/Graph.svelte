@@ -2,7 +2,7 @@
   import Parser from "web-tree-sitter";
   import { newCFGBuilder, type Language } from "../../../control-flow/cfg";
   import { mergeNodeAttrs } from "../../../control-flow/cfg-defs";
-  import { graphToDot } from "../../../control-flow/render";
+  import { graphToDot, graphToLineNumbers } from "../../../control-flow/render";
   import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
   import {
@@ -10,10 +10,13 @@
     initialize as initializeUtils,
     type Parsers,
   } from "./utils";
+  import { onDestroy, onMount } from "svelte";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
   let dot: string;
+  let lineNumbers: Map<string, number>;
+  let mainElement;
   export let code: string;
   export let language: Language;
   export let verbose: boolean = false;
@@ -51,6 +54,8 @@
     if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
 
     dot = graphToDot(cfg, verbose);
+    lineNumbers = graphToLineNumbers(cfg);
+    console.log(lineNumbers);
 
     return graphviz.dot(dot);
   }
@@ -70,9 +75,33 @@
   export function getSVG() {
     return graphviz.dot(dot);
   }
+
+  function registerClickHandlers(parent: Element) {
+    const nodes = parent.querySelectorAll("g.node");
+    for (const node of nodes) {
+      node.addEventListener("click", () => {
+        console.log(node.id, lineNumbers.get(node.id));
+      });
+    }
+  }
+  const observer = new MutationObserver((records) => {
+    for (const record of records) {
+      for (const node of record.addedNodes) {
+        if (node instanceof Element && node.tagName === "svg") {
+          registerClickHandlers(node);
+        }
+      }
+    }
+  });
+  onMount(() => {
+    observer.observe(mainElement, { childList: true, subtree: true });
+  });
+  onDestroy(() => {
+    observer.disconnect();
+  });
 </script>
 
-<div class="results">
+<div class="results" bind:this={mainElement}>
   {#await initialize() then}
     <div class="graph">
       {@html renderWrapper(code, language, {

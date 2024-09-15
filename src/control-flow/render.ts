@@ -187,6 +187,19 @@ export function graphToDot(cfg: CFG, verbose: boolean = false): string {
   return renderHierarchy(cfg, hierarchy, new RenderContext(verbose, backlinks));
 }
 
+export function graphToLineNumbers(cfg: CFG): Map<string, number> {
+  const lineNumbers = new Map();
+
+  cfg.graph.forEachNode((node, attrs) => {
+    console.log(node, attrs.firstLineNumber);
+    if (attrs.firstLineNumber !== undefined) {
+      lineNumbers.set(node, attrs.firstLineNumber);
+    }
+  })
+
+  return lineNumbers
+}
+
 type DotAttributes = { [attribute: string]: number | string | undefined };
 function formatStyle(style: DotAttributes): string {
   return [...Object.entries(style)]
@@ -261,9 +274,13 @@ function renderNode(
   context: RenderContext,
 ): string {
   const dotAttrs: DotAttributes = {};
+  const nodeAttrs = graph.getNodeAttributes(node);
+
   dotAttrs.style = "filled";
   dotAttrs.label = "";
-  const nodeAttrs = graph.getNodeAttributes(node);
+  dotAttrs.label = `${node} ${nodeAttrs.firstLineNumber}`;
+  // This is needed to rename nodes for go-to-line
+  dotAttrs.id = `${node}`;
   if (context.verbose) {
     dotAttrs.label = `${node} ${nodeAttrs.type} ${graph.getNodeAttributes(node).code}`;
 
