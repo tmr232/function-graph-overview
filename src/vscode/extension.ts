@@ -24,11 +24,17 @@ const supportedLanguages: SupportedLanguage[] = [
     language: "Go" as Language,
     parserName: "tree-sitter-go.wasm",
   },
+  {
+    languageId: "python",
+    language: "Python" as Language,
+    parserName: "tree-sitter-python.wasm",
+  },
 ];
 
 const functionNodeTypes: { [key: string]: string[] } = {
   go: ["function_declaration", "method_declaration", "func_literal"],
   c: ["function_definition"],
+  python: ["function_definition"],
 };
 
 const supportedLanguageIds = supportedLanguages.map((lang) => lang.languageId);
