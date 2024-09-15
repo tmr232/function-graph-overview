@@ -6,6 +6,7 @@ import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import { graphToDot } from "../control-flow/render";
 import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
 import { newCFGBuilder, type Language } from "../control-flow/cfg";
+import { mergeNodeAttrs } from "../control-flow/cfg-defs";
 
 let graphviz: Graphviz;
 interface SupportedLanguage {
@@ -182,7 +183,7 @@ export async function activate(context: vscode.ExtensionContext) {
             .getConfiguration("functionGraphOverview")
             .get("simplify")
         ) {
-          cfg = simplifyCFG(cfg);
+          cfg = simplifyCFG(cfg, mergeNodeAttrs);
         }
         const dot = graphToDot(cfg);
         const svg = graphviz.dot(dot);
@@ -195,7 +196,7 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
 
 //------------------------------------------------
 
@@ -204,7 +205,7 @@ class OverviewViewProvider implements vscode.WebviewViewProvider {
 
   private _view?: vscode.WebviewView;
 
-  constructor(private readonly _extensionUri: vscode.Uri) {}
+  constructor(private readonly _extensionUri: vscode.Uri) { }
 
   public setSVG(svg: string) {
     if (this._view) {
