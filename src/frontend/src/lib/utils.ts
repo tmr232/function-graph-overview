@@ -138,7 +138,7 @@ export function processRecord(
     return { ast, error };
   }
 
-  if (!cfg) return null;
+  if (!cfg) return { ast };
   if (trim) cfg = trimFor(cfg);
   if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
 
