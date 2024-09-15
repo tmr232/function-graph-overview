@@ -13,6 +13,7 @@
 
   let parsers: Parsers;
   let graphviz: Graphviz;
+  let dot: string;
   export let code: string;
   export let language: Language;
   export let verbose: boolean = false;
@@ -49,7 +50,7 @@
     if (trim) cfg = trimFor(cfg);
     if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
 
-    const dot = graphToDot(cfg, verbose);
+    dot = graphToDot(cfg, verbose);
 
     return graphviz.dot(dot);
   }
@@ -64,6 +65,10 @@
     } catch (error) {
       return `<p style='border: 2px red solid;'>${error.toString()}</p>`;
     }
+  }
+
+  export function getSVG() {
+    return graphviz.dot(dot);
   }
 </script>
 

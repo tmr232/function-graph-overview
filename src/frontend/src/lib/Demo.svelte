@@ -65,6 +65,29 @@
     navigator.clipboard.writeText(newUrl);
     window.open(newUrl, "_blank").focus();
   }
+
+  let graph: Graph;
+
+  function downloadString(text: string, fileType: string, fileName: string) {
+    var blob = new Blob([text], { type: fileType });
+
+    var a = document.createElement("a");
+    a.download = fileName;
+    a.href = URL.createObjectURL(blob);
+    a.dataset.downloadurl = [fileType, a.download, a.href].join(":");
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () {
+      URL.revokeObjectURL(a.href);
+    }, 1500);
+  }
+
+  function saveSVG() {
+    const svg = graph.getSVG();
+    downloadString(svg, "image/svg+xml", "function-graph-overview.svg");
+  }
 </script>
 
 <main>
@@ -115,14 +138,25 @@
     </div>
   </div>
   <div class="graph">
-    <div class="controls">
-      <input type="checkbox" id="simplify" bind:checked={simplify} />
-      <label for="simplify">Simplify</label>
+    <div class="graph-controls">
+      <div class="settings">
+        <input type="checkbox" id="simplify" bind:checked={simplify} />
+        <label for="simplify">Simplify</label>
 
-      <input type="checkbox" id="flatSwitch" bind:checked={flatSwitch} />
-      <label for="flatSwitch">Flat Switch</label>
+        <input type="checkbox" id="flatSwitch" bind:checked={flatSwitch} />
+        <label for="flatSwitch">Flat Switch</label>
+      </div>
+      <div class="download">
+        <button on:click={saveSVG}>Save SVG</button>
+      </div>
     </div>
-    <Graph {code} language={selection.language} {simplify} {flatSwitch} />
+    <Graph
+      {code}
+      language={selection.language}
+      {simplify}
+      {flatSwitch}
+      bind:this={graph}
+    />
   </div>
 </main>
 
@@ -149,6 +183,15 @@
     font-family: Arial, Helvetica, sans-serif;
     margin-top: 1rem;
     margin-left: 1rem;
+  }
+  .graph-controls {
+    font-family: Arial, Helvetica, sans-serif;
+    margin-top: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+
+    display: flex;
+    justify-content: space-between;
   }
 
   .codemirror {
