@@ -161,16 +161,17 @@ export class CFGBuilder {
     switchHeadNode: string,
   ) {
     let fallthrough: string | null = null;
-    let previous: string | null = null;
-    if (!this.flatSwitch && cases[0]?.conditionEntry) {
-      this.addEdge(switchHeadNode, cases[0].conditionEntry);
-    }
+    let previous: string | null = switchHeadNode;
     cases.forEach((thisCase) => {
       if (this.flatSwitch) {
         if (thisCase.consequenceEntry) {
           this.addEdge(switchHeadNode, thisCase.consequenceEntry);
           if (fallthrough) {
             this.addEdge(fallthrough, thisCase.consequenceEntry);
+          }
+          if (thisCase.isDefault) {
+            // If we have any default node - then we don't connect the head to the merge node.
+            previous = null;
           }
         }
       } else {
@@ -205,7 +206,6 @@ export class CFGBuilder {
     });
     // Connect the last node to the merge node.
     // No need to handle `fallthrough` here as it is not allowed for the last case.
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (previous) {
       this.addEdge(previous, mergeNode, "alternative");
     }
@@ -224,7 +224,7 @@ export class CFGBuilder {
     switchSyntax.namedChildren[1].namedChildren
       .filter((child) => caseTypes.includes(child.type))
       .forEach((caseSyntax) => {
-        const isDefault = caseSyntax.type === "default_case";
+        const isDefault = !caseSyntax.childForFieldName("value");
 
         const consequence = caseSyntax.namedChildren.slice(isDefault ? 0 : 1);
         const hasFallthrough = true;
