@@ -195,9 +195,9 @@ export function graphToLineNumbers(cfg: CFG): Map<string, number> {
     if (attrs.firstLineNumber !== undefined) {
       lineNumbers.set(node, attrs.firstLineNumber);
     }
-  })
+  });
 
-  return lineNumbers
+  return lineNumbers;
 }
 
 type DotAttributes = { [attribute: string]: number | string | undefined };

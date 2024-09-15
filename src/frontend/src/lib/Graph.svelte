@@ -10,7 +10,7 @@
     initialize as initializeUtils,
     type Parsers,
   } from "./utils";
-  import { onDestroy, onMount } from "svelte";
+  import { createEventDispatcher, onDestroy, onMount } from "svelte";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
@@ -23,6 +23,11 @@
   export let simplify: boolean = true;
   export let trim: boolean = true;
   export let flatSwitch: boolean = false;
+  const dispatch = createEventDispatcher();
+
+  function goto(lineNumber: number) {
+    dispatch("goto", { lineNumber });
+  }
 
   async function initialize() {
     const utils = await initializeUtils();
@@ -80,7 +85,11 @@
     const nodes = parent.querySelectorAll("g.node");
     for (const node of nodes) {
       node.addEventListener("click", () => {
-        console.log(node.id, lineNumbers.get(node.id));
+        const lineNumber = lineNumbers.get(node.id);
+        console.log(node.id, lineNumber);
+        if (lineNumber !== undefined) {
+          goto(lineNumber);
+        }
       });
     }
   }

@@ -91,16 +91,17 @@
     downloadString(svg, "image/svg+xml", "function-graph-overview.svg");
   }
 
-  $: if (editorView && codePython) {
+  function gotoLine(event) {
+    const lines = codePython.split("\n");
+    const index = lines
+      .slice(0, event.detail.lineNumber)
+      .reduce((a, x) => a + x.length, 0);
+    console.log(index);
     editorView.dispatch({
-      // Note that this is an index in the file, not line numbers!
-      // We can have an empty selection (head and anchor are the same)
-      // to get a cursor instead of selection.
-      selection: { head: 20, anchor: 20 },
-      // Ensure the selection is shown in viewport
+      selection: { head: index, anchor: index },
       scrollIntoView: true,
     });
-    console.log(editorView);
+    console.log("Goto line", event.detail.lineNumber);
   }
 </script>
 
@@ -171,6 +172,7 @@
       {simplify}
       {flatSwitch}
       bind:this={graph}
+      on:goto={gotoLine}
     />
   </div>
 </main>
