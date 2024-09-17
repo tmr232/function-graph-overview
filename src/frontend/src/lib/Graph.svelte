@@ -81,32 +81,34 @@
     return graphviz.dot(dot);
   }
 
-  function registerClickHandlers(parent: Element) {
-    const nodes = parent.querySelectorAll("g.node");
-    for (const node of nodes) {
-      node.addEventListener("click", () => {
-        const lineNumber = lineNumbers.get(node.id);
-        console.log(node.id, lineNumber);
-        if (lineNumber !== undefined) {
-          goto(lineNumber);
-        }
-      });
-    }
-  }
-  const observer = new MutationObserver((records) => {
-    for (const record of records) {
-      for (const node of record.addedNodes) {
-        if (node instanceof Element && node.tagName === "svg") {
-          registerClickHandlers(node);
-        }
+  function findParentGraphNode(
+    element: Element,
+    container: Element,
+  ): Element | null {
+    for (; element && element !== container; element = element.parentElement) {
+      if (element.classList.contains("node")) {
+        return element;
       }
     }
-  });
+    return null;
+  }
+
+  function registerClickHandler(container: Element) {
+    container.addEventListener("click", (e) => {
+      const nodeElement = findParentGraphNode(e.target, container);
+      if (!nodeElement) {
+        return;
+      }
+      const lineNumber = lineNumbers.get(nodeElement.id);
+      console.log(nodeElement.id, lineNumber);
+      if (lineNumber !== undefined) {
+        goto(lineNumber);
+      }
+    });
+  }
+
   onMount(() => {
-    observer.observe(mainElement, { childList: true, subtree: true });
-  });
-  onDestroy(() => {
-    observer.disconnect();
+    registerClickHandler(mainElement);
   });
 </script>
 

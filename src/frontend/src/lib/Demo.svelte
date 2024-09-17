@@ -92,16 +92,11 @@
   }
 
   function gotoLine(event) {
-    const lines = codePython.split("\n");
-    const index = lines
-      .slice(0, event.detail.lineNumber)
-      .reduce((a, x) => a + x.length, 0);
-    console.log(index);
+    const pos = editorView.state.doc.line(event.detail.lineNumber + 1).from;
     editorView.dispatch({
-      selection: { head: index, anchor: index },
+      selection: { head: pos, anchor: pos },
       scrollIntoView: true,
     });
-    console.log("Goto line", event.detail.lineNumber);
   }
 </script>
 
