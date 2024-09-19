@@ -15,7 +15,6 @@ import {
   type NodeType,
 } from "./cfg-defs";
 
-
 class Builder {
   private graph: CFGGraph;
   private nodeId: number = 0;
@@ -130,7 +129,6 @@ function getSyntax(
   return getSyntaxMany(match, name)[0];
 }
 
-
 function getSyntaxMany(
   match: Parser.QueryMatch,
   name: string,
@@ -146,7 +144,12 @@ class BlockMatcher {
   public update = this.blockHandler.update.bind(this.blockHandler);
   private match: Parser.QueryMatch;
 
-  constructor(processBlock: BlockMatcher["processBlock"], syntax: Parser.SyntaxNode, mainName: string, query: string) {
+  constructor(
+    processBlock: BlockMatcher["processBlock"],
+    syntax: Parser.SyntaxNode,
+    mainName: string,
+    query: string,
+  ) {
     this.processBlock = processBlock;
     this.match = matchQuery(syntax, mainName, query);
   }
@@ -166,7 +169,6 @@ class BlockMatcher {
   public get state() {
     return this.blockHandler;
   }
-
 }
 
 export class CFGBuilder {
@@ -301,8 +303,8 @@ export class CFGBuilder {
     In other cases, the finally is after the end of the try-body.
     This is probably the best course of action.
     */
-    const blockHandler = new BlockHandler();
-    const match = this.matchQuery(
+    const matcher = new BlockMatcher(
+      this.processBlock.bind(this),
       trySyntax,
       "try",
       `
@@ -318,25 +320,23 @@ export class CFGBuilder {
       `,
     );
 
-    const getBlock = this.blockGetter(blockHandler);
-
-    const bodySyntax = this.getSyntax(match, "try-body");
-    const exceptSyntaxMany = this.getSyntaxMany(match, "except-body");
-    const elseSyntax = this.getSyntax(match, "else-body");
-    const finallySyntax = this.getSyntax(match, "finally-body");
+    const bodySyntax = matcher.getSyntax("try-body");
+    const exceptSyntaxMany = matcher.getSyntaxMany("except-body");
+    const elseSyntax = matcher.getSyntax("else-body");
+    const finallySyntax = matcher.getSyntax("finally-body");
 
     const mergeNode = builder.addNode("MERGE", "merge try-complex");
 
     return builder.withCluster("try-complex", (tryComplexCluster) => {
       const bodyBlock = builder.withCluster("try", () =>
-        getBlock(bodySyntax),
+        matcher.getBlock(bodySyntax),
       ) as BasicBlock;
 
       // We handle `except` blocks before the `finally` block to support `return` handling.
       const exceptBlocks = exceptSyntaxMany.map((exceptSyntax) =>
         builder.withCluster(
           "except",
-          () => getBlock(exceptSyntax) as BasicBlock,
+          () => matcher.getBlock(exceptSyntax) as BasicBlock,
         ),
       );
       // We attach the except-blocks to the top of the `try` body.
@@ -352,16 +352,18 @@ export class CFGBuilder {
       }
 
       // Create the `else` block before `finally` to handle returns correctly.
-      const elseBlock = getBlock(elseSyntax);
+      const elseBlock = matcher.getBlock(elseSyntax);
 
       const finallyBlock = builder.withCluster("finally", () => {
         // Handle all the return statements from the try block
         if (finallySyntax) {
           // This is only relevant if there's a finally block.
-          blockHandler.forEachReturn((returnNode) => {
+          matcher.state.forEachReturn((returnNode) => {
             // We create a new finally block for each return node,
             // so that we can link them.
-            const duplicateFinallyBlock = getBlock(finallySyntax) as BasicBlock;
+            const duplicateFinallyBlock = matcher.getBlock(
+              finallySyntax,
+            ) as BasicBlock;
             // We also clone the return node, to place it _after_ the finally block
             // We also override the cluster node, pulling it up to the `try-complex`,
             // as the return is neither in a `try`, `except`, or `finally` context.
@@ -383,7 +385,7 @@ export class CFGBuilder {
         // Handle the finally-block for the trivial case, where we just pass through the try block
         // This must happen AFTER handling the return statements, as the finally block may add return
         // statements of its own.
-        const finallyBlock = getBlock(finallySyntax);
+        const finallyBlock = matcher.getBlock(finallySyntax);
         return finallyBlock;
       });
 
@@ -415,7 +417,7 @@ export class CFGBuilder {
 
       if (happyExit) builder.addEdge(happyExit, mergeNode);
 
-      return blockHandler.update({
+      return matcher.update({
         entry: bodyBlock.entry,
         exit: mergeNode,
       });
@@ -425,8 +427,8 @@ export class CFGBuilder {
     withSyntax: Parser.SyntaxNode,
     builder: Builder,
   ): BasicBlock {
-    const blockHandler = new BlockHandler();
-    const match = this.matchQuery(
+    const matcher = new BlockMatcher(
+      this.processBlock.bind(this),
       withSyntax,
       "with",
       `
@@ -436,18 +438,17 @@ export class CFGBuilder {
       ) @with
       `,
     );
-    const getBlock = this.blockGetter(blockHandler);
 
-    const withClauseSyntax = this.getSyntax(match, "with_clause");
-    const withClauseBlock = getBlock(withClauseSyntax) as BasicBlock;
+    const withClauseSyntax = matcher.getSyntax("with_clause");
+    const withClauseBlock = matcher.getBlock(withClauseSyntax) as BasicBlock;
     return builder.withCluster("with", () => {
-      const bodySyntax = this.getSyntax(match, "body");
-      const bodyBlock = getBlock(bodySyntax) as BasicBlock;
+      const bodySyntax = matcher.getSyntax("body");
+      const bodyBlock = matcher.getBlock(bodySyntax) as BasicBlock;
 
       if (withClauseBlock.exit && bodyBlock.entry)
         builder.addEdge(withClauseBlock.exit, bodyBlock.entry);
 
-      return blockHandler.update({
+      return matcher.state.update({
         entry: withClauseBlock.entry,
         exit: bodyBlock.exit,
       });
@@ -472,8 +473,9 @@ export class CFGBuilder {
     matchSyntax: Parser.SyntaxNode,
     builder: Builder,
   ): BasicBlock {
-    const blockHandler = new BlockHandler();
-    const match = this.matchQuery(
+    const matcher = new BlockMatcher(
+      this.processBlock.bind(this),
+
       matchSyntax,
       "match",
       `
@@ -486,8 +488,8 @@ export class CFGBuilder {
       `,
     );
 
-    const subjectSyntax = this.getSyntax(match, "subject");
-    const alternatives = this.getSyntaxMany(match, "case").map((caseSyntax) => {
+    const subjectSyntax = matcher.getSyntax("subject");
+    const alternatives = matcher.getSyntaxMany("case").map((caseSyntax) => {
       const patterns = caseSyntax.children.filter(
         (c) => c.type === "case_pattern",
       ) as Parser.SyntaxNode[];
@@ -497,9 +499,7 @@ export class CFGBuilder {
       return { consequence, patterns };
     });
 
-    const getBlock = this.blockGetter(blockHandler);
-
-    const subjectBlock = getBlock(subjectSyntax) as BasicBlock;
+    const subjectBlock = matcher.getBlock(subjectSyntax) as BasicBlock;
     const mergeNode = builder.addNode("MERGE", "match merge");
 
     // This is the case where case matches
@@ -511,7 +511,7 @@ export class CFGBuilder {
       consequence: consequenceSyntax,
       patterns: patternSyntaxMany,
     } of alternatives) {
-      const consequenceBlock = getBlock(consequenceSyntax);
+      const consequenceBlock = matcher.getBlock(consequenceSyntax);
       const patternNode = builder.addNode(
         "CASE_CONDITION",
         `case ${patternSyntaxMany.map((pat) => pat.text).join(", ")}:`,
@@ -529,7 +529,7 @@ export class CFGBuilder {
       }
     }
 
-    return blockHandler.update({ entry: subjectBlock.entry, exit: mergeNode });
+    return matcher.update({ entry: subjectBlock.entry, exit: mergeNode });
   }
 
   private processContinueStatement(
@@ -551,7 +551,10 @@ export class CFGBuilder {
     ifNode: Parser.SyntaxNode,
     builder: Builder,
   ): BasicBlock {
-    const matcher = new BlockMatcher(this.processBlock.bind(this), ifNode, "if",
+    const matcher = new BlockMatcher(
+      this.processBlock.bind(this),
+      ifNode,
+      "if",
       `
       (if_statement
           condition: (_) @if-cond
@@ -572,10 +575,11 @@ export class CFGBuilder {
     const elifSyntaxMany = matcher.getSyntaxMany("elif");
     const elseSyntax = matcher.getSyntax("else");
 
-
     const condBlock = matcher.getBlock(condSyntax);
     const thenBlock = matcher.getBlock(thenSyntax);
-    const elifCondBlocks = elifCondSyntaxMany.map((syntax) => matcher.getBlock(syntax));
+    const elifCondBlocks = elifCondSyntaxMany.map((syntax) =>
+      matcher.getBlock(syntax),
+    );
     const elifBlocks = elifSyntaxMany.map((syntax) => matcher.getBlock(syntax));
     const elseBlock = matcher.getBlock(elseSyntax);
 
@@ -615,43 +619,12 @@ export class CFGBuilder {
     return matcher.update({ entry: headNode, exit: mergeNode });
   }
 
-  private matchQuery(
-    syntax: Parser.SyntaxNode,
-    mainName: string,
-    queryString: string,
-  ) {
-    return matchQuery(syntax, mainName, queryString);
-  }
-
-
-
-  private getSyntax(
-    match: Parser.QueryMatch,
-    name: string,
-  ): Parser.SyntaxNode | undefined {
-    return this.getSyntaxMany(match, name)[0];
-  }
-
-  private getSyntaxMany(
-    match: Parser.QueryMatch,
-    name: string,
-  ): Parser.SyntaxNode[] {
-    return match.captures
-      .filter((capture) => capture.name === name)
-      .map((capture) => capture.node);
-  }
-
-  private blockGetter(blockHandler: BlockHandler) {
-    const getBlock = (syntax: Parser.SyntaxNode | null | undefined) =>
-      syntax ? blockHandler.update(this.processBlock(syntax)) : null;
-    return getBlock;
-  }
-
   private processForStatement(
     forNode: Parser.SyntaxNode,
     builder: Builder,
   ): BasicBlock {
-    const matcher = new BlockMatcher(this.processBlock.bind(this),
+    const matcher = new BlockMatcher(
+      this.processBlock.bind(this),
       forNode,
       "for",
       `
@@ -667,7 +640,6 @@ export class CFGBuilder {
 
     const bodySyntax = matcher.getSyntax("body");
     const elseSyntax = matcher.getSyntax("else");
-
 
     const bodyBlock = matcher.getBlock(bodySyntax);
     const elseBlock = matcher.getBlock(elseSyntax);
@@ -708,7 +680,8 @@ export class CFGBuilder {
     whileSyntax: Parser.SyntaxNode,
     builder: Builder,
   ): BasicBlock {
-    const matcher = new BlockMatcher(this.processBlock.bind(this),
+    const matcher = new BlockMatcher(
+      this.processBlock.bind(this),
       whileSyntax,
       "while",
       `
@@ -723,7 +696,6 @@ export class CFGBuilder {
     const condSyntax = matcher.getSyntax("cond");
     const bodySyntax = matcher.getSyntax("body");
     const elseSyntax = matcher.getSyntax("else");
-
 
     const condBlock = matcher.getBlock(condSyntax) as BasicBlock;
     const bodyBlock = matcher.getBlock(bodySyntax) as BasicBlock;
