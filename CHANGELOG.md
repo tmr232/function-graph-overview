@@ -6,32 +6,28 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
-### Language Support
+## [0.0.5] - 2024-09-18
 
-- Add initial support for Python
+### Added
 
-### Visualization
+- Initial support for Python.
+- Support for node clusters. This is used heavily in Python, for context-managers and exception-handling.
+- A "share" feature to the demo
+- A "save SVG" option to the demo
 
-- Add support for node clusters. This is used heavily in Python, for context-managers and exception-handling.
-
-### Demo
-
-- Add Python support
-- Add sharing - click the "Share" button to get a sharable link to what you currently see
-
-### Testing
+#### Testing
 
 - Enable live-testing with the web viewer. Requires that you run both `bun web-tests --watch` and `bun web` at the same time.
 - By default, `bun web` only shows failing tests
 - `bun web` color-codes tests to note which are failing
+- `bun lint` added `tsc --noEmit`
+- DOT output in `bun web` is not pretty-printed, and can be automatically opened in [GraphvizOnline](https://dreampuf.github.io/GraphvizOnline/)
 
-### Extension
+### Fixed
 
-- No changes
-
-### Known Issues
-
-- Backlinks are no longer thicker than normal links. That said, they were half-broken to begin with and were somewhat arbitrary.
+- Switch-like structures in flatSwitch now show an alternative edge from the head to the exit node.
+  This was previously missing.
+- Thick-backlinks (for loops) are now generated correctly based on loop detection.
 
 ## [0.0.4] - 2024-09-10
 
