@@ -708,8 +708,7 @@ export class CFGBuilder {
     whileSyntax: Parser.SyntaxNode,
     builder: Builder,
   ): BasicBlock {
-    const blockHandler = new BlockHandler();
-    const match = this.matchQuery(
+    const matcher = new BlockMatcher(this.processBlock.bind(this),
       whileSyntax,
       "while",
       `
@@ -721,15 +720,14 @@ export class CFGBuilder {
     `,
     );
 
-    const condSyntax = this.getSyntax(match, "cond");
-    const bodySyntax = this.getSyntax(match, "body");
-    const elseSyntax = this.getSyntax(match, "else");
+    const condSyntax = matcher.getSyntax("cond");
+    const bodySyntax = matcher.getSyntax("body");
+    const elseSyntax = matcher.getSyntax("else");
 
-    const getBlock = this.blockGetter(blockHandler);
 
-    const condBlock = getBlock(condSyntax) as BasicBlock;
-    const bodyBlock = getBlock(bodySyntax) as BasicBlock;
-    const elseBlock = getBlock(elseSyntax);
+    const condBlock = matcher.getBlock(condSyntax) as BasicBlock;
+    const bodyBlock = matcher.getBlock(bodySyntax) as BasicBlock;
+    const elseBlock = matcher.getBlock(elseSyntax);
 
     const exitNode = builder.addNode("FOR_EXIT", "loop exit");
 
@@ -747,14 +745,14 @@ export class CFGBuilder {
     if (condBlock.entry && bodyBlock.exit)
       builder.addEdge(bodyBlock.exit, condBlock.entry);
 
-    blockHandler.forEachContinue((continueNode) => {
+    matcher.state.forEachContinue((continueNode) => {
       if (condBlock.entry) builder.addEdge(continueNode, condBlock.entry);
     });
 
-    blockHandler.forEachBreak((breakNode) => {
+    matcher.state.forEachBreak((breakNode) => {
       builder.addEdge(breakNode, exitNode);
     });
 
-    return blockHandler.update({ entry: condBlock.entry, exit: exitNode });
+    return matcher.update({ entry: condBlock.entry, exit: exitNode });
   }
 }
