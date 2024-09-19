@@ -15,7 +15,6 @@ import {
   type NodeType,
 } from "./cfg-defs";
 
-
 class Builder {
   private graph: CFGGraph;
   private nodeId: number = 0;
@@ -25,7 +24,6 @@ class Builder {
   constructor(graph: CFGGraph) {
     this.graph = graph;
   }
-
 
   private startCluster(type: ClusterType): Cluster {
     const parent =
@@ -90,17 +88,14 @@ class Builder {
       this.graph.addEdge(source, target, { type });
     }
   }
-
 }
 
 export class CFGBuilder {
   private graph: MultiDirectedGraph<GraphNode, GraphEdge> =
     new MultiDirectedGraph();
-  private nodeId: number = 0;
-  private clusterId: ClusterId = 0;
+  private builder: Builder = new Builder(this.graph);
   private readonly flatSwitch: boolean;
   private readonly markerPattern: RegExp | null;
-  private activeClusters: Cluster[] = [];
 
   constructor(options?: BuilderOptions) {
     this.flatSwitch = options?.flatSwitch ?? false;
@@ -124,58 +119,19 @@ export class CFGBuilder {
     return { graph: this.graph, entry: startNode };
   }
 
-  private startCluster(type: ClusterType): Cluster {
-    const parent =
-      this.activeClusters.length === 0
-        ? undefined
-        : this.activeClusters[this.activeClusters.length - 1];
-    const cluster = {
-      id: this.clusterId++,
-      type,
-      parent,
-      depth: this.activeClusters.length + 1,
-    };
-    this.activeClusters.push(cluster);
-    return cluster;
-  }
-  private endCluster(_cluster: Cluster) {
-    // We assume that all clusters form a stack.
-    this.activeClusters.pop();
-  }
-
   private withCluster<T>(type: ClusterType, fn: (cluster: Cluster) => T): T {
-    const cluster = this.startCluster(type);
-    try {
-      return fn(cluster);
-    } finally {
-      this.endCluster(cluster);
-    }
+    return this.builder.withCluster(type, fn);
   }
   private addNode(type: NodeType, code: string, lines: number = 1): string {
-    const id = `node${this.nodeId++}`;
-    const cluster = this.activeClusters[this.activeClusters.length - 1];
-    this.graph.addNode(id, {
-      type,
-      code,
-      lines,
-      markers: [],
-      cluster,
-    });
-    return id;
+    return this.builder.addNode(type, code, lines);
   }
 
   private cloneNode(node: string, overrides?: { cluster: Cluster }): string {
-    const id = `node${this.nodeId++}`;
-    const originalAttrs = this.graph.getNodeAttributes(node);
-    const nodeAttrs = structuredClone(originalAttrs);
-    nodeAttrs.cluster = originalAttrs.cluster;
-    Object.assign(nodeAttrs, overrides);
-    this.graph.addNode(id, nodeAttrs);
-    return id;
+    return this.builder.cloneNode(node, overrides);
   }
 
   private addMarker(node: string, marker: string) {
-    this.graph.getNodeAttributes(node).markers.push(marker);
+    return this.builder.addMarker(node, marker);
   }
 
   private addEdge(
@@ -183,9 +139,7 @@ export class CFGBuilder {
     target: string,
     type: EdgeType = "regular",
   ): void {
-    if (!this.graph.hasEdge(source, target)) {
-      this.graph.addEdge(source, target, { type });
-    }
+    return this.builder.addEdge(source, target, type);
   }
 
   private processStatements(statements: Parser.SyntaxNode[]): BasicBlock {
