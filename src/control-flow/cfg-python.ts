@@ -10,20 +10,14 @@ import {
   type ClusterId,
   type ClusterType,
   type EdgeType,
-  type GraphEdge,
-  type GraphNode,
   type NodeType,
 } from "./cfg-defs";
 
 class Builder {
-  private graph: CFGGraph;
+  private graph: CFGGraph = new MultiDirectedGraph();
   private nodeId: number = 0;
   private clusterId: ClusterId = 0;
   private activeClusters: Cluster[] = [];
-
-  constructor(graph: CFGGraph) {
-    this.graph = graph;
-  }
 
   private startCluster(type: ClusterType): Cluster {
     const parent =
@@ -87,6 +81,10 @@ class Builder {
     if (!this.graph.hasEdge(source, target)) {
       this.graph.addEdge(source, target, { type });
     }
+  }
+
+  public getGraph(): CFGGraph {
+    return this.graph;
   }
 }
 
@@ -207,9 +205,7 @@ const pythonStatementHandlers: StatementHandlers = {
 };
 
 export class CFGBuilder {
-  private graph: MultiDirectedGraph<GraphNode, GraphEdge> =
-    new MultiDirectedGraph();
-  private builder: Builder = new Builder(this.graph);
+  private builder: Builder = new Builder();
   private readonly options: BuilderOptions;
 
   constructor(options: BuilderOptions) {
@@ -234,7 +230,7 @@ export class CFGBuilder {
       if (entry) this.builder.addEdge(startNode, entry);
       if (exit) this.builder.addEdge(exit, endNode);
     }
-    return { graph: this.graph, entry: startNode };
+    return { graph: this.builder.getGraph(), entry: startNode };
   }
 
   private match(
@@ -284,7 +280,8 @@ export class CFGBuilder {
       }
 
       return (
-        this.options.markerPattern && Boolean(syntax.text.match(this.options.markerPattern))
+        this.options.markerPattern &&
+        Boolean(syntax.text.match(this.options.markerPattern))
       );
     });
 
