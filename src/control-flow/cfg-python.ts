@@ -174,36 +174,36 @@ export class CFGBuilder {
     return blockHandler.update({ entry, exit: previous });
   }
 
-  private processBlock(node: Parser.SyntaxNode | null): BasicBlock {
-    if (!node) return { entry: null, exit: null };
+  private processBlock(syntax: Parser.SyntaxNode | null): BasicBlock {
+    if (!syntax) return { entry: null, exit: null };
 
-    switch (node.type) {
+    switch (syntax.type) {
       case "block":
-        return this.processStatements(node.namedChildren);
+        return this.processStatements(syntax.namedChildren);
       case "if_statement":
-        return this.processIfStatement(node);
+        return this.processIfStatement(syntax);
       case "for_statement":
-        return this.processForStatement(node);
+        return this.processForStatement(syntax);
       case "while_statement":
-        return this.processWhileStatement(node);
+        return this.processWhileStatement(syntax);
       case "match_statement":
-        return this.processMatchStatement(node);
+        return this.processMatchStatement(syntax);
       case "return_statement":
-        return this.processReturnStatement(node);
+        return this.processReturnStatement(syntax);
       case "break_statement":
-        return this.processBreakStatement(node);
+        return this.processBreakStatement(syntax);
       case "continue_statement":
-        return this.processContinueStatement(node);
+        return this.processContinueStatement(syntax);
       case "comment":
-        return this.processComment(node);
+        return this.processComment(syntax);
       case "with_statement":
-        return this.processWithStatement(node);
+        return this.processWithStatement(syntax);
       case "try_statement":
-        return this.processTryStatement(node);
+        return this.processTryStatement(syntax);
       case "raise_statement":
-        return this.processRaiseStatement(node);
+        return this.processRaiseStatement(syntax);
       default:
-        return this.defaultProcessStatement(node);
+        return this.defaultProcessStatement(syntax);
     }
   }
   private defaultProcessStatement(syntax: Parser.SyntaxNode): BasicBlock {
