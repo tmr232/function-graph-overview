@@ -4,7 +4,7 @@ import type {
   ClusterId,
   ClusterType,
   EdgeType,
-  NodeType
+  NodeType,
 } from "./cfg-defs.ts";
 import { MultiDirectedGraph } from "graphology";
 
@@ -23,7 +23,7 @@ export class Builder {
       id: this.clusterId++,
       type,
       parent,
-      depth: this.activeClusters.length + 1
+      depth: this.activeClusters.length + 1,
     };
     this.activeClusters.push(cluster);
     return cluster;
@@ -51,7 +51,7 @@ export class Builder {
       code,
       lines,
       markers: [],
-      cluster
+      cluster,
     });
     return id;
   }
@@ -73,7 +73,7 @@ export class Builder {
   public addEdge(
     source: string,
     target: string,
-    type: EdgeType = "regular"
+    type: EdgeType = "regular",
   ): void {
     if (!this.graph.hasEdge(source, target)) {
       this.graph.addEdge(source, target, { type });

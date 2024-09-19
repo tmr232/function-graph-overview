@@ -44,7 +44,7 @@ export class CFGBuilder {
         this.processStatements(
           bodyNode.namedChildren,
           this.builder,
-          this.match.bind(this),
+          new BlockMatcher(this.processBlock.bind(this)),
         ),
       );
 
@@ -56,19 +56,6 @@ export class CFGBuilder {
     return { graph: this.builder.getGraph(), entry: startNode };
   }
 
-  private match(
-    syntax: Parser.SyntaxNode,
-    mainName: string,
-    query: string,
-  ): BlockMatcher {
-    return new BlockMatcher(
-      this.processBlock.bind(this),
-      syntax,
-      mainName,
-      query,
-    );
-  }
-
   private processBlock(syntax: Parser.SyntaxNode | null): BasicBlock {
     if (!syntax) return { entry: null, exit: null };
 
@@ -76,26 +63,25 @@ export class CFGBuilder {
       return this.processStatements(
         syntax.namedChildren,
         this.builder,
-        this.match.bind(this),
+        new BlockMatcher(this.processBlock.bind(this)),
       );
     }
     const handler =
       pythonStatementHandlers.named[syntax.type] ??
       pythonStatementHandlers.default;
-    return handler(syntax, this.builder, this.match.bind(this), this.options);
+    return handler(
+      syntax,
+      this.builder,
+      new BlockMatcher(this.processBlock.bind(this)),
+      this.options,
+    );
   }
 
   private processStatements(
     statements: Parser.SyntaxNode[],
     builder: Builder,
-    _match: (
-      syntax: Parser.SyntaxNode,
-      mainName: string,
-      query: string,
-    ) => BlockMatcher,
+    matcher: BlockMatcher,
   ): BasicBlock {
-    const blockHandler = new BlockHandler();
-
     // Ignore comments
     const codeStatements = statements.filter((syntax) => {
       if (syntax.type !== "comment") {
@@ -116,25 +102,20 @@ export class CFGBuilder {
     let entry: string | null = null;
     let previous: string | null = null;
     for (const statement of codeStatements) {
-      const { entry: currentEntry, exit: currentExit } = blockHandler.update(
+      const { entry: currentEntry, exit: currentExit } = matcher.state.update(
         this.processBlock(statement),
       );
       if (!entry) entry = currentEntry;
       if (previous && currentEntry) builder.addEdge(previous, currentEntry);
       previous = currentExit;
     }
-    return blockHandler.update({ entry, exit: previous });
+    return matcher.state.update({ entry, exit: previous });
   }
 }
 
 function defaultProcessStatement(
   syntax: Parser.SyntaxNode,
   builder: Builder,
-  _match: (
-    syntax: Parser.SyntaxNode,
-    mainName: string,
-    query: string,
-  ) => BlockMatcher,
 ): BasicBlock {
   const hasYield = matchExistsIn(syntax, "yield", `(yield) @yield`);
   if (hasYield) {
@@ -147,11 +128,6 @@ function defaultProcessStatement(
 function processRaiseStatement(
   raiseSyntax: Parser.SyntaxNode,
   builder: Builder,
-  _match: (
-    syntax: Parser.SyntaxNode,
-    mainName: string,
-    query: string,
-  ) => BlockMatcher,
 ): BasicBlock {
   const raiseNode = builder.addNode("THROW", raiseSyntax.text);
   return { entry: raiseNode, exit: null };
@@ -159,11 +135,6 @@ function processRaiseStatement(
 function processReturnStatement(
   returnSyntax: Parser.SyntaxNode,
   builder: Builder,
-  _match: (
-    syntax: Parser.SyntaxNode,
-    mainName: string,
-    query: string,
-  ) => BlockMatcher,
 ): BasicBlock {
   const returnNode = builder.addNode("RETURN", returnSyntax.text);
   return { entry: returnNode, exit: null, returns: [returnNode] };
@@ -171,11 +142,7 @@ function processReturnStatement(
 function processTryStatement(
   trySyntax: Parser.SyntaxNode,
   builder: Builder,
-  match: (
-    syntax: Parser.SyntaxNode,
-    mainName: string,
-    query: string,
-  ) => BlockMatcher,
+  matcher: BlockMatcher,
 ): BasicBlock {
   /*
   Here's an idea - I can duplicate the finally blocks!
@@ -183,9 +150,8 @@ function processTryStatement(
   In other cases, the finally is after the end of the try-body.
   This is probably the best course of action.
   */
-  const matcher = match(
+  const match = matcher.match(
     trySyntax,
-    "try",
     `
       (try_statement
         body: (block) @try-body
@@ -199,23 +165,23 @@ function processTryStatement(
       `,
   );
 
-  const bodySyntax = matcher.getSyntax("try-body");
-  const exceptSyntaxMany = matcher.getSyntaxMany("except-body");
-  const elseSyntax = matcher.getSyntax("else-body");
-  const finallySyntax = matcher.getSyntax("finally-body");
+  const bodySyntax = match.getSyntax("try-body");
+  const exceptSyntaxMany = match.getSyntaxMany("except-body");
+  const elseSyntax = match.getSyntax("else-body");
+  const finallySyntax = match.getSyntax("finally-body");
 
   const mergeNode = builder.addNode("MERGE", "merge try-complex");
 
   return builder.withCluster("try-complex", (tryComplexCluster) => {
     const bodyBlock = builder.withCluster("try", () =>
-      matcher.getBlock(bodySyntax),
+      match.getBlock(bodySyntax),
     ) as BasicBlock;
 
     // We handle `except` blocks before the `finally` block to support `return` handling.
     const exceptBlocks = exceptSyntaxMany.map((exceptSyntax) =>
       builder.withCluster(
         "except",
-        () => matcher.getBlock(exceptSyntax) as BasicBlock,
+        () => match.getBlock(exceptSyntax) as BasicBlock,
       ),
     );
     // We attach the except-blocks to the top of the `try` body.
@@ -231,7 +197,7 @@ function processTryStatement(
     }
 
     // Create the `else` block before `finally` to handle returns correctly.
-    const elseBlock = matcher.getBlock(elseSyntax);
+    const elseBlock = match.getBlock(elseSyntax);
 
     const finallyBlock = builder.withCluster("finally", () => {
       // Handle all the return statements from the try block
@@ -240,7 +206,7 @@ function processTryStatement(
         matcher.state.forEachReturn((returnNode) => {
           // We create a new finally block for each return node,
           // so that we can link them.
-          const duplicateFinallyBlock = matcher.getBlock(
+          const duplicateFinallyBlock = match.getBlock(
             finallySyntax,
           ) as BasicBlock;
           // We also clone the return node, to place it _after_ the finally block
@@ -264,7 +230,7 @@ function processTryStatement(
       // Handle the finally-block for the trivial case, where we just pass through the try block
       // This must happen AFTER handling the return statements, as the finally block may add return
       // statements of its own.
-      const finallyBlock = matcher.getBlock(finallySyntax);
+      const finallyBlock = match.getBlock(finallySyntax);
       return finallyBlock;
     });
 
@@ -305,15 +271,10 @@ function processTryStatement(
 function processWithStatement(
   withSyntax: Parser.SyntaxNode,
   builder: Builder,
-  match: (
-    syntax: Parser.SyntaxNode,
-    mainName: string,
-    query: string,
-  ) => BlockMatcher,
+  matcher: BlockMatcher,
 ): BasicBlock {
-  const matcher = match(
+  const match = matcher.match(
     withSyntax,
-    "with",
     `
       (with_statement
         (with_clause) @with_clause
@@ -322,11 +283,11 @@ function processWithStatement(
       `,
   );
 
-  const withClauseSyntax = matcher.getSyntax("with_clause");
-  const withClauseBlock = matcher.getBlock(withClauseSyntax) as BasicBlock;
+  const withClauseSyntax = match.getSyntax("with_clause");
+  const withClauseBlock = match.getBlock(withClauseSyntax) as BasicBlock;
   return builder.withCluster("with", () => {
-    const bodySyntax = matcher.getSyntax("body");
-    const bodyBlock = matcher.getBlock(bodySyntax) as BasicBlock;
+    const bodySyntax = match.getSyntax("body");
+    const bodyBlock = match.getBlock(bodySyntax) as BasicBlock;
 
     if (withClauseBlock.exit && bodyBlock.entry)
       builder.addEdge(withClauseBlock.exit, bodyBlock.entry);
@@ -341,11 +302,7 @@ function processWithStatement(
 function processComment(
   commentSyntax: Parser.SyntaxNode,
   builder: Builder,
-  _match: (
-    syntax: Parser.SyntaxNode,
-    mainName: string,
-    query: string,
-  ) => BlockMatcher,
+  _matcher: BlockMatcher,
   options: BuilderOptions,
 ): BasicBlock {
   // We only ever ger here when marker comments are enabled,
@@ -361,16 +318,11 @@ function processComment(
 function processMatchStatement(
   matchSyntax: Parser.SyntaxNode,
   builder: Builder,
-  match: (
-    syntax: Parser.SyntaxNode,
-    mainName: string,
-    query: string,
-  ) => BlockMatcher,
+  matcher: BlockMatcher,
   options: BuilderOptions,
 ): BasicBlock {
-  const matcher = match(
+  const match = matcher.match(
     matchSyntax,
-    "match",
     `
       (match_statement
         subject: (_) @subject
@@ -381,8 +333,8 @@ function processMatchStatement(
       `,
   );
 
-  const subjectSyntax = matcher.getSyntax("subject");
-  const alternatives = matcher.getSyntaxMany("case").map((caseSyntax) => {
+  const subjectSyntax = match.getSyntax("subject");
+  const alternatives = match.getSyntaxMany("case").map((caseSyntax) => {
     const patterns = caseSyntax.children.filter(
       (c) => c.type === "case_pattern",
     ) as Parser.SyntaxNode[];
@@ -392,7 +344,7 @@ function processMatchStatement(
     return { consequence, patterns };
   });
 
-  const subjectBlock = matcher.getBlock(subjectSyntax) as BasicBlock;
+  const subjectBlock = match.getBlock(subjectSyntax) as BasicBlock;
   const mergeNode = builder.addNode("MERGE", "match merge");
 
   // This is the case where case matches
@@ -404,7 +356,7 @@ function processMatchStatement(
     consequence: consequenceSyntax,
     patterns: patternSyntaxMany,
   } of alternatives) {
-    const consequenceBlock = matcher.getBlock(consequenceSyntax);
+    const consequenceBlock = match.getBlock(consequenceSyntax);
     const patternNode = builder.addNode(
       "CASE_CONDITION",
       `case ${patternSyntaxMany.map((pat) => pat.text).join(", ")}:`,
@@ -428,11 +380,6 @@ function processMatchStatement(
 function processContinueStatement(
   _continueSyntax: Parser.SyntaxNode,
   builder: Builder,
-  _match: (
-    syntax: Parser.SyntaxNode,
-    mainName: string,
-    query: string,
-  ) => BlockMatcher,
 ): BasicBlock {
   const continueNode = builder.addNode("CONTINUE", "CONTINUE");
   return { entry: continueNode, exit: null, continues: [continueNode] };
@@ -440,11 +387,6 @@ function processContinueStatement(
 function processBreakStatement(
   _breakSyntax: Parser.SyntaxNode,
   builder: Builder,
-  _match: (
-    syntax: Parser.SyntaxNode,
-    mainName: string,
-    query: string,
-  ) => BlockMatcher,
 ): BasicBlock {
   const breakNode = builder.addNode("BREAK", "BREAK");
   return { entry: breakNode, exit: null, breaks: [breakNode] };
@@ -453,15 +395,10 @@ function processBreakStatement(
 function processIfStatement(
   ifNode: Parser.SyntaxNode,
   builder: Builder,
-  match: (
-    syntax: Parser.SyntaxNode,
-    mainName: string,
-    query: string,
-  ) => BlockMatcher,
+  matcher: BlockMatcher,
 ): BasicBlock {
-  const matcher = match(
+  const match = matcher.match(
     ifNode,
-    "if",
     `
       (if_statement
           condition: (_) @if-cond
@@ -476,19 +413,19 @@ function processIfStatement(
       `,
   );
 
-  const condSyntax = matcher.getSyntax("if-cond");
-  const thenSyntax = matcher.getSyntax("then");
-  const elifCondSyntaxMany = matcher.getSyntaxMany("elif-cond");
-  const elifSyntaxMany = matcher.getSyntaxMany("elif");
-  const elseSyntax = matcher.getSyntax("else");
+  const condSyntax = match.getSyntax("if-cond");
+  const thenSyntax = match.getSyntax("then");
+  const elifCondSyntaxMany = match.getSyntaxMany("elif-cond");
+  const elifSyntaxMany = match.getSyntaxMany("elif");
+  const elseSyntax = match.getSyntax("else");
 
-  const condBlock = matcher.getBlock(condSyntax);
-  const thenBlock = matcher.getBlock(thenSyntax);
+  const condBlock = match.getBlock(condSyntax);
+  const thenBlock = match.getBlock(thenSyntax);
   const elifCondBlocks = elifCondSyntaxMany.map((syntax) =>
-    matcher.getBlock(syntax),
+    match.getBlock(syntax),
   );
-  const elifBlocks = elifSyntaxMany.map((syntax) => matcher.getBlock(syntax));
-  const elseBlock = matcher.getBlock(elseSyntax);
+  const elifBlocks = elifSyntaxMany.map((syntax) => match.getBlock(syntax));
+  const elseBlock = match.getBlock(elseSyntax);
 
   const mergeNode = builder.addNode("MERGE", "if merge");
   const headNode = builder.addNode("CONDITION", "if condition");
@@ -529,15 +466,10 @@ function processIfStatement(
 function processForStatement(
   forNode: Parser.SyntaxNode,
   builder: Builder,
-  match: (
-    syntax: Parser.SyntaxNode,
-    mainName: string,
-    query: string,
-  ) => BlockMatcher,
+  matcher: BlockMatcher,
 ): BasicBlock {
-  const matcher = match(
+  const match = matcher.match(
     forNode,
-    "for",
     `
       [(for_statement
           body: (_) @body
@@ -549,11 +481,11 @@ function processForStatement(
       `,
   );
 
-  const bodySyntax = matcher.getSyntax("body");
-  const elseSyntax = matcher.getSyntax("else");
+  const bodySyntax = match.getSyntax("body");
+  const elseSyntax = match.getSyntax("else");
 
-  const bodyBlock = matcher.getBlock(bodySyntax);
-  const elseBlock = matcher.getBlock(elseSyntax);
+  const bodyBlock = match.getBlock(bodySyntax);
+  const elseBlock = match.getBlock(elseSyntax);
 
   const exitNode = builder.addNode("FOR_EXIT", "loop exit");
   const headNode = builder.addNode("LOOP_HEAD", "loop head");
@@ -590,15 +522,10 @@ function processForStatement(
 function processWhileStatement(
   whileSyntax: Parser.SyntaxNode,
   builder: Builder,
-  match: (
-    syntax: Parser.SyntaxNode,
-    mainName: string,
-    query: string,
-  ) => BlockMatcher,
+  matcher: BlockMatcher,
 ): BasicBlock {
-  const matcher = match(
+  const match = matcher.match(
     whileSyntax,
-    "while",
     `
     (while_statement
         condition: (_) @cond
@@ -608,13 +535,13 @@ function processWhileStatement(
     `,
   );
 
-  const condSyntax = matcher.getSyntax("cond");
-  const bodySyntax = matcher.getSyntax("body");
-  const elseSyntax = matcher.getSyntax("else");
+  const condSyntax = match.getSyntax("cond");
+  const bodySyntax = match.getSyntax("body");
+  const elseSyntax = match.getSyntax("else");
 
-  const condBlock = matcher.getBlock(condSyntax) as BasicBlock;
-  const bodyBlock = matcher.getBlock(bodySyntax) as BasicBlock;
-  const elseBlock = matcher.getBlock(elseSyntax);
+  const condBlock = match.getBlock(condSyntax) as BasicBlock;
+  const bodyBlock = match.getBlock(bodySyntax) as BasicBlock;
+  const elseBlock = match.getBlock(elseSyntax);
 
   const exitNode = builder.addNode("FOR_EXIT", "loop exit");
 

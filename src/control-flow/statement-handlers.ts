@@ -6,12 +6,8 @@ import type { BasicBlock, BuilderOptions } from "./cfg-defs.ts";
 type StatementHandler = (
   syntax: Parser.SyntaxNode,
   builder: Builder,
-  match: (
-    syntax: Parser.SyntaxNode,
-    mainName: string,
-    query: string
-  ) => BlockMatcher,
-  options: BuilderOptions
+  matcher: BlockMatcher,
+  options: BuilderOptions,
 ) => BasicBlock;
 export type StatementHandlers = {
   block: string;
