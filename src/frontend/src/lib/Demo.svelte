@@ -8,6 +8,7 @@
   import * as LZString from "lz-string";
   import type { EditorView } from "@codemirror/view";
   import { EditorSelection } from "@codemirror/state";
+  import Editor from "./Editor.svelte";
   export let codeGo = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
   export let codeC = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";
   export let codePython = "def example():\n    if x:\n        return";
@@ -98,11 +99,6 @@
       scrollIntoView: true,
     });
   }
-
-  $: {
-    if (editorView?.state.selection.main.head)
-      console.log(editorView.state.selection.main.head);
-  }
 </script>
 
 <main>
@@ -129,19 +125,9 @@
     </div>
     <div class="codemirror">
       {#if selection.language === "Go"}
-        <CodeMirror
-          bind:value={codeGo}
-          lang={go()}
-          tabSize={4}
-          lineWrapping={true}
-        />
+        <Editor bind:code={codeGo} lang={go()} />
       {:else if selection.language === "C"}
-        <CodeMirror
-          bind:value={codeC}
-          lang={cpp()}
-          tabSize={4}
-          lineWrapping={true}
-        />
+        <Editor bind:code={codeC} lang={cpp()} />
       {:else if selection.language === "Python"}
         <CodeMirror
           bind:value={codePython}
