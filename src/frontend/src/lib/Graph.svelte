@@ -10,8 +10,7 @@
     initialize as initializeUtils,
     type Parsers,
   } from "./utils";
-  import { createEventDispatcher, onDestroy, onMount } from "svelte";
-  import type internal from "stream";
+  import { createEventDispatcher, onMount } from "svelte";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
@@ -20,6 +19,7 @@
   let mainElement;
   let cfg: CFG;
   let tree: Parser.Tree;
+  let highlightTemplate: Element;
   export let code: string;
   export let language: Language;
   export let verbose: boolean = false;
@@ -84,15 +84,21 @@
     return graphviz.dot(dot);
   }
 
+  let highlightedNode: Element;
   export function setCursor(row: number, column: number) {
-    if (!cfg.syntaxToNode) {
-      return;
-    }
-    let syntax = tree.rootNode.descendantForPosition({ row: row - 1, column });
+    if (!cfg.syntaxToNode) return;
+    let syntax = tree.rootNode.descendantForPosition({ row, column });
     for (; syntax && !cfg.syntaxToNode.has(syntax.id); syntax = syntax.parent);
-    console.log(document.querySelector(`#${cfg.syntaxToNode.get(syntax.id)}`));
+    if (!syntax) return;
+    const svgNode = document.querySelector(
+      `#${cfg.syntaxToNode.get(syntax.id)}`,
+    );
+    svgNode.classList.add(...highlightTemplate.classList);
+    if (highlightedNode && highlightedNode !== svgNode) {
+      highlightedNode.classList.remove(...highlightTemplate.classList);
+    }
+    highlightedNode = svgNode;
   }
-  console.log(setCursor);
 
   function findParentGraphNode(
     element: Element,
@@ -137,6 +143,7 @@
     </div>
   {/await}
 </div>
+<div class="highlight" style="display:none" bind:this={highlightTemplate}></div>
 
 <style>
   .graph {
@@ -144,5 +151,8 @@
     align-items: center;
     justify-content: center;
     padding: 1em;
+  }
+  .highlight {
+    filter: drop-shadow(0 0 5px red);
   }
 </style>

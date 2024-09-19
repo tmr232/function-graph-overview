@@ -93,11 +93,14 @@
   }
 
   function gotoLine(event) {
-    const pos = editorView.state.doc.line(event.detail.lineNumber + 1).from;
-    editorView.dispatch({
-      selection: { head: pos, anchor: pos },
-      scrollIntoView: true,
-    });
+    if (!editor) return;
+    editor.goto(event.detail.lineNumber);
+  }
+  let editor: Editor;
+
+  function cursorMoved(event): void {
+    const { row, column } = event.detail.pos;
+    graph.setCursor(row, column);
   }
 </script>
 
@@ -125,16 +128,15 @@
     </div>
     <div class="codemirror">
       {#if selection.language === "Go"}
-        <Editor bind:code={codeGo} lang={go()} />
+        <Editor bind:code={codeGo} lang={go()} bind:this={editor} />
       {:else if selection.language === "C"}
-        <Editor bind:code={codeC} lang={cpp()} />
+        <Editor bind:code={codeC} lang={cpp()} bind:this={editor} />
       {:else if selection.language === "Python"}
-        <CodeMirror
-          bind:value={codePython}
+        <Editor
+          bind:code={codePython}
           lang={python()}
-          tabSize={4}
-          lineWrapping={true}
-          on:ready={(e) => (editorView = e.detail)}
+          bind:this={editor}
+          on:cursorMoved={cursorMoved}
         />
       {/if}
     </div>
