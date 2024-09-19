@@ -162,6 +162,11 @@ class BlockMatcher {
   public getBlock(syntax: Parser.SyntaxNode | null | undefined) {
     return syntax ? this.blockHandler.update(this.processBlock(syntax)) : null;
   }
+
+  public get state() {
+    return this.blockHandler;
+  }
+
 }
 
 export class CFGBuilder {
@@ -646,8 +651,7 @@ export class CFGBuilder {
     forNode: Parser.SyntaxNode,
     builder: Builder,
   ): BasicBlock {
-    const blockHandler = new BlockHandler();
-    const match = this.matchQuery(
+    const matcher = new BlockMatcher(this.processBlock.bind(this),
       forNode,
       "for",
       `
@@ -661,13 +665,12 @@ export class CFGBuilder {
       `,
     );
 
-    const bodySyntax = this.getSyntax(match, "body");
-    const elseSyntax = this.getSyntax(match, "else");
+    const bodySyntax = matcher.getSyntax("body");
+    const elseSyntax = matcher.getSyntax("else");
 
-    const getBlock = this.blockGetter(blockHandler);
 
-    const bodyBlock = getBlock(bodySyntax);
-    const elseBlock = getBlock(elseSyntax);
+    const bodyBlock = matcher.getBlock(bodySyntax);
+    const elseBlock = matcher.getBlock(elseSyntax);
 
     const exitNode = builder.addNode("FOR_EXIT", "loop exit");
     const headNode = builder.addNode("LOOP_HEAD", "loop head");
@@ -690,15 +693,15 @@ export class CFGBuilder {
       builder.addEdge(headBlock.exit, exitNode, "alternative");
     }
 
-    blockHandler.forEachContinue((continueNode) => {
+    matcher.state.forEachContinue((continueNode) => {
       builder.addEdge(continueNode, headNode);
     });
 
-    blockHandler.forEachBreak((breakNode) => {
+    matcher.state.forEachBreak((breakNode) => {
       builder.addEdge(breakNode, exitNode);
     });
 
-    return blockHandler.update({ entry: headNode, exit: exitNode });
+    return matcher.update({ entry: headNode, exit: exitNode });
   }
 
   private processWhileStatement(
