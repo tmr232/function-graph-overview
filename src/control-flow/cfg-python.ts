@@ -103,46 +103,26 @@ export class CFGBuilder {
   }
 
   public buildCFG(functionNode: Parser.SyntaxNode): CFG {
-    const startNode = this.addNode("START", "START");
+    const startNode = this.builder.addNode("START", "START");
     const bodyNode = functionNode.childForFieldName("body");
     if (bodyNode) {
       const blockHandler = new BlockHandler();
       const { entry, exit } = blockHandler.update(
-        this.processStatements(bodyNode.namedChildren),
+        this.processStatements(bodyNode.namedChildren, this.builder),
       );
 
-      const endNode = this.addNode("RETURN", "implicit return");
+      const endNode = this.builder.addNode("RETURN", "implicit return");
       // `entry` will be non-null for any valid code
-      if (entry) this.addEdge(startNode, entry);
-      if (exit) this.addEdge(exit, endNode);
+      if (entry) this.builder.addEdge(startNode, entry);
+      if (exit) this.builder.addEdge(exit, endNode);
     }
     return { graph: this.graph, entry: startNode };
   }
 
-  private withCluster<T>(type: ClusterType, fn: (cluster: Cluster) => T): T {
-    return this.builder.withCluster(type, fn);
-  }
-  private addNode(type: NodeType, code: string, lines: number = 1): string {
-    return this.builder.addNode(type, code, lines);
-  }
-
-  private cloneNode(node: string, overrides?: { cluster: Cluster }): string {
-    return this.builder.cloneNode(node, overrides);
-  }
-
-  private addMarker(node: string, marker: string) {
-    return this.builder.addMarker(node, marker);
-  }
-
-  private addEdge(
-    source: string,
-    target: string,
-    type: EdgeType = "regular",
-  ): void {
-    return this.builder.addEdge(source, target, type);
-  }
-
-  private processStatements(statements: Parser.SyntaxNode[]): BasicBlock {
+  private processStatements(
+    statements: Parser.SyntaxNode[],
+    builder: Builder,
+  ): BasicBlock {
     const blockHandler = new BlockHandler();
 
     // Ignore comments
@@ -157,7 +137,7 @@ export class CFGBuilder {
     });
 
     if (codeStatements.length === 0) {
-      const emptyNode = this.addNode("EMPTY", "empty block");
+      const emptyNode = builder.addNode("EMPTY", "empty block");
       return { entry: emptyNode, exit: emptyNode };
     }
 
@@ -168,7 +148,7 @@ export class CFGBuilder {
         this.processBlock(statement),
       );
       if (!entry) entry = currentEntry;
-      if (previous && currentEntry) this.addEdge(previous, currentEntry);
+      if (previous && currentEntry) builder.addEdge(previous, currentEntry);
       previous = currentExit;
     }
     return blockHandler.update({ entry, exit: previous });
@@ -179,51 +159,63 @@ export class CFGBuilder {
 
     switch (syntax.type) {
       case "block":
-        return this.processStatements(syntax.namedChildren);
+        return this.processStatements(syntax.namedChildren, this.builder);
       case "if_statement":
-        return this.processIfStatement(syntax);
+        return this.processIfStatement(syntax, this.builder);
       case "for_statement":
-        return this.processForStatement(syntax);
+        return this.processForStatement(syntax, this.builder);
       case "while_statement":
-        return this.processWhileStatement(syntax);
+        return this.processWhileStatement(syntax, this.builder);
       case "match_statement":
-        return this.processMatchStatement(syntax);
+        return this.processMatchStatement(syntax, this.builder);
       case "return_statement":
-        return this.processReturnStatement(syntax);
+        return this.processReturnStatement(syntax, this.builder);
       case "break_statement":
-        return this.processBreakStatement(syntax);
+        return this.processBreakStatement(syntax, this.builder);
       case "continue_statement":
-        return this.processContinueStatement(syntax);
+        return this.processContinueStatement(syntax, this.builder);
       case "comment":
-        return this.processComment(syntax);
+        return this.processComment(syntax, this.builder);
       case "with_statement":
-        return this.processWithStatement(syntax);
+        return this.processWithStatement(syntax, this.builder);
       case "try_statement":
-        return this.processTryStatement(syntax);
+        return this.processTryStatement(syntax, this.builder);
       case "raise_statement":
-        return this.processRaiseStatement(syntax);
+        return this.processRaiseStatement(syntax, this.builder);
       default:
-        return this.defaultProcessStatement(syntax);
+        return this.defaultProcessStatement(syntax, this.builder);
     }
   }
-  private defaultProcessStatement(syntax: Parser.SyntaxNode): BasicBlock {
+  private defaultProcessStatement(
+    syntax: Parser.SyntaxNode,
+    builder: Builder,
+  ): BasicBlock {
     const hasYield = this.matchExistsIn(syntax, "yield", `(yield) @yield`);
     if (hasYield) {
-      const yieldNode = this.addNode("YIELD", syntax.text);
+      const yieldNode = builder.addNode("YIELD", syntax.text);
       return { entry: yieldNode, exit: yieldNode };
     }
-    const newNode = this.addNode("STATEMENT", syntax.text);
+    const newNode = builder.addNode("STATEMENT", syntax.text);
     return { entry: newNode, exit: newNode };
   }
-  private processRaiseStatement(raiseSyntax: Parser.SyntaxNode): BasicBlock {
-    const raiseNode = this.addNode("THROW", raiseSyntax.text);
+  private processRaiseStatement(
+    raiseSyntax: Parser.SyntaxNode,
+    builder: Builder,
+  ): BasicBlock {
+    const raiseNode = builder.addNode("THROW", raiseSyntax.text);
     return { entry: raiseNode, exit: null };
   }
-  private processReturnStatement(returnSyntax: Parser.SyntaxNode): BasicBlock {
-    const returnNode = this.addNode("RETURN", returnSyntax.text);
+  private processReturnStatement(
+    returnSyntax: Parser.SyntaxNode,
+    builder: Builder,
+  ): BasicBlock {
+    const returnNode = builder.addNode("RETURN", returnSyntax.text);
     return { entry: returnNode, exit: null, returns: [returnNode] };
   }
-  private processTryStatement(trySyntax: Parser.SyntaxNode): BasicBlock {
+  private processTryStatement(
+    trySyntax: Parser.SyntaxNode,
+    builder: Builder,
+  ): BasicBlock {
     /*
     Here's an idea - I can duplicate the finally blocks!
     Then if there's a return, I stick the finally before it.
@@ -254,16 +246,19 @@ export class CFGBuilder {
     const elseSyntax = this.getSyntax(match, "else-body");
     const finallySyntax = this.getSyntax(match, "finally-body");
 
-    const mergeNode = this.addNode("MERGE", "merge try-complex");
+    const mergeNode = builder.addNode("MERGE", "merge try-complex");
 
-    return this.withCluster("try-complex", (tryComplexCluster) => {
-      const bodyBlock = this.withCluster("try", () =>
+    return builder.withCluster("try-complex", (tryComplexCluster) => {
+      const bodyBlock = builder.withCluster("try", () =>
         getBlock(bodySyntax),
       ) as BasicBlock;
 
       // We handle `except` blocks before the `finally` block to support `return` handling.
       const exceptBlocks = exceptSyntaxMany.map((exceptSyntax) =>
-        this.withCluster("except", () => getBlock(exceptSyntax) as BasicBlock),
+        builder.withCluster(
+          "except",
+          () => getBlock(exceptSyntax) as BasicBlock,
+        ),
       );
       // We attach the except-blocks to the top of the `try` body.
       // In the rendering, we will connect them to the side of the node, and use invisible lines for it.
@@ -272,7 +267,7 @@ export class CFGBuilder {
         exceptBlocks.forEach((exceptBlock) => {
           if (exceptBlock.entry) {
             // Yes, this is effectively a head-to-head link. But that's ok.
-            this.addEdge(headNode, exceptBlock.entry, "exception");
+            builder.addEdge(headNode, exceptBlock.entry, "exception");
           }
         });
       }
@@ -280,7 +275,7 @@ export class CFGBuilder {
       // Create the `else` block before `finally` to handle returns correctly.
       const elseBlock = getBlock(elseSyntax);
 
-      const finallyBlock = this.withCluster("finally", () => {
+      const finallyBlock = builder.withCluster("finally", () => {
         // Handle all the return statements from the try block
         if (finallySyntax) {
           // This is only relevant if there's a finally block.
@@ -291,14 +286,14 @@ export class CFGBuilder {
             // We also clone the return node, to place it _after_ the finally block
             // We also override the cluster node, pulling it up to the `try-complex`,
             // as the return is neither in a `try`, `except`, or `finally` context.
-            const returnNodeClone = this.cloneNode(returnNode, {
+            const returnNodeClone = builder.cloneNode(returnNode, {
               cluster: tryComplexCluster,
             });
 
             if (duplicateFinallyBlock.entry)
-              this.addEdge(returnNode, duplicateFinallyBlock.entry);
+              builder.addEdge(returnNode, duplicateFinallyBlock.entry);
             if (duplicateFinallyBlock.exit)
-              this.addEdge(duplicateFinallyBlock.exit, returnNodeClone);
+              builder.addEdge(duplicateFinallyBlock.exit, returnNodeClone);
 
             // We return the cloned return node as the new return node, in case we're nested
             // in a scope that will process it.
@@ -318,28 +313,28 @@ export class CFGBuilder {
 
       // Connect the body to the `else` block
       if (bodyBlock.exit && elseBlock?.entry) {
-        this.addEdge(bodyBlock.exit, elseBlock.entry);
+        builder.addEdge(bodyBlock.exit, elseBlock.entry);
         happyExit = elseBlock.exit;
       }
 
       if (finallyBlock?.entry) {
         // Connect `try` to `finally`
         const toFinally = elseBlock?.exit ?? bodyBlock.exit;
-        if (toFinally) this.addEdge(toFinally, finallyBlock.entry);
+        if (toFinally) builder.addEdge(toFinally, finallyBlock.entry);
         happyExit = finallyBlock.exit;
         // Connect `except` to `finally`
         exceptBlocks.forEach((exceptBlock) => {
           if (exceptBlock.exit)
-            this.addEdge(exceptBlock.exit, finallyBlock.entry as string);
+            builder.addEdge(exceptBlock.exit, finallyBlock.entry as string);
         });
       } else {
         // We need to connect the `except` blocks to the merge node
         exceptBlocks.forEach((exceptBlock) => {
-          if (exceptBlock.exit) this.addEdge(exceptBlock.exit, mergeNode);
+          if (exceptBlock.exit) builder.addEdge(exceptBlock.exit, mergeNode);
         });
       }
 
-      if (happyExit) this.addEdge(happyExit, mergeNode);
+      if (happyExit) builder.addEdge(happyExit, mergeNode);
 
       return blockHandler.update({
         entry: bodyBlock.entry,
@@ -347,7 +342,10 @@ export class CFGBuilder {
       });
     });
   }
-  private processWithStatement(withSyntax: Parser.SyntaxNode): BasicBlock {
+  private processWithStatement(
+    withSyntax: Parser.SyntaxNode,
+    builder: Builder,
+  ): BasicBlock {
     const blockHandler = new BlockHandler();
     const match = this.matchQuery(
       withSyntax,
@@ -363,12 +361,12 @@ export class CFGBuilder {
 
     const withClauseSyntax = this.getSyntax(match, "with_clause");
     const withClauseBlock = getBlock(withClauseSyntax) as BasicBlock;
-    return this.withCluster("with", () => {
+    return builder.withCluster("with", () => {
       const bodySyntax = this.getSyntax(match, "body");
       const bodyBlock = getBlock(bodySyntax) as BasicBlock;
 
       if (withClauseBlock.exit && bodyBlock.entry)
-        this.addEdge(withClauseBlock.exit, bodyBlock.entry);
+        builder.addEdge(withClauseBlock.exit, bodyBlock.entry);
 
       return blockHandler.update({
         entry: withClauseBlock.entry,
@@ -377,18 +375,24 @@ export class CFGBuilder {
     });
   }
 
-  private processComment(commentSyntax: Parser.SyntaxNode): BasicBlock {
+  private processComment(
+    commentSyntax: Parser.SyntaxNode,
+    builder: Builder,
+  ): BasicBlock {
     // We only ever ger here when marker comments are enabled,
     // and only for marker comments as the rest are filtered out.
-    const commentNode = this.addNode("MARKER_COMMENT", commentSyntax.text);
+    const commentNode = builder.addNode("MARKER_COMMENT", commentSyntax.text);
     if (this.markerPattern) {
       const marker = commentSyntax.text.match(this.markerPattern)?.[1];
-      if (marker) this.addMarker(commentNode, marker);
+      if (marker) builder.addMarker(commentNode, marker);
     }
     return { entry: commentNode, exit: commentNode };
   }
 
-  private processMatchStatement(matchSyntax: Parser.SyntaxNode): BasicBlock {
+  private processMatchStatement(
+    matchSyntax: Parser.SyntaxNode,
+    builder: Builder,
+  ): BasicBlock {
     const blockHandler = new BlockHandler();
     const match = this.matchQuery(
       matchSyntax,
@@ -417,11 +421,11 @@ export class CFGBuilder {
     const getBlock = this.blockGetter(blockHandler);
 
     const subjectBlock = getBlock(subjectSyntax) as BasicBlock;
-    const mergeNode = this.addNode("MERGE", "match merge");
+    const mergeNode = builder.addNode("MERGE", "match merge");
 
     // This is the case where case matches
     if (subjectBlock.exit)
-      this.addEdge(subjectBlock.exit, mergeNode, "alternative");
+      builder.addEdge(subjectBlock.exit, mergeNode, "alternative");
 
     let previous = subjectBlock.exit as string;
     for (const {
@@ -429,19 +433,19 @@ export class CFGBuilder {
       patterns: patternSyntaxMany,
     } of alternatives) {
       const consequenceBlock = getBlock(consequenceSyntax);
-      const patternNode = this.addNode(
+      const patternNode = builder.addNode(
         "CASE_CONDITION",
         `case ${patternSyntaxMany.map((pat) => pat.text).join(", ")}:`,
       );
 
       if (consequenceBlock?.entry)
-        this.addEdge(patternNode, consequenceBlock.entry, "consequence");
+        builder.addEdge(patternNode, consequenceBlock.entry, "consequence");
       if (consequenceBlock?.exit)
-        this.addEdge(consequenceBlock.exit, mergeNode, "regular");
+        builder.addEdge(consequenceBlock.exit, mergeNode, "regular");
       if (this.flatSwitch) {
-        this.addEdge(previous, patternNode, "regular");
+        builder.addEdge(previous, patternNode, "regular");
       } else {
-        if (previous) this.addEdge(previous, patternNode, "alternative");
+        if (previous) builder.addEdge(previous, patternNode, "alternative");
         previous = patternNode;
       }
     }
@@ -451,16 +455,23 @@ export class CFGBuilder {
 
   private processContinueStatement(
     _continueSyntax: Parser.SyntaxNode,
+    builder: Builder,
   ): BasicBlock {
-    const continueNode = this.addNode("CONTINUE", "CONTINUE");
+    const continueNode = builder.addNode("CONTINUE", "CONTINUE");
     return { entry: continueNode, exit: null, continues: [continueNode] };
   }
-  private processBreakStatement(_breakSyntax: Parser.SyntaxNode): BasicBlock {
-    const breakNode = this.addNode("BREAK", "BREAK");
+  private processBreakStatement(
+    _breakSyntax: Parser.SyntaxNode,
+    builder: Builder,
+  ): BasicBlock {
+    const breakNode = builder.addNode("BREAK", "BREAK");
     return { entry: breakNode, exit: null, breaks: [breakNode] };
   }
 
-  private processIfStatement(ifNode: Parser.SyntaxNode): BasicBlock {
+  private processIfStatement(
+    ifNode: Parser.SyntaxNode,
+    builder: Builder,
+  ): BasicBlock {
     const blockHandler = new BlockHandler();
     const match = this.matchQuery(
       ifNode,
@@ -493,10 +504,10 @@ export class CFGBuilder {
     const elifBlocks = elifSyntaxMany.map((syntax) => getBlock(syntax));
     const elseBlock = getBlock(elseSyntax);
 
-    const mergeNode = this.addNode("MERGE", "if merge");
-    const headNode = this.addNode("CONDITION", "if condition");
+    const mergeNode = builder.addNode("MERGE", "if merge");
+    const headNode = builder.addNode("CONDITION", "if condition");
 
-    if (condBlock?.entry) this.addEdge(headNode, condBlock.entry);
+    if (condBlock?.entry) builder.addEdge(headNode, condBlock.entry);
 
     const conds = [condBlock, ...elifCondBlocks];
     const consequences = [thenBlock, ...elifBlocks];
@@ -506,24 +517,24 @@ export class CFGBuilder {
       const consequenceBlock = consequences[i];
 
       if (previous?.exit && conditionBlock?.entry)
-        this.addEdge(previous.exit, conditionBlock.entry, "alternative");
+        builder.addEdge(previous.exit, conditionBlock.entry, "alternative");
       if (conditionBlock?.exit && consequenceBlock?.entry)
-        this.addEdge(
+        builder.addEdge(
           conditionBlock.exit,
           consequenceBlock.entry,
           "consequence",
         );
       if (consequenceBlock?.exit)
-        this.addEdge(consequenceBlock.exit, mergeNode);
+        builder.addEdge(consequenceBlock.exit, mergeNode);
 
       previous = conditionBlock;
     }
     if (elseBlock) {
       if (previous?.exit && elseBlock.entry)
-        this.addEdge(previous.exit, elseBlock.entry, "alternative");
-      if (elseBlock.exit) this.addEdge(elseBlock.exit, mergeNode);
+        builder.addEdge(previous.exit, elseBlock.entry, "alternative");
+      if (elseBlock.exit) builder.addEdge(elseBlock.exit, mergeNode);
     } else if (previous?.exit) {
-      this.addEdge(previous.exit, mergeNode, "alternative");
+      builder.addEdge(previous.exit, mergeNode, "alternative");
     }
 
     return blockHandler.update({ entry: headNode, exit: mergeNode });
@@ -583,7 +594,10 @@ export class CFGBuilder {
     return getBlock;
   }
 
-  private processForStatement(forNode: Parser.SyntaxNode): BasicBlock {
+  private processForStatement(
+    forNode: Parser.SyntaxNode,
+    builder: Builder,
+  ): BasicBlock {
     const blockHandler = new BlockHandler();
     const match = this.matchQuery(
       forNode,
@@ -607,8 +621,8 @@ export class CFGBuilder {
     const bodyBlock = getBlock(bodySyntax);
     const elseBlock = getBlock(elseSyntax);
 
-    const exitNode = this.addNode("FOR_EXIT", "loop exit");
-    const headNode = this.addNode("LOOP_HEAD", "loop head");
+    const exitNode = builder.addNode("FOR_EXIT", "loop exit");
+    const headNode = builder.addNode("LOOP_HEAD", "loop head");
     const headBlock = { entry: headNode, exit: headNode };
 
     /*
@@ -618,28 +632,31 @@ export class CFGBuilder {
     continue -> head
     */
     if (bodyBlock?.entry)
-      this.addEdge(headBlock.exit, bodyBlock.entry, "consequence");
-    if (bodyBlock?.exit) this.addEdge(bodyBlock.exit, headBlock.entry);
+      builder.addEdge(headBlock.exit, bodyBlock.entry, "consequence");
+    if (bodyBlock?.exit) builder.addEdge(bodyBlock.exit, headBlock.entry);
     if (elseBlock) {
       if (elseBlock.entry)
-        this.addEdge(headBlock.exit, elseBlock.entry, "alternative");
-      if (elseBlock.exit) this.addEdge(elseBlock.exit, exitNode);
+        builder.addEdge(headBlock.exit, elseBlock.entry, "alternative");
+      if (elseBlock.exit) builder.addEdge(elseBlock.exit, exitNode);
     } else {
-      this.addEdge(headBlock.exit, exitNode, "alternative");
+      builder.addEdge(headBlock.exit, exitNode, "alternative");
     }
 
     blockHandler.forEachContinue((continueNode) => {
-      this.addEdge(continueNode, headNode);
+      builder.addEdge(continueNode, headNode);
     });
 
     blockHandler.forEachBreak((breakNode) => {
-      this.addEdge(breakNode, exitNode);
+      builder.addEdge(breakNode, exitNode);
     });
 
     return blockHandler.update({ entry: headNode, exit: exitNode });
   }
 
-  private processWhileStatement(whileSyntax: Parser.SyntaxNode): BasicBlock {
+  private processWhileStatement(
+    whileSyntax: Parser.SyntaxNode,
+    builder: Builder,
+  ): BasicBlock {
     const blockHandler = new BlockHandler();
     const match = this.matchQuery(
       whileSyntax,
@@ -663,24 +680,28 @@ export class CFGBuilder {
     const bodyBlock = getBlock(bodySyntax) as BasicBlock;
     const elseBlock = getBlock(elseSyntax);
 
-    const exitNode = this.addNode("FOR_EXIT", "loop exit");
+    const exitNode = builder.addNode("FOR_EXIT", "loop exit");
 
     if (condBlock.exit) {
       if (bodyBlock.entry)
-        this.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
-      this.addEdge(condBlock.exit, elseBlock?.entry ?? exitNode, "alternative");
+        builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
+      builder.addEdge(
+        condBlock.exit,
+        elseBlock?.entry ?? exitNode,
+        "alternative",
+      );
     }
-    if (elseBlock?.exit) this.addEdge(elseBlock.exit, exitNode);
+    if (elseBlock?.exit) builder.addEdge(elseBlock.exit, exitNode);
 
     if (condBlock.entry && bodyBlock.exit)
-      this.addEdge(bodyBlock.exit, condBlock.entry);
+      builder.addEdge(bodyBlock.exit, condBlock.entry);
 
     blockHandler.forEachContinue((continueNode) => {
-      if (condBlock.entry) this.addEdge(continueNode, condBlock.entry);
+      if (condBlock.entry) builder.addEdge(continueNode, condBlock.entry);
     });
 
     blockHandler.forEachBreak((breakNode) => {
-      this.addEdge(breakNode, exitNode);
+      builder.addEdge(breakNode, exitNode);
     });
 
     return blockHandler.update({ entry: condBlock.entry, exit: exitNode });
