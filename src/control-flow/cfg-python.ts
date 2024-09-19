@@ -264,7 +264,7 @@ export class CFGBuilder {
     syntax: Parser.SyntaxNode,
     builder: Builder,
   ): BasicBlock {
-    const hasYield = this.matchExistsIn(syntax, "yield", `(yield) @yield`);
+    const hasYield = matchExistsIn(syntax, "yield", `(yield) @yield`);
     if (hasYield) {
       const yieldNode = builder.addNode("YIELD", syntax.text);
       return { entry: yieldNode, exit: yieldNode };
@@ -618,16 +618,7 @@ export class CFGBuilder {
     return matchQuery(syntax, mainName, queryString);
   }
 
-  private matchExistsIn(
-    syntax: Parser.SyntaxNode,
-    mainName: string,
-    queryString: string,
-  ): boolean {
-    const language = syntax.tree.getLanguage();
-    const query = language.query(queryString);
-    const matches = query.matches(syntax);
-    return matches.length > 0;
-  }
+
 
   private getSyntax(
     match: Parser.QueryMatch,
