@@ -143,7 +143,7 @@ function getSyntaxMany(
 class BlockMatcher {
   private blockHandler: BlockHandler = new BlockHandler();
   private processBlock: (syntax: Parser.SyntaxNode | null) => BasicBlock;
-  public update = this.blockHandler.update;
+  public update = this.blockHandler.update.bind(this.blockHandler);
   private match: Parser.QueryMatch;
 
   constructor(processBlock: BlockMatcher["processBlock"], syntax: Parser.SyntaxNode, mainName: string, query: string) {
@@ -546,10 +546,7 @@ export class CFGBuilder {
     ifNode: Parser.SyntaxNode,
     builder: Builder,
   ): BasicBlock {
-    const blockHandler = new BlockHandler();
-    const match = this.matchQuery(
-      ifNode,
-      "if",
+    const matcher = new BlockMatcher(this.processBlock.bind(this), ifNode, "if",
       `
       (if_statement
           condition: (_) @if-cond
@@ -564,19 +561,18 @@ export class CFGBuilder {
       `,
     );
 
-    const condSyntax = this.getSyntax(match, "if-cond");
-    const thenSyntax = this.getSyntax(match, "then");
-    const elifCondSyntaxMany = this.getSyntaxMany(match, "elif-cond");
-    const elifSyntaxMany = this.getSyntaxMany(match, "elif");
-    const elseSyntax = this.getSyntax(match, "else");
+    const condSyntax = matcher.getSyntax("if-cond");
+    const thenSyntax = matcher.getSyntax("then");
+    const elifCondSyntaxMany = matcher.getSyntaxMany("elif-cond");
+    const elifSyntaxMany = matcher.getSyntaxMany("elif");
+    const elseSyntax = matcher.getSyntax("else");
 
-    const getBlock = this.blockGetter(blockHandler);
 
-    const condBlock = getBlock(condSyntax);
-    const thenBlock = getBlock(thenSyntax);
-    const elifCondBlocks = elifCondSyntaxMany.map((syntax) => getBlock(syntax));
-    const elifBlocks = elifSyntaxMany.map((syntax) => getBlock(syntax));
-    const elseBlock = getBlock(elseSyntax);
+    const condBlock = matcher.getBlock(condSyntax);
+    const thenBlock = matcher.getBlock(thenSyntax);
+    const elifCondBlocks = elifCondSyntaxMany.map((syntax) => matcher.getBlock(syntax));
+    const elifBlocks = elifSyntaxMany.map((syntax) => matcher.getBlock(syntax));
+    const elseBlock = matcher.getBlock(elseSyntax);
 
     const mergeNode = builder.addNode("MERGE", "if merge");
     const headNode = builder.addNode("CONDITION", "if condition");
@@ -611,7 +607,7 @@ export class CFGBuilder {
       builder.addEdge(previous.exit, mergeNode, "alternative");
     }
 
-    return blockHandler.update({ entry: headNode, exit: mergeNode });
+    return matcher.update({ entry: headNode, exit: mergeNode });
   }
 
   private matchQuery(
