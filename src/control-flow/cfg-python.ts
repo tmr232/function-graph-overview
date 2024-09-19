@@ -210,14 +210,10 @@ export class CFGBuilder {
   private graph: MultiDirectedGraph<GraphNode, GraphEdge> =
     new MultiDirectedGraph();
   private builder: Builder = new Builder(this.graph);
-  private readonly flatSwitch: boolean;
-  private readonly markerPattern: RegExp | null;
   private readonly options: BuilderOptions;
 
   constructor(options: BuilderOptions) {
     this.options = options;
-    this.flatSwitch = options.flatSwitch ?? false;
-    this.markerPattern = options.markerPattern ?? null;
   }
 
   public buildCFG(functionNode: Parser.SyntaxNode): CFG {
@@ -288,7 +284,7 @@ export class CFGBuilder {
       }
 
       return (
-        this.markerPattern && Boolean(syntax.text.match(this.markerPattern))
+        this.options.markerPattern && Boolean(syntax.text.match(this.options.markerPattern))
       );
     });
 
@@ -310,6 +306,7 @@ export class CFGBuilder {
     return blockHandler.update({ entry, exit: previous });
   }
 }
+
 function defaultProcessStatement(
   syntax: Parser.SyntaxNode,
   builder: Builder,
