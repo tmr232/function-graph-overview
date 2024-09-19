@@ -189,7 +189,11 @@ export class CFGBuilder {
     if (bodyNode) {
       const blockHandler = new BlockHandler();
       const { entry, exit } = blockHandler.update(
-        this.processStatements(bodyNode.namedChildren, this.builder),
+        this.processStatements(
+          bodyNode.namedChildren,
+          this.builder,
+          this.match.bind(this),
+        ),
       );
 
       const endNode = this.builder.addNode("RETURN", "implicit return");
@@ -203,6 +207,11 @@ export class CFGBuilder {
   private processStatements(
     statements: Parser.SyntaxNode[],
     builder: Builder,
+    _match: (
+      syntax: Parser.SyntaxNode,
+      mainName: string,
+      query: string,
+    ) => BlockMatcher,
   ): BasicBlock {
     const blockHandler = new BlockHandler();
 
@@ -235,41 +244,107 @@ export class CFGBuilder {
     return blockHandler.update({ entry, exit: previous });
   }
 
+  private match(
+    syntax: Parser.SyntaxNode,
+    mainName: string,
+    query: string,
+  ): BlockMatcher {
+    return new BlockMatcher(
+      this.processBlock.bind(this),
+      syntax,
+      mainName,
+      query,
+    );
+  }
+
   private processBlock(syntax: Parser.SyntaxNode | null): BasicBlock {
     if (!syntax) return { entry: null, exit: null };
 
     switch (syntax.type) {
       case "block":
-        return this.processStatements(syntax.namedChildren, this.builder);
+        return this.processStatements(
+          syntax.namedChildren,
+          this.builder,
+          this.match.bind(this),
+        );
       case "if_statement":
-        return this.processIfStatement(syntax, this.builder);
+        return this.processIfStatement(
+          syntax,
+          this.builder,
+          this.match.bind(this),
+        );
       case "for_statement":
-        return this.processForStatement(syntax, this.builder);
+        return this.processForStatement(
+          syntax,
+          this.builder,
+          this.match.bind(this),
+        );
       case "while_statement":
-        return this.processWhileStatement(syntax, this.builder);
+        return this.processWhileStatement(
+          syntax,
+          this.builder,
+          this.match.bind(this),
+        );
       case "match_statement":
-        return this.processMatchStatement(syntax, this.builder);
+        return this.processMatchStatement(
+          syntax,
+          this.builder,
+          this.match.bind(this),
+        );
       case "return_statement":
-        return this.processReturnStatement(syntax, this.builder);
+        return this.processReturnStatement(
+          syntax,
+          this.builder,
+          this.match.bind(this),
+        );
       case "break_statement":
-        return this.processBreakStatement(syntax, this.builder);
+        return this.processBreakStatement(
+          syntax,
+          this.builder,
+          this.match.bind(this),
+        );
       case "continue_statement":
-        return this.processContinueStatement(syntax, this.builder);
+        return this.processContinueStatement(
+          syntax,
+          this.builder,
+          this.match.bind(this),
+        );
       case "comment":
-        return this.processComment(syntax, this.builder);
+        return this.processComment(syntax, this.builder, this.match.bind(this));
       case "with_statement":
-        return this.processWithStatement(syntax, this.builder);
+        return this.processWithStatement(
+          syntax,
+          this.builder,
+          this.match.bind(this),
+        );
       case "try_statement":
-        return this.processTryStatement(syntax, this.builder);
+        return this.processTryStatement(
+          syntax,
+          this.builder,
+          this.match.bind(this),
+        );
       case "raise_statement":
-        return this.processRaiseStatement(syntax, this.builder);
+        return this.processRaiseStatement(
+          syntax,
+          this.builder,
+          this.match.bind(this),
+        );
       default:
-        return this.defaultProcessStatement(syntax, this.builder);
+        return this.defaultProcessStatement(
+          syntax,
+          this.builder,
+          this.match.bind(this),
+        );
     }
   }
   private defaultProcessStatement(
     syntax: Parser.SyntaxNode,
     builder: Builder,
+    _match: (
+      syntax: Parser.SyntaxNode,
+      mainName: string,
+      query: string,
+    ) => BlockMatcher,
   ): BasicBlock {
     const hasYield = matchExistsIn(syntax, "yield", `(yield) @yield`);
     if (hasYield) {
@@ -282,6 +357,11 @@ export class CFGBuilder {
   private processRaiseStatement(
     raiseSyntax: Parser.SyntaxNode,
     builder: Builder,
+    _match: (
+      syntax: Parser.SyntaxNode,
+      mainName: string,
+      query: string,
+    ) => BlockMatcher,
   ): BasicBlock {
     const raiseNode = builder.addNode("THROW", raiseSyntax.text);
     return { entry: raiseNode, exit: null };
@@ -289,6 +369,11 @@ export class CFGBuilder {
   private processReturnStatement(
     returnSyntax: Parser.SyntaxNode,
     builder: Builder,
+    _match: (
+      syntax: Parser.SyntaxNode,
+      mainName: string,
+      query: string,
+    ) => BlockMatcher,
   ): BasicBlock {
     const returnNode = builder.addNode("RETURN", returnSyntax.text);
     return { entry: returnNode, exit: null, returns: [returnNode] };
@@ -296,6 +381,11 @@ export class CFGBuilder {
   private processTryStatement(
     trySyntax: Parser.SyntaxNode,
     builder: Builder,
+    match: (
+      syntax: Parser.SyntaxNode,
+      mainName: string,
+      query: string,
+    ) => BlockMatcher,
   ): BasicBlock {
     /*
     Here's an idea - I can duplicate the finally blocks!
@@ -303,8 +393,7 @@ export class CFGBuilder {
     In other cases, the finally is after the end of the try-body.
     This is probably the best course of action.
     */
-    const matcher = new BlockMatcher(
-      this.processBlock.bind(this),
+    const matcher = match(
       trySyntax,
       "try",
       `
@@ -426,9 +515,13 @@ export class CFGBuilder {
   private processWithStatement(
     withSyntax: Parser.SyntaxNode,
     builder: Builder,
+    match: (
+      syntax: Parser.SyntaxNode,
+      mainName: string,
+      query: string,
+    ) => BlockMatcher,
   ): BasicBlock {
-    const matcher = new BlockMatcher(
-      this.processBlock.bind(this),
+    const matcher = match(
       withSyntax,
       "with",
       `
@@ -458,6 +551,11 @@ export class CFGBuilder {
   private processComment(
     commentSyntax: Parser.SyntaxNode,
     builder: Builder,
+    _match: (
+      syntax: Parser.SyntaxNode,
+      mainName: string,
+      query: string,
+    ) => BlockMatcher,
   ): BasicBlock {
     // We only ever ger here when marker comments are enabled,
     // and only for marker comments as the rest are filtered out.
@@ -472,10 +570,13 @@ export class CFGBuilder {
   private processMatchStatement(
     matchSyntax: Parser.SyntaxNode,
     builder: Builder,
+    match: (
+      syntax: Parser.SyntaxNode,
+      mainName: string,
+      query: string,
+    ) => BlockMatcher,
   ): BasicBlock {
-    const matcher = new BlockMatcher(
-      this.processBlock.bind(this),
-
+    const matcher = match(
       matchSyntax,
       "match",
       `
@@ -535,6 +636,11 @@ export class CFGBuilder {
   private processContinueStatement(
     _continueSyntax: Parser.SyntaxNode,
     builder: Builder,
+    _match: (
+      syntax: Parser.SyntaxNode,
+      mainName: string,
+      query: string,
+    ) => BlockMatcher,
   ): BasicBlock {
     const continueNode = builder.addNode("CONTINUE", "CONTINUE");
     return { entry: continueNode, exit: null, continues: [continueNode] };
@@ -542,6 +648,11 @@ export class CFGBuilder {
   private processBreakStatement(
     _breakSyntax: Parser.SyntaxNode,
     builder: Builder,
+    _match: (
+      syntax: Parser.SyntaxNode,
+      mainName: string,
+      query: string,
+    ) => BlockMatcher,
   ): BasicBlock {
     const breakNode = builder.addNode("BREAK", "BREAK");
     return { entry: breakNode, exit: null, breaks: [breakNode] };
@@ -550,9 +661,13 @@ export class CFGBuilder {
   private processIfStatement(
     ifNode: Parser.SyntaxNode,
     builder: Builder,
+    match: (
+      syntax: Parser.SyntaxNode,
+      mainName: string,
+      query: string,
+    ) => BlockMatcher,
   ): BasicBlock {
-    const matcher = new BlockMatcher(
-      this.processBlock.bind(this),
+    const matcher = match(
       ifNode,
       "if",
       `
@@ -622,9 +737,13 @@ export class CFGBuilder {
   private processForStatement(
     forNode: Parser.SyntaxNode,
     builder: Builder,
+    match: (
+      syntax: Parser.SyntaxNode,
+      mainName: string,
+      query: string,
+    ) => BlockMatcher,
   ): BasicBlock {
-    const matcher = new BlockMatcher(
-      this.processBlock.bind(this),
+    const matcher = match(
       forNode,
       "for",
       `
@@ -679,9 +798,13 @@ export class CFGBuilder {
   private processWhileStatement(
     whileSyntax: Parser.SyntaxNode,
     builder: Builder,
+    match: (
+      syntax: Parser.SyntaxNode,
+      mainName: string,
+      query: string,
+    ) => BlockMatcher,
   ): BasicBlock {
-    const matcher = new BlockMatcher(
-      this.processBlock.bind(this),
+    const matcher = match(
       whileSyntax,
       "while",
       `
