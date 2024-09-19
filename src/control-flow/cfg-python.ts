@@ -22,10 +22,15 @@ export class CFGBuilder {
   private readonly flatSwitch: boolean;
   private readonly markerPattern: RegExp | null;
   private activeClusters: Cluster[] = [];
+  private syntaxToNode: Map<number, string> = new Map();
 
   constructor(options?: BuilderOptions) {
     this.flatSwitch = options?.flatSwitch ?? false;
     this.markerPattern = options?.markerPattern ?? null;
+  }
+
+  private mapSyntax(syntax: Parser.SyntaxNode, node: string) {
+    this.syntaxToNode.set(syntax.id, node);
   }
 
   public buildCFG(functionNode: Parser.SyntaxNode): CFG {
@@ -34,6 +39,7 @@ export class CFGBuilder {
       "START",
       functionNode.startPosition.row,
     );
+    this.mapSyntax(functionNode, startNode);
     const bodyNode = functionNode.childForFieldName("body");
     if (bodyNode) {
       const blockHandler = new BlockHandler();
@@ -50,7 +56,11 @@ export class CFGBuilder {
       if (entry) this.addEdge(startNode, entry);
       if (exit) this.addEdge(exit, endNode);
     }
-    return { graph: this.graph, entry: startNode };
+    return {
+      graph: this.graph,
+      entry: startNode,
+      syntaxToNode: this.syntaxToNode,
+    };
   }
 
   private startCluster(type: ClusterType): Cluster {
@@ -194,6 +204,7 @@ export class CFGBuilder {
         syntax.text,
         syntax.startPosition.row,
       );
+      this.mapSyntax(syntax, yieldNode);
       return { entry: yieldNode, exit: yieldNode };
     }
     const newNode = this.addNode(
@@ -201,6 +212,7 @@ export class CFGBuilder {
       syntax.text,
       syntax.startPosition.row,
     );
+    this.mapSyntax(syntax, newNode);
     return { entry: newNode, exit: newNode };
   }
   private processRaiseStatement(raiseSyntax: Parser.SyntaxNode): BasicBlock {
@@ -209,6 +221,7 @@ export class CFGBuilder {
       raiseSyntax.text,
       raiseSyntax.startPosition.row,
     );
+    this.mapSyntax(raiseSyntax, raiseNode);
     return { entry: raiseNode, exit: null };
   }
   private processReturnStatement(returnSyntax: Parser.SyntaxNode): BasicBlock {
@@ -217,6 +230,7 @@ export class CFGBuilder {
       returnSyntax.text,
       returnSyntax.startPosition.row,
     );
+    this.mapSyntax(returnSyntax, returnNode);
     return { entry: returnNode, exit: null, returns: [returnNode] };
   }
   private processTryStatement(trySyntax: Parser.SyntaxNode): BasicBlock {
@@ -438,6 +452,7 @@ export class CFGBuilder {
         `case ${patternSyntaxMany.map((pat) => pat.text).join(", ")}:`,
         consequenceSyntax.startPosition.row,
       );
+      this.mapSyntax(consequenceSyntax, patternNode);
 
       if (consequenceBlock?.entry)
         this.addEdge(patternNode, consequenceBlock.entry, "consequence");
@@ -462,6 +477,7 @@ export class CFGBuilder {
       "CONTINUE",
       continueSyntax.startPosition.row,
     );
+    this.mapSyntax(continueSyntax, continueNode);
     return { entry: continueNode, exit: null, continues: [continueNode] };
   }
   private processBreakStatement(breakSyntax: Parser.SyntaxNode): BasicBlock {
@@ -470,6 +486,7 @@ export class CFGBuilder {
       "BREAK",
       breakSyntax.startPosition.row,
     );
+    this.mapSyntax(breakSyntax, breakNode);
     return { entry: breakNode, exit: null, breaks: [breakNode] };
   }
 
@@ -516,6 +533,7 @@ export class CFGBuilder {
       "if condition",
       ifSyntax.startPosition.row,
     );
+    this.mapSyntax(ifSyntax, headNode);
 
     if (condBlock?.entry) this.addEdge(headNode, condBlock.entry);
 
@@ -638,6 +656,7 @@ export class CFGBuilder {
       "loop head",
       forNode.startPosition.row,
     );
+    this.mapSyntax(forNode, headNode);
     const headBlock = { entry: headNode, exit: headNode };
 
     /*

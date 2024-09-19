@@ -83,6 +83,7 @@ export type CFGGraph = MultiDirectedGraph<GraphNode, GraphEdge>;
 export interface CFG {
   graph: CFGGraph;
   entry: string;
+  syntaxToNode?: Map<number, string>;
 }
 
 export class BlockHandler {

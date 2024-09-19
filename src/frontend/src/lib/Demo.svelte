@@ -98,6 +98,11 @@
       scrollIntoView: true,
     });
   }
+
+  $: {
+    if (editorView?.state.selection.main.head)
+      console.log(editorView.state.selection.main.head);
+  }
 </script>
 
 <main>

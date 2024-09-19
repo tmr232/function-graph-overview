@@ -1,7 +1,7 @@
 <script lang="ts">
   import Parser from "web-tree-sitter";
   import { newCFGBuilder, type Language } from "../../../control-flow/cfg";
-  import { mergeNodeAttrs } from "../../../control-flow/cfg-defs";
+  import { mergeNodeAttrs, type CFG } from "../../../control-flow/cfg-defs";
   import { graphToDot, graphToLineNumbers } from "../../../control-flow/render";
   import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
@@ -11,12 +11,15 @@
     type Parsers,
   } from "./utils";
   import { createEventDispatcher, onDestroy, onMount } from "svelte";
+  import type internal from "stream";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
   let dot: string;
   let lineNumbers: Map<string, number>;
   let mainElement;
+  let cfg: CFG;
+  let tree: Parser.Tree;
   export let code: string;
   export let language: Language;
   export let verbose: boolean = false;
@@ -48,11 +51,11 @@
     options: RenderOptions,
   ) {
     const { trim, simplify, verbose, flatSwitch } = options;
-    const tree = parsers[language].parse(code);
+    tree = parsers[language].parse(code);
     const functionSyntax = getFirstFunction(tree);
     const builder = newCFGBuilder(language, { flatSwitch });
 
-    let cfg = builder.buildCFG(functionSyntax);
+    cfg = builder.buildCFG(functionSyntax);
 
     if (!cfg) return "";
     if (trim) cfg = trimFor(cfg);
@@ -80,6 +83,16 @@
   export function getSVG() {
     return graphviz.dot(dot);
   }
+
+  export function setCursor(row: number, column: number) {
+    if (!cfg.syntaxToNode) {
+      return;
+    }
+    let syntax = tree.rootNode.descendantForPosition({ row: row - 1, column });
+    for (; syntax && !cfg.syntaxToNode.has(syntax.id); syntax = syntax.parent);
+    console.log(document.querySelector(`#${cfg.syntaxToNode.get(syntax.id)}`));
+  }
+  console.log(setCursor);
 
   function findParentGraphNode(
     element: Element,
