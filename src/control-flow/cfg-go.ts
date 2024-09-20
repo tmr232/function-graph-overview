@@ -15,6 +15,14 @@ interface SwitchOptions {
   noImplicitDefault: boolean;
 }
 
+function getChildFieldText(
+  node: Parser.SyntaxNode,
+  fieldName: string,
+): string {
+  const child = node.childForFieldName(fieldName);
+  return child ? child.text : "";
+}
+
 export class CFGBuilder {
   private builder: Builder = new Builder();
   private readonly options: BuilderOptions;
@@ -43,13 +51,7 @@ export class CFGBuilder {
     return { graph: this.builder.getGraph(), entry: startNode };
   }
 
-  private getChildFieldText(
-    node: Parser.SyntaxNode,
-    fieldName: string,
-  ): string {
-    const child = node.childForFieldName(fieldName);
-    return child ? child.text : "";
-  }
+
 
   private processStatements(statements: Parser.SyntaxNode[]): BasicBlock {
     const blockHandler = new BlockHandler();
@@ -119,9 +121,9 @@ export class CFGBuilder {
       case "continue_statement":
         return processContinueStatement(node, ctx);
       case "labeled_statement":
-        return this.processLabeledStatement(node);
+        return processLabeledStatement(node, ctx);
       case "goto_statement":
-        return this.processGotoStatement(node);
+        return processGotoStatement(node, ctx);
       case "comment":
         return this.processComment(node);
       default: {
@@ -254,7 +256,7 @@ export class CFGBuilder {
     const cases = this.collectCases(switchSyntax, blockHandler);
     const headNode = this.builder.addNode(
       "SWITCH_CONDITION",
-      this.getChildFieldText(switchSyntax, "value"),
+      getChildFieldText(switchSyntax, "value"),
     );
     const mergeNode: string = this.builder.addNode("SWITCH_MERGE", "");
     this.buildSwitch(cases, mergeNode, headNode, options);
@@ -266,32 +268,33 @@ export class CFGBuilder {
     return blockHandler.update({ entry: headNode, exit: mergeNode });
   }
 
-  private processGotoStatement(gotoSyntax: Parser.SyntaxNode): BasicBlock {
-    const name = gotoSyntax.firstNamedChild?.text as string;
-    const gotoNode = this.builder.addNode("GOTO", name);
-    return {
-      entry: gotoNode,
-      exit: null,
-      gotos: [{ node: gotoNode, label: name }],
-    };
-  }
-  private processLabeledStatement(labelSyntax: Parser.SyntaxNode): BasicBlock {
-    const blockHandler = new BlockHandler();
-    const name = this.getChildFieldText(labelSyntax, "label");
-    const labelNode = this.builder.addNode("LABEL", name);
-    const { entry: labeledEntry, exit: labeledExit } = blockHandler.update(
-      this.processBlock(labelSyntax.namedChildren[1]),
-    );
-    if (labeledEntry) this.builder.addEdge(labelNode, labeledEntry);
-    return blockHandler.update({
-      entry: labelNode,
-      exit: labeledExit,
-      labels: new Map([[name, labelNode]]),
-    });
-  }
-
-
 }
+
+
+function processGotoStatement(gotoSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock {
+  const name = gotoSyntax.firstNamedChild?.text as string;
+  const gotoNode = ctx.builder.addNode("GOTO", name);
+  return {
+    entry: gotoNode,
+    exit: null,
+    gotos: [{ node: gotoNode, label: name }],
+  };
+}
+function processLabeledStatement(labelSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock {
+  const name = getChildFieldText(labelSyntax, "label");
+  const labelNode = ctx.builder.addNode("LABEL", name);
+  const { entry: labeledEntry, exit: labeledExit } = ctx.state.update(
+    ctx.dispatch.single(labelSyntax.namedChildren[1]),
+  );
+  if (labeledEntry) ctx.builder.addEdge(labelNode, labeledEntry);
+  return ctx.state.update({
+    entry: labelNode,
+    exit: labeledExit,
+    labels: new Map([[name, labelNode]]),
+  });
+}
+
+
 
 
 function processContinueStatement(
