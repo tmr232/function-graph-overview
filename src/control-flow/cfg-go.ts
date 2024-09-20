@@ -109,9 +109,9 @@ export class CFGBuilder {
         return processForStatement(node, ctx);
       case "expression_switch_statement":
       case "type_switch_statement":
-        return this.processSwitchlike(node, undefined);
+        return processSwitchlike(node, { noImplicitDefault: false }, ctx);
       case "select_statement":
-        return this.processSwitchlike(node, { noImplicitDefault: true });
+        return processSwitchlike(node, { noImplicitDefault: true }, ctx);
       case "return_statement": {
         const returnNode = this.builder.addNode("RETURN", node.text);
         return { entry: returnNode, exit: null };
@@ -125,147 +125,12 @@ export class CFGBuilder {
       case "goto_statement":
         return processGotoStatement(node, ctx);
       case "comment":
-        return this.processComment(node);
+        return processComment(node, ctx);
       default: {
         const newNode = this.builder.addNode("STATEMENT", node.text);
         return { entry: newNode, exit: newNode };
       }
     }
-  }
-  private processComment(commentSyntax: Parser.SyntaxNode): BasicBlock {
-    // We only ever ger here when marker comments are enabled,
-    // and only for marker comments as the rest are filtered out.
-    const commentNode = this.builder.addNode("MARKER_COMMENT", commentSyntax.text);
-    if (this.options.markerPattern) {
-      const marker = commentSyntax.text.match(this.options.markerPattern)?.[1];
-      if (marker) this.builder.addMarker(commentNode, marker);
-    }
-    return { entry: commentNode, exit: commentNode };
-  }
-
-  private buildSwitch(
-    cases: Case[],
-    mergeNode: string,
-    switchHeadNode: string,
-    options?: SwitchOptions,
-  ) {
-    let fallthrough: string | null = null;
-    let previous: string | null = switchHeadNode;
-    if (options?.noImplicitDefault) {
-      // This prevents the linking of the switch head to the merge node.
-      // It is required for select statements, as they block until satisfied.
-      previous = null;
-    }
-    cases.forEach((thisCase) => {
-      if (this.options.flatSwitch) {
-        if (thisCase.consequenceEntry) {
-          this.builder.addEdge(switchHeadNode, thisCase.consequenceEntry);
-          if (fallthrough) {
-            this.builder.addEdge(fallthrough, thisCase.consequenceEntry);
-          }
-          if (thisCase.isDefault) {
-            previous = null;
-          }
-        }
-      } else {
-        if (fallthrough && thisCase.consequenceEntry) {
-          this.builder.addEdge(fallthrough, thisCase.consequenceEntry);
-        }
-        if (previous && thisCase.conditionEntry) {
-          this.builder.addEdge(
-            previous,
-            thisCase.conditionEntry,
-            "alternative" as EdgeType,
-          );
-        }
-
-        if (thisCase.consequenceEntry && thisCase.conditionExit)
-          this.builder.addEdge(
-            thisCase.conditionExit,
-            thisCase.consequenceEntry,
-            "consequence",
-          );
-
-        // Update for next case
-        previous = thisCase.isDefault ? null : thisCase.alternativeExit;
-      }
-
-      // Fallthrough is the same for both flat and non-flat layouts.
-      if (!thisCase.hasFallthrough && thisCase.consequenceExit) {
-        this.builder.addEdge(thisCase.consequenceExit, mergeNode);
-      }
-      // Update for next case
-      fallthrough = thisCase.hasFallthrough ? thisCase.consequenceExit : null;
-    });
-    // Connect the last node to the merge node.
-    // No need to handle `fallthrough` here as it is not allowed for the last case.
-    if (previous) {
-      this.builder.addEdge(previous, mergeNode, "alternative");
-    }
-  }
-
-  private collectCases(
-    switchSyntax: Parser.SyntaxNode,
-    blockHandler: BlockHandler,
-  ): Case[] {
-    const cases: Case[] = [];
-    const caseTypes = [
-      "default_case",
-      "communication_case",
-      "type_case",
-      "expression_case",
-    ];
-    switchSyntax.namedChildren
-      .filter((child) => caseTypes.includes(child.type))
-      .forEach((caseSyntax) => {
-        const isDefault = caseSyntax.type === "default_case";
-
-        const consequence = caseSyntax.namedChildren.slice(isDefault ? 0 : 1);
-        const hasFallthrough = consequence
-          .map((node) => node.type)
-          .includes("fallthrough_statement");
-
-        const conditionNode = this.builder.addNode(
-          "CASE_CONDITION",
-          isDefault ? "default" : (caseSyntax.firstNamedChild?.text ?? ""),
-        );
-        const consequenceNode = blockHandler.update(
-          this.processStatements(consequence),
-        );
-
-        cases.push({
-          conditionEntry: conditionNode,
-          conditionExit: conditionNode,
-          consequenceEntry: consequenceNode.entry,
-          consequenceExit: consequenceNode.exit,
-          alternativeExit: conditionNode,
-          hasFallthrough,
-          isDefault,
-        });
-      });
-
-    return cases;
-  }
-
-  private processSwitchlike(
-    switchSyntax: Parser.SyntaxNode,
-    options?: SwitchOptions,
-  ): BasicBlock {
-    const blockHandler = new BlockHandler();
-
-    const cases = this.collectCases(switchSyntax, blockHandler);
-    const headNode = this.builder.addNode(
-      "SWITCH_CONDITION",
-      getChildFieldText(switchSyntax, "value"),
-    );
-    const mergeNode: string = this.builder.addNode("SWITCH_MERGE", "");
-    this.buildSwitch(cases, mergeNode, headNode, options);
-
-    blockHandler.forEachBreak((breakNode) => {
-      this.builder.addEdge(breakNode, mergeNode);
-    });
-
-    return blockHandler.update({ entry: headNode, exit: mergeNode });
   }
 
 }
@@ -401,4 +266,145 @@ function processIfStatement(
   }
 
   return ctx.state.update({ entry: conditionNode, exit: mergeNode });
+}
+
+
+
+function processComment(commentSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock {
+  // We only ever ger here when marker comments are enabled,
+  // and only for marker comments as the rest are filtered out.
+  const commentNode = ctx.builder.addNode("MARKER_COMMENT", commentSyntax.text);
+  if (ctx.options.markerPattern) {
+    const marker = commentSyntax.text.match(ctx.options.markerPattern)?.[1];
+    if (marker) ctx.builder.addMarker(commentNode, marker);
+  }
+  return { entry: commentNode, exit: commentNode };
+}
+
+function buildSwitch(
+  cases: Case[],
+  mergeNode: string,
+  switchHeadNode: string,
+  options: SwitchOptions,
+  ctx: Context
+) {
+  let fallthrough: string | null = null;
+  let previous: string | null = switchHeadNode;
+  if (options.noImplicitDefault) {
+    // This prevents the linking of the switch head to the merge node.
+    // It is required for select statements, as they block until satisfied.
+    previous = null;
+  }
+  cases.forEach((thisCase) => {
+    if (ctx.options.flatSwitch) {
+      if (thisCase.consequenceEntry) {
+        ctx.builder.addEdge(switchHeadNode, thisCase.consequenceEntry);
+        if (fallthrough) {
+          ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
+        }
+        if (thisCase.isDefault) {
+          previous = null;
+        }
+      }
+    } else {
+      if (fallthrough && thisCase.consequenceEntry) {
+        ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
+      }
+      if (previous && thisCase.conditionEntry) {
+        ctx.builder.addEdge(
+          previous,
+          thisCase.conditionEntry,
+          "alternative" as EdgeType,
+        );
+      }
+
+      if (thisCase.consequenceEntry && thisCase.conditionExit)
+        ctx.builder.addEdge(
+          thisCase.conditionExit,
+          thisCase.consequenceEntry,
+          "consequence",
+        );
+
+      // Update for next case
+      previous = thisCase.isDefault ? null : thisCase.alternativeExit;
+    }
+
+    // Fallthrough is the same for both flat and non-flat layouts.
+    if (!thisCase.hasFallthrough && thisCase.consequenceExit) {
+      ctx.builder.addEdge(thisCase.consequenceExit, mergeNode);
+    }
+    // Update for next case
+    fallthrough = thisCase.hasFallthrough ? thisCase.consequenceExit : null;
+  });
+  // Connect the last node to the merge node.
+  // No need to handle `fallthrough` here as it is not allowed for the last case.
+  if (previous) {
+    ctx.builder.addEdge(previous, mergeNode, "alternative");
+  }
+}
+
+function collectCases(
+  switchSyntax: Parser.SyntaxNode,
+  blockHandler: BlockHandler,
+  ctx: Context
+): Case[] {
+  const cases: Case[] = [];
+  const caseTypes = [
+    "default_case",
+    "communication_case",
+    "type_case",
+    "expression_case",
+  ];
+  switchSyntax.namedChildren
+    .filter((child) => caseTypes.includes(child.type))
+    .forEach((caseSyntax) => {
+      const isDefault = caseSyntax.type === "default_case";
+
+      const consequence = caseSyntax.namedChildren.slice(isDefault ? 0 : 1);
+      const hasFallthrough = consequence
+        .map((node) => node.type)
+        .includes("fallthrough_statement");
+
+      const conditionNode = ctx.builder.addNode(
+        "CASE_CONDITION",
+        isDefault ? "default" : (caseSyntax.firstNamedChild?.text ?? ""),
+      );
+      const consequenceNode = blockHandler.update(
+        ctx.dispatch.many(consequence),
+      );
+
+      cases.push({
+        conditionEntry: conditionNode,
+        conditionExit: conditionNode,
+        consequenceEntry: consequenceNode.entry,
+        consequenceExit: consequenceNode.exit,
+        alternativeExit: conditionNode,
+        hasFallthrough,
+        isDefault,
+      });
+    });
+
+  return cases;
+}
+
+function processSwitchlike(
+  switchSyntax: Parser.SyntaxNode,
+  options: SwitchOptions,
+  ctx: Context,
+): BasicBlock {
+  const blockHandler = new BlockHandler();
+
+  const cases = collectCases(switchSyntax, blockHandler, ctx);
+  const headNode = ctx.builder.addNode(
+    "SWITCH_CONDITION",
+    getChildFieldText(switchSyntax, "value"),
+  );
+  const mergeNode: string = ctx.builder.addNode("SWITCH_MERGE", "");
+  buildSwitch(cases, mergeNode, headNode, options, ctx);
+
+  blockHandler.forEachBreak((breakNode) => {
+    ctx.builder.addEdge(breakNode, mergeNode);
+  });
+
+  return blockHandler.update({ entry: headNode, exit: mergeNode });
 }
