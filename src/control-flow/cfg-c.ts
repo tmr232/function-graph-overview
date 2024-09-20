@@ -95,7 +95,7 @@ export class CFGBuilder {
       case "while_statement":
         return this.processWhileStatement(node, new BlockMatcher(this.processBlock.bind(this)));
       case "do_statement":
-        return this.processDoStatement(node);
+        return this.processDoStatement(node, new BlockMatcher(this.processBlock.bind(this)));
       case "switch_statement":
         return this.processSwitchlike(node);
       case "return_statement": {
@@ -465,38 +465,22 @@ export class CFGBuilder {
     return matcher.update({ entry: condBlock.entry, exit: exitNode });
   }
 
-  private processDoStatement(whileSyntax: Parser.SyntaxNode): BasicBlock {
-    const blockHandler = new BlockHandler();
-    const language = whileSyntax.tree.getLanguage();
-    const query = language.query(`
+  private processDoStatement(whileSyntax: Parser.SyntaxNode, matcher: BlockMatcher): BasicBlock {
+    const queryString = `
     (do_statement
         body: (_) @body
         condition: (_) @cond
         ) @while
-    `);
-    const matches = query.matches(whileSyntax);
-    const match = (() => {
-      for (const match of matches) {
-        for (const capture of match.captures) {
-          if (capture.name === "while" && capture.node.id === whileSyntax.id) {
-            return match;
-          }
-        }
-      }
-      throw new Error("No match found!");
-    })();
+    `;
 
-    const getSyntax = (name: string): Parser.SyntaxNode | null =>
-      match.captures.filter((capture) => capture.name === name)[0]?.node;
+    const match = matcher.match(whileSyntax, queryString);
 
-    const condSyntax = getSyntax("cond");
-    const bodySyntax = getSyntax("body");
+    const condSyntax = match.getSyntax("cond");
+    const bodySyntax = match.getSyntax("body");
 
-    const getBlock = (syntax: Parser.SyntaxNode | null) =>
-      syntax ? blockHandler.update(this.processBlock(syntax)) : null;
 
-    const condBlock = getBlock(condSyntax) as BasicBlock;
-    const bodyBlock = getBlock(bodySyntax) as BasicBlock;
+    const condBlock = match.getBlock(condSyntax) as BasicBlock;
+    const bodyBlock = match.getBlock(bodySyntax) as BasicBlock;
 
     const exitNode = this.builder.addNode("FOR_EXIT", "loop exit");
 
@@ -508,14 +492,14 @@ export class CFGBuilder {
     if (condBlock.entry && bodyBlock.exit)
       this.builder.addEdge(bodyBlock.exit, condBlock.entry);
 
-    blockHandler.forEachContinue((continueNode) => {
+    matcher.state.forEachContinue((continueNode) => {
       if (condBlock.entry) this.builder.addEdge(continueNode, condBlock.entry);
     });
 
-    blockHandler.forEachBreak((breakNode) => {
+    matcher.state.forEachBreak((breakNode) => {
       this.builder.addEdge(breakNode, exitNode);
     });
 
-    return blockHandler.update({ entry: bodyBlock.entry, exit: exitNode });
+    return matcher.update({ entry: bodyBlock.entry, exit: exitNode });
   }
 }
