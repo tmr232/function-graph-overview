@@ -1,6 +1,6 @@
 import { createCFGBuilder as createCCFGBuilder } from "./cfg-c";
 import type { BuilderOptions, CFGBuilder } from "./cfg-defs";
-import { CFGBuilder as CFGBuilderForGo } from "./cfg-go";
+import { createCFGBuilder as createGoCFGBuilder } from "./cfg-go";
 import { createCFGBuilder as createPythonCFGBuilder } from "./cfg-python";
 
 export type Language = "C" | "Go" | "Python";
@@ -13,7 +13,7 @@ export function newCFGBuilder(
     case "C":
       return createCCFGBuilder(options);
     case "Go":
-      return new CFGBuilderForGo(options);
+      return createGoCFGBuilder(options);
     case "Python":
       return createPythonCFGBuilder(options);
   }

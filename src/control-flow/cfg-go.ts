@@ -4,12 +4,11 @@ import {
   type BasicBlock,
   type BuilderOptions,
   type Case,
-  type CFG,
+  type CFGBuilder,
   type EdgeType,
 } from "./cfg-defs";
-import { Builder } from "./builder";
-import { BlockMatcher } from "./block-matcher";
-import type { Context } from "./statement-handlers";
+import type { Context, StatementHandlers } from "./statement-handlers";
+import { GenericCFGBuilder } from "./generic-cfg-builder";
 
 interface SwitchOptions {
   noImplicitDefault: boolean;
@@ -20,111 +19,26 @@ function getChildFieldText(node: Parser.SyntaxNode, fieldName: string): string {
   return child ? child.text : "";
 }
 
-export class CFGBuilder {
-  private builder: Builder = new Builder();
-  private readonly options: BuilderOptions;
+const statementHandlers: StatementHandlers = {
+  named: {
+    block: processBlockStatement,
+    if_statement: processIfStatement,
+    for_statement: processForStatement,
+    expression_switch_statement: processSwitchStatement,
+    type_switch_statement: processSwitchStatement,
+    select_statement: processSelectStatement,
+    return_statement: processReturnStatement,
+    break_statement: processBreakStatement,
+    continue_statement: processContinueStatement,
+    labeled_statement: processLabeledStatement,
+    goto_statement: processGotoStatement,
+    comment: processComment,
+  },
+  default: defaultProcessStatement,
+};
 
-  constructor(options: BuilderOptions) {
-    this.options = options;
-  }
-
-  public buildCFG(functionNode: Parser.SyntaxNode): CFG {
-    const startNode = this.builder.addNode("START", "START");
-    const bodyNode = functionNode.childForFieldName("body");
-
-    if (bodyNode) {
-      const blockHandler = new BlockHandler();
-      const { entry } = blockHandler.update(
-        this.processStatements(bodyNode.namedChildren),
-      );
-
-      blockHandler.processGotos((gotoNode, labelNode) =>
-        this.builder.addEdge(gotoNode, labelNode),
-      );
-
-      // `entry` will be non-null for any valid code
-      if (entry) this.builder.addEdge(startNode, entry);
-    }
-    return { graph: this.builder.getGraph(), entry: startNode };
-  }
-
-  private processStatements(statements: Parser.SyntaxNode[]): BasicBlock {
-    const blockHandler = new BlockHandler();
-
-    // Ignore comments
-    const codeStatements = statements.filter((syntax) => {
-      if (syntax.type !== "comment") {
-        return true;
-      }
-
-      return (
-        this.options.markerPattern &&
-        Boolean(syntax.text.match(this.options.markerPattern))
-      );
-    });
-
-    if (codeStatements.length === 0) {
-      const emptyNode = this.builder.addNode("EMPTY", "empty block");
-      return { entry: emptyNode, exit: emptyNode };
-    }
-
-    let entry: string | null = null;
-    let previous: string | null = null;
-    for (const statement of codeStatements) {
-      const { entry: currentEntry, exit: currentExit } = blockHandler.update(
-        this.processBlock(statement),
-      );
-      if (!entry) entry = currentEntry;
-      if (previous && currentEntry)
-        this.builder.addEdge(previous, currentEntry);
-      previous = currentExit;
-    }
-    return blockHandler.update({ entry, exit: previous });
-  }
-
-  private processBlock(node: Parser.SyntaxNode | null): BasicBlock {
-    if (!node) return { entry: null, exit: null };
-
-    const matcher = new BlockMatcher(this.processBlock.bind(this));
-    const ctx: Context = {
-      builder: this.builder,
-      matcher: matcher,
-      state: matcher.state,
-      options: this.options,
-      dispatch: {
-        single: this.processBlock.bind(this),
-        many: this.processStatements.bind(this),
-      },
-    };
-
-    switch (node.type) {
-      case "block":
-        return processBlockStatement(node, ctx);
-      case "if_statement":
-        return processIfStatement(node, ctx);
-      case "for_statement":
-        return processForStatement(node, ctx);
-      case "expression_switch_statement":
-      case "type_switch_statement":
-        return processSwitchStatement(node, ctx);
-      case "select_statement":
-        return processSelectStatement(node, ctx);
-      case "return_statement":
-        return processReturnStatement(node, ctx);
-      case "break_statement":
-        return processBreakStatement(node, ctx);
-      case "continue_statement":
-        return processContinueStatement(node, ctx);
-      case "labeled_statement":
-        return processLabeledStatement(node, ctx);
-      case "goto_statement":
-        return processGotoStatement(node, ctx);
-      case "comment":
-        return processComment(node, ctx);
-      default:
-        return defaultProcessStatement(node, ctx);
-    }
-  }
+export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
+  return new GenericCFGBuilder(statementHandlers, options);
 }
 
 function processSwitchStatement(
