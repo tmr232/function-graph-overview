@@ -112,7 +112,7 @@ export class CFGBuilder {
       case "do_statement":
         return this.processDoStatement(node, new BlockMatcher(this.processBlock.bind(this)));
       case "switch_statement":
-        return this.processSwitchlike(node, this.buildContext());
+        return processSwitchlike(node, this.buildContext());
       case "return_statement": {
         const returnNode = this.builder.addNode("RETURN", node.text);
         return { entry: returnNode, exit: null };
@@ -148,87 +148,11 @@ export class CFGBuilder {
     return { entry: commentNode, exit: commentNode };
   }
 
-  private buildSwitch(
-    cases: Case[],
-    mergeNode: string,
-    switchHeadNode: string,
-    ctx: Context,
-  ) {
-    let fallthrough: string | null = null;
-    let previous: string | null = switchHeadNode;
-    cases.forEach((thisCase) => {
-      if (ctx.options.flatSwitch) {
-        if (thisCase.consequenceEntry) {
-          ctx.builder.addEdge(switchHeadNode, thisCase.consequenceEntry);
-          if (fallthrough) {
-            ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
-          }
-          if (thisCase.isDefault) {
-            // If we have any default node - then we don't connect the head to the merge node.
-            previous = null;
-          }
-        }
-      } else {
-        if (fallthrough && thisCase.consequenceEntry) {
-          ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
-        }
-        if (previous && thisCase.conditionEntry) {
-          ctx.builder.addEdge(
-            previous,
-            thisCase.conditionEntry,
-            "alternative" as EdgeType,
-          );
-        }
-
-        if (thisCase.consequenceEntry && thisCase.conditionExit)
-          ctx.builder.addEdge(
-            thisCase.conditionExit,
-            thisCase.consequenceEntry,
-            "consequence",
-          );
-
-        // Update for next case
-        previous = thisCase.isDefault ? null : thisCase.alternativeExit;
-      }
-
-      // Fallthrough is the same for both flat and non-flat layouts.
-      if (!thisCase.hasFallthrough && thisCase.consequenceExit) {
-        ctx.builder.addEdge(thisCase.consequenceExit, mergeNode);
-      }
-      // Update for next case
-      fallthrough = thisCase.hasFallthrough ? thisCase.consequenceExit : null;
-    });
-    // Connect the last node to the merge node.
-    // No need to handle `fallthrough` here as it is not allowed for the last case.
-    if (previous) {
-      ctx.builder.addEdge(previous, mergeNode, "alternative");
-    }
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (fallthrough) {
-      ctx.builder.addEdge(fallthrough, mergeNode, "regular");
-    }
-  }
 
 
 
 
-  private processSwitchlike(switchSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock {
-    const blockHandler = ctx.matcher.state;
 
-    const cases = collectCases(switchSyntax, ctx);
-    const headNode = ctx.builder.addNode(
-      "SWITCH_CONDITION",
-      getChildFieldText(switchSyntax, "value"),
-    );
-    const mergeNode: string = ctx.builder.addNode("SWITCH_MERGE", "");
-    this.buildSwitch(cases, mergeNode, headNode, ctx);
-
-    blockHandler.forEachBreak((breakNode) => {
-      ctx.builder.addEdge(breakNode, mergeNode);
-    });
-
-    return blockHandler.update({ entry: headNode, exit: mergeNode });
-  }
 
   private processGotoStatement(gotoSyntax: Parser.SyntaxNode): BasicBlock {
     const name = gotoSyntax.firstNamedChild?.text as string;
@@ -521,4 +445,84 @@ function collectCases(
     });
 
   return cases;
+}
+
+
+function buildSwitch(
+  cases: Case[],
+  mergeNode: string,
+  switchHeadNode: string,
+  ctx: Context,
+) {
+  let fallthrough: string | null = null;
+  let previous: string | null = switchHeadNode;
+  cases.forEach((thisCase) => {
+    if (ctx.options.flatSwitch) {
+      if (thisCase.consequenceEntry) {
+        ctx.builder.addEdge(switchHeadNode, thisCase.consequenceEntry);
+        if (fallthrough) {
+          ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
+        }
+        if (thisCase.isDefault) {
+          // If we have any default node - then we don't connect the head to the merge node.
+          previous = null;
+        }
+      }
+    } else {
+      if (fallthrough && thisCase.consequenceEntry) {
+        ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
+      }
+      if (previous && thisCase.conditionEntry) {
+        ctx.builder.addEdge(
+          previous,
+          thisCase.conditionEntry,
+          "alternative" as EdgeType,
+        );
+      }
+
+      if (thisCase.consequenceEntry && thisCase.conditionExit)
+        ctx.builder.addEdge(
+          thisCase.conditionExit,
+          thisCase.consequenceEntry,
+          "consequence",
+        );
+
+      // Update for next case
+      previous = thisCase.isDefault ? null : thisCase.alternativeExit;
+    }
+
+    // Fallthrough is the same for both flat and non-flat layouts.
+    if (!thisCase.hasFallthrough && thisCase.consequenceExit) {
+      ctx.builder.addEdge(thisCase.consequenceExit, mergeNode);
+    }
+    // Update for next case
+    fallthrough = thisCase.hasFallthrough ? thisCase.consequenceExit : null;
+  });
+  // Connect the last node to the merge node.
+  // No need to handle `fallthrough` here as it is not allowed for the last case.
+  if (previous) {
+    ctx.builder.addEdge(previous, mergeNode, "alternative");
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (fallthrough) {
+    ctx.builder.addEdge(fallthrough, mergeNode, "regular");
+  }
+}
+
+function processSwitchlike(switchSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock {
+  const blockHandler = ctx.matcher.state;
+
+  const cases = collectCases(switchSyntax, ctx);
+  const headNode = ctx.builder.addNode(
+    "SWITCH_CONDITION",
+    getChildFieldText(switchSyntax, "value"),
+  );
+  const mergeNode: string = ctx.builder.addNode("SWITCH_MERGE", "");
+  buildSwitch(cases, mergeNode, headNode, ctx);
+
+  blockHandler.forEachBreak((breakNode) => {
+    ctx.builder.addEdge(breakNode, mergeNode);
+  });
+
+  return blockHandler.update({ entry: headNode, exit: mergeNode });
 }
