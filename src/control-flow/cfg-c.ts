@@ -9,16 +9,38 @@ import {
 } from "./cfg-defs";
 import { BlockMatcher, Match } from "./block-matcher.ts";
 import { Builder } from "./builder.ts";
-import { isQuestionOrPlusOrMinusToken } from "typescript";
 
+interface Context {
+  builder: Builder,
+  options: BuilderOptions,
+  matcher: BlockMatcher,
+  processStatements(statements: Parser.SyntaxNode[]): BasicBlock,
+}
+
+function getChildFieldText(
+  node: Parser.SyntaxNode,
+  fieldName: string,
+): string {
+  const child = node.childForFieldName(fieldName);
+  return child ? child.text : "";
+}
 export class CFGBuilder {
   private builder: Builder = new Builder();
   private readonly flatSwitch: boolean;
   private readonly markerPattern: RegExp | null;
+  private readonly options: BuilderOptions;
 
-  constructor(options?: BuilderOptions) {
-    this.flatSwitch = options?.flatSwitch ?? false;
-    this.markerPattern = options?.markerPattern ?? null;
+  constructor(options: BuilderOptions) {
+    this.options = options;
+    this.flatSwitch = options.flatSwitch ?? false;
+    this.markerPattern = options.markerPattern ?? null;
+  }
+
+  private buildContext(): Context {
+    return {
+      builder: this.builder, options: this.options, matcher: new BlockMatcher(this.processBlock.bind(this)),
+      processStatements: this.processStatements.bind(this)
+    }
   }
 
   public buildCFG(functionNode: Parser.SyntaxNode): CFG {
@@ -41,13 +63,6 @@ export class CFGBuilder {
     return { graph: this.builder.getGraph(), entry: startNode };
   }
 
-  private getChildFieldText(
-    node: Parser.SyntaxNode,
-    fieldName: string,
-  ): string {
-    const child = node.childForFieldName(fieldName);
-    return child ? child.text : "";
-  }
 
   private processStatements(statements: Parser.SyntaxNode[]): BasicBlock {
     const blockHandler = new BlockHandler();
@@ -97,7 +112,7 @@ export class CFGBuilder {
       case "do_statement":
         return this.processDoStatement(node, new BlockMatcher(this.processBlock.bind(this)));
       case "switch_statement":
-        return this.processSwitchlike(node);
+        return this.processSwitchlike(node, this.buildContext());
       case "return_statement": {
         const returnNode = this.builder.addNode("RETURN", node.text);
         return { entry: returnNode, exit: null };
@@ -137,15 +152,16 @@ export class CFGBuilder {
     cases: Case[],
     mergeNode: string,
     switchHeadNode: string,
+    ctx: Context,
   ) {
     let fallthrough: string | null = null;
     let previous: string | null = switchHeadNode;
     cases.forEach((thisCase) => {
-      if (this.flatSwitch) {
+      if (ctx.options.flatSwitch) {
         if (thisCase.consequenceEntry) {
-          this.builder.addEdge(switchHeadNode, thisCase.consequenceEntry);
+          ctx.builder.addEdge(switchHeadNode, thisCase.consequenceEntry);
           if (fallthrough) {
-            this.builder.addEdge(fallthrough, thisCase.consequenceEntry);
+            ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
           }
           if (thisCase.isDefault) {
             // If we have any default node - then we don't connect the head to the merge node.
@@ -154,10 +170,10 @@ export class CFGBuilder {
         }
       } else {
         if (fallthrough && thisCase.consequenceEntry) {
-          this.builder.addEdge(fallthrough, thisCase.consequenceEntry);
+          ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
         }
         if (previous && thisCase.conditionEntry) {
-          this.builder.addEdge(
+          ctx.builder.addEdge(
             previous,
             thisCase.conditionEntry,
             "alternative" as EdgeType,
@@ -165,7 +181,7 @@ export class CFGBuilder {
         }
 
         if (thisCase.consequenceEntry && thisCase.conditionExit)
-          this.builder.addEdge(
+          ctx.builder.addEdge(
             thisCase.conditionExit,
             thisCase.consequenceEntry,
             "consequence",
@@ -177,7 +193,7 @@ export class CFGBuilder {
 
       // Fallthrough is the same for both flat and non-flat layouts.
       if (!thisCase.hasFallthrough && thisCase.consequenceExit) {
-        this.builder.addEdge(thisCase.consequenceExit, mergeNode);
+        ctx.builder.addEdge(thisCase.consequenceExit, mergeNode);
       }
       // Update for next case
       fallthrough = thisCase.hasFallthrough ? thisCase.consequenceExit : null;
@@ -185,84 +201,30 @@ export class CFGBuilder {
     // Connect the last node to the merge node.
     // No need to handle `fallthrough` here as it is not allowed for the last case.
     if (previous) {
-      this.builder.addEdge(previous, mergeNode, "alternative");
+      ctx.builder.addEdge(previous, mergeNode, "alternative");
     }
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (fallthrough) {
-      this.builder.addEdge(fallthrough, mergeNode, "regular");
+      ctx.builder.addEdge(fallthrough, mergeNode, "regular");
     }
   }
-/*
 
-(switch_statement
-	condition: (_) @condition
-    body: (
-    	compound_statement
-        [
-          (case_statement
-              value: (_) @case-value
-              (_)* @case-body
-          ) @case
-          
-          (case_statement
-              (_)* @default-body
-          ) @default
-        ]*
-    )
-) @switch
- 
- */
 
-  private collectCases(
-    switchSyntax: Parser.SyntaxNode,
-    blockHandler: BlockHandler,
-  ): Case[] {
-    const cases: Case[] = [];
-    const caseTypes = ["case_statement"];
-    switchSyntax.namedChildren[1].namedChildren
-      .filter((child) => caseTypes.includes(child.type))
-      .forEach((caseSyntax) => {
-        const isDefault = !caseSyntax.childForFieldName("value");
 
-        const consequence = caseSyntax.namedChildren.slice(isDefault ? 0 : 1);
-        const hasFallthrough = true;
 
-        const conditionNode = this.builder.addNode(
-          "CASE_CONDITION",
-          isDefault ? "default" : (caseSyntax.firstNamedChild?.text ?? ""),
-        );
+  private processSwitchlike(switchSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock {
+    const blockHandler = ctx.matcher.state;
 
-        const consequenceBlock = blockHandler.update(
-          this.processStatements(consequence),
-        );
-
-        cases.push({
-          conditionEntry: conditionNode,
-          conditionExit: conditionNode,
-          consequenceEntry: consequenceBlock.entry,
-          consequenceExit: consequenceBlock.exit,
-          alternativeExit: conditionNode,
-          hasFallthrough,
-          isDefault,
-        });
-      });
-
-    return cases;
-  }
-
-  private processSwitchlike(switchSyntax: Parser.SyntaxNode): BasicBlock {
-    const blockHandler = new BlockHandler();
-
-    const cases = this.collectCases(switchSyntax, blockHandler);
-    const headNode = this.builder.addNode(
+    const cases = collectCases(switchSyntax, ctx);
+    const headNode = ctx.builder.addNode(
       "SWITCH_CONDITION",
-      this.getChildFieldText(switchSyntax, "value"),
+      getChildFieldText(switchSyntax, "value"),
     );
-    const mergeNode: string = this.builder.addNode("SWITCH_MERGE", "");
-    this.buildSwitch(cases, mergeNode, headNode);
+    const mergeNode: string = ctx.builder.addNode("SWITCH_MERGE", "");
+    this.buildSwitch(cases, mergeNode, headNode, ctx);
 
     blockHandler.forEachBreak((breakNode) => {
-      this.builder.addEdge(breakNode, mergeNode);
+      ctx.builder.addEdge(breakNode, mergeNode);
     });
 
     return blockHandler.update({ entry: headNode, exit: mergeNode });
@@ -280,7 +242,7 @@ export class CFGBuilder {
 
   private processLabeledStatement(labelSyntax: Parser.SyntaxNode): BasicBlock {
     const blockHandler = new BlockHandler();
-    const name = this.getChildFieldText(labelSyntax, "label");
+    const name = getChildFieldText(labelSyntax, "label");
     const labelNode = this.builder.addNode("LABEL", name);
     const { entry: labeledEntry, exit: labeledExit } = blockHandler.update(
       this.processBlock(labelSyntax.namedChildren[1]),
@@ -522,4 +484,41 @@ export class CFGBuilder {
 
     return matcher.update({ entry: bodyBlock.entry, exit: exitNode });
   }
+}
+
+function collectCases(
+  switchSyntax: Parser.SyntaxNode,
+  ctx: Context,
+): Case[] {
+  const cases: Case[] = [];
+  const caseTypes = ["case_statement"];
+  switchSyntax.namedChildren[1].namedChildren
+    .filter((child) => caseTypes.includes(child.type))
+    .forEach((caseSyntax) => {
+      const isDefault = !caseSyntax.childForFieldName("value");
+
+      const consequence = caseSyntax.namedChildren.slice(isDefault ? 0 : 1);
+      const hasFallthrough = true;
+
+      const conditionNode = ctx.builder.addNode(
+        "CASE_CONDITION",
+        isDefault ? "default" : (caseSyntax.firstNamedChild?.text ?? ""),
+      );
+
+      const consequenceBlock = ctx.matcher.state.update(
+        ctx.processStatements(consequence),
+      );
+
+      cases.push({
+        conditionEntry: conditionNode,
+        conditionExit: conditionNode,
+        consequenceEntry: consequenceBlock.entry,
+        consequenceExit: consequenceBlock.exit,
+        alternativeExit: conditionNode,
+        hasFallthrough,
+        isDefault,
+      });
+    });
+
+  return cases;
 }
