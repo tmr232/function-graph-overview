@@ -115,9 +115,9 @@ export class CFGBuilder {
         return { entry: returnNode, exit: null };
       }
       case "break_statement":
-        return this.processBreakStatement(node);
+        return processBreakStatement(node, ctx);
       case "continue_statement":
-        return this.processContinueStatement(node);
+        return processContinueStatement(node, ctx);
       case "labeled_statement":
         return this.processLabeledStatement(node);
       case "goto_statement":
@@ -289,20 +289,22 @@ export class CFGBuilder {
       labels: new Map([[name, labelNode]]),
     });
   }
-  private processContinueStatement(
-    _continueSyntax: Parser.SyntaxNode,
-  ): BasicBlock {
-    const continueNode = this.builder.addNode("CONTINUE", "CONTINUE");
-    return { entry: continueNode, exit: null, continues: [continueNode] };
-  }
-  private processBreakStatement(_breakSyntax: Parser.SyntaxNode): BasicBlock {
-    const breakNode = this.builder.addNode("BREAK", "BREAK");
-    return { entry: breakNode, exit: null, breaks: [breakNode] };
-  }
-
 
 
 }
+
+
+function processContinueStatement(
+  _continueSyntax: Parser.SyntaxNode, ctx: Context
+): BasicBlock {
+  const continueNode = ctx.builder.addNode("CONTINUE", "CONTINUE");
+  return { entry: continueNode, exit: null, continues: [continueNode] };
+}
+function processBreakStatement(_breakSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock {
+  const breakNode = ctx.builder.addNode("BREAK", "BREAK");
+  return { entry: breakNode, exit: null, breaks: [breakNode] };
+}
+
 
 
 function processForStatement(forNode: Parser.SyntaxNode, ctx: Context): BasicBlock {
