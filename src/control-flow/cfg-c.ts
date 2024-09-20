@@ -47,7 +47,7 @@ export class CFGBuilder {
     const bodySyntax = functionNode.childForFieldName("body");
     if (bodySyntax) {
       const blockHandler = new BlockHandler();
-      const { entry } = blockHandler.update(
+      const { entry, exit } = blockHandler.update(
         this.processStatements(bodySyntax.namedChildren),
       );
 
@@ -55,8 +55,10 @@ export class CFGBuilder {
         this.builder.addEdge(gotoNode, labelNode),
       );
 
+      const endNode = this.builder.addNode("RETURN", "implicit return");
       // `entry` will be non-null for any valid code
       if (entry) this.builder.addEdge(startNode, entry);
+      if (exit) this.builder.addEdge(exit, endNode);
     }
     return { graph: this.builder.getGraph(), entry: startNode };
   }

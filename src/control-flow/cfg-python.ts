@@ -27,21 +27,29 @@ const statementHandlers: StatementHandlers = {
   default: defaultProcessStatement,
 };
 
-export class CFGBuilder {
+class GenericCFGBuilder {
+
   private builder: Builder = new Builder();
   private readonly options: BuilderOptions;
+  private readonly handlers: StatementHandlers;
 
-  constructor(options: BuilderOptions) {
+  constructor(handlers: StatementHandlers, options: BuilderOptions) {
     this.options = options;
+    this.handlers = handlers;
   }
 
   public buildCFG(functionNode: Parser.SyntaxNode): CFG {
     const startNode = this.builder.addNode("START", "START");
-    const bodyNode = functionNode.childForFieldName("body");
-    if (bodyNode) {
+
+    const bodySyntax = functionNode.childForFieldName("body");
+    if (bodySyntax) {
       const blockHandler = new BlockHandler();
       const { entry, exit } = blockHandler.update(
-        this.processStatements(bodyNode.namedChildren),
+        this.processStatements(bodySyntax.namedChildren),
+      );
+
+      blockHandler.processGotos((gotoNode, labelNode) =>
+        this.builder.addEdge(gotoNode, labelNode),
       );
 
       const endNode = this.builder.addNode("RETURN", "implicit return");
@@ -56,7 +64,7 @@ export class CFGBuilder {
     if (!syntax) return { entry: null, exit: null };
 
     const handler =
-      statementHandlers.named[syntax.type] ?? statementHandlers.default;
+      this.handlers.named[syntax.type] ?? this.handlers.default;
     const matcher = new BlockMatcher(this.processBlock.bind(this));
     return handler(syntax, {
       builder: this.builder,
@@ -101,6 +109,17 @@ export class CFGBuilder {
       previous = currentExit;
     }
     return blockHandler.update({ entry, exit: previous });
+  }
+}
+
+export class CFGBuilder {
+  private cfgBuilder: GenericCFGBuilder;
+  constructor(options: BuilderOptions) {
+    this.cfgBuilder = new GenericCFGBuilder(statementHandlers, options);
+  }
+
+  public buildCFG(functionSyntax: Parser.SyntaxNode): CFG {
+    return this.cfgBuilder.buildCFG(functionSyntax);
   }
 }
 
