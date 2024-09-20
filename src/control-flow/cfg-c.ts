@@ -10,11 +10,17 @@ import {
 import { BlockMatcher, Match } from "./block-matcher.ts";
 import { Builder } from "./builder.ts";
 
+
+interface Dispatch {
+  single(syntax: Parser.SyntaxNode | null): BasicBlock
+  many(statements: Parser.SyntaxNode[]): BasicBlock,
+}
 interface Context {
   builder: Builder,
   options: BuilderOptions,
   matcher: BlockMatcher,
   processStatements(statements: Parser.SyntaxNode[]): BasicBlock,
+  dispatch: Dispatch,
 }
 
 function getChildFieldText(
@@ -39,7 +45,7 @@ export class CFGBuilder {
   private buildContext(): Context {
     return {
       builder: this.builder, options: this.options, matcher: new BlockMatcher(this.processBlock.bind(this)),
-      processStatements: this.processStatements.bind(this)
+      processStatements: this.processStatements.bind(this), dispatch: { single: this.processBlock.bind(this), many: this.processStatements.bind(this) }
     }
   }
 
@@ -108,9 +114,9 @@ export class CFGBuilder {
       case "for_statement":
         return processForStatement(node, this.buildContext());
       case "while_statement":
-        return this.processWhileStatement(node, new BlockMatcher(this.processBlock.bind(this)));
+        return processWhileStatement(node, this.buildContext());
       case "do_statement":
-        return this.processDoStatement(node, new BlockMatcher(this.processBlock.bind(this)));
+        return processDoStatement(node, this.buildContext());
       case "switch_statement":
         return processSwitchlike(node, this.buildContext());
       case "return_statement": {
@@ -118,15 +124,15 @@ export class CFGBuilder {
         return { entry: returnNode, exit: null };
       }
       case "break_statement":
-        return this.processBreakStatement(node);
+        return processBreakStatement(node, this.buildContext());
       case "continue_statement":
-        return this.processContinueStatement(node);
+        return processContinueStatement(node, this.buildContext());
       case "labeled_statement":
-        return this.processLabeledStatement(node);
+        return processLabeledStatement(node, this.buildContext());
       case "goto_statement":
-        return this.processGotoStatement(node);
+        return processGotoStatement(node, this.buildContext());
       case "comment":
-        return this.processComment(node);
+        return processComment(node, this.buildContext());
       default: {
         const newNode = this.builder.addNode("STATEMENT", node.text);
         return { entry: newNode, exit: newNode };
@@ -134,140 +140,16 @@ export class CFGBuilder {
     }
   }
 
-  private processComment(commentSyntax: Parser.SyntaxNode): BasicBlock {
-    // We only ever ger here when marker comments are enabled,
-    // and only for marker comments as the rest are filtered out.
-    const commentNode = this.builder.addNode(
-      "MARKER_COMMENT",
-      commentSyntax.text,
-    );
-    if (this.markerPattern) {
-      const marker = commentSyntax.text.match(this.markerPattern)?.[1];
-      if (marker) this.builder.addMarker(commentNode, marker);
-    }
-    return { entry: commentNode, exit: commentNode };
-  }
 
-
-
-
-
-
-
-  private processGotoStatement(gotoSyntax: Parser.SyntaxNode): BasicBlock {
-    const name = gotoSyntax.firstNamedChild?.text as string;
-    const gotoNode = this.builder.addNode("GOTO", name);
-    return {
-      entry: gotoNode,
-      exit: null,
-      gotos: [{ node: gotoNode, label: name }],
-    };
-  }
-
-  private processLabeledStatement(labelSyntax: Parser.SyntaxNode): BasicBlock {
-    const blockHandler = new BlockHandler();
-    const name = getChildFieldText(labelSyntax, "label");
-    const labelNode = this.builder.addNode("LABEL", name);
-    const { entry: labeledEntry, exit: labeledExit } = blockHandler.update(
-      this.processBlock(labelSyntax.namedChildren[1]),
-    );
-    if (labeledEntry) this.builder.addEdge(labelNode, labeledEntry);
-    return blockHandler.update({
-      entry: labelNode,
-      exit: labeledExit,
-      labels: new Map([[name, labelNode]]),
-    });
-  }
-
-  private processContinueStatement(
-    _continueSyntax: Parser.SyntaxNode,
-  ): BasicBlock {
-    const continueNode = this.builder.addNode("CONTINUE", "CONTINUE");
-    return { entry: continueNode, exit: null, continues: [continueNode] };
-  }
-
-  private processBreakStatement(_breakSyntax: Parser.SyntaxNode): BasicBlock {
-    const breakNode = this.builder.addNode("BREAK", "BREAK");
-    return { entry: breakNode, exit: null, breaks: [breakNode] };
-  }
-
-
-
-
-  private processWhileStatement(whileSyntax: Parser.SyntaxNode, matcher: BlockMatcher): BasicBlock {
-    const queryString = `
-    (while_statement
-        condition: (_) @cond
-        body: (_) @body
-        ) @while
-    `;
-    const match = matcher.match(whileSyntax, queryString);
-
-    const condSyntax = match.getSyntax("cond");
-    const bodySyntax = match.getSyntax("body");
-
-    const condBlock = match.getBlock(condSyntax) as BasicBlock;
-    const bodyBlock = match.getBlock(bodySyntax) as BasicBlock;
-
-    const exitNode = this.builder.addNode("FOR_EXIT", "loop exit");
-
-    if (condBlock.exit) {
-      if (bodyBlock.entry)
-        this.builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
-      this.builder.addEdge(condBlock.exit, exitNode, "alternative");
-    }
-    if (condBlock.entry && bodyBlock.exit)
-      this.builder.addEdge(bodyBlock.exit, condBlock.entry);
-
-    matcher.state.forEachContinue((continueNode) => {
-      if (condBlock.entry) this.builder.addEdge(continueNode, condBlock.entry);
-    });
-
-    matcher.state.forEachBreak((breakNode) => {
-      this.builder.addEdge(breakNode, exitNode);
-    });
-
-    return matcher.update({ entry: condBlock.entry, exit: exitNode });
-  }
-
-  private processDoStatement(whileSyntax: Parser.SyntaxNode, matcher: BlockMatcher): BasicBlock {
-    const queryString = `
-    (do_statement
-        body: (_) @body
-        condition: (_) @cond
-        ) @while
-    `;
-
-    const match = matcher.match(whileSyntax, queryString);
-
-    const condSyntax = match.getSyntax("cond");
-    const bodySyntax = match.getSyntax("body");
-
-
-    const condBlock = match.getBlock(condSyntax) as BasicBlock;
-    const bodyBlock = match.getBlock(bodySyntax) as BasicBlock;
-
-    const exitNode = this.builder.addNode("FOR_EXIT", "loop exit");
-
-    if (condBlock.exit) {
-      if (bodyBlock.entry)
-        this.builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
-      this.builder.addEdge(condBlock.exit, exitNode, "alternative");
-    }
-    if (condBlock.entry && bodyBlock.exit)
-      this.builder.addEdge(bodyBlock.exit, condBlock.entry);
-
-    matcher.state.forEachContinue((continueNode) => {
-      if (condBlock.entry) this.builder.addEdge(continueNode, condBlock.entry);
-    });
-
-    matcher.state.forEachBreak((breakNode) => {
-      this.builder.addEdge(breakNode, exitNode);
-    });
-
-    return matcher.update({ entry: bodyBlock.entry, exit: exitNode });
-  }
 }
+
+
+
+
+
+
+
+
 
 function collectCases(
   switchSyntax: Parser.SyntaxNode,
@@ -529,4 +411,134 @@ function processIfStatement(ifSyntax: Parser.SyntaxNode, ctx: Context): BasicBlo
   }
 
   return ctx.matcher.update({ entry: headNode, exit: mergeNode });
+}
+
+
+function processWhileStatement(whileSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock {
+  const queryString = `
+  (while_statement
+      condition: (_) @cond
+      body: (_) @body
+      ) @while
+  `;
+  const match = ctx.matcher.match(whileSyntax, queryString);
+
+  const condSyntax = match.getSyntax("cond");
+  const bodySyntax = match.getSyntax("body");
+
+  const condBlock = match.getBlock(condSyntax) as BasicBlock;
+  const bodyBlock = match.getBlock(bodySyntax) as BasicBlock;
+
+  const exitNode = ctx.builder.addNode("FOR_EXIT", "loop exit");
+
+  if (condBlock.exit) {
+    if (bodyBlock.entry)
+      ctx.builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
+    ctx.builder.addEdge(condBlock.exit, exitNode, "alternative");
+  }
+  if (condBlock.entry && bodyBlock.exit)
+    ctx.builder.addEdge(bodyBlock.exit, condBlock.entry);
+
+  ctx.matcher.state.forEachContinue((continueNode) => {
+    if (condBlock.entry) ctx.builder.addEdge(continueNode, condBlock.entry);
+  });
+
+  ctx.matcher.state.forEachBreak((breakNode) => {
+    ctx.builder.addEdge(breakNode, exitNode);
+  });
+
+  return ctx.matcher.update({ entry: condBlock.entry, exit: exitNode });
+}
+
+
+function processDoStatement(whileSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock {
+  const queryString = `
+  (do_statement
+      body: (_) @body
+      condition: (_) @cond
+      ) @while
+  `;
+
+  const match = ctx.matcher.match(whileSyntax, queryString);
+
+  const condSyntax = match.getSyntax("cond");
+  const bodySyntax = match.getSyntax("body");
+
+
+  const condBlock = match.getBlock(condSyntax) as BasicBlock;
+  const bodyBlock = match.getBlock(bodySyntax) as BasicBlock;
+
+  const exitNode = ctx.builder.addNode("FOR_EXIT", "loop exit");
+
+  if (condBlock.exit) {
+    if (bodyBlock.entry)
+      ctx.builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
+    ctx.builder.addEdge(condBlock.exit, exitNode, "alternative");
+  }
+  if (condBlock.entry && bodyBlock.exit)
+    ctx.builder.addEdge(bodyBlock.exit, condBlock.entry);
+
+  ctx.matcher.state.forEachContinue((continueNode) => {
+    if (condBlock.entry) ctx.builder.addEdge(continueNode, condBlock.entry);
+  });
+
+  ctx.matcher.state.forEachBreak((breakNode) => {
+    ctx.builder.addEdge(breakNode, exitNode);
+  });
+
+  return ctx.matcher.update({ entry: bodyBlock.entry, exit: exitNode });
+}
+
+
+
+function processGotoStatement(gotoSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock {
+  const name = gotoSyntax.firstNamedChild?.text as string;
+  const gotoNode = ctx.builder.addNode("GOTO", name);
+  return {
+    entry: gotoNode,
+    exit: null,
+    gotos: [{ node: gotoNode, label: name }],
+  };
+}
+
+function processLabeledStatement(labelSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock {
+  const blockHandler = new BlockHandler();
+  const name = getChildFieldText(labelSyntax, "label");
+  const labelNode = ctx.builder.addNode("LABEL", name);
+  const { entry: labeledEntry, exit: labeledExit } = blockHandler.update(
+    ctx.dispatch.single(labelSyntax.namedChildren[1]),
+  );
+  if (labeledEntry) ctx.builder.addEdge(labelNode, labeledEntry);
+  return blockHandler.update({
+    entry: labelNode,
+    exit: labeledExit,
+    labels: new Map([[name, labelNode]]),
+  });
+}
+
+function processContinueStatement(
+  _continueSyntax: Parser.SyntaxNode, ctx: Context
+): BasicBlock {
+  const continueNode = ctx.builder.addNode("CONTINUE", "CONTINUE");
+  return { entry: continueNode, exit: null, continues: [continueNode] };
+}
+
+function processBreakStatement(_breakSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock {
+  const breakNode = ctx.builder.addNode("BREAK", "BREAK");
+  return { entry: breakNode, exit: null, breaks: [breakNode] };
+}
+
+
+function processComment(commentSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock {
+  // We only ever ger here when marker comments are enabled,
+  // and only for marker comments as the rest are filtered out.
+  const commentNode = ctx.builder.addNode(
+    "MARKER_COMMENT",
+    commentSyntax.text,
+  );
+  if (ctx.options.markerPattern) {
+    const marker = commentSyntax.text.match(ctx.options.markerPattern)?.[1];
+    if (marker) ctx.builder.addMarker(commentNode, marker);
+  }
+  return { entry: commentNode, exit: commentNode };
 }
