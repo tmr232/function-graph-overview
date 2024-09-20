@@ -31,6 +31,7 @@ export default tseslint.config(
         },
       ],
       "@typescript-eslint/no-unnecessary-condition": "error",
+      "@typescript-eslint/unbound-method": "error",
     },
   },
 );
