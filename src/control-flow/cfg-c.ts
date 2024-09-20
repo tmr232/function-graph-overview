@@ -18,7 +18,6 @@ interface Context {
   builder: Builder;
   options: BuilderOptions;
   matcher: BlockMatcher;
-  processStatements(statements: Parser.SyntaxNode[]): BasicBlock;
   dispatch: Dispatch;
 }
 
@@ -43,7 +42,6 @@ export class CFGBuilder {
       builder: this.builder,
       options: this.options,
       matcher: new BlockMatcher(this.processBlock.bind(this)),
-      processStatements: this.processStatements.bind(this),
       dispatch: {
         single: this.processBlock.bind(this),
         many: this.processStatements.bind(this),
@@ -155,7 +153,7 @@ function collectCases(switchSyntax: Parser.SyntaxNode, ctx: Context): Case[] {
       );
 
       const consequenceBlock = ctx.matcher.state.update(
-        ctx.processStatements(consequence),
+        ctx.dispatch.many(consequence),
       );
 
       cases.push({
