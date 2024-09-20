@@ -56,8 +56,7 @@ export class CFGBuilder {
     if (!syntax) return { entry: null, exit: null };
 
     const handler =
-      statementHandlers.named[syntax.type] ??
-      statementHandlers.default;
+      statementHandlers.named[syntax.type] ?? statementHandlers.default;
     const matcher = new BlockMatcher(this.processBlock.bind(this));
     return handler(syntax, {
       builder: this.builder,

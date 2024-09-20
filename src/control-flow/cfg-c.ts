@@ -16,7 +16,6 @@ function getChildFieldText(node: Parser.SyntaxNode, fieldName: string): string {
   return child ? child.text : "";
 }
 
-
 const statementHandlers: StatementHandlers = {
   named: {
     compound_statement: processCompoundStatement,
@@ -36,14 +35,10 @@ const statementHandlers: StatementHandlers = {
 };
 export class CFGBuilder {
   private builder: Builder = new Builder();
-  private readonly flatSwitch: boolean;
-  private readonly markerPattern: RegExp | null;
   private readonly options: BuilderOptions;
 
   constructor(options: BuilderOptions) {
     this.options = options;
-    this.flatSwitch = options.flatSwitch ?? false;
-    this.markerPattern = options.markerPattern ?? null;
   }
 
   public buildCFG(functionNode: Parser.SyntaxNode): CFG {
@@ -65,6 +60,23 @@ export class CFGBuilder {
     }
     return { graph: this.builder.getGraph(), entry: startNode };
   }
+  private processBlock(syntax: Parser.SyntaxNode | null): BasicBlock {
+    if (!syntax) return { entry: null, exit: null };
+
+    const handler =
+      statementHandlers.named[syntax.type] ?? statementHandlers.default;
+    const matcher = new BlockMatcher(this.processBlock.bind(this));
+    return handler(syntax, {
+      builder: this.builder,
+      matcher: matcher,
+      state: matcher.state,
+      options: this.options,
+      dispatch: {
+        single: this.processBlock.bind(this),
+        many: this.processStatements.bind(this),
+      },
+    });
+  }
 
   private processStatements(statements: Parser.SyntaxNode[]): BasicBlock {
     const blockHandler = new BlockHandler();
@@ -76,7 +88,8 @@ export class CFGBuilder {
       }
 
       return (
-        this.markerPattern && Boolean(syntax.text.match(this.markerPattern))
+        this.options.markerPattern &&
+        Boolean(syntax.text.match(this.options.markerPattern))
       );
     });
 
@@ -98,27 +111,7 @@ export class CFGBuilder {
     }
     return blockHandler.update({ entry, exit: previous });
   }
-
-  private processBlock(syntax: Parser.SyntaxNode | null): BasicBlock {
-    if (!syntax) return { entry: null, exit: null };
-
-    const handler =
-      statementHandlers.named[syntax.type] ??
-      statementHandlers.default;
-    const matcher = new BlockMatcher(this.processBlock.bind(this));
-    return handler(syntax, {
-      builder: this.builder,
-      matcher: matcher,
-      state: matcher.state,
-      options: this.options,
-      dispatch: {
-        single: this.processBlock.bind(this),
-        many: this.processStatements.bind(this),
-      },
-    });
-  }
 }
-
 
 function collectCases(switchSyntax: Parser.SyntaxNode, ctx: Context): Case[] {
   const cases: Case[] = [];
