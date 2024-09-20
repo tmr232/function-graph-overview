@@ -3687,3 +3687,18 @@ color="blue";
 ];
 }"
 `;
+
+exports[`Go: Select: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node8 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+minHeight=0.5;
+height=1.2;
+];
+}"
+`;
