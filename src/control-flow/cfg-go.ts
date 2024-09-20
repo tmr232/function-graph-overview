@@ -8,6 +8,8 @@ import {
   type EdgeType,
 } from "./cfg-defs";
 import { Builder } from "./builder";
+import { BlockMatcher } from "./block-matcher";
+import type { Context } from "./statement-handlers";
 
 interface SwitchOptions {
   noImplicitDefault: boolean;
@@ -15,13 +17,10 @@ interface SwitchOptions {
 
 export class CFGBuilder {
   private builder: Builder = new Builder();
-  private readonly flatSwitch: boolean;
-  private readonly markerPattern: RegExp | null;
+  private readonly options: BuilderOptions;
 
-  constructor(options?: BuilderOptions) {
-
-    this.flatSwitch = options?.flatSwitch ?? false;
-    this.markerPattern = options?.markerPattern ?? null;
+  constructor(options: BuilderOptions) {
+    this.options = options;
   }
 
   public buildCFG(functionNode: Parser.SyntaxNode): CFG {
@@ -62,7 +61,7 @@ export class CFGBuilder {
       }
 
       return (
-        this.markerPattern && Boolean(syntax.text.match(this.markerPattern))
+        this.options.markerPattern && Boolean(syntax.text.match(this.options.markerPattern))
       );
     });
 
@@ -86,6 +85,8 @@ export class CFGBuilder {
 
   private processBlock(node: Parser.SyntaxNode | null): BasicBlock {
     if (!node) return { entry: null, exit: null };
+
+    
 
     switch (node.type) {
       case "block":
@@ -123,8 +124,8 @@ export class CFGBuilder {
     // We only ever ger here when marker comments are enabled,
     // and only for marker comments as the rest are filtered out.
     const commentNode = this.builder.addNode("MARKER_COMMENT", commentSyntax.text);
-    if (this.markerPattern) {
-      const marker = commentSyntax.text.match(this.markerPattern)?.[1];
+    if (this.options.markerPattern) {
+      const marker = commentSyntax.text.match(this.options.markerPattern)?.[1];
       if (marker) this.builder.addMarker(commentNode, marker);
     }
     return { entry: commentNode, exit: commentNode };
@@ -144,7 +145,7 @@ export class CFGBuilder {
       previous = null;
     }
     cases.forEach((thisCase) => {
-      if (this.flatSwitch) {
+      if (this.options.flatSwitch) {
         if (thisCase.consequenceEntry) {
           this.builder.addEdge(switchHeadNode, thisCase.consequenceEntry);
           if (fallthrough) {
