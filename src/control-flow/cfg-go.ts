@@ -101,7 +101,7 @@ export class CFGBuilder {
       case "block":
         return processBlockStatement(node, ctx);
       case "if_statement":
-        return processIfStatement(node, undefined, ctx);
+        return processIfStatement(node, ctx);
       case "for_statement":
         return processForStatement(node, ctx);
       case "expression_switch_statement":
@@ -259,8 +259,8 @@ function processForStatement(
 
 function processIfStatement(
   ifNode: Parser.SyntaxNode,
-  mergeNode: string | null = null,
   ctx: Context,
+  mergeNode: string | null = null,
 ): BasicBlock {
   const conditionChild = ifNode.childForFieldName("condition");
   const conditionNode = ctx.builder.addNode(
@@ -281,7 +281,7 @@ function processIfStatement(
   const { entry: elseEntry, exit: elseExit } = (() => {
     if (elseIf) {
       return ctx.state.update(
-        processIfStatement(alternativeChild, mergeNode, ctx),
+        processIfStatement(alternativeChild, ctx, mergeNode),
       );
     } else {
       return ctx.state.update(ctx.dispatch.single(alternativeChild));
