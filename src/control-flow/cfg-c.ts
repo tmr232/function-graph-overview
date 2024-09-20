@@ -4,12 +4,12 @@ import {
   type BasicBlock,
   type BuilderOptions,
   type Case,
-  type CFG,
+  type CFGBuilder,
   type EdgeType,
 } from "./cfg-defs";
-import { BlockMatcher, Match } from "./block-matcher.ts";
-import { Builder } from "./builder.ts";
+import { Match } from "./block-matcher.ts";
 import type { Context, StatementHandlers } from "./statement-handlers.ts";
+import { GenericCFGBuilder } from "./generic-cfg-builder.ts";
 
 function getChildFieldText(node: Parser.SyntaxNode, fieldName: string): string {
   const child = node.childForFieldName(fieldName);
@@ -33,86 +33,9 @@ const statementHandlers: StatementHandlers = {
   },
   default: defaultProcessStatement,
 };
-export class CFGBuilder {
-  private builder: Builder = new Builder();
-  private readonly options: BuilderOptions;
 
-  constructor(options: BuilderOptions) {
-    this.options = options;
-  }
-
-  public buildCFG(functionNode: Parser.SyntaxNode): CFG {
-    const startNode = this.builder.addNode("START", "START");
-
-    const bodySyntax = functionNode.childForFieldName("body");
-    if (bodySyntax) {
-      const blockHandler = new BlockHandler();
-      const { entry, exit } = blockHandler.update(
-        this.processStatements(bodySyntax.namedChildren),
-      );
-
-      blockHandler.processGotos((gotoNode, labelNode) =>
-        this.builder.addEdge(gotoNode, labelNode),
-      );
-
-      const endNode = this.builder.addNode("RETURN", "implicit return");
-      // `entry` will be non-null for any valid code
-      if (entry) this.builder.addEdge(startNode, entry);
-      if (exit) this.builder.addEdge(exit, endNode);
-    }
-    return { graph: this.builder.getGraph(), entry: startNode };
-  }
-  private processBlock(syntax: Parser.SyntaxNode | null): BasicBlock {
-    if (!syntax) return { entry: null, exit: null };
-
-    const handler =
-      statementHandlers.named[syntax.type] ?? statementHandlers.default;
-    const matcher = new BlockMatcher(this.processBlock.bind(this));
-    return handler(syntax, {
-      builder: this.builder,
-      matcher: matcher,
-      state: matcher.state,
-      options: this.options,
-      dispatch: {
-        single: this.processBlock.bind(this),
-        many: this.processStatements.bind(this),
-      },
-    });
-  }
-
-  private processStatements(statements: Parser.SyntaxNode[]): BasicBlock {
-    const blockHandler = new BlockHandler();
-
-    // Ignore comments
-    const codeStatements = statements.filter((syntax) => {
-      if (syntax.type !== "comment") {
-        return true;
-      }
-
-      return (
-        this.options.markerPattern &&
-        Boolean(syntax.text.match(this.options.markerPattern))
-      );
-    });
-
-    if (codeStatements.length === 0) {
-      const emptyNode = this.builder.addNode("EMPTY", "empty block");
-      return { entry: emptyNode, exit: emptyNode };
-    }
-
-    let entry: string | null = null;
-    let previous: string | null = null;
-    for (const statement of codeStatements) {
-      const { entry: currentEntry, exit: currentExit } = blockHandler.update(
-        this.processBlock(statement),
-      );
-      if (!entry) entry = currentEntry;
-      if (previous && currentEntry)
-        this.builder.addEdge(previous, currentEntry);
-      previous = currentExit;
-    }
-    return blockHandler.update({ entry, exit: previous });
-  }
+export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
+  return new GenericCFGBuilder(statementHandlers, options);
 }
 
 function collectCases(switchSyntax: Parser.SyntaxNode, ctx: Context): Case[] {
