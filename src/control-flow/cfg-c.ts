@@ -104,9 +104,9 @@ export class CFGBuilder {
       case "compound_statement":
         return this.processStatements(node.namedChildren);
       case "if_statement":
-        return this.processIfStatement(node, new BlockMatcher(this.processBlock.bind(this)));
+        return processIfStatement(node, this.buildContext());
       case "for_statement":
-        return this.processForStatement(node, new BlockMatcher(this.processBlock.bind(this)));
+        return processForStatement(node, this.buildContext());
       case "while_statement":
         return this.processWhileStatement(node, new BlockMatcher(this.processBlock.bind(this)));
       case "do_statement":
@@ -191,149 +191,8 @@ export class CFGBuilder {
     return { entry: breakNode, exit: null, breaks: [breakNode] };
   }
 
-  private processIfStatement(ifSyntax: Parser.SyntaxNode, matcher: BlockMatcher): BasicBlock {
-    const queryString = `
-        (if_statement
-          condition: (_) @cond
-          consequence: (_) @then
-          alternative: (
-              else_clause ([
-                  (if_statement) @else-if
-                  (compound_statement) @else-body
-                  ])
-          )? @else
-        )@if
-    `;
 
 
-    const getIfs = (currentSyntax: Parser.SyntaxNode): Match[] => {
-      const match = matcher.tryMatch(currentSyntax, queryString);
-      if (!match) return [];
-      const elseifSyntax = match.getSyntax("else-if");
-      if (!elseifSyntax) return [match];
-      return [match, ...getIfs(elseifSyntax)];
-    };
-
-    const blocks = getIfs(ifSyntax).map((ifMatch) => ({
-      condBlock: ifMatch.getBlock(ifMatch.requireSyntax("cond")),
-      thenBlock: ifMatch.getBlock(ifMatch.requireSyntax("then")),
-      elseBlock: ifMatch.getBlock(ifMatch.getSyntax("else-body")),
-    }));
-
-    const headNode = this.builder.addNode("CONDITION", "if-else head");
-    const mergeNode = this.builder.addNode("MERGE", "if-else merge");
-
-    if (blocks[0].condBlock?.entry)
-      this.builder.addEdge(headNode, blocks[0].condBlock.entry);
-
-    let previous: string | null | undefined = null;
-    for (const { condBlock, thenBlock } of blocks) {
-      if (previous && condBlock?.entry) {
-        this.builder.addEdge(previous, condBlock.entry, "alternative");
-      }
-      if (condBlock?.exit && thenBlock?.entry) {
-        this.builder.addEdge(condBlock.exit, thenBlock.entry, "consequence");
-      }
-      if (thenBlock?.exit) {
-        this.builder.addEdge(thenBlock.exit, mergeNode);
-      }
-
-      previous = condBlock?.exit;
-    }
-
-    function last<T>(items: T[]): T | undefined {
-      return items[items.length - 1];
-    }
-
-    const elseBlock = last(blocks)?.elseBlock;
-    if (elseBlock) {
-      if (previous && elseBlock.entry) {
-        this.builder.addEdge(previous, elseBlock.entry, "alternative");
-      }
-      if (elseBlock.exit) this.builder.addEdge(elseBlock.exit, mergeNode);
-    } else if (previous) {
-      this.builder.addEdge(previous, mergeNode, "alternative");
-    }
-
-    return matcher.update({ entry: headNode, exit: mergeNode });
-  }
-
-  private processForStatement(forNode: Parser.SyntaxNode, matcher: BlockMatcher): BasicBlock {
-    const queryString = `
-      (for_statement
-	        initializer: (_)? @init
-          condition: (_)? @cond
-          update: (_)? @update
-          body: (_) @body) @for
-      `;
-    const match = matcher.match(forNode, queryString);
-
-    const initSyntax = match.getSyntax("init");
-    const condSyntax = match.getSyntax("cond");
-    const updateSyntax = match.getSyntax("update");
-    const bodySyntax = match.getSyntax("body");
-
-    const initBlock = match.getBlock(initSyntax);
-    const condBlock = match.getBlock(condSyntax);
-    const updateBlock = match.getBlock(updateSyntax);
-    const bodyBlock = match.getBlock(bodySyntax);
-
-    const entryNode = this.builder.addNode("EMPTY", "loop head");
-    const exitNode = this.builder.addNode("FOR_EXIT", "loop exit");
-    const headNode = this.builder.addNode("LOOP_HEAD", "loop head");
-    const headBlock = { entry: headNode, exit: headNode };
-
-    const chain = (entry: string | null, blocks: (BasicBlock | null)[]) => {
-      let prevExit: string | null = entry;
-      for (const block of blocks) {
-        if (!block) continue;
-        if (prevExit && block.entry)
-          this.builder.addEdge(prevExit, block.entry);
-        prevExit = block.exit;
-      }
-      return prevExit;
-    };
-
-    /*
-    entry -> init -> cond +-> body -> head -> update -> cond
-                          --> exit
-  
-    top = chain(entry, init,)
-  
-    if cond:
-        chain(top, cond)
-        cond +-> body
-        cond --> exit
-        chain(body, head, update, cond)
-    else:
-        chain(top, body, head, update, body)
-  
-    chain(continue, head)
-    chain(break, exit)
-    */
-    const topExit = chain(entryNode, [initBlock]);
-    if (condBlock) {
-      chain(topExit, [condBlock]);
-      if (condBlock.exit) {
-        if (bodyBlock?.entry)
-          this.builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
-        this.builder.addEdge(condBlock.exit, exitNode, "alternative");
-        chain(bodyBlock?.exit ?? null, [headBlock, updateBlock, condBlock]);
-      }
-    } else {
-      chain(topExit, [bodyBlock, headBlock, updateBlock, bodyBlock]);
-    }
-
-    matcher.state.forEachContinue((continueNode) => {
-      this.builder.addEdge(continueNode, headNode);
-    });
-
-    matcher.state.forEachBreak((breakNode) => {
-      this.builder.addEdge(breakNode, exitNode);
-    });
-
-    return matcher.update({ entry: entryNode, exit: exitNode });
-  }
 
   private processWhileStatement(whileSyntax: Parser.SyntaxNode, matcher: BlockMatcher): BasicBlock {
     const queryString = `
@@ -525,4 +384,149 @@ function processSwitchlike(switchSyntax: Parser.SyntaxNode, ctx: Context): Basic
   });
 
   return blockHandler.update({ entry: headNode, exit: mergeNode });
+}
+
+function processForStatement(forNode: Parser.SyntaxNode, ctx: Context): BasicBlock {
+  const queryString = `
+    (for_statement
+        initializer: (_)? @init
+        condition: (_)? @cond
+        update: (_)? @update
+        body: (_) @body) @for
+    `;
+  const match = ctx.matcher.match(forNode, queryString);
+
+  const initSyntax = match.getSyntax("init");
+  const condSyntax = match.getSyntax("cond");
+  const updateSyntax = match.getSyntax("update");
+  const bodySyntax = match.getSyntax("body");
+
+  const initBlock = match.getBlock(initSyntax);
+  const condBlock = match.getBlock(condSyntax);
+  const updateBlock = match.getBlock(updateSyntax);
+  const bodyBlock = match.getBlock(bodySyntax);
+
+  const entryNode = ctx.builder.addNode("EMPTY", "loop head");
+  const exitNode = ctx.builder.addNode("FOR_EXIT", "loop exit");
+  const headNode = ctx.builder.addNode("LOOP_HEAD", "loop head");
+  const headBlock = { entry: headNode, exit: headNode };
+
+  const chain = (entry: string | null, blocks: (BasicBlock | null)[]) => {
+    let prevExit: string | null = entry;
+    for (const block of blocks) {
+      if (!block) continue;
+      if (prevExit && block.entry)
+        ctx.builder.addEdge(prevExit, block.entry);
+      prevExit = block.exit;
+    }
+    return prevExit;
+  };
+
+  /*
+  entry -> init -> cond +-> body -> head -> update -> cond
+                        --> exit
+
+  top = chain(entry, init,)
+
+  if cond:
+      chain(top, cond)
+      cond +-> body
+      cond --> exit
+      chain(body, head, update, cond)
+  else:
+      chain(top, body, head, update, body)
+
+  chain(continue, head)
+  chain(break, exit)
+  */
+  const topExit = chain(entryNode, [initBlock]);
+  if (condBlock) {
+    chain(topExit, [condBlock]);
+    if (condBlock.exit) {
+      if (bodyBlock?.entry)
+        ctx.builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
+      ctx.builder.addEdge(condBlock.exit, exitNode, "alternative");
+      chain(bodyBlock?.exit ?? null, [headBlock, updateBlock, condBlock]);
+    }
+  } else {
+    chain(topExit, [bodyBlock, headBlock, updateBlock, bodyBlock]);
+  }
+
+  ctx.matcher.state.forEachContinue((continueNode) => {
+    ctx.builder.addEdge(continueNode, headNode);
+  });
+
+  ctx.matcher.state.forEachBreak((breakNode) => {
+    ctx.builder.addEdge(breakNode, exitNode);
+  });
+
+  return ctx.matcher.update({ entry: entryNode, exit: exitNode });
+}
+
+
+function processIfStatement(ifSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock {
+  const queryString = `
+      (if_statement
+        condition: (_) @cond
+        consequence: (_) @then
+        alternative: (
+            else_clause ([
+                (if_statement) @else-if
+                (compound_statement) @else-body
+                ])
+        )? @else
+      )@if
+  `;
+
+
+  const getIfs = (currentSyntax: Parser.SyntaxNode): Match[] => {
+    const match = ctx.matcher.tryMatch(currentSyntax, queryString);
+    if (!match) return [];
+    const elseifSyntax = match.getSyntax("else-if");
+    if (!elseifSyntax) return [match];
+    return [match, ...getIfs(elseifSyntax)];
+  };
+
+  const blocks = getIfs(ifSyntax).map((ifMatch) => ({
+    condBlock: ifMatch.getBlock(ifMatch.requireSyntax("cond")),
+    thenBlock: ifMatch.getBlock(ifMatch.requireSyntax("then")),
+    elseBlock: ifMatch.getBlock(ifMatch.getSyntax("else-body")),
+  }));
+
+  const headNode = ctx.builder.addNode("CONDITION", "if-else head");
+  const mergeNode = ctx.builder.addNode("MERGE", "if-else merge");
+
+  if (blocks[0].condBlock?.entry)
+    ctx.builder.addEdge(headNode, blocks[0].condBlock.entry);
+
+  let previous: string | null | undefined = null;
+  for (const { condBlock, thenBlock } of blocks) {
+    if (previous && condBlock?.entry) {
+      ctx.builder.addEdge(previous, condBlock.entry, "alternative");
+    }
+    if (condBlock?.exit && thenBlock?.entry) {
+      ctx.builder.addEdge(condBlock.exit, thenBlock.entry, "consequence");
+    }
+    if (thenBlock?.exit) {
+      ctx.builder.addEdge(thenBlock.exit, mergeNode);
+    }
+
+    previous = condBlock?.exit;
+  }
+
+  function last<T>(items: T[]): T | undefined {
+    return items[items.length - 1];
+  }
+
+  const elseBlock = last(blocks)?.elseBlock;
+  if (elseBlock) {
+    if (previous && elseBlock.entry) {
+      ctx.builder.addEdge(previous, elseBlock.entry, "alternative");
+    }
+    if (elseBlock.exit) ctx.builder.addEdge(elseBlock.exit, mergeNode);
+  } else if (previous) {
+    ctx.builder.addEdge(previous, mergeNode, "alternative");
+  }
+
+  return ctx.matcher.update({ entry: headNode, exit: mergeNode });
 }
