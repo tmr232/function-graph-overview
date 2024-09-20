@@ -238,11 +238,6 @@ function buildSwitch(
 ) {
   let fallthrough: string | null = null;
   let previous: string | null = switchHeadNode;
-  if (options.noImplicitDefault) {
-    // This prevents the linking of the switch head to the merge node.
-    // It is required for select statements, as they block until satisfied.
-    previous = null;
-  }
   cases.forEach((thisCase) => {
     if (ctx.options.flatSwitch) {
       if (thisCase.consequenceEntry) {
@@ -279,15 +274,19 @@ function buildSwitch(
 
     // Fallthrough is the same for both flat and non-flat layouts.
     if (!thisCase.hasFallthrough && thisCase.consequenceExit) {
-      ctx.builder.addEdge(thisCase.consequenceExit, mergeNode);
+      ctx.builder.addEdge(thisCase.consequenceExit, mergeNode, "regular");
     }
     // Update for next case
     fallthrough = thisCase.hasFallthrough ? thisCase.consequenceExit : null;
   });
   // Connect the last node to the merge node.
   // No need to handle `fallthrough` here as it is not allowed for the last case.
-  if (previous) {
+  if (previous && !options.noImplicitDefault) {
     ctx.builder.addEdge(previous, mergeNode, "alternative");
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (fallthrough) {
+    ctx.builder.addEdge(fallthrough, mergeNode, "regular");
   }
 }
 

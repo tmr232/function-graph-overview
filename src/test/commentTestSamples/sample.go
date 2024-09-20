@@ -120,17 +120,33 @@ func typeSwitch() {
 }
 
 /*
-exits: 3
+exits: 2,
+nodes: 3
 */
 func Select(c, quit chan int) {
 	x, y := 0, 1
-	for {
-		select {
-		case c <- x:
-			x, y = y, x+y
-		case <-quit:
-			fmt.Println("quit")
-			return
-		}
+	select {
+	case c <- x:
+		x, y = y, x+y
+	case <-quit:
+		fmt.Println("quit")
+		return
+	}
+}
+
+/*
+exits: 2,
+nodes: 6
+*/
+func Select2(c, quit chan int) {
+	x, y := 0, 1
+	select {
+	case c <- x:
+		x, y = y, x+y
+	case <-quit:
+		fmt.Println("quit")
+		return
+	case <-y:
+		f()
 	}
 }

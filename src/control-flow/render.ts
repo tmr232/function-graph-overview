@@ -265,7 +265,7 @@ function renderNode(
   dotAttrs.label = "";
   const nodeAttrs = graph.getNodeAttributes(node);
   if (context.verbose) {
-    dotAttrs.label = `${node} ${nodeAttrs.type} ${graph.getNodeAttributes(node).code}`;
+    dotAttrs.label = `${node} ${nodeAttrs.type} ${graph.getNodeAttributes(node).code.replaceAll('"', '\\"')}`;
 
     const clusterAttrs = graph.getNodeAttribute(node, "cluster");
     dotAttrs.label = `${clusterAttrs?.id} ${clusterAttrs?.type}\n${dotAttrs.label}`;

@@ -1046,6 +1046,100 @@ color="red";
 }"
 `;
 
+exports[`Go: Select: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node2 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=1.2;
+];
+    node9 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.8999999999999999;
+];
+    node6 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.8999999999999999;
+];
+    node2 -> node6 [penwidth=1;
+color="red";
+];
+    node2 -> node9 [penwidth=1;
+color="green";
+];
+}"
+`;
+
+exports[`Go: Select2: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node2 [style="filled";
+label="";
+shape="invhouse";
+fillcolor="#48AB30";
+height=1.2;
+];
+    node3 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node11 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node6 [style="filled";
+label="";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node8 [style="filled";
+label="";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node2 -> node3 [penwidth=1;
+color="green";
+];
+    node2 -> node4 [penwidth=1;
+color="red";
+];
+    node4 -> node6 [penwidth=1;
+color="green";
+];
+    node4 -> node8 [penwidth=1;
+color="red";
+];
+    node3 -> node11 [penwidth=1;
+color="blue";
+];
+    node8 -> node11 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
 exports[`Python: trivial: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box];
@@ -3684,21 +3778,6 @@ color="blue";
 ];
     node0 -> node2 [penwidth=1;
 color="blue";
-];
-}"
-`;
-
-exports[`Go: Select: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box];
-    edge [headport=n tailport=s]
-    bgcolor="transparent"
-    node8 [style="filled";
-label="";
-shape="box";
-fillcolor="lightgray";
-minHeight=0.5;
-height=1.2;
 ];
 }"
 `;
