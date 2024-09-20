@@ -6,6 +6,19 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Fixed
+
+- Rendering of `select` blocks in Go was broken.
+
+### Changed
+
+- Massive refactoring of `CFGBuilder` classes.
+  New design now uses the same`GenericCGBuilder` class
+  for all languages, and takes statement handlers as
+  arguments.
+  This reduces code duplication and makes it easier to add
+  new languages in the future.
+
 ## [0.0.5] - 2024-09-18
 
 ### Added
