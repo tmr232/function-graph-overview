@@ -192,6 +192,26 @@ export class CFGBuilder {
       this.builder.addEdge(fallthrough, mergeNode, "regular");
     }
   }
+/*
+
+(switch_statement
+	condition: (_) @condition
+    body: (
+    	compound_statement
+        [
+          (case_statement
+              value: (_) @case-value
+              (_)* @case-body
+          ) @case
+          
+          (case_statement
+              (_)* @default-body
+          ) @default
+        ]*
+    )
+) @switch
+ 
+ */
 
   private collectCases(
     switchSyntax: Parser.SyntaxNode,
