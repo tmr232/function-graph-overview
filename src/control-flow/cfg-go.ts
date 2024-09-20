@@ -86,7 +86,17 @@ export class CFGBuilder {
   private processBlock(node: Parser.SyntaxNode | null): BasicBlock {
     if (!node) return { entry: null, exit: null };
 
-    
+    const matcher = new BlockMatcher(this.processBlock.bind(this));
+    const ctx: Context = {
+      builder: this.builder,
+      matcher: matcher,
+      state: matcher.state,
+      options: this.options,
+      dispatch: {
+        single: this.processBlock.bind(this),
+        many: this.processStatements.bind(this),
+      }
+    };
 
     switch (node.type) {
       case "block":
@@ -94,7 +104,7 @@ export class CFGBuilder {
       case "if_statement":
         return this.processIfStatement(node);
       case "for_statement":
-        return this.processForStatement(node);
+        return processForStatement(node, ctx);
       case "expression_switch_statement":
       case "type_switch_statement":
         return this.processSwitchlike(node);
@@ -334,52 +344,55 @@ export class CFGBuilder {
     return blockHandler.update({ entry: conditionNode, exit: mergeNode });
   }
 
-  private processForStatement(forNode: Parser.SyntaxNode): BasicBlock {
-    const blockHandler = new BlockHandler();
-    switch (forNode.namedChildCount) {
-      // One child means only loop body, two children means loop head.
-      case 1: {
-        const headNode = this.builder.addNode("LOOP_HEAD", "loop head");
-        const { entry: bodyEntry, exit: bodyExit } = blockHandler.update(
-          this.processBlock(forNode.firstNamedChild),
-        );
-        if (bodyEntry) this.builder.addEdge(headNode, bodyEntry);
-        if (bodyExit) this.builder.addEdge(bodyExit, headNode);
-        const exitNode = this.builder.addNode("LOOP_EXIT", "loop exit");
-        blockHandler.forEachBreak((breakNode) => {
-          this.builder.addEdge(breakNode, exitNode);
-        });
 
-        blockHandler.forEachContinue((continueNode) => {
-          this.builder.addEdge(continueNode, headNode);
-        });
-        return blockHandler.update({ entry: headNode, exit: exitNode });
-      }
-      // TODO: Handle the case where there is no loop condition, only init and update.
-      case 2: {
-        const headNode = this.builder.addNode("LOOP_HEAD", "loop head");
-        const { entry: bodyEntry, exit: bodyExit } = blockHandler.update(
-          this.processBlock(forNode.namedChildren[1]),
-        );
-        const exitNode = this.builder.addNode("LOOP_EXIT", "loop exit");
-        if (bodyEntry) {
-          this.builder.addEdge(headNode, bodyEntry, "consequence");
-        }
-        this.builder.addEdge(headNode, exitNode, "alternative");
-        if (bodyExit) this.builder.addEdge(bodyExit, headNode);
-        blockHandler.forEachBreak((breakNode) => {
-          this.builder.addEdge(breakNode, exitNode);
-        });
+}
 
-        blockHandler.forEachContinue((continueNode) => {
-          this.builder.addEdge(continueNode, headNode);
-        });
-        return blockHandler.update({ entry: headNode, exit: exitNode });
-      }
-      default:
-        throw new Error(
-          `Unsupported for type: ${forNode.firstNamedChild?.type}`,
-        );
+
+function processForStatement(forNode: Parser.SyntaxNode, ctx: Context): BasicBlock {
+  const { state } = ctx;
+  switch (forNode.namedChildCount) {
+    // One child means only loop body, two children means loop head.
+    case 1: {
+      const headNode = ctx.builder.addNode("LOOP_HEAD", "loop head");
+      const { entry: bodyEntry, exit: bodyExit } = state.update(
+        ctx.dispatch.single(forNode.firstNamedChild),
+      );
+      if (bodyEntry) ctx.builder.addEdge(headNode, bodyEntry);
+      if (bodyExit) ctx.builder.addEdge(bodyExit, headNode);
+      const exitNode = ctx.builder.addNode("LOOP_EXIT", "loop exit");
+      state.forEachBreak((breakNode) => {
+        ctx.builder.addEdge(breakNode, exitNode);
+      });
+
+      state.forEachContinue((continueNode) => {
+        ctx.builder.addEdge(continueNode, headNode);
+      });
+      return state.update({ entry: headNode, exit: exitNode });
     }
+    // TODO: Handle the case where there is no loop condition, only init and update.
+    case 2: {
+      const headNode = ctx.builder.addNode("LOOP_HEAD", "loop head");
+      const { entry: bodyEntry, exit: bodyExit } = state.update(
+        ctx.dispatch.single(forNode.namedChildren[1]),
+      );
+      const exitNode = ctx.builder.addNode("LOOP_EXIT", "loop exit");
+      if (bodyEntry) {
+        ctx.builder.addEdge(headNode, bodyEntry, "consequence");
+      }
+      ctx.builder.addEdge(headNode, exitNode, "alternative");
+      if (bodyExit) ctx.builder.addEdge(bodyExit, headNode);
+      state.forEachBreak((breakNode) => {
+        ctx.builder.addEdge(breakNode, exitNode);
+      });
+
+      state.forEachContinue((continueNode) => {
+        ctx.builder.addEdge(continueNode, headNode);
+      });
+      return state.update({ entry: headNode, exit: exitNode });
+    }
+    default:
+      throw new Error(
+        `Unsupported for type: ${forNode.firstNamedChild?.type}`,
+      );
   }
 }
