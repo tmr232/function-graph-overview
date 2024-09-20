@@ -102,12 +102,12 @@ export class CFGBuilder {
       case "block":
         return this.processStatements(node.namedChildren);
       case "if_statement":
-        return this.processIfStatement(node);
+        return processIfStatement(node, undefined, ctx);
       case "for_statement":
         return processForStatement(node, ctx);
       case "expression_switch_statement":
       case "type_switch_statement":
-        return this.processSwitchlike(node);
+        return this.processSwitchlike(node, undefined);
       case "select_statement":
         return this.processSwitchlike(node, { noImplicitDefault: true });
       case "return_statement": {
@@ -300,49 +300,6 @@ export class CFGBuilder {
     return { entry: breakNode, exit: null, breaks: [breakNode] };
   }
 
-  private processIfStatement(
-    ifNode: Parser.SyntaxNode,
-    mergeNode: string | null = null,
-  ): BasicBlock {
-    const blockHandler = new BlockHandler();
-    const conditionChild = ifNode.childForFieldName("condition");
-    const conditionNode = this.builder.addNode(
-      "CONDITION",
-      conditionChild ? conditionChild.text : "Unknown condition",
-    );
-
-    mergeNode ??= this.builder.addNode("MERGE", "MERGE");
-
-    const consequenceChild = ifNode.childForFieldName("consequence");
-
-    const { entry: thenEntry, exit: thenExit } = blockHandler.update(
-      this.processBlock(consequenceChild),
-    );
-
-    const alternativeChild = ifNode.childForFieldName("alternative");
-    const elseIf = alternativeChild?.type === "if_statement";
-    const { entry: elseEntry, exit: elseExit } = (() => {
-      if (elseIf) {
-        return blockHandler.update(
-          this.processIfStatement(alternativeChild, mergeNode),
-        );
-      } else {
-        return blockHandler.update(this.processBlock(alternativeChild));
-      }
-    })();
-
-    this.builder.addEdge(conditionNode, thenEntry || mergeNode, "consequence");
-    if (thenExit) this.builder.addEdge(thenExit, mergeNode);
-
-    if (elseEntry) {
-      this.builder.addEdge(conditionNode, elseEntry, "alternative");
-      if (elseExit && !elseIf) this.builder.addEdge(elseExit, mergeNode);
-    } else {
-      this.builder.addEdge(conditionNode, mergeNode, "alternative");
-    }
-
-    return blockHandler.update({ entry: conditionNode, exit: mergeNode });
-  }
 
 
 }
@@ -395,4 +352,48 @@ function processForStatement(forNode: Parser.SyntaxNode, ctx: Context): BasicBlo
         `Unsupported for type: ${forNode.firstNamedChild?.type}`,
       );
   }
+}
+
+function processIfStatement(
+  ifNode: Parser.SyntaxNode,
+  mergeNode: string | null = null,
+  ctx: Context
+): BasicBlock {
+  const conditionChild = ifNode.childForFieldName("condition");
+  const conditionNode = ctx.builder.addNode(
+    "CONDITION",
+    conditionChild ? conditionChild.text : "Unknown condition",
+  );
+
+  mergeNode ??= ctx.builder.addNode("MERGE", "MERGE");
+
+  const consequenceChild = ifNode.childForFieldName("consequence");
+
+  const { entry: thenEntry, exit: thenExit } = ctx.state.update(
+    ctx.dispatch.single(consequenceChild),
+  );
+
+  const alternativeChild = ifNode.childForFieldName("alternative");
+  const elseIf = alternativeChild?.type === "if_statement";
+  const { entry: elseEntry, exit: elseExit } = (() => {
+    if (elseIf) {
+      return ctx.state.update(
+        processIfStatement(alternativeChild, mergeNode, ctx),
+      );
+    } else {
+      return ctx.state.update(ctx.dispatch.single(alternativeChild));
+    }
+  })();
+
+  ctx.builder.addEdge(conditionNode, thenEntry || mergeNode, "consequence");
+  if (thenExit) ctx.builder.addEdge(thenExit, mergeNode);
+
+  if (elseEntry) {
+    ctx.builder.addEdge(conditionNode, elseEntry, "alternative");
+    if (elseExit && !elseIf) ctx.builder.addEdge(elseExit, mergeNode);
+  } else {
+    ctx.builder.addEdge(conditionNode, mergeNode, "alternative");
+  }
+
+  return ctx.state.update({ entry: conditionNode, exit: mergeNode });
 }
