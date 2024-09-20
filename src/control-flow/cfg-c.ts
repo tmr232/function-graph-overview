@@ -88,7 +88,7 @@ export class CFGBuilder {
       case "compound_statement":
         return this.processStatements(node.namedChildren);
       case "if_statement":
-        return this.processIfStatement(node);
+        return this.processIfStatement(node, new BlockMatcher(this.processBlock.bind(this)));
       case "for_statement":
         return this.processForStatement(node);
       case "while_statement":
@@ -284,7 +284,7 @@ export class CFGBuilder {
     return { entry: breakNode, exit: null, breaks: [breakNode] };
   }
 
-  private processIfStatement(ifSyntax: Parser.SyntaxNode): BasicBlock {
+  private processIfStatement(ifSyntax: Parser.SyntaxNode, matcher: BlockMatcher): BasicBlock {
     const queryString = `
         (if_statement
           condition: (_) @cond
@@ -298,10 +298,9 @@ export class CFGBuilder {
         )@if
     `;
 
-    const blockMatcher = new BlockMatcher(this.processBlock.bind(this));
 
     const getIfs = (currentSyntax: Parser.SyntaxNode): Match[] => {
-      const match = blockMatcher.tryMatch(currentSyntax, queryString);
+      const match = matcher.tryMatch(currentSyntax, queryString);
       if (!match) return [];
       const elseifSyntax = match.getSyntax("else-if");
       if (!elseifSyntax) return [match];
@@ -349,7 +348,7 @@ export class CFGBuilder {
       this.builder.addEdge(previous, mergeNode, "alternative");
     }
 
-    return blockMatcher.update({ entry: headNode, exit: mergeNode });
+    return matcher.update({ entry: headNode, exit: mergeNode });
   }
 
   private processForStatement(forNode: Parser.SyntaxNode): BasicBlock {
