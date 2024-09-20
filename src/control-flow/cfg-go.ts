@@ -15,10 +15,7 @@ interface SwitchOptions {
   noImplicitDefault: boolean;
 }
 
-function getChildFieldText(
-  node: Parser.SyntaxNode,
-  fieldName: string,
-): string {
+function getChildFieldText(node: Parser.SyntaxNode, fieldName: string): string {
   const child = node.childForFieldName(fieldName);
   return child ? child.text : "";
 }
@@ -51,8 +48,6 @@ export class CFGBuilder {
     return { graph: this.builder.getGraph(), entry: startNode };
   }
 
-
-
   private processStatements(statements: Parser.SyntaxNode[]): BasicBlock {
     const blockHandler = new BlockHandler();
 
@@ -63,7 +58,8 @@ export class CFGBuilder {
       }
 
       return (
-        this.options.markerPattern && Boolean(syntax.text.match(this.options.markerPattern))
+        this.options.markerPattern &&
+        Boolean(syntax.text.match(this.options.markerPattern))
       );
     });
 
@@ -79,7 +75,8 @@ export class CFGBuilder {
         this.processBlock(statement),
       );
       if (!entry) entry = currentEntry;
-      if (previous && currentEntry) this.builder.addEdge(previous, currentEntry);
+      if (previous && currentEntry)
+        this.builder.addEdge(previous, currentEntry);
       previous = currentExit;
     }
     return blockHandler.update({ entry, exit: previous });
@@ -97,25 +94,23 @@ export class CFGBuilder {
       dispatch: {
         single: this.processBlock.bind(this),
         many: this.processStatements.bind(this),
-      }
+      },
     };
 
     switch (node.type) {
       case "block":
-        return this.processStatements(node.namedChildren);
+        return processBlockStatement(node, ctx);
       case "if_statement":
         return processIfStatement(node, undefined, ctx);
       case "for_statement":
         return processForStatement(node, ctx);
       case "expression_switch_statement":
       case "type_switch_statement":
-        return processSwitchlike(node, { noImplicitDefault: false }, ctx);
+        return processSwitchStatement(node, ctx);
       case "select_statement":
-        return processSwitchlike(node, { noImplicitDefault: true }, ctx);
-      case "return_statement": {
-        const returnNode = this.builder.addNode("RETURN", node.text);
-        return { entry: returnNode, exit: null };
-      }
+        return processSelectStatement(node, ctx);
+      case "return_statement":
+        return processReturnStatement(node, ctx);
       case "break_statement":
         return processBreakStatement(node, ctx);
       case "continue_statement":
@@ -126,17 +121,52 @@ export class CFGBuilder {
         return processGotoStatement(node, ctx);
       case "comment":
         return processComment(node, ctx);
-      default: {
-        const newNode = this.builder.addNode("STATEMENT", node.text);
-        return { entry: newNode, exit: newNode };
-      }
+      default:
+        return defaultProcessStatement(node, ctx);
     }
   }
-
 }
 
+function processSwitchStatement(
+  syntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  return processSwitchlike(syntax, { noImplicitDefault: false }, ctx);
+}
 
-function processGotoStatement(gotoSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock {
+function processSelectStatement(
+  syntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  return processSwitchlike(syntax, { noImplicitDefault: true }, ctx);
+}
+
+function processBlockStatement(
+  syntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  return ctx.dispatch.many(syntax.namedChildren);
+}
+
+function processReturnStatement(
+  syntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const returnNode = ctx.builder.addNode("RETURN", syntax.text);
+  return { entry: returnNode, exit: null };
+}
+function defaultProcessStatement(
+  syntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const newNode = ctx.builder.addNode("STATEMENT", syntax.text);
+  return { entry: newNode, exit: newNode };
+}
+
+function processGotoStatement(
+  gotoSyntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
   const name = gotoSyntax.firstNamedChild?.text as string;
   const gotoNode = ctx.builder.addNode("GOTO", name);
   return {
@@ -145,7 +175,10 @@ function processGotoStatement(gotoSyntax: Parser.SyntaxNode, ctx: Context): Basi
     gotos: [{ node: gotoNode, label: name }],
   };
 }
-function processLabeledStatement(labelSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock {
+function processLabeledStatement(
+  labelSyntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
   const name = getChildFieldText(labelSyntax, "label");
   const labelNode = ctx.builder.addNode("LABEL", name);
   const { entry: labeledEntry, exit: labeledExit } = ctx.state.update(
@@ -159,23 +192,25 @@ function processLabeledStatement(labelSyntax: Parser.SyntaxNode, ctx: Context): 
   });
 }
 
-
-
-
 function processContinueStatement(
-  _continueSyntax: Parser.SyntaxNode, ctx: Context
+  _continueSyntax: Parser.SyntaxNode,
+  ctx: Context,
 ): BasicBlock {
   const continueNode = ctx.builder.addNode("CONTINUE", "CONTINUE");
   return { entry: continueNode, exit: null, continues: [continueNode] };
 }
-function processBreakStatement(_breakSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock {
+function processBreakStatement(
+  _breakSyntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
   const breakNode = ctx.builder.addNode("BREAK", "BREAK");
   return { entry: breakNode, exit: null, breaks: [breakNode] };
 }
 
-
-
-function processForStatement(forNode: Parser.SyntaxNode, ctx: Context): BasicBlock {
+function processForStatement(
+  forNode: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
   const { state } = ctx;
   switch (forNode.namedChildCount) {
     // One child means only loop body, two children means loop head.
@@ -218,16 +253,14 @@ function processForStatement(forNode: Parser.SyntaxNode, ctx: Context): BasicBlo
       return state.update({ entry: headNode, exit: exitNode });
     }
     default:
-      throw new Error(
-        `Unsupported for type: ${forNode.firstNamedChild?.type}`,
-      );
+      throw new Error(`Unsupported for type: ${forNode.firstNamedChild?.type}`);
   }
 }
 
 function processIfStatement(
   ifNode: Parser.SyntaxNode,
   mergeNode: string | null = null,
-  ctx: Context
+  ctx: Context,
 ): BasicBlock {
   const conditionChild = ifNode.childForFieldName("condition");
   const conditionNode = ctx.builder.addNode(
@@ -268,9 +301,10 @@ function processIfStatement(
   return ctx.state.update({ entry: conditionNode, exit: mergeNode });
 }
 
-
-
-function processComment(commentSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock {
+function processComment(
+  commentSyntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
   // We only ever ger here when marker comments are enabled,
   // and only for marker comments as the rest are filtered out.
   const commentNode = ctx.builder.addNode("MARKER_COMMENT", commentSyntax.text);
@@ -286,7 +320,7 @@ function buildSwitch(
   mergeNode: string,
   switchHeadNode: string,
   options: SwitchOptions,
-  ctx: Context
+  ctx: Context,
 ) {
   let fallthrough: string | null = null;
   let previous: string | null = switchHeadNode;
@@ -346,7 +380,7 @@ function buildSwitch(
 function collectCases(
   switchSyntax: Parser.SyntaxNode,
   blockHandler: BlockHandler,
-  ctx: Context
+  ctx: Context,
 ): Case[] {
   const cases: Case[] = [];
   const caseTypes = [
