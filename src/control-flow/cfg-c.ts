@@ -1,4 +1,3 @@
-import { MultiDirectedGraph } from "graphology";
 import Parser from "web-tree-sitter";
 import {
   BlockHandler,
@@ -7,28 +6,22 @@ import {
   type Case,
   type CFG,
   type EdgeType,
-  type GraphEdge,
-  type GraphNode,
-  type NodeType,
 } from "./cfg-defs";
 import { BlockMatcher, Match } from "./block-matcher.ts";
+import { Builder } from "./builder.ts";
 
 export class CFGBuilder {
-  private graph: MultiDirectedGraph<GraphNode, GraphEdge>;
-  private nodeId: number;
+  private builder: Builder = new Builder();
   private readonly flatSwitch: boolean;
   private readonly markerPattern: RegExp | null;
 
   constructor(options?: BuilderOptions) {
-    this.graph = new MultiDirectedGraph();
-    this.nodeId = 0;
-
     this.flatSwitch = options?.flatSwitch ?? false;
     this.markerPattern = options?.markerPattern ?? null;
   }
 
   public buildCFG(functionNode: Parser.SyntaxNode): CFG {
-    const startNode = this.addNode("START", "START");
+    const startNode = this.builder.addNode("START", "START");
 
     const bodySyntax = functionNode.childForFieldName("body");
     if (bodySyntax) {
@@ -38,33 +31,13 @@ export class CFGBuilder {
       );
 
       blockHandler.processGotos((gotoNode, labelNode) =>
-        this.addEdge(gotoNode, labelNode),
+        this.builder.addEdge(gotoNode, labelNode),
       );
 
       // `entry` will be non-null for any valid code
-      if (entry) this.addEdge(startNode, entry);
+      if (entry) this.builder.addEdge(startNode, entry);
     }
-    return { graph: this.graph, entry: startNode };
-  }
-
-  private addNode(type: NodeType, code: string, lines: number = 1): string {
-    const id = `node${this.nodeId++}`;
-    this.graph.addNode(id, { type, code, lines, markers: [] });
-    return id;
-  }
-
-  private addMarker(node: string, marker: string) {
-    this.graph.getNodeAttributes(node).markers.push(marker);
-  }
-
-  private addEdge(
-    source: string,
-    target: string,
-    type: EdgeType = "regular",
-  ): void {
-    if (!this.graph.hasEdge(source, target)) {
-      this.graph.addEdge(source, target, { type });
-    }
+    return { graph: this.builder.getGraph(), entry: startNode };
   }
 
   private getChildFieldText(
@@ -90,7 +63,7 @@ export class CFGBuilder {
     });
 
     if (codeStatements.length === 0) {
-      const emptyNode = this.addNode("EMPTY", "empty block");
+      const emptyNode = this.builder.addNode("EMPTY", "empty block");
       return { entry: emptyNode, exit: emptyNode };
     }
 
@@ -101,7 +74,8 @@ export class CFGBuilder {
         this.processBlock(statement),
       );
       if (!entry) entry = currentEntry;
-      if (previous && currentEntry) this.addEdge(previous, currentEntry);
+      if (previous && currentEntry)
+        this.builder.addEdge(previous, currentEntry);
       previous = currentExit;
     }
     return blockHandler.update({ entry, exit: previous });
@@ -124,7 +98,7 @@ export class CFGBuilder {
       case "switch_statement":
         return this.processSwitchlike(node);
       case "return_statement": {
-        const returnNode = this.addNode("RETURN", node.text);
+        const returnNode = this.builder.addNode("RETURN", node.text);
         return { entry: returnNode, exit: null };
       }
       case "break_statement":
@@ -138,7 +112,7 @@ export class CFGBuilder {
       case "comment":
         return this.processComment(node);
       default: {
-        const newNode = this.addNode("STATEMENT", node.text);
+        const newNode = this.builder.addNode("STATEMENT", node.text);
         return { entry: newNode, exit: newNode };
       }
     }
@@ -147,10 +121,13 @@ export class CFGBuilder {
   private processComment(commentSyntax: Parser.SyntaxNode): BasicBlock {
     // We only ever ger here when marker comments are enabled,
     // and only for marker comments as the rest are filtered out.
-    const commentNode = this.addNode("MARKER_COMMENT", commentSyntax.text);
+    const commentNode = this.builder.addNode(
+      "MARKER_COMMENT",
+      commentSyntax.text,
+    );
     if (this.markerPattern) {
       const marker = commentSyntax.text.match(this.markerPattern)?.[1];
-      if (marker) this.addMarker(commentNode, marker);
+      if (marker) this.builder.addMarker(commentNode, marker);
     }
     return { entry: commentNode, exit: commentNode };
   }
@@ -165,9 +142,9 @@ export class CFGBuilder {
     cases.forEach((thisCase) => {
       if (this.flatSwitch) {
         if (thisCase.consequenceEntry) {
-          this.addEdge(switchHeadNode, thisCase.consequenceEntry);
+          this.builder.addEdge(switchHeadNode, thisCase.consequenceEntry);
           if (fallthrough) {
-            this.addEdge(fallthrough, thisCase.consequenceEntry);
+            this.builder.addEdge(fallthrough, thisCase.consequenceEntry);
           }
           if (thisCase.isDefault) {
             // If we have any default node - then we don't connect the head to the merge node.
@@ -176,10 +153,10 @@ export class CFGBuilder {
         }
       } else {
         if (fallthrough && thisCase.consequenceEntry) {
-          this.addEdge(fallthrough, thisCase.consequenceEntry);
+          this.builder.addEdge(fallthrough, thisCase.consequenceEntry);
         }
         if (previous && thisCase.conditionEntry) {
-          this.addEdge(
+          this.builder.addEdge(
             previous,
             thisCase.conditionEntry,
             "alternative" as EdgeType,
@@ -187,7 +164,7 @@ export class CFGBuilder {
         }
 
         if (thisCase.consequenceEntry && thisCase.conditionExit)
-          this.addEdge(
+          this.builder.addEdge(
             thisCase.conditionExit,
             thisCase.consequenceEntry,
             "consequence",
@@ -199,7 +176,7 @@ export class CFGBuilder {
 
       // Fallthrough is the same for both flat and non-flat layouts.
       if (!thisCase.hasFallthrough && thisCase.consequenceExit) {
-        this.addEdge(thisCase.consequenceExit, mergeNode);
+        this.builder.addEdge(thisCase.consequenceExit, mergeNode);
       }
       // Update for next case
       fallthrough = thisCase.hasFallthrough ? thisCase.consequenceExit : null;
@@ -207,11 +184,11 @@ export class CFGBuilder {
     // Connect the last node to the merge node.
     // No need to handle `fallthrough` here as it is not allowed for the last case.
     if (previous) {
-      this.addEdge(previous, mergeNode, "alternative");
+      this.builder.addEdge(previous, mergeNode, "alternative");
     }
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (fallthrough) {
-      this.addEdge(fallthrough, mergeNode, "regular");
+      this.builder.addEdge(fallthrough, mergeNode, "regular");
     }
   }
 
@@ -229,7 +206,7 @@ export class CFGBuilder {
         const consequence = caseSyntax.namedChildren.slice(isDefault ? 0 : 1);
         const hasFallthrough = true;
 
-        const conditionNode = this.addNode(
+        const conditionNode = this.builder.addNode(
           "CASE_CONDITION",
           isDefault ? "default" : (caseSyntax.firstNamedChild?.text ?? ""),
         );
@@ -256,15 +233,15 @@ export class CFGBuilder {
     const blockHandler = new BlockHandler();
 
     const cases = this.collectCases(switchSyntax, blockHandler);
-    const headNode = this.addNode(
+    const headNode = this.builder.addNode(
       "SWITCH_CONDITION",
       this.getChildFieldText(switchSyntax, "value"),
     );
-    const mergeNode: string = this.addNode("SWITCH_MERGE", "");
+    const mergeNode: string = this.builder.addNode("SWITCH_MERGE", "");
     this.buildSwitch(cases, mergeNode, headNode);
 
     blockHandler.forEachBreak((breakNode) => {
-      this.addEdge(breakNode, mergeNode);
+      this.builder.addEdge(breakNode, mergeNode);
     });
 
     return blockHandler.update({ entry: headNode, exit: mergeNode });
@@ -272,7 +249,7 @@ export class CFGBuilder {
 
   private processGotoStatement(gotoSyntax: Parser.SyntaxNode): BasicBlock {
     const name = gotoSyntax.firstNamedChild?.text as string;
-    const gotoNode = this.addNode("GOTO", name);
+    const gotoNode = this.builder.addNode("GOTO", name);
     return {
       entry: gotoNode,
       exit: null,
@@ -283,11 +260,11 @@ export class CFGBuilder {
   private processLabeledStatement(labelSyntax: Parser.SyntaxNode): BasicBlock {
     const blockHandler = new BlockHandler();
     const name = this.getChildFieldText(labelSyntax, "label");
-    const labelNode = this.addNode("LABEL", name);
+    const labelNode = this.builder.addNode("LABEL", name);
     const { entry: labeledEntry, exit: labeledExit } = blockHandler.update(
       this.processBlock(labelSyntax.namedChildren[1]),
     );
-    if (labeledEntry) this.addEdge(labelNode, labeledEntry);
+    if (labeledEntry) this.builder.addEdge(labelNode, labeledEntry);
     return blockHandler.update({
       entry: labelNode,
       exit: labeledExit,
@@ -298,15 +275,14 @@ export class CFGBuilder {
   private processContinueStatement(
     _continueSyntax: Parser.SyntaxNode,
   ): BasicBlock {
-    const continueNode = this.addNode("CONTINUE", "CONTINUE");
+    const continueNode = this.builder.addNode("CONTINUE", "CONTINUE");
     return { entry: continueNode, exit: null, continues: [continueNode] };
   }
 
   private processBreakStatement(_breakSyntax: Parser.SyntaxNode): BasicBlock {
-    const breakNode = this.addNode("BREAK", "BREAK");
+    const breakNode = this.builder.addNode("BREAK", "BREAK");
     return { entry: breakNode, exit: null, breaks: [breakNode] };
   }
-
 
   private processIfStatement(ifSyntax: Parser.SyntaxNode): BasicBlock {
     const queryString = `
@@ -338,22 +314,22 @@ export class CFGBuilder {
       elseBlock: ifMatch.getBlock(ifMatch.getSyntax("else-body")),
     }));
 
-    const headNode = this.addNode("CONDITION", "if-else head");
-    const mergeNode = this.addNode("MERGE", "if-else merge");
+    const headNode = this.builder.addNode("CONDITION", "if-else head");
+    const mergeNode = this.builder.addNode("MERGE", "if-else merge");
 
     if (blocks[0].condBlock?.entry)
-      this.addEdge(headNode, blocks[0].condBlock.entry);
+      this.builder.addEdge(headNode, blocks[0].condBlock.entry);
 
     let previous: string | null | undefined = null;
     for (const { condBlock, thenBlock } of blocks) {
       if (previous && condBlock?.entry) {
-        this.addEdge(previous, condBlock.entry, "alternative");
+        this.builder.addEdge(previous, condBlock.entry, "alternative");
       }
       if (condBlock?.exit && thenBlock?.entry) {
-        this.addEdge(condBlock.exit, thenBlock.entry, "consequence");
+        this.builder.addEdge(condBlock.exit, thenBlock.entry, "consequence");
       }
       if (thenBlock?.exit) {
-        this.addEdge(thenBlock.exit, mergeNode);
+        this.builder.addEdge(thenBlock.exit, mergeNode);
       }
 
       previous = condBlock?.exit;
@@ -366,11 +342,11 @@ export class CFGBuilder {
     const elseBlock = last(blocks)?.elseBlock;
     if (elseBlock) {
       if (previous && elseBlock.entry) {
-        this.addEdge(previous, elseBlock.entry, "alternative");
+        this.builder.addEdge(previous, elseBlock.entry, "alternative");
       }
-      if (elseBlock.exit) this.addEdge(elseBlock.exit, mergeNode);
+      if (elseBlock.exit) this.builder.addEdge(elseBlock.exit, mergeNode);
     } else if (previous) {
-      this.addEdge(previous, mergeNode, "alternative");
+      this.builder.addEdge(previous, mergeNode, "alternative");
     }
 
     return blockMatcher.update({ entry: headNode, exit: mergeNode });
@@ -414,16 +390,17 @@ export class CFGBuilder {
     const updateBlock = getBlock(updateSyntax);
     const bodyBlock = getBlock(bodySyntax);
 
-    const entryNode = this.addNode("EMPTY", "loop head");
-    const exitNode = this.addNode("FOR_EXIT", "loop exit");
-    const headNode = this.addNode("LOOP_HEAD", "loop head");
+    const entryNode = this.builder.addNode("EMPTY", "loop head");
+    const exitNode = this.builder.addNode("FOR_EXIT", "loop exit");
+    const headNode = this.builder.addNode("LOOP_HEAD", "loop head");
     const headBlock = { entry: headNode, exit: headNode };
 
     const chain = (entry: string | null, blocks: (BasicBlock | null)[]) => {
       let prevExit: string | null = entry;
       for (const block of blocks) {
         if (!block) continue;
-        if (prevExit && block.entry) this.addEdge(prevExit, block.entry);
+        if (prevExit && block.entry)
+          this.builder.addEdge(prevExit, block.entry);
         prevExit = block.exit;
       }
       return prevExit;
@@ -451,8 +428,8 @@ export class CFGBuilder {
       chain(topExit, [condBlock]);
       if (condBlock.exit) {
         if (bodyBlock?.entry)
-          this.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
-        this.addEdge(condBlock.exit, exitNode, "alternative");
+          this.builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
+        this.builder.addEdge(condBlock.exit, exitNode, "alternative");
         chain(bodyBlock?.exit ?? null, [headBlock, updateBlock, condBlock]);
       }
     } else {
@@ -460,11 +437,11 @@ export class CFGBuilder {
     }
 
     blockHandler.forEachContinue((continueNode) => {
-      this.addEdge(continueNode, headNode);
+      this.builder.addEdge(continueNode, headNode);
     });
 
     blockHandler.forEachBreak((breakNode) => {
-      this.addEdge(breakNode, exitNode);
+      this.builder.addEdge(breakNode, exitNode);
     });
 
     return blockHandler.update({ entry: entryNode, exit: exitNode });
@@ -503,22 +480,22 @@ export class CFGBuilder {
     const condBlock = getBlock(condSyntax) as BasicBlock;
     const bodyBlock = getBlock(bodySyntax) as BasicBlock;
 
-    const exitNode = this.addNode("FOR_EXIT", "loop exit");
+    const exitNode = this.builder.addNode("FOR_EXIT", "loop exit");
 
     if (condBlock.exit) {
       if (bodyBlock.entry)
-        this.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
-      this.addEdge(condBlock.exit, exitNode, "alternative");
+        this.builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
+      this.builder.addEdge(condBlock.exit, exitNode, "alternative");
     }
     if (condBlock.entry && bodyBlock.exit)
-      this.addEdge(bodyBlock.exit, condBlock.entry);
+      this.builder.addEdge(bodyBlock.exit, condBlock.entry);
 
     blockHandler.forEachContinue((continueNode) => {
-      if (condBlock.entry) this.addEdge(continueNode, condBlock.entry);
+      if (condBlock.entry) this.builder.addEdge(continueNode, condBlock.entry);
     });
 
     blockHandler.forEachBreak((breakNode) => {
-      this.addEdge(breakNode, exitNode);
+      this.builder.addEdge(breakNode, exitNode);
     });
 
     return blockHandler.update({ entry: condBlock.entry, exit: exitNode });
@@ -557,22 +534,22 @@ export class CFGBuilder {
     const condBlock = getBlock(condSyntax) as BasicBlock;
     const bodyBlock = getBlock(bodySyntax) as BasicBlock;
 
-    const exitNode = this.addNode("FOR_EXIT", "loop exit");
+    const exitNode = this.builder.addNode("FOR_EXIT", "loop exit");
 
     if (condBlock.exit) {
       if (bodyBlock.entry)
-        this.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
-      this.addEdge(condBlock.exit, exitNode, "alternative");
+        this.builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
+      this.builder.addEdge(condBlock.exit, exitNode, "alternative");
     }
     if (condBlock.entry && bodyBlock.exit)
-      this.addEdge(bodyBlock.exit, condBlock.entry);
+      this.builder.addEdge(bodyBlock.exit, condBlock.entry);
 
     blockHandler.forEachContinue((continueNode) => {
-      if (condBlock.entry) this.addEdge(continueNode, condBlock.entry);
+      if (condBlock.entry) this.builder.addEdge(continueNode, condBlock.entry);
     });
 
     blockHandler.forEachBreak((breakNode) => {
-      this.addEdge(breakNode, exitNode);
+      this.builder.addEdge(breakNode, exitNode);
     });
 
     return blockHandler.update({ entry: bodyBlock.entry, exit: exitNode });
