@@ -9,6 +9,7 @@ import {
 } from "./cfg-defs";
 import { BlockMatcher, Match } from "./block-matcher.ts";
 import { Builder } from "./builder.ts";
+import { isQuestionOrPlusOrMinusToken } from "typescript";
 
 export class CFGBuilder {
   private builder: Builder = new Builder();
@@ -90,7 +91,7 @@ export class CFGBuilder {
       case "if_statement":
         return this.processIfStatement(node, new BlockMatcher(this.processBlock.bind(this)));
       case "for_statement":
-        return this.processForStatement(node);
+        return this.processForStatement(node, new BlockMatcher(this.processBlock.bind(this)));
       case "while_statement":
         return this.processWhileStatement(node);
       case "do_statement":
@@ -351,43 +352,25 @@ export class CFGBuilder {
     return matcher.update({ entry: headNode, exit: mergeNode });
   }
 
-  private processForStatement(forNode: Parser.SyntaxNode): BasicBlock {
-    const blockHandler = new BlockHandler();
-    const language = forNode.tree.getLanguage();
-    const query = language.query(`
+  private processForStatement(forNode: Parser.SyntaxNode, matcher: BlockMatcher): BasicBlock {
+    const queryString = `
       (for_statement
 	        initializer: (_)? @init
           condition: (_)? @cond
           update: (_)? @update
           body: (_) @body) @for
-      `);
-    const matches = query.matches(forNode);
-    const match = (() => {
-      for (const match of matches) {
-        for (const capture of match.captures) {
-          if (capture.name === "for" && capture.node.id === forNode.id) {
-            return match;
-          }
-        }
-      }
-      throw new Error("No match found!");
-    })();
+      `;
+    const match = matcher.match(forNode, queryString);
 
-    const getSyntax = (name: string): Parser.SyntaxNode | null =>
-      match.captures.filter((capture) => capture.name === name)[0]?.node;
+    const initSyntax = match.getSyntax("init");
+    const condSyntax = match.getSyntax("cond");
+    const updateSyntax = match.getSyntax("update");
+    const bodySyntax = match.getSyntax("body");
 
-    const initSyntax = getSyntax("init");
-    const condSyntax = getSyntax("cond");
-    const updateSyntax = getSyntax("update");
-    const bodySyntax = getSyntax("body");
-
-    const getBlock = (syntax: Parser.SyntaxNode | null) =>
-      syntax ? blockHandler.update(this.processBlock(syntax)) : null;
-
-    const initBlock = getBlock(initSyntax);
-    const condBlock = getBlock(condSyntax);
-    const updateBlock = getBlock(updateSyntax);
-    const bodyBlock = getBlock(bodySyntax);
+    const initBlock = match.getBlock(initSyntax);
+    const condBlock = match.getBlock(condSyntax);
+    const updateBlock = match.getBlock(updateSyntax);
+    const bodyBlock = match.getBlock(bodySyntax);
 
     const entryNode = this.builder.addNode("EMPTY", "loop head");
     const exitNode = this.builder.addNode("FOR_EXIT", "loop exit");
@@ -435,15 +418,15 @@ export class CFGBuilder {
       chain(topExit, [bodyBlock, headBlock, updateBlock, bodyBlock]);
     }
 
-    blockHandler.forEachContinue((continueNode) => {
+    matcher.state.forEachContinue((continueNode) => {
       this.builder.addEdge(continueNode, headNode);
     });
 
-    blockHandler.forEachBreak((breakNode) => {
+    matcher.state.forEachBreak((breakNode) => {
       this.builder.addEdge(breakNode, exitNode);
     });
 
-    return blockHandler.update({ entry: entryNode, exit: exitNode });
+    return matcher.update({ entry: entryNode, exit: exitNode });
   }
 
   private processWhileStatement(whileSyntax: Parser.SyntaxNode): BasicBlock {
