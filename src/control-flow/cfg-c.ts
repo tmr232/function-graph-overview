@@ -9,22 +9,31 @@ import {
 } from "./cfg-defs";
 import { BlockMatcher, Match } from "./block-matcher.ts";
 import { Builder } from "./builder.ts";
-
-interface Dispatch {
-  single(syntax: Parser.SyntaxNode | null): BasicBlock;
-  many(statements: Parser.SyntaxNode[]): BasicBlock;
-}
-interface Context {
-  builder: Builder;
-  options: BuilderOptions;
-  matcher: BlockMatcher;
-  dispatch: Dispatch;
-}
+import type { Context, StatementHandlers } from "./statement-handlers.ts";
 
 function getChildFieldText(node: Parser.SyntaxNode, fieldName: string): string {
   const child = node.childForFieldName(fieldName);
   return child ? child.text : "";
 }
+
+
+const statementHandlers: StatementHandlers = {
+  named: {
+    compound_statement: processCompoundStatement,
+    if_statement: processIfStatement,
+    for_statement: processForStatement,
+    while_statement: processWhileStatement,
+    do_statement: processDoStatement,
+    switch_statement: processSwitchlike,
+    return_statement: processReturnStatement,
+    break_statement: processBreakStatement,
+    continue_statement: processContinueStatement,
+    labeled_statement: processLabeledStatement,
+    goto_statement: processGotoStatement,
+    comment: processComment,
+  },
+  default: defaultProcessStatement,
+};
 export class CFGBuilder {
   private builder: Builder = new Builder();
   private readonly flatSwitch: boolean;
@@ -35,18 +44,6 @@ export class CFGBuilder {
     this.options = options;
     this.flatSwitch = options.flatSwitch ?? false;
     this.markerPattern = options.markerPattern ?? null;
-  }
-
-  private buildContext(): Context {
-    return {
-      builder: this.builder,
-      options: this.options,
-      matcher: new BlockMatcher(this.processBlock.bind(this)),
-      dispatch: {
-        single: this.processBlock.bind(this),
-        many: this.processStatements.bind(this),
-      },
-    };
   }
 
   public buildCFG(functionNode: Parser.SyntaxNode): CFG {
@@ -102,39 +99,26 @@ export class CFGBuilder {
     return blockHandler.update({ entry, exit: previous });
   }
 
-  private processBlock(node: Parser.SyntaxNode | null): BasicBlock {
-    if (!node) return { entry: null, exit: null };
+  private processBlock(syntax: Parser.SyntaxNode | null): BasicBlock {
+    if (!syntax) return { entry: null, exit: null };
 
-    switch (node.type) {
-      case "compound_statement":
-        return processCompoundStatement(node, this.buildContext());
-      case "if_statement":
-        return processIfStatement(node, this.buildContext());
-      case "for_statement":
-        return processForStatement(node, this.buildContext());
-      case "while_statement":
-        return processWhileStatement(node, this.buildContext());
-      case "do_statement":
-        return processDoStatement(node, this.buildContext());
-      case "switch_statement":
-        return processSwitchlike(node, this.buildContext());
-      case "return_statement":
-        return processReturnStatement(node, this.buildContext());
-      case "break_statement":
-        return processBreakStatement(node, this.buildContext());
-      case "continue_statement":
-        return processContinueStatement(node, this.buildContext());
-      case "labeled_statement":
-        return processLabeledStatement(node, this.buildContext());
-      case "goto_statement":
-        return processGotoStatement(node, this.buildContext());
-      case "comment":
-        return processComment(node, this.buildContext());
-      default:
-        return defaultProcessStatement(node, this.buildContext());
-    }
+    const handler =
+      statementHandlers.named[syntax.type] ??
+      statementHandlers.default;
+    const matcher = new BlockMatcher(this.processBlock.bind(this));
+    return handler(syntax, {
+      builder: this.builder,
+      matcher: matcher,
+      state: matcher.state,
+      options: this.options,
+      dispatch: {
+        single: this.processBlock.bind(this),
+        many: this.processStatements.bind(this),
+      },
+    });
   }
 }
+
 
 function collectCases(switchSyntax: Parser.SyntaxNode, ctx: Context): Case[] {
   const cases: Case[] = [];

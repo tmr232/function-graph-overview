@@ -7,10 +7,9 @@ import {
 } from "./cfg-defs";
 import { Builder } from "./builder.ts";
 import { BlockMatcher, matchExistsIn } from "./block-matcher.ts";
-import type { StatementHandlers } from "./statement-handlers.ts";
+import type { Context, StatementHandlers } from "./statement-handlers.ts";
 
-const pythonStatementHandlers: StatementHandlers = {
-  block: "block",
+const statementHandlers: StatementHandlers = {
   named: {
     if_statement: processIfStatement,
     for_statement: processForStatement,
@@ -23,6 +22,7 @@ const pythonStatementHandlers: StatementHandlers = {
     with_statement: processWithStatement,
     try_statement: processTryStatement,
     raise_statement: processRaiseStatement,
+    block: processBlockStatement,
   },
   default: defaultProcessStatement,
 };
@@ -41,11 +41,7 @@ export class CFGBuilder {
     if (bodyNode) {
       const blockHandler = new BlockHandler();
       const { entry, exit } = blockHandler.update(
-        this.processStatements(
-          bodyNode.namedChildren,
-          this.builder,
-          new BlockMatcher(this.processBlock.bind(this)),
-        ),
+        this.processStatements(bodyNode.namedChildren),
       );
 
       const endNode = this.builder.addNode("RETURN", "implicit return");
@@ -59,29 +55,24 @@ export class CFGBuilder {
   private processBlock(syntax: Parser.SyntaxNode | null): BasicBlock {
     if (!syntax) return { entry: null, exit: null };
 
-    if (syntax.type === pythonStatementHandlers.block) {
-      return this.processStatements(
-        syntax.namedChildren,
-        this.builder,
-        new BlockMatcher(this.processBlock.bind(this)),
-      );
-    }
     const handler =
-      pythonStatementHandlers.named[syntax.type] ??
-      pythonStatementHandlers.default;
-    return handler(
-      syntax,
-      this.builder,
-      new BlockMatcher(this.processBlock.bind(this)),
-      this.options,
-    );
+      statementHandlers.named[syntax.type] ??
+      statementHandlers.default;
+    const matcher = new BlockMatcher(this.processBlock.bind(this));
+    return handler(syntax, {
+      builder: this.builder,
+      matcher: matcher,
+      state: matcher.state,
+      options: this.options,
+      dispatch: {
+        single: this.processBlock.bind(this),
+        many: this.processStatements.bind(this),
+      },
+    });
   }
 
-  private processStatements(
-    statements: Parser.SyntaxNode[],
-    builder: Builder,
-    matcher: BlockMatcher,
-  ): BasicBlock {
+  private processStatements(statements: Parser.SyntaxNode[]): BasicBlock {
+    const blockHandler = new BlockHandler();
     // Ignore comments
     const codeStatements = statements.filter((syntax) => {
       if (syntax.type !== "comment") {
@@ -95,28 +86,30 @@ export class CFGBuilder {
     });
 
     if (codeStatements.length === 0) {
-      const emptyNode = builder.addNode("EMPTY", "empty block");
+      const emptyNode = this.builder.addNode("EMPTY", "empty block");
       return { entry: emptyNode, exit: emptyNode };
     }
 
     let entry: string | null = null;
     let previous: string | null = null;
     for (const statement of codeStatements) {
-      const { entry: currentEntry, exit: currentExit } = matcher.state.update(
+      const { entry: currentEntry, exit: currentExit } = blockHandler.update(
         this.processBlock(statement),
       );
       if (!entry) entry = currentEntry;
-      if (previous && currentEntry) builder.addEdge(previous, currentEntry);
+      if (previous && currentEntry)
+        this.builder.addEdge(previous, currentEntry);
       previous = currentExit;
     }
-    return matcher.state.update({ entry, exit: previous });
+    return blockHandler.update({ entry, exit: previous });
   }
 }
 
 function defaultProcessStatement(
   syntax: Parser.SyntaxNode,
-  builder: Builder,
+  ctx: Context,
 ): BasicBlock {
+  const { builder } = ctx;
   const hasYield = matchExistsIn(syntax, "yield", `(yield) @yield`);
   if (hasYield) {
     const yieldNode = builder.addNode("YIELD", syntax.text);
@@ -127,23 +120,25 @@ function defaultProcessStatement(
 }
 function processRaiseStatement(
   raiseSyntax: Parser.SyntaxNode,
-  builder: Builder,
+  ctx: Context,
 ): BasicBlock {
+  const { builder } = ctx;
   const raiseNode = builder.addNode("THROW", raiseSyntax.text);
   return { entry: raiseNode, exit: null };
 }
 function processReturnStatement(
   returnSyntax: Parser.SyntaxNode,
-  builder: Builder,
+  ctx: Context,
 ): BasicBlock {
+  const { builder } = ctx;
   const returnNode = builder.addNode("RETURN", returnSyntax.text);
   return { entry: returnNode, exit: null, returns: [returnNode] };
 }
 function processTryStatement(
   trySyntax: Parser.SyntaxNode,
-  builder: Builder,
-  matcher: BlockMatcher,
+  ctx: Context,
 ): BasicBlock {
+  const { builder, matcher } = ctx;
   /*
   Here's an idea - I can duplicate the finally blocks!
   Then if there's a return, I stick the finally before it.
@@ -270,9 +265,9 @@ function processTryStatement(
 }
 function processWithStatement(
   withSyntax: Parser.SyntaxNode,
-  builder: Builder,
-  matcher: BlockMatcher,
+  ctx: Context,
 ): BasicBlock {
+  const { builder, matcher } = ctx;
   const match = matcher.match(
     withSyntax,
     `
@@ -301,10 +296,9 @@ function processWithStatement(
 
 function processComment(
   commentSyntax: Parser.SyntaxNode,
-  builder: Builder,
-  _matcher: BlockMatcher,
-  options: BuilderOptions,
+  ctx: Context,
 ): BasicBlock {
+  const { builder, options } = ctx;
   // We only ever ger here when marker comments are enabled,
   // and only for marker comments as the rest are filtered out.
   const commentNode = builder.addNode("MARKER_COMMENT", commentSyntax.text);
@@ -317,10 +311,9 @@ function processComment(
 
 function processMatchStatement(
   matchSyntax: Parser.SyntaxNode,
-  builder: Builder,
-  matcher: BlockMatcher,
-  options: BuilderOptions,
+  ctx: Context,
 ): BasicBlock {
+  const { builder, matcher, options } = ctx;
   const match = matcher.match(
     matchSyntax,
     `
@@ -379,24 +372,26 @@ function processMatchStatement(
 
 function processContinueStatement(
   _continueSyntax: Parser.SyntaxNode,
-  builder: Builder,
+  ctx: Context,
 ): BasicBlock {
+  const { builder } = ctx;
   const continueNode = builder.addNode("CONTINUE", "CONTINUE");
   return { entry: continueNode, exit: null, continues: [continueNode] };
 }
 function processBreakStatement(
   _breakSyntax: Parser.SyntaxNode,
-  builder: Builder,
+  ctx: Context,
 ): BasicBlock {
+  const { builder } = ctx;
   const breakNode = builder.addNode("BREAK", "BREAK");
   return { entry: breakNode, exit: null, breaks: [breakNode] };
 }
 
 function processIfStatement(
   ifNode: Parser.SyntaxNode,
-  builder: Builder,
-  matcher: BlockMatcher,
+  ctx: Context,
 ): BasicBlock {
+  const { builder, matcher } = ctx;
   const match = matcher.match(
     ifNode,
     `
@@ -465,9 +460,9 @@ function processIfStatement(
 
 function processForStatement(
   forNode: Parser.SyntaxNode,
-  builder: Builder,
-  matcher: BlockMatcher,
+  ctx: Context,
 ): BasicBlock {
+  const { builder, matcher } = ctx;
   const match = matcher.match(
     forNode,
     `
@@ -521,9 +516,9 @@ function processForStatement(
 
 function processWhileStatement(
   whileSyntax: Parser.SyntaxNode,
-  builder: Builder,
-  matcher: BlockMatcher,
+  ctx: Context,
 ): BasicBlock {
+  const { builder, matcher } = ctx;
   const match = matcher.match(
     whileSyntax,
     `
@@ -568,4 +563,11 @@ function processWhileStatement(
   });
 
   return matcher.update({ entry: condBlock.entry, exit: exitNode });
+}
+
+function processBlockStatement(
+  blockSyntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  return ctx.dispatch.many(blockSyntax.namedChildren);
 }
