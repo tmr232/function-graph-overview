@@ -11,6 +11,7 @@ import {
   type GraphNode,
   type NodeType,
 } from "./cfg-defs";
+import { BlockMatcher, Match } from "./block-matcher.ts";
 
 export class CFGBuilder {
   private graph: MultiDirectedGraph<GraphNode, GraphEdge>;
@@ -142,6 +143,7 @@ export class CFGBuilder {
       }
     }
   }
+
   private processComment(commentSyntax: Parser.SyntaxNode): BasicBlock {
     // We only ever ger here when marker comments are enabled,
     // and only for marker comments as the rest are filtered out.
@@ -277,6 +279,7 @@ export class CFGBuilder {
       gotos: [{ node: gotoNode, label: name }],
     };
   }
+
   private processLabeledStatement(labelSyntax: Parser.SyntaxNode): BasicBlock {
     const blockHandler = new BlockHandler();
     const name = this.getChildFieldText(labelSyntax, "label");
@@ -291,67 +294,86 @@ export class CFGBuilder {
       labels: new Map([[name, labelNode]]),
     });
   }
+
   private processContinueStatement(
     _continueSyntax: Parser.SyntaxNode,
   ): BasicBlock {
     const continueNode = this.addNode("CONTINUE", "CONTINUE");
     return { entry: continueNode, exit: null, continues: [continueNode] };
   }
+
   private processBreakStatement(_breakSyntax: Parser.SyntaxNode): BasicBlock {
     const breakNode = this.addNode("BREAK", "BREAK");
     return { entry: breakNode, exit: null, breaks: [breakNode] };
   }
 
-  private processIfStatement(
-    ifNode: Parser.SyntaxNode,
-    mergeNode: string | null = null,
-  ): BasicBlock {
-    const blockHandler = new BlockHandler();
 
-    const conditionChild = ifNode.childForFieldName("condition");
-    const conditionNode = this.addNode(
-      "CONDITION",
-      conditionChild ? conditionChild.text : "Unknown condition",
-    );
+  private processIfStatement(ifSyntax: Parser.SyntaxNode): BasicBlock {
+    const queryString = `
+        (if_statement
+          condition: (_) @cond
+          consequence: (_) @then
+          alternative: (
+              else_clause ([
+                  (if_statement) @else-if
+                  (compound_statement) @else-body
+                  ])
+          )? @else
+        )@if
+    `;
 
-    mergeNode ??= this.addNode("MERGE", "MERGE");
+    const blockMatcher = new BlockMatcher(this.processBlock.bind(this));
 
-    const consequenceChild = ifNode.childForFieldName("consequence");
+    const getIfs = (currentSyntax: Parser.SyntaxNode): Match[] => {
+      const match = blockMatcher.tryMatch(currentSyntax, queryString);
+      if (!match) return [];
+      const elseifSyntax = match.getSyntax("else-if");
+      if (!elseifSyntax) return [match];
+      return [match, ...getIfs(elseifSyntax)];
+    };
 
-    const { entry: thenEntry, exit: thenExit } = blockHandler.update(
-      this.processBlock(consequenceChild),
-    );
+    const blocks = getIfs(ifSyntax).map((ifMatch) => ({
+      condBlock: ifMatch.getBlock(ifMatch.requireSyntax("cond")),
+      thenBlock: ifMatch.getBlock(ifMatch.requireSyntax("then")),
+      elseBlock: ifMatch.getBlock(ifMatch.getSyntax("else-body")),
+    }));
 
-    if (thenEntry) this.addEdge(conditionNode, thenEntry, "consequence");
-    if (thenExit) this.addEdge(thenExit, mergeNode, "regular");
+    const headNode = this.addNode("CONDITION", "if-else head");
+    const mergeNode = this.addNode("MERGE", "if-else merge");
 
-    const alternativeChild = ifNode.childForFieldName("alternative");
+    if (blocks[0].condBlock?.entry)
+      this.addEdge(headNode, blocks[0].condBlock.entry);
 
-    if (alternativeChild) {
-      // We have an else or else-if
-      const maybeElseIf = alternativeChild.firstNamedChild;
-      const elseIf = maybeElseIf?.type === "if_statement";
-      if (elseIf) {
-        const { entry: elseEntry } = blockHandler.update(
-          this.processIfStatement(maybeElseIf, mergeNode),
-        );
-        if (elseEntry) this.addEdge(conditionNode, elseEntry, "alternative");
-        // No need to connect the exit as it's already linked to the else node.
-      } else {
-        // Normal else
-        const { entry: elseEntry, exit: elseExit } = blockHandler.update(
-          this.processBlock(alternativeChild),
-        );
-        if (elseEntry) this.addEdge(conditionNode, elseEntry, "alternative");
-        // This was processed like any other block, so we need to link the merge node.
-        if (elseExit) this.addEdge(elseExit, mergeNode, "regular");
+    let previous: string | null | undefined = null;
+    for (const { condBlock, thenBlock } of blocks) {
+      if (previous && condBlock?.entry) {
+        this.addEdge(previous, condBlock.entry, "alternative");
       }
-    } else {
-      // No else clause
-      this.addEdge(conditionNode, mergeNode, "alternative");
+      if (condBlock?.exit && thenBlock?.entry) {
+        this.addEdge(condBlock.exit, thenBlock.entry, "consequence");
+      }
+      if (thenBlock?.exit) {
+        this.addEdge(thenBlock.exit, mergeNode);
+      }
+
+      previous = condBlock?.exit;
     }
 
-    return blockHandler.update({ entry: conditionNode, exit: mergeNode });
+    function last<T>(items: T[]): T | undefined {
+      return items[items.length - 1];
+    }
+
+    const elseBlock = last(blocks)?.elseBlock;
+    if (elseBlock) {
+      if (previous && elseBlock.entry) {
+        this.addEdge(previous, elseBlock.entry, "alternative");
+      }
+      if (elseBlock.exit) this.addEdge(elseBlock.exit, mergeNode);
+    } else if (previous) {
+      this.addEdge(previous, mergeNode, "alternative");
+    }
+
+    return blockMatcher.update({ entry: headNode, exit: mergeNode });
   }
 
   private processForStatement(forNode: Parser.SyntaxNode): BasicBlock {
@@ -410,9 +432,9 @@ export class CFGBuilder {
     /*
     entry -> init -> cond +-> body -> head -> update -> cond
                           --> exit
-
+  
     top = chain(entry, init,)
-
+  
     if cond:
         chain(top, cond)
         cond +-> body
@@ -420,7 +442,7 @@ export class CFGBuilder {
         chain(body, head, update, cond)
     else:
         chain(top, body, head, update, body)
-
+  
     chain(continue, head)
     chain(break, exit)
     */

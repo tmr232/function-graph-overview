@@ -1,7 +1,10 @@
 import Parser from "web-tree-sitter";
 import { type BasicBlock, BlockHandler } from "./cfg-defs.ts";
 
-function matchQuery(syntax: Parser.SyntaxNode, queryString: string) {
+function matchQuery(
+  syntax: Parser.SyntaxNode,
+  queryString: string,
+): Parser.QueryMatch {
   const language = syntax.tree.getLanguage();
   const query = language.query(queryString);
   const matches = query.matches(syntax, { maxStartDepth: 0 });
@@ -29,6 +32,17 @@ function getSyntax(
   return getSyntaxMany(match, name)[0];
 }
 
+function requireSyntax(
+  match: Parser.QueryMatch,
+  name: string,
+): Parser.SyntaxNode {
+  const syntax = getSyntax(match, name);
+  if (!syntax) {
+    throw new Error(`Failed getting syntax for ${name}`);
+  }
+  return syntax;
+}
+
 function getSyntaxMany(
   match: Parser.QueryMatch,
   name: string,
@@ -47,9 +61,20 @@ export class BlockMatcher {
     this.processBlock = processBlock;
   }
 
-  public match(syntax: Parser.SyntaxNode, queryString: string) {
+  public match(syntax: Parser.SyntaxNode, queryString: string): Match {
     const match = matchQuery(syntax, queryString);
     return new Match(match, this.blockHandler, this.processBlock);
+  }
+
+  public tryMatch(
+    syntax: Parser.SyntaxNode,
+    queryString: string,
+  ): Match | null {
+    try {
+      return this.match(syntax, queryString);
+    } catch {
+      return null;
+    }
   }
 
   public get state() {
@@ -57,7 +82,7 @@ export class BlockMatcher {
   }
 }
 
-class Match {
+export class Match {
   private match: Parser.QueryMatch;
   private blockHandler: BlockHandler;
   private processBlock: BlockMatcher["processBlock"];
@@ -73,6 +98,10 @@ class Match {
 
   public getSyntax(name: string): ReturnType<typeof getSyntax> {
     return getSyntax(this.match, name);
+  }
+
+  public requireSyntax(name: string): ReturnType<typeof requireSyntax> {
+    return requireSyntax(this.match, name);
   }
 
   public getSyntaxMany(name: string): ReturnType<typeof getSyntaxMany> {
