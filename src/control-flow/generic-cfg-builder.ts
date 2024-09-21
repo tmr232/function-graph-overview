@@ -23,7 +23,7 @@ export class GenericCFGBuilder {
 
   public buildCFG(functionNode: Parser.SyntaxNode): CFG {
     const startNode = this.builder.addNode("START", "START");
-
+    this.nodeMapper.add(functionNode, startNode);
     const bodySyntax = functionNode.childForFieldName("body");
     if (bodySyntax) {
       const blockHandler = new BlockHandler();

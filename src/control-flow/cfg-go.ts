@@ -191,6 +191,7 @@ function processIfStatement(
     "CONDITION",
     conditionChild ? conditionChild.text : "Unknown condition",
   );
+  ctx.link(ifNode, conditionNode);
 
   mergeNode ??= ctx.builder.addNode("MERGE", "MERGE");
 
@@ -232,6 +233,7 @@ function processComment(
   // We only ever ger here when marker comments are enabled,
   // and only for marker comments as the rest are filtered out.
   const commentNode = ctx.builder.addNode("MARKER_COMMENT", commentSyntax.text);
+  ctx.link(commentSyntax, commentNode)
   if (ctx.options.markerPattern) {
     const marker = commentSyntax.text.match(ctx.options.markerPattern)?.[1];
     if (marker) ctx.builder.addMarker(commentNode, marker);
@@ -326,6 +328,7 @@ function collectCases(
         "CASE_CONDITION",
         isDefault ? "default" : (caseSyntax.firstNamedChild?.text ?? ""),
       );
+      ctx.link(caseSyntax, conditionNode);
       const consequenceNode = blockHandler.update(
         ctx.dispatch.many(consequence),
       );
@@ -356,6 +359,7 @@ function processSwitchlike(
     "SWITCH_CONDITION",
     getChildFieldText(switchSyntax, "value"),
   );
+  ctx.link(switchSyntax, headNode);
   const mergeNode: string = ctx.builder.addNode("SWITCH_MERGE", "");
   buildSwitch(cases, mergeNode, headNode, options, ctx);
 
