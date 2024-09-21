@@ -1,5 +1,0 @@
-func endlessBreak() {
-	for {
-		break
-	}
-}
