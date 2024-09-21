@@ -233,7 +233,7 @@ function processComment(
   // We only ever ger here when marker comments are enabled,
   // and only for marker comments as the rest are filtered out.
   const commentNode = ctx.builder.addNode("MARKER_COMMENT", commentSyntax.text);
-  ctx.link(commentSyntax, commentNode)
+  ctx.link(commentSyntax, commentNode);
   if (ctx.options.markerPattern) {
     const marker = commentSyntax.text.match(ctx.options.markerPattern)?.[1];
     if (marker) ctx.builder.addMarker(commentNode, marker);
