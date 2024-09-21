@@ -1,11 +1,6 @@
-# CFG Web View
+# Test Viewer
 
-This is a tool meant to help debugging the CFG generation and presentation.
+This is the test viewer, meant to make testing easier.
 
-Use `bun run web` to run it.
-
-Add more samples under `./src/assets/samples/` to see them in the web view.
-
-## TODO
-
-- [ ] Find a better way to serve the `.wasm` files rather than sticking them in the `public` dir.
+To run it, run `bun web-tests` to generate test data, (or use `--watch` to run continiously),
+then run `bun web` to start the server.
