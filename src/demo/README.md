@@ -1,11 +1,7 @@
-# CFG Web View
+# Function-Graph-Overview Demo
 
-This is a tool meant to help debugging the CFG generation and presentation.
+This is the interactive web demo.
 
-Use `bun run web` to run it.
+To run it, run `bun demo`.
 
-Add more samples under `./src/assets/samples/` to see them in the web view.
-
-## TODO
-
-- [ ] Find a better way to serve the `.wasm` files rather than sticking them in the `public` dir.
+To build it, `bun build-demo`.

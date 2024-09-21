@@ -1,410 +1,357 @@
-import { MultiDirectedGraph } from "graphology";
 import Parser from "web-tree-sitter";
 import {
   BlockHandler,
   type BasicBlock,
   type BuilderOptions,
   type Case,
-  type CFG,
+  type CFGBuilder,
   type EdgeType,
-  type GraphEdge,
-  type GraphNode,
-  type NodeType,
 } from "./cfg-defs";
+import type { Context, StatementHandlers } from "./statement-handlers";
+import { GenericCFGBuilder } from "./generic-cfg-builder";
 
 interface SwitchOptions {
   noImplicitDefault: boolean;
 }
 
-export class CFGBuilder {
-  private graph: MultiDirectedGraph<GraphNode, GraphEdge>;
-  private nodeId: number;
-  private readonly flatSwitch: boolean;
-  private readonly markerPattern: RegExp | null;
+function getChildFieldText(node: Parser.SyntaxNode, fieldName: string): string {
+  const child = node.childForFieldName(fieldName);
+  return child ? child.text : "";
+}
 
-  constructor(options?: BuilderOptions) {
-    this.graph = new MultiDirectedGraph();
-    this.nodeId = 0;
+const statementHandlers: StatementHandlers = {
+  named: {
+    block: processBlockStatement,
+    if_statement: processIfStatement,
+    for_statement: processForStatement,
+    expression_switch_statement: processSwitchStatement,
+    type_switch_statement: processSwitchStatement,
+    select_statement: processSelectStatement,
+    return_statement: processReturnStatement,
+    break_statement: processBreakStatement,
+    continue_statement: processContinueStatement,
+    labeled_statement: processLabeledStatement,
+    goto_statement: processGotoStatement,
+    comment: processComment,
+  },
+  default: defaultProcessStatement,
+};
 
-    this.flatSwitch = options?.flatSwitch ?? false;
-    this.markerPattern = options?.markerPattern ?? null;
-  }
+export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
+  return new GenericCFGBuilder(statementHandlers, options);
+}
 
-  public buildCFG(functionNode: Parser.SyntaxNode): CFG {
-    const startNode = this.addNode("START", "START");
-    const bodyNode = functionNode.childForFieldName("body");
+function processSwitchStatement(
+  syntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  return processSwitchlike(syntax, { noImplicitDefault: false }, ctx);
+}
 
-    if (bodyNode) {
-      const blockHandler = new BlockHandler();
-      const { entry } = blockHandler.update(
-        this.processStatements(bodyNode.namedChildren),
+function processSelectStatement(
+  syntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  return processSwitchlike(syntax, { noImplicitDefault: true }, ctx);
+}
+
+function processBlockStatement(
+  syntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  return ctx.dispatch.many(syntax.namedChildren);
+}
+
+function processReturnStatement(
+  syntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const returnNode = ctx.builder.addNode("RETURN", syntax.text);
+  return { entry: returnNode, exit: null };
+}
+function defaultProcessStatement(
+  syntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const newNode = ctx.builder.addNode("STATEMENT", syntax.text);
+  return { entry: newNode, exit: newNode };
+}
+
+function processGotoStatement(
+  gotoSyntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const name = gotoSyntax.firstNamedChild?.text as string;
+  const gotoNode = ctx.builder.addNode("GOTO", name);
+  return {
+    entry: gotoNode,
+    exit: null,
+    gotos: [{ node: gotoNode, label: name }],
+  };
+}
+function processLabeledStatement(
+  labelSyntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const name = getChildFieldText(labelSyntax, "label");
+  const labelNode = ctx.builder.addNode("LABEL", name);
+  const { entry: labeledEntry, exit: labeledExit } = ctx.state.update(
+    ctx.dispatch.single(labelSyntax.namedChildren[1]),
+  );
+  if (labeledEntry) ctx.builder.addEdge(labelNode, labeledEntry);
+  return ctx.state.update({
+    entry: labelNode,
+    exit: labeledExit,
+    labels: new Map([[name, labelNode]]),
+  });
+}
+
+function processContinueStatement(
+  _continueSyntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const continueNode = ctx.builder.addNode("CONTINUE", "CONTINUE");
+  return { entry: continueNode, exit: null, continues: [continueNode] };
+}
+function processBreakStatement(
+  _breakSyntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const breakNode = ctx.builder.addNode("BREAK", "BREAK");
+  return { entry: breakNode, exit: null, breaks: [breakNode] };
+}
+
+function processForStatement(
+  forNode: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const { state } = ctx;
+  switch (forNode.namedChildCount) {
+    // One child means only loop body, two children means loop head.
+    case 1: {
+      const headNode = ctx.builder.addNode("LOOP_HEAD", "loop head");
+      const { entry: bodyEntry, exit: bodyExit } = state.update(
+        ctx.dispatch.single(forNode.firstNamedChild),
       );
-
-      blockHandler.processGotos((gotoNode, labelNode) =>
-        this.addEdge(gotoNode, labelNode),
-      );
-
-      // `entry` will be non-null for any valid code
-      if (entry) this.addEdge(startNode, entry);
-    }
-    return { graph: this.graph, entry: startNode };
-  }
-
-  private addNode(type: NodeType, code: string, lines: number = 1): string {
-    const id = `node${this.nodeId++}`;
-    this.graph.addNode(id, { type, code, lines, markers: [] });
-    return id;
-  }
-
-  private addMarker(node: string, marker: string) {
-    this.graph.getNodeAttributes(node).markers.push(marker);
-  }
-
-  private addEdge(
-    source: string,
-    target: string,
-    type: EdgeType = "regular",
-  ): void {
-    if (!this.graph.hasEdge(source, target)) {
-      this.graph.addEdge(source, target, { type });
-    }
-  }
-
-  private getChildFieldText(
-    node: Parser.SyntaxNode,
-    fieldName: string,
-  ): string {
-    const child = node.childForFieldName(fieldName);
-    return child ? child.text : "";
-  }
-
-  private processStatements(statements: Parser.SyntaxNode[]): BasicBlock {
-    const blockHandler = new BlockHandler();
-
-    // Ignore comments
-    const codeStatements = statements.filter((syntax) => {
-      if (syntax.type !== "comment") {
-        return true;
-      }
-
-      return (
-        this.markerPattern && Boolean(syntax.text.match(this.markerPattern))
-      );
-    });
-
-    if (codeStatements.length === 0) {
-      const emptyNode = this.addNode("EMPTY", "empty block");
-      return { entry: emptyNode, exit: emptyNode };
-    }
-
-    let entry: string | null = null;
-    let previous: string | null = null;
-    for (const statement of codeStatements) {
-      const { entry: currentEntry, exit: currentExit } = blockHandler.update(
-        this.processBlock(statement),
-      );
-      if (!entry) entry = currentEntry;
-      if (previous && currentEntry) this.addEdge(previous, currentEntry);
-      previous = currentExit;
-    }
-    return blockHandler.update({ entry, exit: previous });
-  }
-
-  private processBlock(node: Parser.SyntaxNode | null): BasicBlock {
-    if (!node) return { entry: null, exit: null };
-
-    switch (node.type) {
-      case "block":
-        return this.processStatements(node.namedChildren);
-      case "if_statement":
-        return this.processIfStatement(node);
-      case "for_statement":
-        return this.processForStatement(node);
-      case "expression_switch_statement":
-      case "type_switch_statement":
-        return this.processSwitchlike(node);
-      case "select_statement":
-        return this.processSwitchlike(node, { noImplicitDefault: true });
-      case "return_statement": {
-        const returnNode = this.addNode("RETURN", node.text);
-        return { entry: returnNode, exit: null };
-      }
-      case "break_statement":
-        return this.processBreakStatement(node);
-      case "continue_statement":
-        return this.processContinueStatement(node);
-      case "labeled_statement":
-        return this.processLabeledStatement(node);
-      case "goto_statement":
-        return this.processGotoStatement(node);
-      case "comment":
-        return this.processComment(node);
-      default: {
-        const newNode = this.addNode("STATEMENT", node.text);
-        return { entry: newNode, exit: newNode };
-      }
-    }
-  }
-  private processComment(commentSyntax: Parser.SyntaxNode): BasicBlock {
-    // We only ever ger here when marker comments are enabled,
-    // and only for marker comments as the rest are filtered out.
-    const commentNode = this.addNode("MARKER_COMMENT", commentSyntax.text);
-    if (this.markerPattern) {
-      const marker = commentSyntax.text.match(this.markerPattern)?.[1];
-      if (marker) this.addMarker(commentNode, marker);
-    }
-    return { entry: commentNode, exit: commentNode };
-  }
-
-  private buildSwitch(
-    cases: Case[],
-    mergeNode: string,
-    switchHeadNode: string,
-    options?: SwitchOptions,
-  ) {
-    let fallthrough: string | null = null;
-    let previous: string | null = switchHeadNode;
-    if (options?.noImplicitDefault) {
-      // This prevents the linking of the switch head to the merge node.
-      // It is required for select statements, as they block until satisfied.
-      previous = null;
-    }
-    cases.forEach((thisCase) => {
-      if (this.flatSwitch) {
-        if (thisCase.consequenceEntry) {
-          this.addEdge(switchHeadNode, thisCase.consequenceEntry);
-          if (fallthrough) {
-            this.addEdge(fallthrough, thisCase.consequenceEntry);
-          }
-          if (thisCase.isDefault) {
-            previous = null;
-          }
-        }
-      } else {
-        if (fallthrough && thisCase.consequenceEntry) {
-          this.addEdge(fallthrough, thisCase.consequenceEntry);
-        }
-        if (previous && thisCase.conditionEntry) {
-          this.addEdge(
-            previous,
-            thisCase.conditionEntry,
-            "alternative" as EdgeType,
-          );
-        }
-
-        if (thisCase.consequenceEntry && thisCase.conditionExit)
-          this.addEdge(
-            thisCase.conditionExit,
-            thisCase.consequenceEntry,
-            "consequence",
-          );
-
-        // Update for next case
-        previous = thisCase.isDefault ? null : thisCase.alternativeExit;
-      }
-
-      // Fallthrough is the same for both flat and non-flat layouts.
-      if (!thisCase.hasFallthrough && thisCase.consequenceExit) {
-        this.addEdge(thisCase.consequenceExit, mergeNode);
-      }
-      // Update for next case
-      fallthrough = thisCase.hasFallthrough ? thisCase.consequenceExit : null;
-    });
-    // Connect the last node to the merge node.
-    // No need to handle `fallthrough` here as it is not allowed for the last case.
-    if (previous) {
-      this.addEdge(previous, mergeNode, "alternative");
-    }
-  }
-
-  private collectCases(
-    switchSyntax: Parser.SyntaxNode,
-    blockHandler: BlockHandler,
-  ): Case[] {
-    const cases: Case[] = [];
-    const caseTypes = [
-      "default_case",
-      "communication_case",
-      "type_case",
-      "expression_case",
-    ];
-    switchSyntax.namedChildren
-      .filter((child) => caseTypes.includes(child.type))
-      .forEach((caseSyntax) => {
-        const isDefault = caseSyntax.type === "default_case";
-
-        const consequence = caseSyntax.namedChildren.slice(isDefault ? 0 : 1);
-        const hasFallthrough = consequence
-          .map((node) => node.type)
-          .includes("fallthrough_statement");
-
-        const conditionNode = this.addNode(
-          "CASE_CONDITION",
-          isDefault ? "default" : (caseSyntax.firstNamedChild?.text ?? ""),
-        );
-        const consequenceNode = blockHandler.update(
-          this.processStatements(consequence),
-        );
-
-        cases.push({
-          conditionEntry: conditionNode,
-          conditionExit: conditionNode,
-          consequenceEntry: consequenceNode.entry,
-          consequenceExit: consequenceNode.exit,
-          alternativeExit: conditionNode,
-          hasFallthrough,
-          isDefault,
-        });
+      if (bodyEntry) ctx.builder.addEdge(headNode, bodyEntry);
+      if (bodyExit) ctx.builder.addEdge(bodyExit, headNode);
+      const exitNode = ctx.builder.addNode("LOOP_EXIT", "loop exit");
+      state.forEachBreak((breakNode) => {
+        ctx.builder.addEdge(breakNode, exitNode);
       });
 
-    return cases;
-  }
-
-  private processSwitchlike(
-    switchSyntax: Parser.SyntaxNode,
-    options?: SwitchOptions,
-  ): BasicBlock {
-    const blockHandler = new BlockHandler();
-
-    const cases = this.collectCases(switchSyntax, blockHandler);
-    const headNode = this.addNode(
-      "SWITCH_CONDITION",
-      this.getChildFieldText(switchSyntax, "value"),
-    );
-    const mergeNode: string = this.addNode("SWITCH_MERGE", "");
-    this.buildSwitch(cases, mergeNode, headNode, options);
-
-    blockHandler.forEachBreak((breakNode) => {
-      this.addEdge(breakNode, mergeNode);
-    });
-
-    return blockHandler.update({ entry: headNode, exit: mergeNode });
-  }
-
-  private processGotoStatement(gotoSyntax: Parser.SyntaxNode): BasicBlock {
-    const name = gotoSyntax.firstNamedChild?.text as string;
-    const gotoNode = this.addNode("GOTO", name);
-    return {
-      entry: gotoNode,
-      exit: null,
-      gotos: [{ node: gotoNode, label: name }],
-    };
-  }
-  private processLabeledStatement(labelSyntax: Parser.SyntaxNode): BasicBlock {
-    const blockHandler = new BlockHandler();
-    const name = this.getChildFieldText(labelSyntax, "label");
-    const labelNode = this.addNode("LABEL", name);
-    const { entry: labeledEntry, exit: labeledExit } = blockHandler.update(
-      this.processBlock(labelSyntax.namedChildren[1]),
-    );
-    if (labeledEntry) this.addEdge(labelNode, labeledEntry);
-    return blockHandler.update({
-      entry: labelNode,
-      exit: labeledExit,
-      labels: new Map([[name, labelNode]]),
-    });
-  }
-  private processContinueStatement(
-    _continueSyntax: Parser.SyntaxNode,
-  ): BasicBlock {
-    const continueNode = this.addNode("CONTINUE", "CONTINUE");
-    return { entry: continueNode, exit: null, continues: [continueNode] };
-  }
-  private processBreakStatement(_breakSyntax: Parser.SyntaxNode): BasicBlock {
-    const breakNode = this.addNode("BREAK", "BREAK");
-    return { entry: breakNode, exit: null, breaks: [breakNode] };
-  }
-
-  private processIfStatement(
-    ifNode: Parser.SyntaxNode,
-    mergeNode: string | null = null,
-  ): BasicBlock {
-    const blockHandler = new BlockHandler();
-    const conditionChild = ifNode.childForFieldName("condition");
-    const conditionNode = this.addNode(
-      "CONDITION",
-      conditionChild ? conditionChild.text : "Unknown condition",
-    );
-
-    mergeNode ??= this.addNode("MERGE", "MERGE");
-
-    const consequenceChild = ifNode.childForFieldName("consequence");
-
-    const { entry: thenEntry, exit: thenExit } = blockHandler.update(
-      this.processBlock(consequenceChild),
-    );
-
-    const alternativeChild = ifNode.childForFieldName("alternative");
-    const elseIf = alternativeChild?.type === "if_statement";
-    const { entry: elseEntry, exit: elseExit } = (() => {
-      if (elseIf) {
-        return blockHandler.update(
-          this.processIfStatement(alternativeChild, mergeNode),
-        );
-      } else {
-        return blockHandler.update(this.processBlock(alternativeChild));
+      state.forEachContinue((continueNode) => {
+        ctx.builder.addEdge(continueNode, headNode);
+      });
+      return state.update({ entry: headNode, exit: exitNode });
+    }
+    // TODO: Handle the case where there is no loop condition, only init and update.
+    case 2: {
+      const headNode = ctx.builder.addNode("LOOP_HEAD", "loop head");
+      const { entry: bodyEntry, exit: bodyExit } = state.update(
+        ctx.dispatch.single(forNode.namedChildren[1]),
+      );
+      const exitNode = ctx.builder.addNode("LOOP_EXIT", "loop exit");
+      if (bodyEntry) {
+        ctx.builder.addEdge(headNode, bodyEntry, "consequence");
       }
-    })();
+      ctx.builder.addEdge(headNode, exitNode, "alternative");
+      if (bodyExit) ctx.builder.addEdge(bodyExit, headNode);
+      state.forEachBreak((breakNode) => {
+        ctx.builder.addEdge(breakNode, exitNode);
+      });
 
-    this.addEdge(conditionNode, thenEntry || mergeNode, "consequence");
-    if (thenExit) this.addEdge(thenExit, mergeNode);
+      state.forEachContinue((continueNode) => {
+        ctx.builder.addEdge(continueNode, headNode);
+      });
+      return state.update({ entry: headNode, exit: exitNode });
+    }
+    default:
+      throw new Error(`Unsupported for type: ${forNode.firstNamedChild?.type}`);
+  }
+}
 
-    if (elseEntry) {
-      this.addEdge(conditionNode, elseEntry, "alternative");
-      if (elseExit && !elseIf) this.addEdge(elseExit, mergeNode);
+function processIfStatement(
+  ifNode: Parser.SyntaxNode,
+  ctx: Context,
+  mergeNode: string | null = null,
+): BasicBlock {
+  const conditionChild = ifNode.childForFieldName("condition");
+  const conditionNode = ctx.builder.addNode(
+    "CONDITION",
+    conditionChild ? conditionChild.text : "Unknown condition",
+  );
+
+  mergeNode ??= ctx.builder.addNode("MERGE", "MERGE");
+
+  const consequenceChild = ifNode.childForFieldName("consequence");
+
+  const { entry: thenEntry, exit: thenExit } = ctx.state.update(
+    ctx.dispatch.single(consequenceChild),
+  );
+
+  const alternativeChild = ifNode.childForFieldName("alternative");
+  const elseIf = alternativeChild?.type === "if_statement";
+  const { entry: elseEntry, exit: elseExit } = (() => {
+    if (elseIf) {
+      return ctx.state.update(
+        processIfStatement(alternativeChild, ctx, mergeNode),
+      );
     } else {
-      this.addEdge(conditionNode, mergeNode, "alternative");
+      return ctx.state.update(ctx.dispatch.single(alternativeChild));
     }
+  })();
 
-    return blockHandler.update({ entry: conditionNode, exit: mergeNode });
+  ctx.builder.addEdge(conditionNode, thenEntry || mergeNode, "consequence");
+  if (thenExit) ctx.builder.addEdge(thenExit, mergeNode);
+
+  if (elseEntry) {
+    ctx.builder.addEdge(conditionNode, elseEntry, "alternative");
+    if (elseExit && !elseIf) ctx.builder.addEdge(elseExit, mergeNode);
+  } else {
+    ctx.builder.addEdge(conditionNode, mergeNode, "alternative");
   }
 
-  private processForStatement(forNode: Parser.SyntaxNode): BasicBlock {
-    const blockHandler = new BlockHandler();
-    switch (forNode.namedChildCount) {
-      // One child means only loop body, two children means loop head.
-      case 1: {
-        const headNode = this.addNode("LOOP_HEAD", "loop head");
-        const { entry: bodyEntry, exit: bodyExit } = blockHandler.update(
-          this.processBlock(forNode.firstNamedChild),
-        );
-        if (bodyEntry) this.addEdge(headNode, bodyEntry);
-        if (bodyExit) this.addEdge(bodyExit, headNode);
-        const exitNode = this.addNode("LOOP_EXIT", "loop exit");
-        blockHandler.forEachBreak((breakNode) => {
-          this.addEdge(breakNode, exitNode);
-        });
+  return ctx.state.update({ entry: conditionNode, exit: mergeNode });
+}
 
-        blockHandler.forEachContinue((continueNode) => {
-          this.addEdge(continueNode, headNode);
-        });
-        return blockHandler.update({ entry: headNode, exit: exitNode });
-      }
-      // TODO: Handle the case where there is no loop condition, only init and update.
-      case 2: {
-        const headNode = this.addNode("LOOP_HEAD", "loop head");
-        const { entry: bodyEntry, exit: bodyExit } = blockHandler.update(
-          this.processBlock(forNode.namedChildren[1]),
-        );
-        const exitNode = this.addNode("LOOP_EXIT", "loop exit");
-        if (bodyEntry) {
-          this.addEdge(headNode, bodyEntry, "consequence");
+function processComment(
+  commentSyntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  // We only ever ger here when marker comments are enabled,
+  // and only for marker comments as the rest are filtered out.
+  const commentNode = ctx.builder.addNode("MARKER_COMMENT", commentSyntax.text);
+  if (ctx.options.markerPattern) {
+    const marker = commentSyntax.text.match(ctx.options.markerPattern)?.[1];
+    if (marker) ctx.builder.addMarker(commentNode, marker);
+  }
+  return { entry: commentNode, exit: commentNode };
+}
+
+function buildSwitch(
+  cases: Case[],
+  mergeNode: string,
+  switchHeadNode: string,
+  options: SwitchOptions,
+  ctx: Context,
+) {
+  let fallthrough: string | null = null;
+  let previous: string | null = switchHeadNode;
+  cases.forEach((thisCase) => {
+    if (ctx.options.flatSwitch) {
+      if (thisCase.consequenceEntry) {
+        ctx.builder.addEdge(switchHeadNode, thisCase.consequenceEntry);
+        if (fallthrough) {
+          ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
         }
-        this.addEdge(headNode, exitNode, "alternative");
-        if (bodyExit) this.addEdge(bodyExit, headNode);
-        blockHandler.forEachBreak((breakNode) => {
-          this.addEdge(breakNode, exitNode);
-        });
-
-        blockHandler.forEachContinue((continueNode) => {
-          this.addEdge(continueNode, headNode);
-        });
-        return blockHandler.update({ entry: headNode, exit: exitNode });
+        if (thisCase.isDefault) {
+          previous = null;
+        }
       }
-      default:
-        throw new Error(
-          `Unsupported for type: ${forNode.firstNamedChild?.type}`,
+    } else {
+      if (fallthrough && thisCase.consequenceEntry) {
+        ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
+      }
+      if (previous && thisCase.conditionEntry) {
+        ctx.builder.addEdge(
+          previous,
+          thisCase.conditionEntry,
+          "alternative" as EdgeType,
         );
+      }
+
+      if (thisCase.consequenceEntry && thisCase.conditionExit)
+        ctx.builder.addEdge(
+          thisCase.conditionExit,
+          thisCase.consequenceEntry,
+          "consequence",
+        );
+
+      // Update for next case
+      previous = thisCase.isDefault ? null : thisCase.alternativeExit;
     }
+
+    // Fallthrough is the same for both flat and non-flat layouts.
+    if (!thisCase.hasFallthrough && thisCase.consequenceExit) {
+      ctx.builder.addEdge(thisCase.consequenceExit, mergeNode, "regular");
+    }
+    // Update for next case
+    fallthrough = thisCase.hasFallthrough ? thisCase.consequenceExit : null;
+  });
+  // Connect the last node to the merge node.
+  // No need to handle `fallthrough` here as it is not allowed for the last case.
+  if (previous && !options.noImplicitDefault) {
+    ctx.builder.addEdge(previous, mergeNode, "alternative");
   }
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (fallthrough) {
+    ctx.builder.addEdge(fallthrough, mergeNode, "regular");
+  }
+}
+
+function collectCases(
+  switchSyntax: Parser.SyntaxNode,
+  blockHandler: BlockHandler,
+  ctx: Context,
+): Case[] {
+  const cases: Case[] = [];
+  const caseTypes = [
+    "default_case",
+    "communication_case",
+    "type_case",
+    "expression_case",
+  ];
+  switchSyntax.namedChildren
+    .filter((child) => caseTypes.includes(child.type))
+    .forEach((caseSyntax) => {
+      const isDefault = caseSyntax.type === "default_case";
+
+      const consequence = caseSyntax.namedChildren.slice(isDefault ? 0 : 1);
+      const hasFallthrough = consequence
+        .map((node) => node.type)
+        .includes("fallthrough_statement");
+
+      const conditionNode = ctx.builder.addNode(
+        "CASE_CONDITION",
+        isDefault ? "default" : (caseSyntax.firstNamedChild?.text ?? ""),
+      );
+      const consequenceNode = blockHandler.update(
+        ctx.dispatch.many(consequence),
+      );
+
+      cases.push({
+        conditionEntry: conditionNode,
+        conditionExit: conditionNode,
+        consequenceEntry: consequenceNode.entry,
+        consequenceExit: consequenceNode.exit,
+        alternativeExit: conditionNode,
+        hasFallthrough,
+        isDefault,
+      });
+    });
+
+  return cases;
+}
+
+function processSwitchlike(
+  switchSyntax: Parser.SyntaxNode,
+  options: SwitchOptions,
+  ctx: Context,
+): BasicBlock {
+  const blockHandler = new BlockHandler();
+
+  const cases = collectCases(switchSyntax, blockHandler, ctx);
+  const headNode = ctx.builder.addNode(
+    "SWITCH_CONDITION",
+    getChildFieldText(switchSyntax, "value"),
+  );
+  const mergeNode: string = ctx.builder.addNode("SWITCH_MERGE", "");
+  buildSwitch(cases, mergeNode, headNode, options, ctx);
+
+  blockHandler.forEachBreak((breakNode) => {
+    ctx.builder.addEdge(breakNode, mergeNode);
+  });
+
+  return blockHandler.update({ entry: headNode, exit: mergeNode });
 }

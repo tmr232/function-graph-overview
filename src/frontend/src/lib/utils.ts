@@ -144,8 +144,9 @@ export function processRecord(
   if (!cfg) return { ast };
   if (trim) cfg = trimFor(cfg);
   if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
-
-  const dot = graphviz.dot(graphToDot(cfg, verbose), "canon" as Format);
+  const rawDot = graphToDot(cfg, verbose);
+  console.log(rawDot);
+  const dot = graphviz.dot(rawDot, "canon" as Format);
   const svg = graphviz.dot(dot);
 
   return { dot, ast, svg };

@@ -282,7 +282,7 @@ function renderNode(
   // This is needed to rename nodes for go-to-line
   dotAttrs.id = `${node}`;
   if (context.verbose) {
-    dotAttrs.label = `${node} ${nodeAttrs.type} ${graph.getNodeAttributes(node).code}`;
+    dotAttrs.label = `${node} ${nodeAttrs.type} ${graph.getNodeAttributes(node).code.replaceAll('"', '\\"')}`;
 
     const clusterAttrs = graph.getNodeAttribute(node, "cluster");
     dotAttrs.label = `${clusterAttrs?.id} ${clusterAttrs?.type}\n${dotAttrs.label}`;
