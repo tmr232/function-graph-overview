@@ -101,7 +101,6 @@ export function trimFor(cfg: CFG): CFG {
   return evolve(cfg, { graph: subgraph(graph, reachable) });
 }
 
-
 export function detectBacklinks(
   graph: MultiDirectedGraph,
   entry: string,

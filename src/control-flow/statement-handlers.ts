@@ -14,7 +14,7 @@ export interface Context {
   matcher: BlockMatcher;
   dispatch: Dispatch;
   state: BlockHandler;
-  link: InstanceType<typeof NodeMapper>['add']
+  link: InstanceType<typeof NodeMapper>["add"];
 }
 
 type StatementHandler = (syntax: Parser.SyntaxNode, ctx: Context) => BasicBlock;

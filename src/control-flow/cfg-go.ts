@@ -9,7 +9,6 @@ import {
 } from "./cfg-defs";
 import type { Context, StatementHandlers } from "./statement-handlers";
 import { GenericCFGBuilder } from "./generic-cfg-builder";
-import { symbolName } from "typescript";
 
 interface SwitchOptions {
   noImplicitDefault: boolean;
@@ -116,7 +115,7 @@ function processContinueStatement(
   ctx: Context,
 ): BasicBlock {
   const continueNode = ctx.builder.addNode("CONTINUE", "CONTINUE");
-  ctx.link(continueSyntax, continueNode)
+  ctx.link(continueSyntax, continueNode);
   return { entry: continueNode, exit: null, continues: [continueNode] };
 }
 function processBreakStatement(
@@ -138,6 +137,7 @@ function processForStatement(
     case 1: {
       const headNode = ctx.builder.addNode("LOOP_HEAD", "loop head");
       ctx.link(forNode, headNode);
+      console.log("for", forNode.id, headNode);
       const { entry: bodyEntry, exit: bodyExit } = state.update(
         ctx.dispatch.single(forNode.firstNamedChild),
       );
@@ -157,6 +157,7 @@ function processForStatement(
     case 2: {
       const headNode = ctx.builder.addNode("LOOP_HEAD", "loop head");
       ctx.link(forNode, headNode);
+      console.log("for", forNode.id, headNode);
       const { entry: bodyEntry, exit: bodyExit } = state.update(
         ctx.dispatch.single(forNode.namedChildren[1]),
       );

@@ -61,7 +61,6 @@ function buildHierarchy(cfg: CFG): Hierarchy {
   const hierarchy: Hierarchy = { graph: cfg.graph, children: {} };
 
   const clusterNodes: Map<Cluster, string[]> = new Map();
-  console.log(typeof cfg.graph, cfg.graph.forEachNode);
   cfg.graph.forEachNode((node, { cluster }) => {
     if (cluster) {
       const nodesList = clusterNodes.get(cluster);

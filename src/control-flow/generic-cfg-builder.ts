@@ -10,9 +10,6 @@ import type { StatementHandlers } from "./statement-handlers";
 import { BlockMatcher } from "./block-matcher";
 import { NodeMapper } from "./node-mapper";
 
-
-
-
 export class GenericCFGBuilder {
   private builder: Builder = new Builder();
   private readonly options: BuilderOptions;
@@ -43,7 +40,11 @@ export class GenericCFGBuilder {
       if (entry) this.builder.addEdge(startNode, entry);
       if (exit) this.builder.addEdge(exit, endNode);
     }
-    return { graph: this.builder.getGraph(), entry: startNode, syntaxToNode: this.nodeMapper.getMapping(functionNode) };
+    return {
+      graph: this.builder.getGraph(),
+      entry: startNode,
+      syntaxToNode: this.nodeMapper.getMapping(functionNode),
+    };
   }
 
   private processBlock(syntax: Parser.SyntaxNode | null): BasicBlock {
