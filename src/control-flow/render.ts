@@ -61,6 +61,7 @@ function buildHierarchy(cfg: CFG): Hierarchy {
   const hierarchy: Hierarchy = { graph: cfg.graph, children: {} };
 
   const clusterNodes: Map<Cluster, string[]> = new Map();
+  console.log(typeof cfg.graph, cfg.graph.forEachNode);
   cfg.graph.forEachNode((node, { cluster }) => {
     if (cluster) {
       const nodesList = clusterNodes.get(cluster);
@@ -279,6 +280,7 @@ function renderNode(
   dotAttrs.style = "filled";
   dotAttrs.label = "";
   dotAttrs.label = `${node} ${nodeAttrs.firstLineNumber}`;
+  dotAttrs.label = `${node} ${nodeAttrs.type} ${graph.getNodeAttributes(node).code.replaceAll('"', '\\"')}`;
   // This is needed to rename nodes for go-to-line
   dotAttrs.id = `${node}`;
   if (context.verbose) {

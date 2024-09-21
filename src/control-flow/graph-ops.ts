@@ -2,6 +2,7 @@ import { MultiDirectedGraph } from "graphology";
 import { subgraph } from "graphology-operators";
 import { bfsFromNode } from "graphology-traversal";
 import type { CFG, GraphNode } from "./cfg-defs";
+import { evolve } from "./evolve";
 
 export function distanceFromEntry(cfg: CFG): Map<string, number> {
   const { graph, entry } = cfg;
@@ -100,14 +101,6 @@ export function trimFor(cfg: CFG): CFG {
   return evolve(cfg, { graph: subgraph(graph, reachable) });
 }
 
-function evolve<T extends object>(
-  obj: T,
-  attrs: { [key: string]: unknown },
-): T {
-  const newObj = structuredClone(obj);
-  Object.assign(newObj, attrs);
-  return newObj;
-}
 
 export function detectBacklinks(
   graph: MultiDirectedGraph,

@@ -9,6 +9,7 @@ import {
 } from "./cfg-defs";
 import type { Context, StatementHandlers } from "./statement-handlers";
 import { GenericCFGBuilder } from "./generic-cfg-builder";
+import { symbolName } from "typescript";
 
 interface SwitchOptions {
   noImplicitDefault: boolean;
@@ -75,6 +76,7 @@ function defaultProcessStatement(
   ctx: Context,
 ): BasicBlock {
   const newNode = ctx.builder.addNode("STATEMENT", syntax.text);
+  ctx.link(syntax, newNode);
   return { entry: newNode, exit: newNode };
 }
 
@@ -84,6 +86,7 @@ function processGotoStatement(
 ): BasicBlock {
   const name = gotoSyntax.firstNamedChild?.text as string;
   const gotoNode = ctx.builder.addNode("GOTO", name);
+  ctx.link(gotoSyntax, gotoNode);
   return {
     entry: gotoNode,
     exit: null,
@@ -96,6 +99,7 @@ function processLabeledStatement(
 ): BasicBlock {
   const name = getChildFieldText(labelSyntax, "label");
   const labelNode = ctx.builder.addNode("LABEL", name);
+  ctx.link(labelSyntax, labelNode);
   const { entry: labeledEntry, exit: labeledExit } = ctx.state.update(
     ctx.dispatch.single(labelSyntax.namedChildren[1]),
   );
@@ -108,17 +112,19 @@ function processLabeledStatement(
 }
 
 function processContinueStatement(
-  _continueSyntax: Parser.SyntaxNode,
+  continueSyntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const continueNode = ctx.builder.addNode("CONTINUE", "CONTINUE");
+  ctx.link(continueSyntax, continueNode)
   return { entry: continueNode, exit: null, continues: [continueNode] };
 }
 function processBreakStatement(
-  _breakSyntax: Parser.SyntaxNode,
+  breakSyntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const breakNode = ctx.builder.addNode("BREAK", "BREAK");
+  ctx.link(breakSyntax, breakNode);
   return { entry: breakNode, exit: null, breaks: [breakNode] };
 }
 
@@ -131,6 +137,7 @@ function processForStatement(
     // One child means only loop body, two children means loop head.
     case 1: {
       const headNode = ctx.builder.addNode("LOOP_HEAD", "loop head");
+      ctx.link(forNode, headNode);
       const { entry: bodyEntry, exit: bodyExit } = state.update(
         ctx.dispatch.single(forNode.firstNamedChild),
       );
@@ -149,6 +156,7 @@ function processForStatement(
     // TODO: Handle the case where there is no loop condition, only init and update.
     case 2: {
       const headNode = ctx.builder.addNode("LOOP_HEAD", "loop head");
+      ctx.link(forNode, headNode);
       const { entry: bodyEntry, exit: bodyExit } = state.update(
         ctx.dispatch.single(forNode.namedChildren[1]),
       );

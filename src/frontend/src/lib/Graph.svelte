@@ -1,7 +1,11 @@
 <script lang="ts">
   import Parser from "web-tree-sitter";
   import { newCFGBuilder, type Language } from "../../../control-flow/cfg";
-  import { mergeNodeAttrs, type CFG } from "../../../control-flow/cfg-defs";
+  import {
+    mergeNodeAttrs,
+    type CFG,
+    type CFGGraph,
+  } from "../../../control-flow/cfg-defs";
   import { graphToDot, graphToLineNumbers } from "../../../control-flow/render";
   import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
@@ -11,6 +15,7 @@
     type Parsers,
   } from "./utils";
   import { createEventDispatcher, onMount } from "svelte";
+  import { evolve } from "../../../control-flow/evolve";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
@@ -45,6 +50,23 @@
     readonly flatSwitch: boolean;
   }
 
+  function remapNodeTargets(cfg: CFG): CFG {
+    const remap = new Map<string, string>();
+    cfg.graph.forEachNode((node, { targets }) => {
+      targets.forEach((target) => remap.set(target, node));
+    });
+    const syntaxToNode = new Map(
+      [...cfg.syntaxToNode.entries()].map(([syntaxId, node]) => [
+        syntaxId,
+        remap.get(node),
+      ]),
+    );
+    // Copying the graph is needed.
+    // Seems that some of the graph properties don't survive the structured clone.
+    const graph = cfg.graph.copy();
+    return evolve(cfg, { syntaxToNode, graph });
+  }
+
   function renderCode(
     code: string,
     language: Language,
@@ -60,6 +82,7 @@
     if (!cfg) return "";
     if (trim) cfg = trimFor(cfg);
     if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
+    cfg = remapNodeTargets(cfg);
 
     dot = graphToDot(cfg, verbose);
     lineNumbers = graphToLineNumbers(cfg);
@@ -76,6 +99,7 @@
     try {
       return renderCode(code, language, options);
     } catch (error) {
+      console.trace(error);
       return `<p style='border: 2px red solid;'>${error.toString()}</p>`;
     }
   }
@@ -90,9 +114,9 @@
     let syntax = tree.rootNode.descendantForPosition({ row, column });
     for (; syntax && !cfg.syntaxToNode.has(syntax.id); syntax = syntax.parent);
     if (!syntax) return;
-    const svgNode = document.querySelector(
-      `#${cfg.syntaxToNode.get(syntax.id)}`,
-    );
+    const nodeId = cfg.syntaxToNode.get(syntax.id);
+    console.log("Marking", nodeId);
+    const svgNode = document.querySelector(`#${nodeId}`);
     svgNode.classList.add(...highlightTemplate.classList);
     if (highlightedNode && highlightedNode !== svgNode) {
       highlightedNode.classList.remove(...highlightTemplate.classList);

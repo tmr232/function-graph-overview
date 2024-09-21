@@ -55,6 +55,7 @@ export interface GraphNode {
   firstLineNumber?: number;
   markers: string[];
   cluster?: Cluster;
+  targets: string[]
 }
 
 export interface GraphEdge {
@@ -179,6 +180,7 @@ export function mergeNodeAttrs(
     markers: [...from.markers, ...into.markers],
     cluster: from.cluster,
     firstLineNumber: minIfDefined(from.firstLineNumber, into.firstLineNumber),
+    targets: [...from.targets, ...into.targets]
   };
 }
 export interface Case {
