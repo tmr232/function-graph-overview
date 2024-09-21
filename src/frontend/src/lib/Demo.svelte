@@ -1,18 +1,14 @@
 <script lang="ts">
-  import CodeMirror from "svelte-codemirror-editor";
   import { go } from "@codemirror/lang-go";
   import { cpp } from "@codemirror/lang-cpp";
   import { python } from "@codemirror/lang-python";
   import Graph from "./Graph.svelte";
   import type { Language } from "../../../control-flow/cfg";
   import * as LZString from "lz-string";
-  import type { EditorView } from "@codemirror/view";
-  import { EditorSelection } from "@codemirror/state";
   import Editor from "./Editor.svelte";
   export let codeGo = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
   export let codeC = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";
   export let codePython = "def example():\n    if x:\n        return";
-  let editorView: EditorView;
   let languages: {
     language: Language;
     text: string;
@@ -128,9 +124,19 @@
     </div>
     <div class="codemirror">
       {#if selection.language === "Go"}
-        <Editor bind:code={codeGo} lang={go()} bind:this={editor} />
+        <Editor
+          bind:code={codeGo}
+          lang={go()}
+          bind:this={editor}
+          on:cursorMoved={cursorMoved}
+        />
       {:else if selection.language === "C"}
-        <Editor bind:code={codeC} lang={cpp()} bind:this={editor} />
+        <Editor
+          bind:code={codeC}
+          lang={cpp()}
+          bind:this={editor}
+          on:cursorMoved={cursorMoved}
+        />
       {:else if selection.language === "Python"}
         <Editor
           bind:code={codePython}

@@ -67,6 +67,7 @@ function processReturnStatement(
   ctx: Context,
 ): BasicBlock {
   const returnNode = ctx.builder.addNode("RETURN", syntax.text);
+  ctx.link(syntax, returnNode);
   return { entry: returnNode, exit: null };
 }
 function defaultProcessStatement(
