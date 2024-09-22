@@ -16,6 +16,7 @@
   } from "./utils";
   import { createEventDispatcher, onMount } from "svelte";
   import { evolve } from "../../../control-flow/evolve";
+  import { getValue } from "../../../control-flow/ranges";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
@@ -109,12 +110,13 @@
   }
 
   let highlightedNode: Element;
-  export function setCursor(row: number, column: number) {
-    if (!cfg.syntaxToNode) return;
-    let syntax = tree.rootNode.descendantForPosition({ row, column });
-    for (; syntax && !cfg.syntaxToNode.has(syntax.id); syntax = syntax.parent);
-    if (!syntax) return;
-    const nodeId = cfg.syntaxToNode.get(syntax.id);
+  export function setCursor(row: number, column: number, index: number) {
+    const nodeId = getValue(cfg.offsetToNode, index);
+    // if (!cfg.syntaxToNode) return;
+    // let syntax = tree.rootNode.descendantForPosition({ row, column });
+    // for (; syntax && !cfg.syntaxToNode.has(syntax.id); syntax = syntax.parent);
+    // if (!syntax) return;
+    // const nodeId = cfg.syntaxToNode.get(syntax.id);
     console.log("Marking", nodeId);
     const svgNode = document.querySelector(`#${nodeId}`);
     svgNode.classList.add(...highlightTemplate.classList);

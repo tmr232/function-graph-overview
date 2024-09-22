@@ -8,7 +8,7 @@
   export let lang: LanguageSupport;
 
   let editorView: EditorView;
-  let cursorPos: { row: number; column: number };
+  let cursorPos: { row: number; column: number; index: number };
 
   const dispatch = createEventDispatcher();
 
@@ -25,7 +25,7 @@
   function updateCursorPosition() {
     const pos = editorView.state.selection.main.head;
     let { number, from } = editorView.state.doc.lineAt(pos);
-    const newCursorPos = { row: number - 1, column: pos - from };
+    const newCursorPos = { row: number - 1, column: pos - from, index: pos };
 
     if (
       !cursorPos ||

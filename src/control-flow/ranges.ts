@@ -1,11 +1,11 @@
-export type Range<T> = { start: number; value: T };
+export type SimpleRange<T> = { start: number; value: T };
 
 function preAddRange<T>(
+  ranges: SimpleRange<T>[],
   start: number,
   stop: number,
   value: T,
-  ranges: Range<T>[],
-): { at: number; toSplice: Range<T>[]; deleteCount: number } {
+): { at: number; toSplice: SimpleRange<T>[]; deleteCount: number } {
   const spliceAt = ranges.findLastIndex((range) => start >= range.start);
   if (spliceAt === -1) {
     // This should never happen, as a range should always have a start element.
@@ -30,30 +30,30 @@ function preAddRange<T>(
   return { at: spliceAt + 1, deleteCount: 0, toSplice };
 }
 
-export function newRanges<T>(value: T): Range<T>[] {
+export function newRanges<T>(value: T): SimpleRange<T>[] {
   return [{ start: 0, value }];
 }
 
 export function addRange<T>(
+  ranges: SimpleRange<T>[],
   start: number,
   stop: number,
   value: T,
-  ranges: Range<T>[],
-): Range<T>[] {
-  const { at, toSplice, deleteCount } = preAddRange(start, stop, value, ranges);
+): SimpleRange<T>[] {
+  const { at, toSplice, deleteCount } = preAddRange(ranges, start, stop, value,);
   return ranges.toSpliced(at, deleteCount, ...toSplice);
 }
 
 export function inplaceAddRange<T>(
+  ranges: SimpleRange<T>[],
   start: number,
   stop: number,
   value: T,
-  ranges: Range<T>[],
 ): void {
-  const { at, toSplice, deleteCount } = preAddRange(start, stop, value, ranges);
+  const { at, toSplice, deleteCount } = preAddRange(ranges, start, stop, value,);
   ranges.splice(at, deleteCount, ...toSplice);
 }
 
-export function getValue<T>(pos: number, ranges: Range<T>[]): T | undefined {
+export function getValue<T>(ranges: SimpleRange<T>[], pos: number): T | undefined {
   return ranges.findLast((range) => pos >= range.start)?.value;
 }

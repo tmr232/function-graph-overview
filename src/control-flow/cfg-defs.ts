@@ -1,5 +1,6 @@
 import { MultiDirectedGraph } from "graphology";
 import type Parser from "web-tree-sitter";
+import type { SimpleRange } from "./ranges";
 
 export type NodeType =
   | "YIELD"
@@ -85,6 +86,7 @@ export interface CFG {
   graph: CFGGraph;
   entry: string;
   syntaxToNode?: Map<number, string>;
+  offsetToNode: SimpleRange<string>[];
 }
 
 export class BlockHandler {

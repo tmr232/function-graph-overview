@@ -1,4 +1,5 @@
 import type Parser from "web-tree-sitter";
+import { inplaceAddRange, newRanges, type SimpleRange } from "./ranges";
 /* TODO: It seem that AST-based mapping does not fit with what a user expects.
 We need to move to a range-based option, based on offsets in the code.
 
@@ -57,12 +58,20 @@ function* parentsUpTo(
     throw new Error(`stopAt must be a parent of the input`);
   }
 }
-
 export class NodeMapper {
   private syntaxToNode: Map<Parser.SyntaxNode, string> = new Map();
+  private ranges: { start: number, stop: number, value: Parser.SyntaxNode }[] = [];
+
+
   public add(syntax: Parser.SyntaxNode, node: string) {
     this.syntaxToNode.set(syntax, node);
+    this.ranges.push({ start: syntax.startIndex, stop: syntax.endIndex, value: syntax })
   }
+
+  public range(start: number, stop: number, syntax: Parser.SyntaxNode) {
+    this.ranges.push({ start, stop, value: syntax })
+  }
+
   private propagateInside(
     container: Parser.SyntaxNode,
   ): Map<Parser.SyntaxNode, string> {
@@ -80,6 +89,11 @@ export class NodeMapper {
     }
     return new Map([...this.syntaxToNode.entries(), ...propagated]);
   }
+
+  /**
+   * 
+   * @returns Mapping from syntax-IDs to node names
+   */
   public getMapping(functionSyntax: Parser.SyntaxNode): Map<number, string> {
     console.log(
       [...this.syntaxToNode.entries()].map(([syntax, node]) => [
@@ -104,5 +118,19 @@ export class NodeMapper {
         ([syntax, node]) => [syntax.id, node],
       ),
     );
+  }
+
+  private buildRanges(functionSyntax: Parser.SyntaxNode): SimpleRange<Parser.SyntaxNode>[] {
+    const ranges = newRanges(functionSyntax);
+    for (const { start, stop, value } of this.ranges.toSorted((b, a) => (a.stop - a.start) - (b.stop - b.start))) {
+      inplaceAddRange(ranges, start, stop, value);
+    }
+    return ranges;
+  }
+
+  public getIndexMapping(functionSyntax: Parser.SyntaxNode): SimpleRange<string>[] {
+    const syntaxToNode = this.getMapping(functionSyntax);
+    const ranges = this.buildRanges(functionSyntax);
+    return ranges.map(({ start, value }) => ({ start, value: syntaxToNode.get(value.id) ?? "Not found" }))
   }
 }

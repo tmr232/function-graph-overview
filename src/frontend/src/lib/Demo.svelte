@@ -95,8 +95,8 @@
   let editor: Editor;
 
   function cursorMoved(event): void {
-    const { row, column } = event.detail.pos;
-    graph.setCursor(row, column);
+    const { row, column, index } = event.detail.pos;
+    graph.setCursor(row, column, index);
   }
 </script>
 

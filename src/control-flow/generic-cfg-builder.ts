@@ -40,10 +40,12 @@ export class GenericCFGBuilder {
       if (entry) this.builder.addEdge(startNode, entry);
       if (exit) this.builder.addEdge(exit, endNode);
     }
+    console.log(this.nodeMapper.getIndexMapping(functionNode));
     return {
       graph: this.builder.getGraph(),
       entry: startNode,
       syntaxToNode: this.nodeMapper.getMapping(functionNode),
+      offsetToNode: this.nodeMapper.getIndexMapping(functionNode),
     };
   }
 
@@ -86,6 +88,7 @@ export class GenericCFGBuilder {
 
     let entry: string | null = null;
     let previous: string | null = null;
+    let prevEndIndex: number | null = null;
     for (const statement of codeStatements) {
       const { entry: currentEntry, exit: currentExit } = blockHandler.update(
         this.processBlock(statement),
@@ -94,6 +97,13 @@ export class GenericCFGBuilder {
       if (previous && currentEntry)
         this.builder.addEdge(previous, currentEntry);
       previous = currentExit;
+
+      // Mark the text from the previous statement all the way to the end of the current one as 
+      // mapped to this one.
+      if (prevEndIndex !== null) {
+        this.nodeMapper.range(prevEndIndex, statement.endIndex, statement);
+      }
+      prevEndIndex = statement.endIndex;
     }
     return blockHandler.update({ entry, exit: previous });
   }
