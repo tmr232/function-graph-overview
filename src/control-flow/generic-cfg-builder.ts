@@ -102,6 +102,8 @@ export class GenericCFGBuilder {
       // mapped to this one.
       if (prevEndIndex !== null) {
         this.nodeMapper.range(prevEndIndex, statement.endIndex, statement);
+      } else {
+        this.nodeMapper.range(statement.startIndex, statement.endIndex, statement);
       }
       prevEndIndex = statement.endIndex;
     }
