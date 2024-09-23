@@ -329,6 +329,7 @@ function processIfStatement(
     `
       (if_statement
           condition: (_) @if-cond
+          (":") @colon
           consequence: (block) @then
           alternative: [
               (elif_clause 
@@ -354,6 +355,7 @@ function processIfStatement(
   const elifBlocks = elifSyntaxMany.map((syntax) => match.getBlock(syntax));
   const elseBlock = match.getBlock(elseSyntax);
 
+  ctx.linkGap(match.requireSyntax("colon"), thenSyntax);
   if (thenBlock?.entry) ctx.link(thenSyntax, thenBlock.entry)
   console.log(thenSyntax.startPosition)
   match.getSyntaxMany("elif-clause").forEach((syntax, i) => { if (elifCondBlocks[i]?.entry) ctx.link(syntax, elifCondBlocks[i]?.entry) })

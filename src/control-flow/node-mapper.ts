@@ -127,6 +127,10 @@ export class NodeMapper {
     this.ranges.push({ start: syntax.startIndex, stop: syntax.endIndex, value: syntax })
   }
 
+  public linkGap(from: Parser.SyntaxNode, to: Parser.SyntaxNode) {
+    this.range(from.endIndex, to.startIndex, to);
+  }
+
   public range(start: number, stop: number, syntax: Parser.SyntaxNode) {
     this.ranges.push({ start, stop, value: syntax })
   }

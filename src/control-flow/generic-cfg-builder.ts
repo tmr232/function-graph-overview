@@ -64,6 +64,7 @@ export class GenericCFGBuilder {
         many: this.processStatements.bind(this),
       },
       link: this.nodeMapper.add.bind(this.nodeMapper),
+      linkGap: this.nodeMapper.linkGap.bind(this.nodeMapper),
     });
   }
 
