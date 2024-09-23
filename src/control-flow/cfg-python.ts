@@ -333,15 +333,15 @@ function processIfStatement(
           alternative: [
               (elif_clause 
                   condition: (_) @elif-cond
-                  consequence: (block) @elif)
-              (else_clause (block) @else)
+                  consequence: (block) @elif) @elif-clause
+              (else_clause (block) @else) @else-clause
                             ]*
       ) @if
       `,
   );
 
   const condSyntax = match.getSyntax("if-cond");
-  const thenSyntax = match.getSyntax("then");
+  const thenSyntax = match.requireSyntax("then");
   const elifCondSyntaxMany = match.getSyntaxMany("elif-cond");
   const elifSyntaxMany = match.getSyntaxMany("elif");
   const elseSyntax = match.getSyntax("else");
@@ -354,8 +354,13 @@ function processIfStatement(
   const elifBlocks = elifSyntaxMany.map((syntax) => match.getBlock(syntax));
   const elseBlock = match.getBlock(elseSyntax);
 
+  if (thenBlock?.entry) ctx.link(thenSyntax, thenBlock.entry)
+  console.log(thenSyntax.startPosition)
+  match.getSyntaxMany("elif-clause").forEach((syntax, i) => { if (elifCondBlocks[i]?.entry) ctx.link(syntax, elifCondBlocks[i]?.entry) })
+
   const mergeNode = builder.addNode("MERGE", "if merge");
   const headNode = builder.addNode("CONDITION", "if condition");
+
   ctx.link(ifNode, headNode);
 
   if (condBlock?.entry) builder.addEdge(headNode, condBlock.entry);
@@ -380,7 +385,9 @@ function processIfStatement(
 
     previous = conditionBlock;
   }
+
   if (elseBlock) {
+    if (elseBlock.entry) ctx.link(match.requireSyntax("else-clause"), elseBlock.entry)
     if (previous?.exit && elseBlock.entry)
       builder.addEdge(previous.exit, elseBlock.entry, "alternative");
     if (elseBlock.exit) builder.addEdge(elseBlock.exit, mergeNode);

@@ -36,6 +36,64 @@ This makes both lookups and insertions simple.
 We can easily achieve this with splicing.
 We don't have a pre-written binary-search, but with our data sizes linear search should be ok.
 */
+/*
+TODO: This would probably requrie a second pass on the AST.
+I think I'll have to go with multiple passes.
+
+The CFG pass builds the CFG and maps syntax-nodes to CFG-nodes.
+This is necessary and we can't do without teh syntax-cfg mapping.
+
+The second pass will build mapping between text positions to syntax nodes.
+This _can_ be done in the same pass, but is generally code with different concerns.
+This does impose _some_ requirements on the CFG code, as the syntax-nodes we map to
+must be mapped to CFG-nodes for things to work.
+But the CFG creation is responsible for different things, and it'd be nice to
+separate those concerns to the degree possible.
+This would probably mean adding more meta-nodes in the non-simplified version of the graph,
+but that is generally a non-issue, as no-one should be using that anyhow...
+
+An example would be including an `ELSE` node before the statements of the else block, 
+so that we can easily link the else syntax-node to that.
+*/
+
+/*
+OK, after playing a bit with Python it seems that I don't need a second pass, only to know what I'm doing with the current one.
+Also, it seems that nodes don't capture whitespace very well, so...
+
+For a Python `if`, I need a query that looks like:
+
+```
+(if_statement
+  (":") @colon
+)
+```
+
+To capture the colon and know where the whitespace beyond it starts.
+To actually use that, I need a link function that can handle that.
+Something along the lines of:
+1. Link from end-of-A to start-of-B
+
+So with:
+      (if_statement
+          condition: (_) @if-cond
+          (":") @colon
+          consequence: (block) @then
+          alternative: [
+              (elif_clause 
+                  condition: (_) @elif-cond
+                  consequence: (block) @elif) @elif-clause
+              (else_clause (block) @else) @else-clause
+                            ]*
+      ) @if
+
+This'd be something like `link(from-end-of: colon, to-start-of: then, to-node-for: then)
+Which would eat the space.
+The alternative is end-of-A to end-of-B.
+Also - we can link from the end-of colon to end-of then / start-of-alternative.
+The bonus of using end-of for this is that we always have end-of then, but not always start-of-alternative.
+
+that said, it's not strictly necessary to map all the way to the end of then, as we'll get that from the then-block anyhow.
+*/
 
 function* parentsUpTo(
   syntax: Parser.SyntaxNode,
@@ -64,6 +122,7 @@ export class NodeMapper {
 
 
   public add(syntax: Parser.SyntaxNode, node: string) {
+    console.log(node, syntax.text.split("\n")[0], syntax.toString());
     this.syntaxToNode.set(syntax, node);
     this.ranges.push({ start: syntax.startIndex, stop: syntax.endIndex, value: syntax })
   }

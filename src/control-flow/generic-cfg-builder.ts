@@ -88,7 +88,7 @@ export class GenericCFGBuilder {
 
     let entry: string | null = null;
     let previous: string | null = null;
-    let prevEndIndex: number | null = null;
+    let prevStatement: Parser.SyntaxNode | null = null;
     for (const statement of codeStatements) {
       const { entry: currentEntry, exit: currentExit } = blockHandler.update(
         this.processBlock(statement),
@@ -100,12 +100,16 @@ export class GenericCFGBuilder {
 
       // Mark the text from the previous statement all the way to the end of the current one as 
       // mapped to this one.
-      if (prevEndIndex !== null) {
-        this.nodeMapper.range(prevEndIndex, statement.endIndex, statement);
+      if (prevStatement) {
+        // This captures _after_ the current statement
+        // this.nodeMapper.range(prevStatement.endIndex, statement.startIndex, prevStatement);
+        // this.nodeMapper.range(statement.startIndex, statement.endIndex, statement);
+        // This captures _before_ the current statement
+        this.nodeMapper.range(prevStatement.endIndex, statement.endIndex, statement);
       } else {
         this.nodeMapper.range(statement.startIndex, statement.endIndex, statement);
       }
-      prevEndIndex = statement.endIndex;
+      prevStatement = statement;
     }
     return blockHandler.update({ entry, exit: previous });
   }
