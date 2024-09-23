@@ -6,6 +6,7 @@
   import type { Language } from "../../../control-flow/cfg";
   import * as LZString from "lz-string";
   import Editor from "./Editor.svelte";
+  import CodeSegmentation from "./CodeSegmentation.svelte";
   export let codeGo = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
   export let codeC = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";
   export let codePython = "def example():\n    if x:\n        return";
@@ -30,6 +31,8 @@
       urlParams.get("python"),
     );
   }
+
+  let showSegmentation = urlParams.has("segmentation");
 
   let selection = languages[parseInt(urlParams.get("language")) || 0];
   let code = codeGo;
@@ -146,7 +149,13 @@
         />
       {/if}
     </div>
+    {#if showSegmentation}
+      <div class="segmentation">
+        <CodeSegmentation {code} language={selection.language} {simplify} />
+      </div>
+    {/if}
   </div>
+
   <div class="graph">
     <div class="graph-controls">
       <div class="settings">
@@ -209,6 +218,7 @@
     padding-top: 1rem;
   }
   .graph,
+  .segmentation,
   .editor {
     background-color: white;
     filter: drop-shadow(0 0 0.3rem gray);

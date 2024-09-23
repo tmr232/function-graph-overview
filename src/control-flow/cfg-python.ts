@@ -38,9 +38,11 @@ function defaultProcessStatement(
   const hasYield = matchExistsIn(syntax, "yield", `(yield) @yield`);
   if (hasYield) {
     const yieldNode = builder.addNode("YIELD", syntax.text);
+    ctx.link(syntax, yieldNode);
     return { entry: yieldNode, exit: yieldNode };
   }
   const newNode = builder.addNode("STATEMENT", syntax.text);
+  ctx.link(syntax, newNode);
   return { entry: newNode, exit: newNode };
 }
 function processRaiseStatement(
@@ -49,6 +51,7 @@ function processRaiseStatement(
 ): BasicBlock {
   const { builder } = ctx;
   const raiseNode = builder.addNode("THROW", raiseSyntax.text);
+  ctx.link(raiseSyntax, raiseNode);
   return { entry: raiseNode, exit: null };
 }
 function processReturnStatement(
@@ -57,6 +60,7 @@ function processReturnStatement(
 ): BasicBlock {
   const { builder } = ctx;
   const returnNode = builder.addNode("RETURN", returnSyntax.text);
+  ctx.link(returnSyntax, returnNode);
   return { entry: returnNode, exit: null, returns: [returnNode] };
 }
 function processTryStatement(
@@ -227,6 +231,7 @@ function processComment(
   // We only ever ger here when marker comments are enabled,
   // and only for marker comments as the rest are filtered out.
   const commentNode = builder.addNode("MARKER_COMMENT", commentSyntax.text);
+  ctx.link(commentSyntax, commentNode);
   if (options.markerPattern) {
     const marker = commentSyntax.text.match(options.markerPattern)?.[1];
     if (marker) builder.addMarker(commentNode, marker);
@@ -296,19 +301,21 @@ function processMatchStatement(
 }
 
 function processContinueStatement(
-  _continueSyntax: Parser.SyntaxNode,
+  continueSyntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const { builder } = ctx;
   const continueNode = builder.addNode("CONTINUE", "CONTINUE");
+  ctx.link(continueSyntax, continueNode);
   return { entry: continueNode, exit: null, continues: [continueNode] };
 }
 function processBreakStatement(
-  _breakSyntax: Parser.SyntaxNode,
+  breakSyntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const { builder } = ctx;
   const breakNode = builder.addNode("BREAK", "BREAK");
+  ctx.link(breakSyntax, breakNode);
   return { entry: breakNode, exit: null, breaks: [breakNode] };
 }
 
@@ -349,6 +356,7 @@ function processIfStatement(
 
   const mergeNode = builder.addNode("MERGE", "if merge");
   const headNode = builder.addNode("CONDITION", "if condition");
+  ctx.link(ifNode, headNode);
 
   if (condBlock?.entry) builder.addEdge(headNode, condBlock.entry);
 
@@ -409,6 +417,7 @@ function processForStatement(
 
   const exitNode = builder.addNode("FOR_EXIT", "loop exit");
   const headNode = builder.addNode("LOOP_HEAD", "loop head");
+  ctx.link(forNode, headNode);
   const headBlock = { entry: headNode, exit: headNode };
 
   /*

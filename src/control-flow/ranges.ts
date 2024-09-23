@@ -1,3 +1,4 @@
+
 export type SimpleRange<T> = { start: number; value: T };
 
 function preAddRange<T>(
@@ -56,4 +57,15 @@ export function inplaceAddRange<T>(
 
 export function getValue<T>(ranges: SimpleRange<T>[], pos: number): T | undefined {
   return ranges.findLast((range) => pos >= range.start)?.value;
+}
+
+
+export function* iterRanges<T>(ranges: SimpleRange<T>[]): Generator<{ start: number, stop?: number, value: T }> {
+  let i = 0
+  for (; i < ranges.length - 1; ++i) {
+    yield { start: ranges[i].start, stop: ranges[i + 1].start, value: ranges[i].value }
+  }
+  if (i < ranges.length) {
+    yield { start: ranges[i].start, value: ranges[i].value }
+  }
 }
