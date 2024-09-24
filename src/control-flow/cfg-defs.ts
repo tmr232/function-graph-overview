@@ -70,7 +70,7 @@ export interface Goto {
 }
 
 export interface BasicBlock {
-  entry: string | null;
+  entry: string;
   exit: string | null;
   continues?: string[];
   breaks?: string[];

@@ -201,24 +201,26 @@ function processIfStatement(
     ctx.dispatch.single(consequenceChild),
   );
 
-  const alternativeChild = ifNode.childForFieldName("alternative");
-  const elseIf = alternativeChild?.type === "if_statement";
-  const { entry: elseEntry, exit: elseExit } = (() => {
-    if (elseIf) {
-      return ctx.state.update(
-        processIfStatement(alternativeChild, ctx, mergeNode),
-      );
-    } else {
-      return ctx.state.update(ctx.dispatch.single(alternativeChild));
-    }
-  })();
-
   ctx.builder.addEdge(conditionNode, thenEntry || mergeNode, "consequence");
   if (thenExit) ctx.builder.addEdge(thenExit, mergeNode);
 
-  if (elseEntry) {
-    ctx.builder.addEdge(conditionNode, elseEntry, "alternative");
-    if (elseExit && !elseIf) ctx.builder.addEdge(elseExit, mergeNode);
+  const alternativeChild = ifNode.childForFieldName("alternative");
+  if (alternativeChild) {
+    const elseIf = alternativeChild.type === "if_statement";
+    const { entry: elseEntry, exit: elseExit } = (() => {
+      if (elseIf) {
+        return ctx.state.update(
+          processIfStatement(alternativeChild, ctx, mergeNode),
+        );
+      } else {
+        return ctx.state.update(ctx.dispatch.single(alternativeChild));
+      }
+    })();
+
+    if (elseEntry) {
+      ctx.builder.addEdge(conditionNode, elseEntry, "alternative");
+      if (elseExit && !elseIf) ctx.builder.addEdge(elseExit, mergeNode);
+    }
   } else {
     ctx.builder.addEdge(conditionNode, mergeNode, "alternative");
   }

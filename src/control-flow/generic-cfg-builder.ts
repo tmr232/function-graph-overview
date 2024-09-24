@@ -51,7 +51,10 @@ export class GenericCFGBuilder {
   }
 
   private processBlock(syntax: Parser.SyntaxNode | null): BasicBlock {
-    if (!syntax) return { entry: null, exit: null };
+    if (!syntax) {
+      const emptyNode = this.builder.addNode("EMPTY", "Empty node");
+      return { entry: emptyNode, exit: emptyNode };
+    }
 
     const handler = this.handlers.named[syntax.type] ?? this.handlers.default;
     const matcher = new BlockMatcher(this.processBlock.bind(this));
