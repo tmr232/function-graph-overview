@@ -425,16 +425,18 @@ function processForStatement(
     forNode,
     `
       [(for_statement
+          (":") @colon
           body: (_) @body
           alternative: (else_clause (block) @else)
       )
       (for_statement
+          (":") @colon
           body: (_) @body
       )] @for
       `,
   );
 
-  const bodySyntax = match.getSyntax("body");
+  const bodySyntax = match.requireSyntax("body");
   const elseSyntax = match.getSyntax("else");
 
   const bodyBlock = match.getBlock(bodySyntax);
@@ -442,8 +444,10 @@ function processForStatement(
 
   const exitNode = builder.addNode("FOR_EXIT", "loop exit");
   const headNode = builder.addNode("LOOP_HEAD", "loop head");
-  ctx.link(forNode, headNode);
   const headBlock = { entry: headNode, exit: headNode };
+
+  ctx.link(forNode, headNode);
+  ctx.linkGap(match.requireSyntax("colon"), bodySyntax);
 
   /*
   head +-> body -> head
@@ -483,14 +487,15 @@ function processWhileStatement(
     `
     (while_statement
         condition: (_) @cond
+        (":") @colon
         body: (_) @body
         alternative: (else_clause (_) @else)?
         ) @while
     `,
   );
 
-  const condSyntax = match.getSyntax("cond");
-  const bodySyntax = match.getSyntax("body");
+  const condSyntax = match.requireSyntax("cond");
+  const bodySyntax = match.requireSyntax("body");
   const elseSyntax = match.getSyntax("else");
 
   const condBlock = match.getBlock(condSyntax) as BasicBlock;
@@ -498,6 +503,8 @@ function processWhileStatement(
   const elseBlock = match.getBlock(elseSyntax);
 
   const exitNode = builder.addNode("FOR_EXIT", "loop exit");
+
+  ctx.linkGap(match.requireSyntax("colon"), bodySyntax);
 
   if (condBlock.exit) {
     if (bodyBlock.entry)
