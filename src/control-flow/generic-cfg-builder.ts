@@ -29,7 +29,7 @@ export class GenericCFGBuilder {
     if (bodySyntax) {
       const blockHandler = new BlockHandler();
       const { entry, exit } = blockHandler.update(
-        this.processStatements(bodySyntax.namedChildren),
+        this.dispatchMany(bodySyntax.namedChildren),
       );
 
       blockHandler.processGotos((gotoNode, labelNode) =>
@@ -51,29 +51,29 @@ export class GenericCFGBuilder {
     };
   }
 
-  private processBlock(syntax: Parser.SyntaxNode | null): BasicBlock {
+  private dispatchSingle(syntax: Parser.SyntaxNode | null): BasicBlock {
     if (!syntax) {
       const emptyNode = this.builder.addNode("EMPTY", "Empty node");
       return { entry: emptyNode, exit: emptyNode };
     }
 
     const handler = this.handlers.named[syntax.type] ?? this.handlers.default;
-    const matcher = new BlockMatcher(this.processBlock.bind(this));
+    const matcher = new BlockMatcher(this.dispatchSingle.bind(this));
     return handler(syntax, {
       builder: this.builder,
       matcher: matcher,
       state: matcher.state,
       options: this.options,
       dispatch: {
-        single: this.processBlock.bind(this),
-        many: this.processStatements.bind(this),
+        single: this.dispatchSingle.bind(this),
+        many: this.dispatchMany.bind(this),
       },
       link: this.nodeMapper.add.bind(this.nodeMapper),
       linkGap: this.nodeMapper.linkGap.bind(this.nodeMapper),
     });
   }
 
-  private processStatements(statements: Parser.SyntaxNode[]): BasicBlock {
+  private dispatchMany(statements: Parser.SyntaxNode[]): BasicBlock {
     const blockHandler = new BlockHandler();
     // Ignore comments
     const codeStatements = statements.filter((syntax) => {
@@ -93,7 +93,7 @@ export class GenericCFGBuilder {
     }
 
     const blocks = codeStatements.map((statement) =>
-      blockHandler.update(this.processBlock(statement)),
+      blockHandler.update(this.dispatchSingle(statement)),
     );
 
     for (const [prevStatement, statement] of pairwise(codeStatements)) {
