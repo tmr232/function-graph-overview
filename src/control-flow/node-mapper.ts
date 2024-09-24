@@ -1,5 +1,7 @@
 import type Parser from "web-tree-sitter";
 import { inplaceAddRange, newRanges, type SimpleRange } from "./ranges";
+import { type PointRange, comparePoints, newRanges as newPointRanges, inplaceAddRange as inplaceAddPointRange, pointDiff } from "./point-ranges";
+import type { Point } from "web-tree-sitter";
 /* TODO: It seem that AST-based mapping does not fit with what a user expects.
 We need to move to a range-based option, based on offsets in the code.
 
@@ -119,6 +121,7 @@ function* parentsUpTo(
 export class NodeMapper {
   private syntaxToNode: Map<Parser.SyntaxNode, string> = new Map();
   private ranges: { start: number, stop: number, value: Parser.SyntaxNode }[] = [];
+  private pointRanges: { start: Point, stop: Point, value: Parser.SyntaxNode }[] = []
 
 
   public add(syntax: Parser.SyntaxNode, node: string) {
@@ -126,10 +129,12 @@ export class NodeMapper {
     this.syntaxToNode.set(syntax, node);
 
     this.ranges.push({ start: syntax.startIndex, stop: syntax.endIndex, value: syntax })
+    this.pointRanges.push({ start: syntax.startPosition, stop: syntax.endPosition, value: syntax })
   }
 
   public linkGap(from: Parser.SyntaxNode, to: Parser.SyntaxNode) {
     this.range(from.endIndex, to.startIndex, to);
+    this.pointRanges.push({ start: from.endPosition, stop: to.startPosition, value: to })
   }
 
   public range(start: number, stop: number, syntax: Parser.SyntaxNode) {
@@ -195,6 +200,20 @@ export class NodeMapper {
   public getIndexMapping(functionSyntax: Parser.SyntaxNode): SimpleRange<string>[] {
     const syntaxToNode = this.getMapping(functionSyntax);
     const ranges = this.buildRanges(functionSyntax);
+    return ranges.map(({ start, value }) => ({ start, value: syntaxToNode.get(value.id) ?? "Not found" }))
+  }
+
+  private buildPointRanges(functionSyntax: Parser.SyntaxNode): PointRange<Parser.SyntaxNode>[] {
+    const ranges = newPointRanges(functionSyntax);
+    for (const { start, stop, value } of this.pointRanges.toSorted((b, a) => comparePoints(pointDiff(a.stop, a.start), pointDiff(b.stop, b.start)))) {
+      inplaceAddPointRange(ranges, start, stop, value);
+    }
+    return ranges;
+  }
+
+  public getPointMapping(functionSyntax: Parser.SyntaxNode): PointRange<string>[] {
+    const syntaxToNode = this.getMapping(functionSyntax);
+    const ranges = this.buildPointRanges(functionSyntax);
     return ranges.map(({ start, value }) => ({ start, value: syntaxToNode.get(value.id) ?? "Not found" }))
   }
 }

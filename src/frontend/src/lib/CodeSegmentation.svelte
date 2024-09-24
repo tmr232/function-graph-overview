@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Parser from "web-tree-sitter";
+  import Parser, { type Point } from "web-tree-sitter";
   import { newCFGBuilder, type Language } from "../../../control-flow/cfg";
   import { mergeNodeAttrs, type CFG } from "../../../control-flow/cfg-defs";
   import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
@@ -11,6 +11,10 @@
   } from "./utils";
   import { evolve } from "../../../control-flow/evolve";
   import { iterRanges } from "../../../control-flow/ranges";
+  import {
+    comparePoints,
+    iterRanges as iterPointRanges,
+  } from "../../../control-flow/point-ranges";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
@@ -71,6 +75,62 @@
     return result + "\n\n\n" + legend;
   }
 
+  function sliceLines(lines: string[], start: Point, stop?: Point): string {
+    if (stop === undefined) {
+      return [
+        lines[start.row].slice(start.column),
+        ...lines.slice(start.row + 1),
+      ].join("\n");
+    }
+    if (start.row === stop.row) {
+      return lines[start.row].slice(start.column, stop.column);
+    }
+    return [
+      lines[start.row].slice(start.column),
+      ...lines.slice(start.row + 1, stop.row),
+      lines[stop.row].slice(0, stop.column),
+    ].join("\n");
+  }
+
+  function renderPointRanges(
+    cfg: CFG,
+    functionSyntax: Parser.SyntaxNode,
+    sourceText: string,
+    nodeColors: NodeColors,
+  ): string {
+    let result = "";
+    const lines = sourceText.split("\n");
+    const funcStart = functionSyntax.startPosition;
+    const funcEnd = functionSyntax.endPosition;
+    for (const { start, stop, value: node } of iterPointRanges(
+      cfg.pointToNode,
+    )) {
+      if (
+        stop === undefined ||
+        comparePoints(stop, funcStart) < 0 ||
+        comparePoints(start, funcEnd) > 0
+      ) {
+        continue;
+      }
+      const sliceStart =
+        comparePoints(start, funcStart) > 0 ? start : funcStart;
+      const sliceEnd = stop
+        ? comparePoints(stop, funcEnd) < 0
+          ? stop
+          : funcEnd
+        : undefined;
+      const textPart = (result += withBackground(
+        sliceLines(lines, sliceStart, sliceEnd),
+        nodeColors.get(node) ?? "red",
+      ));
+    }
+
+    let legend = [...nodeColors.entries()]
+      .map(([name, color]) => withBackground(name, color))
+      .join("\n");
+    return result + "\n\n\n" + legend;
+  }
+
   function remapNodeTargets(cfg: CFG): CFG {
     const remap = new Map<string, string>();
     cfg.graph.forEachNode((node, { targets }) => {
@@ -80,10 +140,14 @@
       start,
       value: remap.get(node) ?? node,
     }));
+    const pointToNode = cfg.pointToNode.map(({ start, value: node }) => ({
+      start,
+      value: remap.get(node) ?? node,
+    }));
     // Copying the graph is needed.
     // Seems that some of the graph properties don't survive the structured clone.
     const graph = cfg.graph.copy();
-    return evolve(cfg, { graph, offsetToNode });
+    return evolve(cfg, { graph, offsetToNode, pointToNode });
   }
 
   type Options = { simplify: boolean; trim: boolean };
@@ -104,7 +168,8 @@
     if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
     cfg = remapNodeTargets(cfg);
     nodeColors = createNodeColors(cfg);
-    return renderRanges(cfg, functionSyntax, code, nodeColors);
+    // return renderRanges(cfg, functionSyntax, code, nodeColors);
+    return renderPointRanges(cfg, functionSyntax, code, nodeColors);
   }
 
   function renderWrapper(code: string, language: Language, options: Options) {

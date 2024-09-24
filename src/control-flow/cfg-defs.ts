@@ -1,6 +1,7 @@
 import { MultiDirectedGraph } from "graphology";
 import type Parser from "web-tree-sitter";
 import type { SimpleRange } from "./ranges";
+import type { PointRange } from "./point-ranges";
 
 export type NodeType =
   | "YIELD"
@@ -87,6 +88,7 @@ export interface CFG {
   entry: string;
   syntaxToNode: Map<number, string>;
   offsetToNode: SimpleRange<string>[];
+  pointToNode: PointRange<string>[];
 }
 
 export class BlockHandler {

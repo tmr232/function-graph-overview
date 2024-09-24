@@ -12,8 +12,17 @@ function compare<T extends object>(a: T, b: T, ...keys: (keyof T)[]): number {
   return 0;
 }
 
+
 export function comparePoints(a: Point, b: Point): number {
   return compare(a, b, "row", "column")
+}
+
+export function pointDiff(a: Point, b: Point): Point {
+  return { row: a.row - b.row, column: a.column - b.column };
+}
+
+function pointToString(p: Point): string {
+  return `{row: ${p.row}, column: ${p.column}}`
 }
 
 function preAddRange<T>(
@@ -31,7 +40,7 @@ function preAddRange<T>(
   if (ranges[spliceAt + 1] && comparePoints(stop, ranges[spliceAt + 1].start) > 0) {
     // We overlap the next range, this is invalid
     throw new Error(
-      `Cannot insert range at (${start}, ${stop}), overflows into range starting at ${ranges[spliceAt + 1].start}`,
+      `Cannot insert range at (${pointToString(start)}, ${pointToString(stop)}), overflows into range starting at ${pointToString(ranges[spliceAt + 1].start)}`,
     );
   }
 

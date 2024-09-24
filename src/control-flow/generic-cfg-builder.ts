@@ -46,6 +46,7 @@ export class GenericCFGBuilder {
       entry: startNode,
       syntaxToNode: this.nodeMapper.getMapping(functionNode),
       offsetToNode: this.nodeMapper.getIndexMapping(functionNode),
+      pointToNode: this.nodeMapper.getPointMapping(functionNode),
     };
   }
 
