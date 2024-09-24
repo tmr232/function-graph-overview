@@ -361,7 +361,7 @@ function processIfStatement(
     ctx.linkGap(thenSyntax, elifClause);
   }
   for (const [elifClause, elseClause] of zip(
-    maybe(match.getLastSyntax("elif-clause")),
+    maybe(match.getLastSyntax("elif-clause") ?? thenSyntax),
     maybe(match.getSyntax("else-clause")),
   )) {
     ctx.linkGap(elifClause, elseClause);
