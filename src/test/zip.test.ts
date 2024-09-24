@@ -1,4 +1,4 @@
-import { structZip, zip } from "../control-flow/zip";
+import { pairwise, structZip, zip } from "../control-flow/zip";
 import { test, expect } from 'bun:test'
 
 
@@ -21,4 +21,9 @@ test("structZip", () => {
             s: "c",
         }
     ])
+})
+
+
+test("pairwise", () => {
+    expect([...pairwise([1, 2, 3, 4])]).toEqual([[1, 2], [2, 3], [3, 4]]);
 })

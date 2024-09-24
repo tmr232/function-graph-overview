@@ -388,10 +388,7 @@ function processIfStatement(
   const conds = [condBlock, ...elifCondBlocks];
   const consequences = [thenBlock, ...elifBlocks];
   let previous: null | BasicBlock = null;
-  for (let i = 0; i < conds.length; ++i) {
-    const conditionBlock = conds[i];
-    const consequenceBlock = consequences[i];
-
+  for (const [conditionBlock, consequenceBlock] of zip(conds, consequences)) {
     if (previous?.exit && conditionBlock?.entry)
       builder.addEdge(previous.exit, conditionBlock.entry, "alternative");
     if (conditionBlock?.exit && consequenceBlock?.entry)

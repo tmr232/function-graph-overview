@@ -24,3 +24,13 @@ export function maybe<T>(value: T | undefined): T[] {
     if (value === undefined) return [];
     return [value];
 }
+
+
+export function* pairwise<T>(items: T[]): Generator<[T, T], void, unknown> {
+    const iterator = items[Symbol.iterator]();
+    let { value: a } = iterator.next();
+    for (const b of iterator) {
+        yield [a, b];
+        a = b;
+    }
+}
