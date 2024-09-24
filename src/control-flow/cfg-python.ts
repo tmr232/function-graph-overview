@@ -360,10 +360,14 @@ function processIfStatement(
   const elseBlock = match.getBlock(elseSyntax);
 
   ctx.linkGap(match.requireSyntax("colon"), thenSyntax);
-  if (thenBlock?.entry) ctx.link(thenSyntax, thenBlock.entry)
-  console.log(thenSyntax.startPosition)
-  match.getSyntaxMany("elif-clause").forEach((syntax, i) => { if (elifCondBlocks[i]?.entry) ctx.link(syntax, elifCondBlocks[i]?.entry) });
-  match.getSyntaxMany("elif-colon").forEach((syntax, i) => { ctx.linkGap(syntax, elifSyntaxMany[i]) });
+  if (thenBlock?.entry) ctx.link(thenSyntax, thenBlock.entry);
+  console.log(thenSyntax.startPosition);
+  match.getSyntaxMany("elif-clause").forEach((syntax, i) => {
+    if (elifCondBlocks[i]?.entry) ctx.link(syntax, elifCondBlocks[i]?.entry);
+  });
+  match.getSyntaxMany("elif-colon").forEach((syntax, i) => {
+    ctx.linkGap(syntax, elifSyntaxMany[i]);
+  });
   if (elseSyntax) ctx.linkGap(match.requireSyntax("else-colon"), elseSyntax);
 
   const mergeNode = builder.addNode("MERGE", "if merge");
@@ -395,7 +399,8 @@ function processIfStatement(
   }
 
   if (elseBlock) {
-    if (elseBlock.entry) ctx.link(match.requireSyntax("else-clause"), elseBlock.entry)
+    if (elseBlock.entry)
+      ctx.link(match.requireSyntax("else-clause"), elseBlock.entry);
     if (previous?.exit && elseBlock.entry)
       builder.addEdge(previous.exit, elseBlock.entry, "alternative");
     if (elseBlock.exit) builder.addEdge(elseBlock.exit, mergeNode);

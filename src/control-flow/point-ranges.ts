@@ -12,9 +12,8 @@ function compare<T extends object>(a: T, b: T, ...keys: (keyof T)[]): number {
   return 0;
 }
 
-
 export function comparePoints(a: Point, b: Point): number {
-  return compare(a, b, "row", "column")
+  return compare(a, b, "row", "column");
 }
 
 export function pointDiff(a: Point, b: Point): Point {
@@ -22,7 +21,7 @@ export function pointDiff(a: Point, b: Point): Point {
 }
 
 function pointToString(p: Point): string {
-  return `{row: ${p.row}, column: ${p.column}}`
+  return `{row: ${p.row}, column: ${p.column}}`;
 }
 
 function preAddRange<T>(
@@ -31,13 +30,18 @@ function preAddRange<T>(
   stop: Point,
   value: T,
 ): { at: number; toSplice: PointRange<T>[]; deleteCount: number } {
-  const spliceAt = ranges.findLastIndex((range) => comparePoints(start, range.start) >= 0);
+  const spliceAt = ranges.findLastIndex(
+    (range) => comparePoints(start, range.start) >= 0,
+  );
   if (spliceAt === -1) {
     // This should never happen, as a range should always have a start element.
     throw new Error("Could not find splice position");
   }
 
-  if (ranges[spliceAt + 1] && comparePoints(stop, ranges[spliceAt + 1].start) > 0) {
+  if (
+    ranges[spliceAt + 1] &&
+    comparePoints(stop, ranges[spliceAt + 1].start) > 0
+  ) {
     // We overlap the next range, this is invalid
     throw new Error(
       `Cannot insert range at (${pointToString(start)}, ${pointToString(stop)}), overflows into range starting at ${pointToString(ranges[spliceAt + 1].start)}`,
@@ -65,7 +69,7 @@ export function addRange<T>(
   stop: Point,
   value: T,
 ): PointRange<T>[] {
-  const { at, toSplice, deleteCount } = preAddRange(ranges, start, stop, value,);
+  const { at, toSplice, deleteCount } = preAddRange(ranges, start, stop, value);
   return ranges.toSpliced(at, deleteCount, ...toSplice);
 }
 
@@ -75,21 +79,30 @@ export function inplaceAddRange<T>(
   stop: Point,
   value: T,
 ): void {
-  const { at, toSplice, deleteCount } = preAddRange(ranges, start, stop, value,);
+  const { at, toSplice, deleteCount } = preAddRange(ranges, start, stop, value);
   ranges.splice(at, deleteCount, ...toSplice);
 }
 
-export function getValue<T>(ranges: PointRange<T>[], pos: Point): T | undefined {
-  return ranges.findLast((range) => comparePoints(pos, range.start) >= 0)?.value;
+export function getValue<T>(
+  ranges: PointRange<T>[],
+  pos: Point,
+): T | undefined {
+  return ranges.findLast((range) => comparePoints(pos, range.start) >= 0)
+    ?.value;
 }
 
-
-export function* iterRanges<T>(ranges: PointRange<T>[]): Generator<{ start: Point, stop?: Point, value: T }> {
-  let i = 0
+export function* iterRanges<T>(
+  ranges: PointRange<T>[],
+): Generator<{ start: Point; stop?: Point; value: T }> {
+  let i = 0;
   for (; i < ranges.length - 1; ++i) {
-    yield { start: ranges[i].start, stop: ranges[i + 1].start, value: ranges[i].value }
+    yield {
+      start: ranges[i].start,
+      stop: ranges[i + 1].start,
+      value: ranges[i].value,
+    };
   }
   if (i < ranges.length) {
-    yield { start: ranges[i].start, value: ranges[i].value }
+    yield { start: ranges[i].start, value: ranges[i].value };
   }
 }

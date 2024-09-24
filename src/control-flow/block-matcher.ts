@@ -52,8 +52,11 @@ function getSyntaxMany(
     .map((capture) => capture.node);
 }
 
-function getSyntaxManyTuples(match: Parser.QueryMatch, ...names: string[]): { [key in typeof names[number]]: Parser.SyntaxNode }[] {
-  const result: { [key in typeof names[number]]: Parser.SyntaxNode[] } = {}
+function getSyntaxManyTuples(
+  match: Parser.QueryMatch,
+  ...names: string[]
+): { [key in (typeof names)[number]]: Parser.SyntaxNode }[] {
+  const result: { [key in (typeof names)[number]]: Parser.SyntaxNode[] } = {};
 
   let length: number | null = null;
   for (const name of names) {
@@ -61,18 +64,18 @@ function getSyntaxManyTuples(match: Parser.QueryMatch, ...names: string[]): { [k
     if (length === null) {
       length = result[name].length;
     } else if (length !== result[name].length) {
-      throw new Error("Count mismatch!")
+      throw new Error("Count mismatch!");
     }
   }
 
   if (length === null) {
-    return []
+    return [];
   }
 
-  const tuples: { [key in typeof names[number]]: Parser.SyntaxNode }[] = []
+  const tuples: { [key in (typeof names)[number]]: Parser.SyntaxNode }[] = [];
 
   for (let i = 0; i < length; ++i) {
-    const tuple: { [key in typeof names[number]]: Parser.SyntaxNode } = {};
+    const tuple: { [key in (typeof names)[number]]: Parser.SyntaxNode } = {};
     for (const name in names) {
       tuple[name] = result[name][i];
       tuples.push(tuple);

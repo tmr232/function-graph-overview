@@ -1,4 +1,3 @@
-
 export type SimpleRange<T> = { start: number; value: T };
 
 function preAddRange<T>(
@@ -41,7 +40,7 @@ export function addRange<T>(
   stop: number,
   value: T,
 ): SimpleRange<T>[] {
-  const { at, toSplice, deleteCount } = preAddRange(ranges, start, stop, value,);
+  const { at, toSplice, deleteCount } = preAddRange(ranges, start, stop, value);
   return ranges.toSpliced(at, deleteCount, ...toSplice);
 }
 
@@ -51,21 +50,29 @@ export function inplaceAddRange<T>(
   stop: number,
   value: T,
 ): void {
-  const { at, toSplice, deleteCount } = preAddRange(ranges, start, stop, value,);
+  const { at, toSplice, deleteCount } = preAddRange(ranges, start, stop, value);
   ranges.splice(at, deleteCount, ...toSplice);
 }
 
-export function getValue<T>(ranges: SimpleRange<T>[], pos: number): T | undefined {
+export function getValue<T>(
+  ranges: SimpleRange<T>[],
+  pos: number,
+): T | undefined {
   return ranges.findLast((range) => pos >= range.start)?.value;
 }
 
-
-export function* iterRanges<T>(ranges: SimpleRange<T>[]): Generator<{ start: number, stop?: number, value: T }> {
-  let i = 0
+export function* iterRanges<T>(
+  ranges: SimpleRange<T>[],
+): Generator<{ start: number; stop?: number; value: T }> {
+  let i = 0;
   for (; i < ranges.length - 1; ++i) {
-    yield { start: ranges[i].start, stop: ranges[i + 1].start, value: ranges[i].value }
+    yield {
+      start: ranges[i].start,
+      stop: ranges[i + 1].start,
+      value: ranges[i].value,
+    };
   }
   if (i < ranges.length) {
-    yield { start: ranges[i].start, value: ranges[i].value }
+    yield { start: ranges[i].start, value: ranges[i].value };
   }
 }
