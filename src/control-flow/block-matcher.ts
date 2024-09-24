@@ -52,7 +52,7 @@ function getSyntaxMany(
     .map((capture) => capture.node);
 }
 
-function getSyntaxManyTuples(
+function getSyntaxTuples(
   match: Parser.QueryMatch,
   ...names: string[]
 ): { [key in (typeof names)[number]]: Parser.SyntaxNode }[] {

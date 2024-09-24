@@ -345,7 +345,7 @@ function processIfStatement(
       `,
   );
 
-  const condSyntax = match.getSyntax("if-cond");
+  const condSyntax = match.requireSyntax("if-cond");
   const thenSyntax = match.requireSyntax("then");
   const elifCondSyntaxMany = match.getSyntaxMany("elif-cond");
   const elifSyntaxMany = match.getSyntaxMany("elif");
