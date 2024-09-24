@@ -137,7 +137,6 @@ function processForStatement(
     case 1: {
       const headNode = ctx.builder.addNode("LOOP_HEAD", "loop head");
       ctx.link(forNode, headNode);
-      console.log("for", forNode.id, headNode);
       const { entry: bodyEntry, exit: bodyExit } = state.update(
         ctx.dispatch.single(forNode.firstNamedChild),
       );
@@ -157,7 +156,6 @@ function processForStatement(
     case 2: {
       const headNode = ctx.builder.addNode("LOOP_HEAD", "loop head");
       ctx.link(forNode, headNode);
-      console.log("for", forNode.id, headNode);
       const { entry: bodyEntry, exit: bodyExit } = state.update(
         ctx.dispatch.single(forNode.namedChildren[1]),
       );

@@ -9,6 +9,7 @@ import {
 import type { StatementHandlers } from "./statement-handlers";
 import { BlockMatcher } from "./block-matcher";
 import { NodeMapper } from "./node-mapper";
+import { pairwise } from "./zip";
 
 export class GenericCFGBuilder {
   private builder: Builder = new Builder();
@@ -40,7 +41,7 @@ export class GenericCFGBuilder {
       if (entry) this.builder.addEdge(startNode, entry);
       if (exit) this.builder.addEdge(exit, endNode);
     }
-    console.log(this.nodeMapper.getIndexMapping(functionNode));
+
     return {
       graph: this.builder.getGraph(),
       entry: startNode,
@@ -91,24 +92,19 @@ export class GenericCFGBuilder {
       return { entry: emptyNode, exit: emptyNode };
     }
 
-    let entry: string | null = null;
-    let previous: string | null = null;
-    let prevStatement: Parser.SyntaxNode | null = null;
-    for (const statement of codeStatements) {
-      const { entry: currentEntry, exit: currentExit } = blockHandler.update(
-        this.processBlock(statement),
-      );
-      if (!entry) entry = currentEntry;
-      if (previous && currentEntry)
-        this.builder.addEdge(previous, currentEntry);
-      previous = currentExit;
 
-      if (prevStatement) {
-        this.nodeMapper.linkGap(prevStatement, statement);
-      }
+    const blocks = codeStatements.map(statement => blockHandler.update(this.processBlock(statement)));
 
-      prevStatement = statement;
+    for (const [prevStatement, statement] of pairwise(codeStatements)) {
+      this.nodeMapper.linkGap(prevStatement, statement);
     }
-    return blockHandler.update({ entry, exit: previous });
+
+    for (const [{ exit: prevExit }, { entry: currentEntry }] of pairwise(blocks)) {
+      if (prevExit) {
+        this.builder.addEdge(prevExit, currentEntry);
+      }
+    }
+
+    return blockHandler.update({ entry: blocks[0].entry, exit: blocks[blocks.length - 1].exit });
   }
 }

@@ -135,7 +135,6 @@ export class NodeMapper {
   }[] = [];
 
   public add(syntax: Parser.SyntaxNode, node: string) {
-    console.log(node, syntax.text.split("\n")[0], syntax.toString());
     this.syntaxToNode.set(syntax, node);
 
     this.ranges.push({
@@ -192,24 +191,24 @@ export class NodeMapper {
    * @returns Mapping from syntax-IDs to node names
    */
   public getMapping(functionSyntax: Parser.SyntaxNode): Map<number, string> {
-    console.log(
-      [...this.syntaxToNode.entries()].map(([syntax, node]) => [
-        syntax.id,
-        syntax.type,
-        syntax.startPosition.row + 1,
-        node,
-      ]),
-    );
-    console.log(
-      [...this.propagateInside(functionSyntax).entries()].map(
-        ([syntax, node]) => [
-          syntax.id,
-          syntax.type,
-          syntax.startPosition.row + 1,
-          node,
-        ],
-      ),
-    );
+    // console.log(
+    //   [...this.syntaxToNode.entries()].map(([syntax, node]) => [
+    //     syntax.id,
+    //     syntax.type,
+    //     syntax.startPosition.row + 1,
+    //     node,
+    //   ]),
+    // );
+    // console.log(
+    //   [...this.propagateInside(functionSyntax).entries()].map(
+    //     ([syntax, node]) => [
+    //       syntax.id,
+    //       syntax.type,
+    //       syntax.startPosition.row + 1,
+    //       node,
+    //     ],
+    //   ),
+    // );
     return new Map(
       [...this.propagateInside(functionSyntax).entries()].map(
         ([syntax, node]) => [syntax.id, node],

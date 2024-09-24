@@ -191,7 +191,7 @@ export function graphToLineNumbers(cfg: CFG): Map<string, number> {
   const lineNumbers = new Map();
 
   cfg.graph.forEachNode((node, attrs) => {
-    console.log(node, attrs.firstLineNumber);
+    // console.log(node, attrs.firstLineNumber);
     if (attrs.firstLineNumber !== undefined) {
       lineNumbers.set(node, attrs.firstLineNumber);
     }

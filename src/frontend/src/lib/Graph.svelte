@@ -95,7 +95,7 @@
 
     dot = graphToDot(cfg, verbose);
     lineNumbers = graphToLineNumbers(cfg);
-    console.log(lineNumbers);
+    // console.log(lineNumbers);
 
     return graphviz.dot(dot);
   }
@@ -119,14 +119,14 @@
 
   let highlightedNode: Element;
   export function setCursor(row: number, column: number, index: number) {
-    console.log(index);
+    // console.log(index);
     const nodeId = getValue(cfg.offsetToNode, index);
     // if (!cfg.syntaxToNode) return;
     // let syntax = tree.rootNode.descendantForPosition({ row, column });
     // for (; syntax && !cfg.syntaxToNode.has(syntax.id); syntax = syntax.parent);
     // if (!syntax) return;
     // const nodeId = cfg.syntaxToNode.get(syntax.id);
-    console.log("Marking", nodeId);
+    // console.log("Marking", nodeId);
     const svgNode = document.querySelector(`#${nodeId}`);
     svgNode.classList.add(...highlightTemplate.classList);
     if (highlightedNode && highlightedNode !== svgNode) {
@@ -154,7 +154,7 @@
         return;
       }
       const lineNumber = lineNumbers.get(nodeElement.id);
-      console.log(nodeElement.id, lineNumber);
+      // console.log(nodeElement.id, lineNumber);
       if (lineNumber !== undefined) {
         goto(lineNumber);
       }
