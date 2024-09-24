@@ -352,28 +352,35 @@ function processIfStatement(
   const elifSyntaxMany = match.getSyntaxMany("elif");
   const elseSyntax = match.getSyntax("else");
 
-
-
   const condBlock = match.getBlock(condSyntax);
   const thenBlock = match.getBlock(thenSyntax);
   const elifCondBlocks = match.getManyBlocks(elifCondSyntaxMany);
   const elifBlocks = match.getManyBlocks(elifSyntaxMany);
   const elseBlock = match.getBlock(elseSyntax);
 
-  for (const elifClause of maybe(match.getSyntax('elif-clause'))) {
+  for (const elifClause of maybe(match.getSyntax("elif-clause"))) {
     ctx.linkGap(thenSyntax, elifClause);
   }
-  for (const [elifClause, elseClause] of zip(maybe(match.getLastSyntax('elif-clause')), maybe(match.getSyntax('else-clause')))) {
+  for (const [elifClause, elseClause] of zip(
+    maybe(match.getLastSyntax("elif-clause")),
+    maybe(match.getSyntax("else-clause")),
+  )) {
     ctx.linkGap(elifClause, elseClause);
   }
   ctx.linkGap(match.requireSyntax("colon"), thenSyntax);
   if (thenBlock?.entry) ctx.link(thenSyntax, thenBlock.entry);
 
-  for (const [elifClauseSyntax, elifCondBlock] of zip(match.getSyntaxMany('elif-clause'), elifCondBlocks)) {
-    if (elifCondBlock.entry) ctx.link(elifClauseSyntax, elifCondBlock.entry)
+  for (const [elifClauseSyntax, elifCondBlock] of zip(
+    match.getSyntaxMany("elif-clause"),
+    elifCondBlocks,
+  )) {
+    if (elifCondBlock.entry) ctx.link(elifClauseSyntax, elifCondBlock.entry);
   }
 
-  for (const [colonSyntax, elifSyntax] of zip(match.getSyntaxMany("elif-colon"), elifSyntaxMany)) {
+  for (const [colonSyntax, elifSyntax] of zip(
+    match.getSyntaxMany("elif-colon"),
+    elifSyntaxMany,
+  )) {
     ctx.linkGap(colonSyntax, elifSyntax);
   }
   if (elseSyntax) ctx.linkGap(match.requireSyntax("else-colon"), elseSyntax);

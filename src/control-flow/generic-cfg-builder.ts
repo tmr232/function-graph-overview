@@ -92,19 +92,25 @@ export class GenericCFGBuilder {
       return { entry: emptyNode, exit: emptyNode };
     }
 
-
-    const blocks = codeStatements.map(statement => blockHandler.update(this.processBlock(statement)));
+    const blocks = codeStatements.map((statement) =>
+      blockHandler.update(this.processBlock(statement)),
+    );
 
     for (const [prevStatement, statement] of pairwise(codeStatements)) {
       this.nodeMapper.linkGap(prevStatement, statement);
     }
 
-    for (const [{ exit: prevExit }, { entry: currentEntry }] of pairwise(blocks)) {
+    for (const [{ exit: prevExit }, { entry: currentEntry }] of pairwise(
+      blocks,
+    )) {
       if (prevExit) {
         this.builder.addEdge(prevExit, currentEntry);
       }
     }
 
-    return blockHandler.update({ entry: blocks[0].entry, exit: blocks[blocks.length - 1].exit });
+    return blockHandler.update({
+      entry: blocks[0].entry,
+      exit: blocks[blocks.length - 1].exit,
+    });
   }
 }

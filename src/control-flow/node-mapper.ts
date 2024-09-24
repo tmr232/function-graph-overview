@@ -170,7 +170,7 @@ export class NodeMapper {
   private propagateInside(
     container: Parser.SyntaxNode,
   ): Map<Parser.SyntaxNode, string> {
-    return this.syntaxToNode
+    return this.syntaxToNode;
     const mappedIds = new Set(
       [...this.syntaxToNode.keys()].map((syntax) => syntax.id),
     );

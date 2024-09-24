@@ -40,7 +40,6 @@ function getLastSyntax(
   return many[many.length - 1];
 }
 
-
 function requireSyntax(
   match: Parser.QueryMatch,
   name: string,
@@ -153,10 +152,14 @@ export class Match {
   public getSyntaxMany(name: string): ReturnType<typeof getSyntaxMany> {
     return getSyntaxMany(this.match, name);
   }
-  public getBlock(syntax: Parser.SyntaxNode | null | undefined): BasicBlock | null {
+
+  public getBlock(
+    syntax: Parser.SyntaxNode | null | undefined,
+  ): BasicBlock | null {
     return syntax ? this.blockHandler.update(this.processBlock(syntax)) : null;
   }
+
   public getManyBlocks(syntaxMany: Parser.SyntaxNode[]): BasicBlock[] {
-    return syntaxMany.map(syntax => this.getBlock(syntax) as BasicBlock);
+    return syntaxMany.map((syntax) => this.getBlock(syntax) as BasicBlock);
   }
 }
