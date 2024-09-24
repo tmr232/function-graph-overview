@@ -7,6 +7,7 @@ import {
 import type { Context, StatementHandlers } from "./statement-handlers.ts";
 import { GenericCFGBuilder } from "./generic-cfg-builder.ts";
 import { matchExistsIn } from "./block-matcher.ts";
+import { maybe, zip } from "./zip.ts";
 
 const statementHandlers: StatementHandlers = {
   named: {
@@ -355,27 +356,26 @@ function processIfStatement(
 
   const condBlock = match.getBlock(condSyntax);
   const thenBlock = match.getBlock(thenSyntax);
-  const elifCondBlocks = elifCondSyntaxMany.map((syntax) =>
-    match.getBlock(syntax),
-  );
-  const elifBlocks = elifSyntaxMany.map((syntax) => match.getBlock(syntax));
+  const elifCondBlocks = match.getManyBlocks(elifCondSyntaxMany);
+  const elifBlocks = match.getManyBlocks(elifSyntaxMany);
   const elseBlock = match.getBlock(elseSyntax);
 
-  ctx.linkGap(thenSyntax, match.requireSyntax("elif-clause"))
-  ctx.linkGap(match.requireSyntax("elif-clause"), match.requireSyntax("else-clause"))
+  for (const elifClause of maybe(match.getSyntax('elif-clause'))) {
+    ctx.linkGap(thenSyntax, elifClause);
+  }
+  for (const [elifClause, elseClause] of zip(maybe(match.getLastSyntax('elif-clause')), maybe(match.getSyntax('else-clause')))) {
+    ctx.linkGap(elifClause, elseClause);
+  }
   ctx.linkGap(match.requireSyntax("colon"), thenSyntax);
   if (thenBlock?.entry) ctx.link(thenSyntax, thenBlock.entry);
-  console.log(thenSyntax.startPosition);
-  match.getSyntaxMany("elif-clause").forEach((syntax, i) => {
-    if (elifCondBlocks[i]?.entry) ctx.link(syntax, elifCondBlocks[i]?.entry);
-    console.log("elif-clause", syntax.startPosition)
-    console.log("consequence", thenSyntax.endPosition)
-  });
 
-  match.getSyntaxMany("elif-colon").forEach((syntax, i) => {
-    console.log("yo!", syntax.endPosition, elifSyntaxMany[i].startPosition)
-    ctx.linkGap(syntax, elifSyntaxMany[i]);
-  });
+  for (const [elifClauseSyntax, elifCondBlock] of zip(match.getSyntaxMany('elif-clause'), elifCondBlocks)) {
+    if (elifCondBlock.entry) ctx.link(elifClauseSyntax, elifCondBlock.entry)
+  }
+
+  for (const [colonSyntax, elifSyntax] of zip(match.getSyntaxMany("elif-colon"), elifSyntaxMany)) {
+    ctx.linkGap(colonSyntax, elifSyntax);
+  }
   if (elseSyntax) ctx.linkGap(match.requireSyntax("else-colon"), elseSyntax);
 
   const mergeNode = builder.addNode("MERGE", "if merge");

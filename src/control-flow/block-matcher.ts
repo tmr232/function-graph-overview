@@ -32,6 +32,15 @@ function getSyntax(
   return getSyntaxMany(match, name)[0];
 }
 
+function getLastSyntax(
+  match: Parser.QueryMatch,
+  name: string,
+): Parser.SyntaxNode | undefined {
+  const many = getSyntaxMany(match, name);
+  return many[many.length - 1];
+}
+
+
 function requireSyntax(
   match: Parser.QueryMatch,
   name: string,
@@ -133,6 +142,10 @@ export class Match {
     return getSyntax(this.match, name);
   }
 
+  public getLastSyntax(name: string): ReturnType<typeof getLastSyntax> {
+    return getLastSyntax(this.match, name);
+  }
+
   public requireSyntax(name: string): ReturnType<typeof requireSyntax> {
     return requireSyntax(this.match, name);
   }
@@ -140,7 +153,10 @@ export class Match {
   public getSyntaxMany(name: string): ReturnType<typeof getSyntaxMany> {
     return getSyntaxMany(this.match, name);
   }
-  public getBlock(syntax: Parser.SyntaxNode | null | undefined) {
+  public getBlock(syntax: Parser.SyntaxNode | null | undefined): BasicBlock | null {
     return syntax ? this.blockHandler.update(this.processBlock(syntax)) : null;
+  }
+  public getManyBlocks(syntaxMany: Parser.SyntaxNode[]): BasicBlock[] {
+    return syntaxMany.map(syntax => this.getBlock(syntax) as BasicBlock);
   }
 }

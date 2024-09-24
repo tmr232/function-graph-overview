@@ -18,3 +18,9 @@ export function* structZip<T extends Record<string, unknown[]>>(
         ) as { [K in keyof T]: T[K] extends Array<infer U> ? U : never };
     }
 }
+
+
+export function maybe<T>(value: T | undefined): T[] {
+    if (value === undefined) return [];
+    return [value];
+}
