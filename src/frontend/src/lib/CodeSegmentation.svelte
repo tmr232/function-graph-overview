@@ -168,8 +168,8 @@
     if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
     cfg = remapNodeTargets(cfg);
     nodeColors = createNodeColors(cfg);
-    // return renderRanges(cfg, functionSyntax, code, nodeColors);
-    return renderPointRanges(cfg, functionSyntax, code, nodeColors);
+    return renderRanges(cfg, functionSyntax, code, nodeColors);
+    // return renderPointRanges(cfg, functionSyntax, code, nodeColors);
   }
 
   function renderWrapper(code: string, language: Language, options: Options) {

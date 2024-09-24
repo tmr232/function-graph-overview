@@ -143,8 +143,13 @@ export class NodeMapper {
       stop: syntax.endIndex,
       value: syntax,
     });
+    // this.pointRanges.push({
+    //   start: syntax.startPosition,
+    //   stop: syntax.endPosition,
+    //   value: syntax,
+    // });
     this.pointRanges.push({
-      start: syntax.startPosition,
+      start: { row: syntax.startPosition.row, column: 0 },
       stop: syntax.endPosition,
       value: syntax,
     });
@@ -154,7 +159,7 @@ export class NodeMapper {
     this.range(from.endIndex, to.startIndex, to);
     this.pointRanges.push({
       start: from.endPosition,
-      stop: to.startPosition,
+      stop: { row: to.startPosition.row, column: 0 },
       value: to,
     });
   }
@@ -166,6 +171,7 @@ export class NodeMapper {
   private propagateInside(
     container: Parser.SyntaxNode,
   ): Map<Parser.SyntaxNode, string> {
+    return this.syntaxToNode
     const mappedIds = new Set(
       [...this.syntaxToNode.keys()].map((syntax) => syntax.id),
     );

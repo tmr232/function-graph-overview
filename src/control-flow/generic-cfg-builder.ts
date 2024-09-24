@@ -90,6 +90,7 @@ export class GenericCFGBuilder {
 
     let entry: string | null = null;
     let previous: string | null = null;
+    let prevStatement: Parser.SyntaxNode | null = null;
     for (const statement of codeStatements) {
       const { entry: currentEntry, exit: currentExit } = blockHandler.update(
         this.processBlock(statement),
@@ -98,6 +99,12 @@ export class GenericCFGBuilder {
       if (previous && currentEntry)
         this.builder.addEdge(previous, currentEntry);
       previous = currentExit;
+
+      if (prevStatement) {
+        this.nodeMapper.linkGap(prevStatement, statement);
+      }
+
+      prevStatement = statement;
     }
     return blockHandler.update({ entry, exit: previous });
   }

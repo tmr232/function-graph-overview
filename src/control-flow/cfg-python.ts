@@ -351,6 +351,8 @@ function processIfStatement(
   const elifSyntaxMany = match.getSyntaxMany("elif");
   const elseSyntax = match.getSyntax("else");
 
+
+
   const condBlock = match.getBlock(condSyntax);
   const thenBlock = match.getBlock(thenSyntax);
   const elifCondBlocks = elifCondSyntaxMany.map((syntax) =>
@@ -359,13 +361,19 @@ function processIfStatement(
   const elifBlocks = elifSyntaxMany.map((syntax) => match.getBlock(syntax));
   const elseBlock = match.getBlock(elseSyntax);
 
+  ctx.linkGap(thenSyntax, match.requireSyntax("elif-clause"))
+  ctx.linkGap(match.requireSyntax("elif-clause"), match.requireSyntax("else-clause"))
   ctx.linkGap(match.requireSyntax("colon"), thenSyntax);
   if (thenBlock?.entry) ctx.link(thenSyntax, thenBlock.entry);
   console.log(thenSyntax.startPosition);
   match.getSyntaxMany("elif-clause").forEach((syntax, i) => {
     if (elifCondBlocks[i]?.entry) ctx.link(syntax, elifCondBlocks[i]?.entry);
+    console.log("elif-clause", syntax.startPosition)
+    console.log("consequence", thenSyntax.endPosition)
   });
+
   match.getSyntaxMany("elif-colon").forEach((syntax, i) => {
+    console.log("yo!", syntax.endPosition, elifSyntaxMany[i].startPosition)
     ctx.linkGap(syntax, elifSyntaxMany[i]);
   });
   if (elseSyntax) ctx.linkGap(match.requireSyntax("else-colon"), elseSyntax);
@@ -523,5 +531,7 @@ function processBlockStatement(
   blockSyntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  return ctx.dispatch.many(blockSyntax.namedChildren);
+  const blockBlock = ctx.dispatch.many(blockSyntax.namedChildren);
+  if (blockBlock.entry) ctx.link(blockSyntax, blockBlock.entry);
+  return blockBlock;
 }
