@@ -124,6 +124,7 @@ export class NodeMapper {
   public add(syntax: Parser.SyntaxNode, node: string) {
     console.log(node, syntax.text.split("\n")[0], syntax.toString());
     this.syntaxToNode.set(syntax, node);
+
     this.ranges.push({ start: syntax.startIndex, stop: syntax.endIndex, value: syntax })
   }
 

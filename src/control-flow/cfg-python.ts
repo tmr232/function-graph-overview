@@ -334,8 +334,12 @@ function processIfStatement(
           alternative: [
               (elif_clause 
                   condition: (_) @elif-cond
+                  (":") @elif-colon
                   consequence: (block) @elif) @elif-clause
-              (else_clause (block) @else) @else-clause
+              (else_clause 
+                  (":") @else-colon
+                  (block) @else
+              ) @else-clause
                             ]*
       ) @if
       `,
@@ -358,7 +362,9 @@ function processIfStatement(
   ctx.linkGap(match.requireSyntax("colon"), thenSyntax);
   if (thenBlock?.entry) ctx.link(thenSyntax, thenBlock.entry)
   console.log(thenSyntax.startPosition)
-  match.getSyntaxMany("elif-clause").forEach((syntax, i) => { if (elifCondBlocks[i]?.entry) ctx.link(syntax, elifCondBlocks[i]?.entry) })
+  match.getSyntaxMany("elif-clause").forEach((syntax, i) => { if (elifCondBlocks[i]?.entry) ctx.link(syntax, elifCondBlocks[i]?.entry) });
+  match.getSyntaxMany("elif-colon").forEach((syntax, i) => { ctx.linkGap(syntax, elifSyntaxMany[i]) });
+  if (elseSyntax) ctx.linkGap(match.requireSyntax("else-colon"), elseSyntax);
 
   const mergeNode = builder.addNode("MERGE", "if merge");
   const headNode = builder.addNode("CONDITION", "if condition");
