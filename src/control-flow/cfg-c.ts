@@ -267,22 +267,22 @@ function processIfStatement(
   const headNode = ctx.builder.addNode("CONDITION", "if-else head");
   const mergeNode = ctx.builder.addNode("MERGE", "if-else merge");
 
-  if (blocks[0].condBlock?.entry)
+  if (blocks[0].condBlock.entry)
     ctx.builder.addEdge(headNode, blocks[0].condBlock.entry);
 
   let previous: string | null | undefined = null;
   for (const { condBlock, thenBlock } of blocks) {
-    if (previous && condBlock?.entry) {
+    if (previous && condBlock.entry) {
       ctx.builder.addEdge(previous, condBlock.entry, "alternative");
     }
-    if (condBlock?.exit && thenBlock?.entry) {
+    if (condBlock.exit && thenBlock.entry) {
       ctx.builder.addEdge(condBlock.exit, thenBlock.entry, "consequence");
     }
-    if (thenBlock?.exit) {
+    if (thenBlock.exit) {
       ctx.builder.addEdge(thenBlock.exit, mergeNode);
     }
 
-    previous = condBlock?.exit;
+    previous = condBlock.exit;
   }
 
   function last<T>(items: T[]): T | undefined {

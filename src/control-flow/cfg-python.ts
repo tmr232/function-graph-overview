@@ -286,9 +286,8 @@ function processMatchStatement(
       `case ${patternSyntaxMany.map((pat) => pat.text).join(", ")}:`,
     );
 
-    if (consequenceBlock?.entry)
-      builder.addEdge(patternNode, consequenceBlock.entry, "consequence");
-    if (consequenceBlock?.exit)
+    builder.addEdge(patternNode, consequenceBlock.entry, "consequence");
+    if (consequenceBlock.exit)
       builder.addEdge(consequenceBlock.exit, mergeNode, "regular");
     if (options.flatSwitch) {
       builder.addEdge(previous, patternNode, "regular");
@@ -368,13 +367,13 @@ function processIfStatement(
     ctx.linkGap(elifClause, elseClause);
   }
   ctx.linkGap(match.requireSyntax("colon"), thenSyntax);
-  if (thenBlock?.entry) ctx.link(thenSyntax, thenBlock.entry);
+  ctx.link(thenSyntax, thenBlock.entry);
 
   for (const [elifClauseSyntax, elifCondBlock] of zip(
     match.getSyntaxMany("elif-clause"),
     elifCondBlocks,
   )) {
-    if (elifCondBlock.entry) ctx.link(elifClauseSyntax, elifCondBlock.entry);
+    ctx.link(elifClauseSyntax, elifCondBlock.entry);
   }
 
   for (const [colonSyntax, elifSyntax] of zip(
@@ -390,30 +389,29 @@ function processIfStatement(
 
   ctx.link(ifNode, headNode);
 
-  if (condBlock?.entry) builder.addEdge(headNode, condBlock.entry);
+  builder.addEdge(headNode, condBlock.entry);
 
   const conds = [condBlock, ...elifCondBlocks];
   const consequences = [thenBlock, ...elifBlocks];
   let previous: null | BasicBlock = null;
   for (const [conditionBlock, consequenceBlock] of zip(conds, consequences)) {
-    if (previous?.exit && conditionBlock?.entry)
+    if (previous?.exit)
       builder.addEdge(previous.exit, conditionBlock.entry, "alternative");
-    if (conditionBlock?.exit && consequenceBlock?.entry)
+    if (conditionBlock.exit)
       builder.addEdge(
         conditionBlock.exit,
         consequenceBlock.entry,
         "consequence",
       );
-    if (consequenceBlock?.exit)
+    if (consequenceBlock.exit)
       builder.addEdge(consequenceBlock.exit, mergeNode);
 
     previous = conditionBlock;
   }
 
   if (elseBlock) {
-    if (elseBlock.entry)
-      ctx.link(match.requireSyntax("else-clause"), elseBlock.entry);
-    if (previous?.exit && elseBlock.entry)
+    ctx.link(match.requireSyntax("else-clause"), elseBlock.entry);
+    if (previous?.exit)
       builder.addEdge(previous.exit, elseBlock.entry, "alternative");
     if (elseBlock.exit) builder.addEdge(elseBlock.exit, mergeNode);
   } else if (previous?.exit) {
@@ -462,12 +460,10 @@ function processForStatement(
   break -> exit
   continue -> head
   */
-  if (bodyBlock?.entry)
-    builder.addEdge(headBlock.exit, bodyBlock.entry, "consequence");
-  if (bodyBlock?.exit) builder.addEdge(bodyBlock.exit, headBlock.entry);
+  builder.addEdge(headBlock.exit, bodyBlock.entry, "consequence");
+  if (bodyBlock.exit) builder.addEdge(bodyBlock.exit, headBlock.entry);
   if (elseBlock) {
-    if (elseBlock.entry)
-      builder.addEdge(headBlock.exit, elseBlock.entry, "alternative");
+    builder.addEdge(headBlock.exit, elseBlock.entry, "alternative");
     if (elseBlock.exit) builder.addEdge(elseBlock.exit, exitNode);
   } else {
     builder.addEdge(headBlock.exit, exitNode, "alternative");
@@ -505,8 +501,8 @@ function processWhileStatement(
   const bodySyntax = match.requireSyntax("body");
   const elseSyntax = match.getSyntax("else");
 
-  const condBlock = match.getBlock(condSyntax) as BasicBlock;
-  const bodyBlock = match.getBlock(bodySyntax) as BasicBlock;
+  const condBlock = match.getBlock(condSyntax);
+  const bodyBlock = match.getBlock(bodySyntax);
   const elseBlock = match.getBlock(elseSyntax);
 
   const exitNode = builder.addNode("FOR_EXIT", "loop exit");
@@ -514,8 +510,7 @@ function processWhileStatement(
   ctx.linkGap(match.requireSyntax("colon"), bodySyntax);
 
   if (condBlock.exit) {
-    if (bodyBlock.entry)
-      builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
+    builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
     builder.addEdge(
       condBlock.exit,
       elseBlock?.entry ?? exitNode,
@@ -524,11 +519,10 @@ function processWhileStatement(
   }
   if (elseBlock?.exit) builder.addEdge(elseBlock.exit, exitNode);
 
-  if (condBlock.entry && bodyBlock.exit)
-    builder.addEdge(bodyBlock.exit, condBlock.entry);
+  if (bodyBlock.exit) builder.addEdge(bodyBlock.exit, condBlock.entry);
 
   matcher.state.forEachContinue((continueNode) => {
-    if (condBlock.entry) builder.addEdge(continueNode, condBlock.entry);
+    builder.addEdge(continueNode, condBlock.entry);
   });
 
   matcher.state.forEachBreak((breakNode) => {
@@ -543,6 +537,6 @@ function processBlockStatement(
   ctx: Context,
 ): BasicBlock {
   const blockBlock = ctx.dispatch.many(blockSyntax.namedChildren);
-  if (blockBlock.entry) ctx.link(blockSyntax, blockBlock.entry);
+  ctx.link(blockSyntax, blockBlock.entry);
   return blockBlock;
 }

@@ -33,7 +33,10 @@ export function* pairwise<T>(items: T[]): Generator<[T, T], void, unknown> {
   const iterator = items[Symbol.iterator]();
   let { value: a } = iterator.next();
   for (const b of iterator) {
-    yield [a, b];
+    // We know that if we got here, `a` cannot be undefined as there
+    // was at least one more value in the iterator.
+    // But tsc can't deduce it, so we help it.
+    yield [a as T, b];
     a = b;
   }
 }
