@@ -258,65 +258,6 @@ function processComment(
   return { entry: commentNode, exit: commentNode };
 }
 
-function buildSwitch(
-  cases: Case[],
-  mergeNode: string,
-  switchHeadNode: string,
-  options: SwitchOptions,
-  ctx: Context,
-) {
-  let fallthrough: string | null = null;
-  let previous: string | null = switchHeadNode;
-  cases.forEach((thisCase) => {
-    if (ctx.options.flatSwitch) {
-      ctx.builder.addEdge(switchHeadNode, thisCase.conditionEntry);
-      ctx.builder.addEdge(thisCase.conditionExit, thisCase.consequenceEntry);
-      if (fallthrough) {
-        ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
-      }
-      if (thisCase.isDefault) {
-        previous = null;
-      }
-    } else {
-      if (fallthrough) {
-        ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
-      }
-      if (previous && thisCase.conditionEntry) {
-        ctx.builder.addEdge(
-          previous,
-          thisCase.conditionEntry,
-          "alternative" as EdgeType,
-        );
-      }
-
-      if (thisCase.conditionExit)
-        ctx.builder.addEdge(
-          thisCase.conditionExit,
-          thisCase.consequenceEntry,
-          "consequence",
-        );
-
-      // Update for next case
-      previous = thisCase.isDefault ? null : thisCase.alternativeExit;
-    }
-
-    // Fallthrough is the same for both flat and non-flat layouts.
-    if (!thisCase.hasFallthrough && thisCase.consequenceExit) {
-      ctx.builder.addEdge(thisCase.consequenceExit, mergeNode, "regular");
-    }
-    // Update for next case
-    fallthrough = thisCase.hasFallthrough ? thisCase.consequenceExit : null;
-  });
-  // Connect the last node to the merge node.
-  // No need to handle `fallthrough` here as it is not allowed for the last case.
-  if (previous && !options.noImplicitDefault) {
-    ctx.builder.addEdge(previous, mergeNode, "alternative");
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (fallthrough) {
-    ctx.builder.addEdge(fallthrough, mergeNode, "regular");
-  }
-}
 
 const caseTypes = [
   "default_case",
@@ -381,12 +322,73 @@ function collectCases(
   return cases;
 }
 
+
+function buildSwitch(
+  cases: Case[],
+  mergeNode: string,
+  switchHeadNode: string,
+  options: SwitchOptions,
+  ctx: Context,
+) {
+  let fallthrough: string | null = null;
+  let previous: string | null = switchHeadNode;
+  cases.forEach((thisCase) => {
+    if (ctx.options.flatSwitch) {
+      ctx.builder.addEdge(switchHeadNode, thisCase.conditionEntry);
+      ctx.builder.addEdge(thisCase.conditionExit, thisCase.consequenceEntry);
+      if (fallthrough) {
+        ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
+      }
+      if (thisCase.isDefault) {
+        previous = null;
+      }
+    } else {
+      if (fallthrough) {
+        ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
+      }
+      if (previous && thisCase.conditionEntry) {
+        ctx.builder.addEdge(
+          previous,
+          thisCase.conditionEntry,
+          "alternative" as EdgeType,
+        );
+      }
+
+      if (thisCase.conditionExit)
+        ctx.builder.addEdge(
+          thisCase.conditionExit,
+          thisCase.consequenceEntry,
+          "consequence",
+        );
+
+      // Update for next case
+      previous = thisCase.isDefault ? null : thisCase.alternativeExit;
+    }
+
+    // Fallthrough is the same for both flat and non-flat layouts.
+    if (!thisCase.hasFallthrough && thisCase.consequenceExit) {
+      ctx.builder.addEdge(thisCase.consequenceExit, mergeNode, "regular");
+    }
+    // Update for next case
+    fallthrough = thisCase.hasFallthrough ? thisCase.consequenceExit : null;
+  });
+  // Connect the last node to the merge node.
+  // No need to handle `fallthrough` here as it is not allowed for the last case.
+  if (previous && !options.noImplicitDefault) {
+    ctx.builder.addEdge(previous, mergeNode, "alternative");
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (fallthrough) {
+    ctx.builder.addEdge(fallthrough, mergeNode, "regular");
+  }
+}
+
 function processSwitchlike(
   switchSyntax: Parser.SyntaxNode,
   options: SwitchOptions,
   ctx: Context,
 ): BasicBlock {
-  const blockHandler = new BlockHandler();
+  const blockHandler = ctx.matcher.state;
 
   const cases = collectCases(switchSyntax, blockHandler, ctx);
   const headNode = ctx.builder.addNode(
