@@ -41,7 +41,8 @@ export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
 function collectCases(switchSyntax: Parser.SyntaxNode, ctx: Context): Case[] {
   const cases: Case[] = [];
   const caseTypes = ["case_statement"];
-  switchSyntax.namedChildren[1].namedChildren
+  const switchBody = switchSyntax.namedChildren[1] as Parser.SyntaxNode;
+  switchBody.namedChildren
     .filter((child) => caseTypes.includes(child.type))
     .forEach((caseSyntax) => {
       const isDefault = !caseSyntax.childForFieldName("value");
@@ -267,8 +268,10 @@ function processIfStatement(
   const headNode = ctx.builder.addNode("CONDITION", "if-else head");
   const mergeNode = ctx.builder.addNode("MERGE", "if-else merge");
 
-  if (blocks[0].condBlock.entry)
-    ctx.builder.addEdge(headNode, blocks[0].condBlock.entry);
+  // An ugly hack to make tsc not hate us.
+  const firstBlock = blocks[0] as (typeof blocks)[0];
+  if (firstBlock.condBlock.entry)
+    ctx.builder.addEdge(headNode, firstBlock.condBlock.entry);
 
   let previous: string | null | undefined = null;
   for (const { condBlock, thenBlock } of blocks) {
@@ -411,15 +414,26 @@ function processLabeledStatement(
   const name = getChildFieldText(labelSyntax, "label");
   const labelNode = ctx.builder.addNode("LABEL", name);
   ctx.link(labelSyntax, labelNode);
-  const { entry: labeledEntry, exit: labeledExit } = blockHandler.update(
-    ctx.dispatch.single(labelSyntax.namedChildren[1]),
-  );
-  if (labeledEntry) ctx.builder.addEdge(labelNode, labeledEntry);
-  return blockHandler.update({
-    entry: labelNode,
-    exit: labeledExit,
-    labels: new Map([[name, labelNode]]),
-  });
+  const labelContentSyntax = labelSyntax.namedChildren[1];
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (labelContentSyntax) {
+    const { entry: labeledEntry, exit: labeledExit } = blockHandler.update(
+      ctx.dispatch.single(labelContentSyntax),
+    );
+    if (labeledEntry) ctx.builder.addEdge(labelNode, labeledEntry);
+    return blockHandler.update({
+      entry: labelNode,
+      exit: labeledExit,
+      labels: new Map([[name, labelNode]]),
+    });
+  } else {
+    // C allows for empty labels.
+    return blockHandler.update({
+      entry: labelNode,
+      exit: labelNode,
+      labels: new Map([[name, labelNode]]),
+    });
+  }
 }
 
 function processContinueStatement(

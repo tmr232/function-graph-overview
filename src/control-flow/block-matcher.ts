@@ -13,9 +13,11 @@ function matchQuery(
   const query = language.query(queryString);
   options = evolve(defaultQueryOptions, options ?? {});
   const matches = query.matches(syntax, options);
+
   if (matches.length === 0) {
     throw new Error(`No match found for query.`);
   }
+  // @ts-expect-error: tsc can't deduce that an element must exist.
   return matches[0];
 }
 
@@ -62,39 +64,6 @@ function getSyntaxMany(
   return match.captures
     .filter((capture) => capture.name === name)
     .map((capture) => capture.node);
-}
-
-function getSyntaxTuples(
-  match: Parser.QueryMatch,
-  ...names: string[]
-): { [key in (typeof names)[number]]: Parser.SyntaxNode }[] {
-  const result: { [key in (typeof names)[number]]: Parser.SyntaxNode[] } = {};
-
-  let length: number | null = null;
-  for (const name of names) {
-    result[name] = getSyntaxMany(match, name);
-    if (length === null) {
-      length = result[name].length;
-    } else if (length !== result[name].length) {
-      throw new Error("Count mismatch!");
-    }
-  }
-
-  if (length === null) {
-    return [];
-  }
-
-  const tuples: { [key in (typeof names)[number]]: Parser.SyntaxNode }[] = [];
-
-  for (let i = 0; i < length; ++i) {
-    const tuple: { [key in (typeof names)[number]]: Parser.SyntaxNode } = {};
-    for (const name in names) {
-      tuple[name] = result[name][i];
-      tuples.push(tuple);
-    }
-  }
-
-  return tuples;
 }
 
 export class BlockMatcher {

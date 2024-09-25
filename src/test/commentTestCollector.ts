@@ -25,7 +25,7 @@ const extToFuncs = new Map(
 export async function collectTests(): Promise<TestFunction[]> {
   const allTestFuncs = [];
   for await (const file of sampleGlob.scan(testsDir)) {
-    const ext = file.split(".").slice(-1)[0];
+    const ext = file.split(".").slice(-1)[0] as string;
     const getTestFuncs = extToFuncs.get(ext);
     if (!getTestFuncs) continue;
     const code = await Bun.file(`${testsDir}/${file}`).text();
