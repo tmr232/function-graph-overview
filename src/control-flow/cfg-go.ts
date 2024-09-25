@@ -308,21 +308,27 @@ function buildSwitch(
   }
 }
 
+const caseTypes = [
+  "default_case",
+  "communication_case",
+  "type_case",
+  "expression_case",
+];
+
+function getCases(switchSyntax: Parser.SyntaxNode): Parser.SyntaxNode[] {
+  return switchSyntax.namedChildren.filter((child) =>
+    caseTypes.includes(child.type),
+  );
+}
+
 function collectCases(
   switchSyntax: Parser.SyntaxNode,
   blockHandler: BlockHandler,
   ctx: Context,
 ): Case[] {
   const cases: Case[] = [];
-  const caseTypes = [
-    "default_case",
-    "communication_case",
-    "type_case",
-    "expression_case",
-  ];
-  const caseSyntaxMany = switchSyntax.namedChildren.filter((child) =>
-    caseTypes.includes(child.type),
-  );
+
+  const caseSyntaxMany = getCases(switchSyntax);
 
   for (const [prev, curr] of pairwise(caseSyntaxMany)) {
     ctx.linkGap(prev, curr);
@@ -341,7 +347,6 @@ function collectCases(
     );
     ctx.link(caseSyntax, conditionNode);
     const consequenceNode = blockHandler.update(ctx.dispatch.many(consequence));
-    console.log("case-syntax", caseSyntax.type, caseSyntax.toString());
     ctx.linkGap(
       ctx.matcher
         .match(caseSyntax, `(_ (":") @colon)`, { maxStartDepth: 1 })
@@ -382,6 +387,19 @@ function processSwitchlike(
   blockHandler.forEachBreak((breakNode) => {
     ctx.builder.addEdge(breakNode, mergeNode);
   });
+
+  const braceMatch = ctx.matcher.match(switchSyntax, `(_ "{" @opening-brace "}" @closing-brace) @switch`, { maxStartDepth: 1 })
+  const openingBrace = braceMatch.requireSyntax("opening-brace")
+  const closingBrace = braceMatch.requireSyntax("closing-brace")
+  const caseSyntaxMany = getCases(switchSyntax)
+  const firstCase = caseSyntaxMany[0];
+  if (firstCase) {
+    ctx.linkGap(openingBrace, firstCase)
+  }
+  const lastCase = caseSyntaxMany[caseSyntaxMany.length - 1]
+  if (lastCase) {
+    ctx.linkGap(lastCase, closingBrace, { reverse: true, includeTo: true })
+  }
 
   return blockHandler.update({ entry: headNode, exit: mergeNode });
 }

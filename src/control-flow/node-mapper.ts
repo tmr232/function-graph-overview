@@ -155,13 +155,15 @@ export class NodeMapper {
     });
   }
 
-  public linkGap(from: Parser.SyntaxNode, to: Parser.SyntaxNode) {
-    this.range(from.endIndex, to.startIndex, to);
+  public linkGap(from: Parser.SyntaxNode, to: Parser.SyntaxNode, options?: { reverse?: boolean, includeTo?: boolean }) {
+    const target = options?.reverse ? from : to;
+    const toIndex = options?.includeTo?to.endIndex:to.startIndex
+    this.range(from.endIndex, toIndex, target);
     this.pointRanges.push({
       start: from.endPosition,
       stop: to.startPosition,
       // stop: { row: to.startPosition.row, column: 0 },
-      value: to,
+      value: target,
     });
   }
 
