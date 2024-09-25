@@ -1,13 +1,18 @@
 import Parser from "web-tree-sitter";
 import { type BasicBlock, BlockHandler } from "./cfg-defs.ts";
+import { evolve } from "./evolve.ts";
+
+const defaultQueryOptions: Parser.QueryOptions = { maxStartDepth: 0 }
 
 function matchQuery(
   syntax: Parser.SyntaxNode,
   queryString: string,
+  options?: Parser.QueryOptions,
 ): Parser.QueryMatch {
   const language = syntax.tree.getLanguage();
   const query = language.query(queryString);
-  const matches = query.matches(syntax, { maxStartDepth: 0 });
+  options = evolve(defaultQueryOptions, options ?? {});
+  const matches = query.matches(syntax, options);
   if (matches.length === 0) {
     throw new Error(`No match found for query.`);
   }
@@ -16,7 +21,6 @@ function matchQuery(
 
 export function matchExistsIn(
   syntax: Parser.SyntaxNode,
-  mainName: string,
   queryString: string,
 ): boolean {
   const language = syntax.tree.getLanguage();
@@ -102,8 +106,8 @@ export class BlockMatcher {
     this.processBlock = processBlock;
   }
 
-  public match(syntax: Parser.SyntaxNode, queryString: string): Match {
-    const match = matchQuery(syntax, queryString);
+  public match(syntax: Parser.SyntaxNode, queryString: string, options?: Parser.QueryOptions): Match {
+    const match = matchQuery(syntax, queryString, options);
     return new Match(match, this.blockHandler, this.processBlock);
   }
 

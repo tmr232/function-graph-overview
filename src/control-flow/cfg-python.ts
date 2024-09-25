@@ -36,7 +36,7 @@ function defaultProcessStatement(
   ctx: Context,
 ): BasicBlock {
   const { builder } = ctx;
-  const hasYield = matchExistsIn(syntax, "yield", `(yield) @yield`);
+  const hasYield = matchExistsIn(syntax, `(yield) @yield`);
   if (hasYield) {
     const yieldNode = builder.addNode("YIELD", syntax.text);
     ctx.link(syntax, yieldNode);

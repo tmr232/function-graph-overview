@@ -338,6 +338,8 @@ function collectCases(
       const consequenceNode = blockHandler.update(
         ctx.dispatch.many(consequence),
       );
+      console.log("case-syntax", caseSyntax.type, caseSyntax.toString())
+      ctx.linkGap(ctx.matcher.match(caseSyntax, `(_ (":") @colon)`, { maxStartDepth: 1 }).requireSyntax("colon"), consequence[0]);
 
       cases.push({
         conditionEntry: conditionNode,
