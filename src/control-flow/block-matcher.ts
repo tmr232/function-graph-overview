@@ -129,6 +129,7 @@ export class Match {
   public getSyntaxMany(name: string): ReturnType<typeof getSyntaxMany> {
     return getSyntaxMany(this.match, name);
   }
+
   public getBlock(syntax: Parser.SyntaxNode): BasicBlock;
   public getBlock(
     syntax: Parser.SyntaxNode | null | undefined,

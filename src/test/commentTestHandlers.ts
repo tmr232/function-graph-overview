@@ -17,11 +17,18 @@ function buildCFG(language: CFGLanguage, functionNode: Parser.SyntaxNode): CFG {
   return trimFor(builder.buildCFG(functionNode));
 }
 
+const simpleCFGCache = new Map<Parser.SyntaxNode, CFG>();
 export function buildSimpleCFG(
   language: CFGLanguage,
   functionNode: Parser.SyntaxNode,
 ): CFG {
-  return simplifyCFG(buildCFG(language, functionNode), mergeNodeAttrs);
+  const cachedCFG = simpleCFGCache.get(functionNode);
+  if (cachedCFG) {
+    return cachedCFG;
+  }
+  const cfg = simplifyCFG(buildCFG(language, functionNode), mergeNodeAttrs);
+  simpleCFGCache.set(functionNode, cfg);
+  return cfg;
 }
 
 function buildMarkerCFG(
@@ -99,7 +106,7 @@ export const requirementTests: {
   },
   render(testFunc: TestFunction) {
     if (testFunc.reqs.render !== undefined) {
-      const cfg = buildCFG(testFunc.language, testFunc.function);
+      const cfg = buildSimpleCFG(testFunc.language, testFunc.function);
       try {
         graphToDot(cfg);
       } catch (error) {

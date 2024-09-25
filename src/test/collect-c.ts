@@ -2,15 +2,9 @@ import Parser from "web-tree-sitter";
 import treeSitterC from "../../parsers/tree-sitter-c.wasm?url";
 import { parseComment } from "./commentTestUtils";
 import type { TestFunction } from "./commentTestTypes";
+import { initializeParser } from "./parser-init";
 
-async function initializeParser(): Promise<[Parser, Parser.Language]> {
-  await Parser.init();
-  const parser = new Parser();
-  const C = await Parser.Language.load(treeSitterC);
-  parser.setLanguage(C);
-  return [parser, C];
-}
-const [parser, language] = await initializeParser();
+const { parser, language } = await initializeParser(treeSitterC);
 
 export function getTestFuncs(code: string): Generator<TestFunction> {
   const tree = parser.parse(code);
@@ -28,7 +22,7 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
   ) @func
 )+
   `);
-  const matches = testFuncQuery.matches(tree.rootNode);
+  const matches = testFuncQuery.matches(tree.rootNode, { maxStartDepth: 1 });
   for (const match of matches) {
     for (let i = 0; i < match.captures.length; i += 4) {
       const captures = match.captures.slice(i);
