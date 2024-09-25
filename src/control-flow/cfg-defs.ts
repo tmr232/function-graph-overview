@@ -1,6 +1,7 @@
 import { MultiDirectedGraph } from "graphology";
 import type Parser from "web-tree-sitter";
 import type { SimpleRange } from "./ranges";
+import { evolve } from "./evolve";
 
 export type NodeType =
   | "YIELD"
@@ -202,4 +203,20 @@ export interface BuilderOptions {
 
 export interface CFGBuilder {
   buildCFG(functionSyntax: Parser.SyntaxNode): CFG;
+}
+
+export function remapNodeTargets(cfg: CFG): CFG {
+  const remap = new Map<string, string>();
+  cfg.graph.forEachNode((node, { targets }) => {
+    targets.forEach((target) => remap.set(target, node));
+  });
+  const offsetToNode = cfg.offsetToNode.map(({ start, value: node }) => ({
+    start,
+    value: remap.get(node) ?? node,
+  }));
+
+  // Copying the graph is needed.
+  // Seems that some of the graph properties don't survive the structured clone.
+  const graph = cfg.graph.copy();
+  return evolve(cfg, { graph, offsetToNode });
 }

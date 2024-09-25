@@ -4581,3 +4581,4956 @@ color="green";
 ];
 }"
 `;
+
+exports[`C: trivial: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 18,
+    "value": "node2",
+  },
+  {
+    "start": 35,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`C: simpleIf: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 57,
+    "value": "node1",
+  },
+  {
+    "start": 80,
+    "value": "node1",
+  },
+  {
+    "start": 83,
+    "value": "node1",
+  },
+  {
+    "start": 86,
+    "value": "node2",
+  },
+  {
+    "start": 87,
+    "value": "node1",
+  },
+  {
+    "start": 87,
+    "value": "node2",
+  },
+  {
+    "start": 95,
+    "value": "node1",
+  },
+  {
+    "start": 95,
+    "value": "node1",
+  },
+  {
+    "start": 98,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`C: ifElse: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 131,
+    "value": "node1",
+  },
+  {
+    "start": 152,
+    "value": "node1",
+  },
+  {
+    "start": 155,
+    "value": "node1",
+  },
+  {
+    "start": 158,
+    "value": "node2",
+  },
+  {
+    "start": 159,
+    "value": "node1",
+  },
+  {
+    "start": 159,
+    "value": "node2",
+  },
+  {
+    "start": 167,
+    "value": "node3",
+  },
+  {
+    "start": 173,
+    "value": "node1",
+  },
+  {
+    "start": 173,
+    "value": "node3",
+  },
+  {
+    "start": 176,
+    "value": "node3",
+  },
+  {
+    "start": 179,
+    "value": "node4",
+  },
+  {
+    "start": 180,
+    "value": "node3",
+  },
+  {
+    "start": 180,
+    "value": "node4",
+  },
+  {
+    "start": 188,
+    "value": "node5",
+  },
+  {
+    "start": 189,
+    "value": "node3",
+  },
+  {
+    "start": 189,
+    "value": "node5",
+  },
+  {
+    "start": 194,
+    "value": "node5",
+  },
+  {
+    "start": 202,
+    "value": "node5",
+  },
+  {
+    "start": 202,
+    "value": "node3",
+  },
+  {
+    "start": 202,
+    "value": "node1",
+  },
+  {
+    "start": 202,
+    "value": "node1",
+  },
+  {
+    "start": 205,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`C: forever: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 238,
+    "value": "node2",
+  },
+  {
+    "start": 260,
+    "value": "node2",
+  },
+  {
+    "start": 265,
+    "value": "Not found",
+  },
+  {
+    "start": 265,
+    "value": "node2",
+  },
+  {
+    "start": 266,
+    "value": "Not found",
+  },
+  {
+    "start": 267,
+    "value": "node2",
+  },
+  {
+    "start": 268,
+    "value": "node4",
+  },
+  {
+    "start": 269,
+    "value": "node2",
+  },
+  {
+    "start": 269,
+    "value": "node4",
+  },
+  {
+    "start": 277,
+    "value": "node2",
+  },
+  {
+    "start": 277,
+    "value": "node2",
+  },
+  {
+    "start": 280,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`C: forever2: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 313,
+    "value": "node1",
+  },
+  {
+    "start": 336,
+    "value": "node1",
+  },
+  {
+    "start": 341,
+    "value": "node1",
+  },
+  {
+    "start": 341,
+    "value": "node1",
+  },
+  {
+    "start": 351,
+    "value": "Not found",
+  },
+  {
+    "start": 351,
+    "value": "node1",
+  },
+  {
+    "start": 352,
+    "value": "node2",
+  },
+  {
+    "start": 353,
+    "value": "node1",
+  },
+  {
+    "start": 353,
+    "value": "node2",
+  },
+  {
+    "start": 356,
+    "value": "Not found",
+  },
+  {
+    "start": 356,
+    "value": "node1",
+  },
+  {
+    "start": 357,
+    "value": "node2",
+  },
+  {
+    "start": 358,
+    "value": "node1",
+  },
+  {
+    "start": 358,
+    "value": "node2",
+  },
+  {
+    "start": 366,
+    "value": "node1",
+  },
+  {
+    "start": 366,
+    "value": "node1",
+  },
+  {
+    "start": 369,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`C: forLoop: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 435,
+    "value": "node1",
+  },
+  {
+    "start": 457,
+    "value": "node1",
+  },
+  {
+    "start": 462,
+    "value": "node1",
+  },
+  {
+    "start": 462,
+    "value": "node1",
+  },
+  {
+    "start": 472,
+    "value": "node2",
+  },
+  {
+    "start": 473,
+    "value": "node1",
+  },
+  {
+    "start": 473,
+    "value": "node2",
+  },
+  {
+    "start": 479,
+    "value": "node2",
+  },
+  {
+    "start": 479,
+    "value": "node2",
+  },
+  {
+    "start": 480,
+    "value": "node3",
+  },
+  {
+    "start": 481,
+    "value": "node1",
+  },
+  {
+    "start": 481,
+    "value": "node3",
+  },
+  {
+    "start": 484,
+    "value": "Not found",
+  },
+  {
+    "start": 484,
+    "value": "node1",
+  },
+  {
+    "start": 485,
+    "value": "node3",
+  },
+  {
+    "start": 486,
+    "value": "node1",
+  },
+  {
+    "start": 486,
+    "value": "node3",
+  },
+  {
+    "start": 532,
+    "value": "node1",
+  },
+  {
+    "start": 532,
+    "value": "node1",
+  },
+  {
+    "start": 535,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`C: whileLoop: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 568,
+    "value": "node0",
+  },
+  {
+    "start": 592,
+    "value": "node1",
+  },
+  {
+    "start": 598,
+    "value": "node1",
+  },
+  {
+    "start": 603,
+    "value": "node1",
+  },
+  {
+    "start": 603,
+    "value": "node1",
+  },
+  {
+    "start": 604,
+    "value": "node2",
+  },
+  {
+    "start": 612,
+    "value": "node2",
+  },
+  {
+    "start": 612,
+    "value": "node1",
+  },
+  {
+    "start": 612,
+    "value": "node0",
+  },
+  {
+    "start": 615,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`C: doWhile: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 648,
+    "value": "node0",
+  },
+  {
+    "start": 670,
+    "value": "node1",
+  },
+  {
+    "start": 673,
+    "value": "node1",
+  },
+  {
+    "start": 681,
+    "value": "node1",
+  },
+  {
+    "start": 681,
+    "value": "node1",
+  },
+  {
+    "start": 688,
+    "value": "node1",
+  },
+  {
+    "start": 693,
+    "value": "node1",
+  },
+  {
+    "start": 693,
+    "value": "node1",
+  },
+  {
+    "start": 694,
+    "value": "node0",
+  },
+  {
+    "start": 697,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`C: gotoA: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 730,
+    "value": "node0",
+  },
+  {
+    "start": 746,
+    "value": "node2",
+  },
+  {
+    "start": 758,
+    "value": "node2",
+  },
+  {
+    "start": 761,
+    "value": "node2",
+  },
+  {
+    "start": 764,
+    "value": "node3",
+  },
+  {
+    "start": 765,
+    "value": "node2",
+  },
+  {
+    "start": 765,
+    "value": "node3",
+  },
+  {
+    "start": 776,
+    "value": "node3",
+  },
+  {
+    "start": 787,
+    "value": "node3",
+  },
+  {
+    "start": 794,
+    "value": "node2",
+  },
+  {
+    "start": 794,
+    "value": "node2",
+  },
+  {
+    "start": 794,
+    "value": "node0",
+  },
+  {
+    "start": 797,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`C: switch_1: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 853,
+    "value": "node1",
+  },
+  {
+    "start": 930,
+    "value": "node2",
+  },
+  {
+    "start": 944,
+    "value": "node1",
+  },
+  {
+    "start": 999,
+    "value": "node6",
+  },
+  {
+    "start": 1013,
+    "value": "node1",
+  },
+  {
+    "start": 1023,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`C: switch_2: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 1056,
+    "value": "node1",
+  },
+  {
+    "start": 1114,
+    "value": "node2",
+  },
+  {
+    "start": 1120,
+    "value": "node1",
+  },
+  {
+    "start": 1156,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`C: ManyIfs: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 1190,
+    "value": "node1",
+  },
+  {
+    "start": 1212,
+    "value": "node1",
+  },
+  {
+    "start": 1215,
+    "value": "node1",
+  },
+  {
+    "start": 1218,
+    "value": "node2",
+  },
+  {
+    "start": 1219,
+    "value": "node1",
+  },
+  {
+    "start": 1219,
+    "value": "node2",
+  },
+  {
+    "start": 1227,
+    "value": "node1",
+  },
+  {
+    "start": 1227,
+    "value": "node5",
+  },
+  {
+    "start": 1235,
+    "value": "node1",
+  },
+  {
+    "start": 1235,
+    "value": "node5",
+  },
+  {
+    "start": 1238,
+    "value": "node5",
+  },
+  {
+    "start": 1241,
+    "value": "node6",
+  },
+  {
+    "start": 1242,
+    "value": "node5",
+  },
+  {
+    "start": 1242,
+    "value": "node6",
+  },
+  {
+    "start": 1250,
+    "value": "node7",
+  },
+  {
+    "start": 1251,
+    "value": "node5",
+  },
+  {
+    "start": 1251,
+    "value": "node7",
+  },
+  {
+    "start": 1256,
+    "value": "node7",
+  },
+  {
+    "start": 1264,
+    "value": "node7",
+  },
+  {
+    "start": 1264,
+    "value": "node5",
+  },
+  {
+    "start": 1264,
+    "value": "node10",
+  },
+  {
+    "start": 1272,
+    "value": "node1",
+  },
+  {
+    "start": 1272,
+    "value": "node10",
+  },
+  {
+    "start": 1275,
+    "value": "node10",
+  },
+  {
+    "start": 1278,
+    "value": "node11",
+  },
+  {
+    "start": 1279,
+    "value": "node10",
+  },
+  {
+    "start": 1279,
+    "value": "node11",
+  },
+  {
+    "start": 1287,
+    "value": "node12",
+  },
+  {
+    "start": 1293,
+    "value": "node10",
+  },
+  {
+    "start": 1293,
+    "value": "node12",
+  },
+  {
+    "start": 1296,
+    "value": "node12",
+  },
+  {
+    "start": 1299,
+    "value": "node13",
+  },
+  {
+    "start": 1300,
+    "value": "node12",
+  },
+  {
+    "start": 1300,
+    "value": "node13",
+  },
+  {
+    "start": 1308,
+    "value": "node12",
+  },
+  {
+    "start": 1308,
+    "value": "node10",
+  },
+  {
+    "start": 1308,
+    "value": "node16",
+  },
+  {
+    "start": 1316,
+    "value": "node1",
+  },
+  {
+    "start": 1316,
+    "value": "node16",
+  },
+  {
+    "start": 1319,
+    "value": "node16",
+  },
+  {
+    "start": 1322,
+    "value": "node17",
+  },
+  {
+    "start": 1323,
+    "value": "node16",
+  },
+  {
+    "start": 1323,
+    "value": "node17",
+  },
+  {
+    "start": 1331,
+    "value": "node18",
+  },
+  {
+    "start": 1337,
+    "value": "node16",
+  },
+  {
+    "start": 1337,
+    "value": "node18",
+  },
+  {
+    "start": 1340,
+    "value": "node18",
+  },
+  {
+    "start": 1343,
+    "value": "node19",
+  },
+  {
+    "start": 1344,
+    "value": "node18",
+  },
+  {
+    "start": 1344,
+    "value": "node19",
+  },
+  {
+    "start": 1354,
+    "value": "node20",
+  },
+  {
+    "start": 1355,
+    "value": "node18",
+  },
+  {
+    "start": 1355,
+    "value": "node20",
+  },
+  {
+    "start": 1360,
+    "value": "node20",
+  },
+  {
+    "start": 1368,
+    "value": "node20",
+  },
+  {
+    "start": 1368,
+    "value": "node18",
+  },
+  {
+    "start": 1368,
+    "value": "node16",
+  },
+  {
+    "start": 1368,
+    "value": "node1",
+  },
+  {
+    "start": 1371,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`C: IfWithoutBraces: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node5",
+  },
+  {
+    "start": 1393,
+    "value": "node5",
+  },
+  {
+    "start": 1572,
+    "value": "node5",
+  },
+  {
+    "start": 1577,
+    "value": "Not found",
+  },
+  {
+    "start": 1577,
+    "value": "node5",
+  },
+  {
+    "start": 1578,
+    "value": "Not found",
+  },
+  {
+    "start": 1579,
+    "value": "node5",
+  },
+  {
+    "start": 1580,
+    "value": "node1",
+  },
+  {
+    "start": 1581,
+    "value": "node5",
+  },
+  {
+    "start": 1581,
+    "value": "node1",
+  },
+  {
+    "start": 1592,
+    "value": "node1",
+  },
+  {
+    "start": 1595,
+    "value": "node1",
+  },
+  {
+    "start": 1598,
+    "value": "node1",
+  },
+  {
+    "start": 1598,
+    "value": "node12",
+  },
+  {
+    "start": 1612,
+    "value": "node12",
+  },
+  {
+    "start": 1618,
+    "value": "node1",
+  },
+  {
+    "start": 1618,
+    "value": "node1",
+  },
+  {
+    "start": 1625,
+    "value": "node5",
+  },
+  {
+    "start": 1625,
+    "value": "node12",
+  },
+  {
+    "start": 1633,
+    "value": "node5",
+  },
+  {
+    "start": 1633,
+    "value": "node12",
+  },
+  {
+    "start": 1638,
+    "value": "Not found",
+  },
+  {
+    "start": 1638,
+    "value": "node12",
+  },
+  {
+    "start": 1639,
+    "value": "Not found",
+  },
+  {
+    "start": 1640,
+    "value": "node12",
+  },
+  {
+    "start": 1641,
+    "value": "node8",
+  },
+  {
+    "start": 1642,
+    "value": "node12",
+  },
+  {
+    "start": 1642,
+    "value": "node8",
+  },
+  {
+    "start": 1653,
+    "value": "node8",
+  },
+  {
+    "start": 1656,
+    "value": "node8",
+  },
+  {
+    "start": 1659,
+    "value": "node15",
+  },
+  {
+    "start": 1660,
+    "value": "node8",
+  },
+  {
+    "start": 1660,
+    "value": "node15",
+  },
+  {
+    "start": 1675,
+    "value": "node15",
+  },
+  {
+    "start": 1681,
+    "value": "node15",
+  },
+  {
+    "start": 1692,
+    "value": "node8",
+  },
+  {
+    "start": 1692,
+    "value": "node8",
+  },
+  {
+    "start": 1699,
+    "value": "node12",
+  },
+  {
+    "start": 1699,
+    "value": "node5",
+  },
+  {
+    "start": 1702,
+    "value": "node5",
+  },
+]
+`;
+
+exports[`Go: trivial: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 50,
+    "value": "node2",
+  },
+  {
+    "start": 69,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`Go: ifThen: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 91,
+    "value": "node1",
+  },
+  {
+    "start": 109,
+    "value": "node1",
+  },
+  {
+    "start": 114,
+    "value": "node3",
+  },
+  {
+    "start": 121,
+    "value": "node3",
+  },
+  {
+    "start": 121,
+    "value": "node1",
+  },
+  {
+    "start": 121,
+    "value": "node1",
+  },
+  {
+    "start": 124,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`Go: ManyIfStatements: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 158,
+    "value": "node1",
+  },
+  {
+    "start": 186,
+    "value": "node1",
+  },
+  {
+    "start": 191,
+    "value": "node3",
+  },
+  {
+    "start": 196,
+    "value": "node3",
+  },
+  {
+    "start": 196,
+    "value": "node1",
+  },
+  {
+    "start": 196,
+    "value": "node4",
+  },
+  {
+    "start": 202,
+    "value": "node4",
+  },
+  {
+    "start": 207,
+    "value": "node1",
+  },
+  {
+    "start": 207,
+    "value": "node5",
+  },
+  {
+    "start": 212,
+    "value": "node1",
+  },
+  {
+    "start": 212,
+    "value": "node5",
+  },
+  {
+    "start": 217,
+    "value": "node7",
+  },
+  {
+    "start": 222,
+    "value": "node7",
+  },
+  {
+    "start": 222,
+    "value": "node5",
+  },
+  {
+    "start": 222,
+    "value": "node8",
+  },
+  {
+    "start": 228,
+    "value": "node5",
+  },
+  {
+    "start": 228,
+    "value": "node8",
+  },
+  {
+    "start": 233,
+    "value": "node9",
+  },
+  {
+    "start": 238,
+    "value": "node9",
+  },
+  {
+    "start": 238,
+    "value": "node8",
+  },
+  {
+    "start": 238,
+    "value": "node5",
+  },
+  {
+    "start": 238,
+    "value": "node10",
+  },
+  {
+    "start": 243,
+    "value": "node1",
+  },
+  {
+    "start": 243,
+    "value": "node10",
+  },
+  {
+    "start": 248,
+    "value": "node12",
+  },
+  {
+    "start": 253,
+    "value": "node12",
+  },
+  {
+    "start": 253,
+    "value": "node10",
+  },
+  {
+    "start": 253,
+    "value": "node13",
+  },
+  {
+    "start": 259,
+    "value": "node10",
+  },
+  {
+    "start": 259,
+    "value": "node13",
+  },
+  {
+    "start": 264,
+    "value": "node14",
+  },
+  {
+    "start": 269,
+    "value": "node14",
+  },
+  {
+    "start": 269,
+    "value": "node13",
+  },
+  {
+    "start": 269,
+    "value": "node15",
+  },
+  {
+    "start": 275,
+    "value": "node15",
+  },
+  {
+    "start": 280,
+    "value": "node13",
+  },
+  {
+    "start": 280,
+    "value": "node10",
+  },
+  {
+    "start": 280,
+    "value": "node1",
+  },
+  {
+    "start": 283,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`Go: Switch: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 305,
+    "value": "node1",
+  },
+  {
+    "start": 323,
+    "value": "node1",
+  },
+  {
+    "start": 333,
+    "value": "node1",
+  },
+  {
+    "start": 336,
+    "value": "node1",
+  },
+  {
+    "start": 336,
+    "value": "node1",
+  },
+  {
+    "start": 343,
+    "value": "node3",
+  },
+  {
+    "start": 346,
+    "value": "node1",
+  },
+  {
+    "start": 346,
+    "value": "node3",
+  },
+  {
+    "start": 353,
+    "value": "node5",
+  },
+  {
+    "start": 356,
+    "value": "node1",
+  },
+  {
+    "start": 356,
+    "value": "node5",
+  },
+  {
+    "start": 363,
+    "value": "node7",
+  },
+  {
+    "start": 366,
+    "value": "node1",
+  },
+  {
+    "start": 366,
+    "value": "node7",
+  },
+  {
+    "start": 373,
+    "value": "node7",
+  },
+  {
+    "start": 377,
+    "value": "node1",
+  },
+  {
+    "start": 377,
+    "value": "node1",
+  },
+  {
+    "start": 380,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`Go: switchAndLabelsAndGoto: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 403,
+    "value": "node1",
+  },
+  {
+    "start": 437,
+    "value": "node1",
+  },
+  {
+    "start": 447,
+    "value": "node1",
+  },
+  {
+    "start": 450,
+    "value": "node1",
+  },
+  {
+    "start": 450,
+    "value": "node1",
+  },
+  {
+    "start": 457,
+    "value": "node3",
+  },
+  {
+    "start": 460,
+    "value": "node1",
+  },
+  {
+    "start": 460,
+    "value": "node3",
+  },
+  {
+    "start": 467,
+    "value": "node13",
+  },
+  {
+    "start": 471,
+    "value": "node3",
+  },
+  {
+    "start": 471,
+    "value": "node13",
+  },
+  {
+    "start": 481,
+    "value": "node3",
+  },
+  {
+    "start": 483,
+    "value": "node5",
+  },
+  {
+    "start": 484,
+    "value": "node1",
+  },
+  {
+    "start": 484,
+    "value": "node5",
+  },
+  {
+    "start": 491,
+    "value": "node7",
+  },
+  {
+    "start": 494,
+    "value": "node1",
+  },
+  {
+    "start": 494,
+    "value": "node7",
+  },
+  {
+    "start": 501,
+    "value": "node7",
+  },
+  {
+    "start": 505,
+    "value": "node1",
+  },
+  {
+    "start": 505,
+    "value": "node11",
+  },
+  {
+    "start": 508,
+    "value": "node1",
+  },
+  {
+    "start": 508,
+    "value": "node11",
+  },
+  {
+    "start": 514,
+    "value": "node13",
+  },
+  {
+    "start": 518,
+    "value": "node1",
+  },
+  {
+    "start": 518,
+    "value": "node13",
+  },
+  {
+    "start": 527,
+    "value": "node13",
+  },
+  {
+    "start": 532,
+    "value": "node15",
+  },
+  {
+    "start": 537,
+    "value": "node15",
+  },
+  {
+    "start": 540,
+    "value": "node15",
+  },
+  {
+    "start": 544,
+    "value": "node15",
+  },
+  {
+    "start": 544,
+    "value": "node16",
+  },
+  {
+    "start": 550,
+    "value": "node13",
+  },
+  {
+    "start": 550,
+    "value": "node16",
+  },
+  {
+    "start": 555,
+    "value": "node16",
+  },
+  {
+    "start": 558,
+    "value": "node16",
+  },
+  {
+    "start": 562,
+    "value": "node13",
+  },
+  {
+    "start": 562,
+    "value": "node13",
+  },
+  {
+    "start": 562,
+    "value": "node1",
+  },
+  {
+    "start": 565,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`Go: trivialReachability: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 616,
+    "value": "node2",
+  },
+  {
+    "start": 671,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`Go: hasFallthrough: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 711,
+    "value": "node1",
+  },
+  {
+    "start": 737,
+    "value": "node1",
+  },
+  {
+    "start": 747,
+    "value": "node1",
+  },
+  {
+    "start": 750,
+    "value": "node1",
+  },
+  {
+    "start": 750,
+    "value": "node1",
+  },
+  {
+    "start": 757,
+    "value": "Not found",
+  },
+  {
+    "start": 761,
+    "value": "node1",
+  },
+  {
+    "start": 774,
+    "value": "node2",
+  },
+  {
+    "start": 785,
+    "value": "node1",
+  },
+  {
+    "start": 787,
+    "value": "node3",
+  },
+  {
+    "start": 788,
+    "value": "node1",
+  },
+  {
+    "start": 788,
+    "value": "node3",
+  },
+  {
+    "start": 795,
+    "value": "Not found",
+  },
+  {
+    "start": 799,
+    "value": "node3",
+  },
+  {
+    "start": 812,
+    "value": "node4",
+  },
+  {
+    "start": 825,
+    "value": "node3",
+  },
+  {
+    "start": 827,
+    "value": "node3",
+  },
+  {
+    "start": 829,
+    "value": "node1",
+  },
+  {
+    "start": 829,
+    "value": "node1",
+  },
+  {
+    "start": 832,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`Go: forever: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 854,
+    "value": "node0",
+  },
+  {
+    "start": 873,
+    "value": "node2",
+  },
+  {
+    "start": 877,
+    "value": "node2",
+  },
+  {
+    "start": 882,
+    "value": "node2",
+  },
+  {
+    "start": 882,
+    "value": "node0",
+  },
+  {
+    "start": 885,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Go: forCond: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 907,
+    "value": "node0",
+  },
+  {
+    "start": 926,
+    "value": "node1",
+  },
+  {
+    "start": 937,
+    "value": "node2",
+  },
+  {
+    "start": 942,
+    "value": "node1",
+  },
+  {
+    "start": 942,
+    "value": "node0",
+  },
+  {
+    "start": 945,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Go: forCStyle: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 967,
+    "value": "node0",
+  },
+  {
+    "start": 988,
+    "value": "node1",
+  },
+  {
+    "start": 1014,
+    "value": "node2",
+  },
+  {
+    "start": 1019,
+    "value": "node1",
+  },
+  {
+    "start": 1019,
+    "value": "node0",
+  },
+  {
+    "start": 1022,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Go: forRange: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 1044,
+    "value": "node0",
+  },
+  {
+    "start": 1064,
+    "value": "node1",
+  },
+  {
+    "start": 1081,
+    "value": "node2",
+  },
+  {
+    "start": 1086,
+    "value": "node1",
+  },
+  {
+    "start": 1086,
+    "value": "node0",
+  },
+  {
+    "start": 1089,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Go: typeSwitch: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 1111,
+    "value": "node1",
+  },
+  {
+    "start": 1133,
+    "value": "node1",
+  },
+  {
+    "start": 1150,
+    "value": "node1",
+  },
+  {
+    "start": 1153,
+    "value": "node1",
+  },
+  {
+    "start": 1153,
+    "value": "node1",
+  },
+  {
+    "start": 1162,
+    "value": "node3",
+  },
+  {
+    "start": 1165,
+    "value": "node1",
+  },
+  {
+    "start": 1165,
+    "value": "node3",
+  },
+  {
+    "start": 1175,
+    "value": "node3",
+  },
+  {
+    "start": 1179,
+    "value": "node1",
+  },
+  {
+    "start": 1179,
+    "value": "node1",
+  },
+  {
+    "start": 1182,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`Go: Select: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 1215,
+    "value": "node2",
+  },
+  {
+    "start": 1249,
+    "value": "node2",
+  },
+  {
+    "start": 1261,
+    "value": "node2",
+  },
+  {
+    "start": 1264,
+    "value": "node2",
+  },
+  {
+    "start": 1264,
+    "value": "node2",
+  },
+  {
+    "start": 1272,
+    "value": "node2",
+  },
+  {
+    "start": 1275,
+    "value": "node2",
+  },
+  {
+    "start": 1275,
+    "value": "node2",
+  },
+  {
+    "start": 1287,
+    "value": "node9",
+  },
+  {
+    "start": 1291,
+    "value": "node2",
+  },
+  {
+    "start": 1291,
+    "value": "node9",
+  },
+  {
+    "start": 1304,
+    "value": "node2",
+  },
+  {
+    "start": 1306,
+    "value": "node6",
+  },
+  {
+    "start": 1307,
+    "value": "node2",
+  },
+  {
+    "start": 1307,
+    "value": "node6",
+  },
+  {
+    "start": 1319,
+    "value": "node6",
+  },
+  {
+    "start": 1323,
+    "value": "node6",
+  },
+  {
+    "start": 1323,
+    "value": "node6",
+  },
+  {
+    "start": 1342,
+    "value": "node6",
+  },
+  {
+    "start": 1346,
+    "value": "node6",
+  },
+  {
+    "start": 1346,
+    "value": "node6",
+  },
+  {
+    "start": 1352,
+    "value": "node6",
+  },
+  {
+    "start": 1354,
+    "value": "node6",
+  },
+  {
+    "start": 1356,
+    "value": "node2",
+  },
+  {
+    "start": 1356,
+    "value": "node2",
+  },
+  {
+    "start": 1359,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`Go: Select2: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 1392,
+    "value": "node2",
+  },
+  {
+    "start": 1427,
+    "value": "node2",
+  },
+  {
+    "start": 1439,
+    "value": "node2",
+  },
+  {
+    "start": 1442,
+    "value": "node2",
+  },
+  {
+    "start": 1442,
+    "value": "node2",
+  },
+  {
+    "start": 1450,
+    "value": "node2",
+  },
+  {
+    "start": 1453,
+    "value": "node2",
+  },
+  {
+    "start": 1453,
+    "value": "node2",
+  },
+  {
+    "start": 1465,
+    "value": "node3",
+  },
+  {
+    "start": 1469,
+    "value": "node2",
+  },
+  {
+    "start": 1469,
+    "value": "node3",
+  },
+  {
+    "start": 1482,
+    "value": "node2",
+  },
+  {
+    "start": 1484,
+    "value": "node4",
+  },
+  {
+    "start": 1485,
+    "value": "node2",
+  },
+  {
+    "start": 1485,
+    "value": "node4",
+  },
+  {
+    "start": 1497,
+    "value": "node6",
+  },
+  {
+    "start": 1501,
+    "value": "node4",
+  },
+  {
+    "start": 1501,
+    "value": "node6",
+  },
+  {
+    "start": 1520,
+    "value": "node6",
+  },
+  {
+    "start": 1524,
+    "value": "node4",
+  },
+  {
+    "start": 1524,
+    "value": "node6",
+  },
+  {
+    "start": 1530,
+    "value": "node4",
+  },
+  {
+    "start": 1532,
+    "value": "node8",
+  },
+  {
+    "start": 1533,
+    "value": "node2",
+  },
+  {
+    "start": 1533,
+    "value": "node8",
+  },
+  {
+    "start": 1542,
+    "value": "node8",
+  },
+  {
+    "start": 1546,
+    "value": "node8",
+  },
+  {
+    "start": 1549,
+    "value": "node8",
+  },
+  {
+    "start": 1551,
+    "value": "node8",
+  },
+  {
+    "start": 1553,
+    "value": "node2",
+  },
+  {
+    "start": 1553,
+    "value": "node2",
+  },
+  {
+    "start": 1556,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`Python: trivial: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 25,
+    "value": "node2",
+  },
+  {
+    "start": 45,
+    "value": "node2",
+  },
+  {
+    "start": 49,
+    "value": "node2",
+  },
+  {
+    "start": 49,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`Python: If: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 65,
+    "value": "node1",
+  },
+  {
+    "start": 80,
+    "value": "node1",
+  },
+  {
+    "start": 83,
+    "value": "node1",
+  },
+  {
+    "start": 84,
+    "value": "node1",
+  },
+  {
+    "start": 85,
+    "value": "node2",
+  },
+  {
+    "start": 95,
+    "value": "node2",
+  },
+  {
+    "start": 99,
+    "value": "node2",
+  },
+  {
+    "start": 99,
+    "value": "node2",
+  },
+  {
+    "start": 99,
+    "value": "node1",
+  },
+  {
+    "start": 99,
+    "value": "node6",
+  },
+  {
+    "start": 105,
+    "value": "node6",
+  },
+  {
+    "start": 109,
+    "value": "node1",
+  },
+  {
+    "start": 109,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`Python: IfElse: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 125,
+    "value": "node1",
+  },
+  {
+    "start": 144,
+    "value": "node1",
+  },
+  {
+    "start": 147,
+    "value": "node1",
+  },
+  {
+    "start": 148,
+    "value": "node1",
+  },
+  {
+    "start": 149,
+    "value": "node2",
+  },
+  {
+    "start": 159,
+    "value": "node2",
+  },
+  {
+    "start": 162,
+    "value": "node2",
+  },
+  {
+    "start": 162,
+    "value": "node2",
+  },
+  {
+    "start": 162,
+    "value": "node1",
+  },
+  {
+    "start": 162,
+    "value": "node3",
+  },
+  {
+    "start": 168,
+    "value": "node1",
+  },
+  {
+    "start": 168,
+    "value": "node3",
+  },
+  {
+    "start": 173,
+    "value": "node3",
+  },
+  {
+    "start": 183,
+    "value": "node3",
+  },
+  {
+    "start": 186,
+    "value": "node3",
+  },
+  {
+    "start": 186,
+    "value": "node3",
+  },
+  {
+    "start": 186,
+    "value": "node1",
+  },
+  {
+    "start": 186,
+    "value": "node7",
+  },
+  {
+    "start": 192,
+    "value": "node7",
+  },
+  {
+    "start": 195,
+    "value": "node1",
+  },
+  {
+    "start": 195,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`Python: IfElifElse: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 211,
+    "value": "node1",
+  },
+  {
+    "start": 234,
+    "value": "node1",
+  },
+  {
+    "start": 237,
+    "value": "node1",
+  },
+  {
+    "start": 238,
+    "value": "node1",
+  },
+  {
+    "start": 239,
+    "value": "node2",
+  },
+  {
+    "start": 249,
+    "value": "node2",
+  },
+  {
+    "start": 252,
+    "value": "node2",
+  },
+  {
+    "start": 252,
+    "value": "node2",
+  },
+  {
+    "start": 252,
+    "value": "node1",
+  },
+  {
+    "start": 252,
+    "value": "node3",
+  },
+  {
+    "start": 258,
+    "value": "node1",
+  },
+  {
+    "start": 258,
+    "value": "node3",
+  },
+  {
+    "start": 263,
+    "value": "node3",
+  },
+  {
+    "start": 264,
+    "value": "node3",
+  },
+  {
+    "start": 265,
+    "value": "node4",
+  },
+  {
+    "start": 275,
+    "value": "node4",
+  },
+  {
+    "start": 278,
+    "value": "node4",
+  },
+  {
+    "start": 278,
+    "value": "node3",
+  },
+  {
+    "start": 278,
+    "value": "node5",
+  },
+  {
+    "start": 284,
+    "value": "node1",
+  },
+  {
+    "start": 284,
+    "value": "node5",
+  },
+  {
+    "start": 289,
+    "value": "node5",
+  },
+  {
+    "start": 299,
+    "value": "node5",
+  },
+  {
+    "start": 302,
+    "value": "node5",
+  },
+  {
+    "start": 302,
+    "value": "node5",
+  },
+  {
+    "start": 302,
+    "value": "node1",
+  },
+  {
+    "start": 302,
+    "value": "node9",
+  },
+  {
+    "start": 308,
+    "value": "node9",
+  },
+  {
+    "start": 311,
+    "value": "node1",
+  },
+  {
+    "start": 311,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`Python: For: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 340,
+    "value": "node0",
+  },
+  {
+    "start": 356,
+    "value": "node3",
+  },
+  {
+    "start": 367,
+    "value": "node1",
+  },
+  {
+    "start": 377,
+    "value": "node1",
+  },
+  {
+    "start": 381,
+    "value": "node1",
+  },
+  {
+    "start": 381,
+    "value": "node3",
+  },
+  {
+    "start": 381,
+    "value": "node0",
+  },
+  {
+    "start": 381,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: ForContinue: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 397,
+    "value": "node0",
+  },
+  {
+    "start": 421,
+    "value": "node7",
+  },
+  {
+    "start": 432,
+    "value": "node1",
+  },
+  {
+    "start": 442,
+    "value": "node7",
+  },
+  {
+    "start": 442,
+    "value": "node1",
+  },
+  {
+    "start": 445,
+    "value": "node1",
+  },
+  {
+    "start": 446,
+    "value": "node1",
+  },
+  {
+    "start": 447,
+    "value": "node2",
+  },
+  {
+    "start": 461,
+    "value": "node2",
+  },
+  {
+    "start": 469,
+    "value": "node2",
+  },
+  {
+    "start": 469,
+    "value": "node2",
+  },
+  {
+    "start": 469,
+    "value": "node1",
+  },
+  {
+    "start": 469,
+    "value": "node5",
+  },
+  {
+    "start": 479,
+    "value": "node5",
+  },
+  {
+    "start": 483,
+    "value": "node1",
+  },
+  {
+    "start": 483,
+    "value": "node7",
+  },
+  {
+    "start": 483,
+    "value": "node0",
+  },
+  {
+    "start": 483,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: ForBreak: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 499,
+    "value": "node0",
+  },
+  {
+    "start": 520,
+    "value": "node6",
+  },
+  {
+    "start": 531,
+    "value": "node1",
+  },
+  {
+    "start": 541,
+    "value": "node6",
+  },
+  {
+    "start": 541,
+    "value": "node1",
+  },
+  {
+    "start": 544,
+    "value": "node1",
+  },
+  {
+    "start": 545,
+    "value": "node1",
+  },
+  {
+    "start": 546,
+    "value": "node2",
+  },
+  {
+    "start": 560,
+    "value": "node2",
+  },
+  {
+    "start": 565,
+    "value": "node2",
+  },
+  {
+    "start": 565,
+    "value": "node2",
+  },
+  {
+    "start": 565,
+    "value": "node1",
+  },
+  {
+    "start": 565,
+    "value": "node1",
+  },
+  {
+    "start": 565,
+    "value": "node6",
+  },
+  {
+    "start": 565,
+    "value": "node0",
+  },
+  {
+    "start": 565,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: ForElse: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 581,
+    "value": "node0",
+  },
+  {
+    "start": 601,
+    "value": "node4",
+  },
+  {
+    "start": 612,
+    "value": "node1",
+  },
+  {
+    "start": 622,
+    "value": "node1",
+  },
+  {
+    "start": 626,
+    "value": "node1",
+  },
+  {
+    "start": 626,
+    "value": "node4",
+  },
+  {
+    "start": 647,
+    "value": "node2",
+  },
+  {
+    "start": 655,
+    "value": "node2",
+  },
+  {
+    "start": 655,
+    "value": "node4",
+  },
+  {
+    "start": 655,
+    "value": "node0",
+  },
+  {
+    "start": 655,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: ForElseBreak: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 671,
+    "value": "node0",
+  },
+  {
+    "start": 696,
+    "value": "node7",
+  },
+  {
+    "start": 707,
+    "value": "node1",
+  },
+  {
+    "start": 717,
+    "value": "node7",
+  },
+  {
+    "start": 717,
+    "value": "node1",
+  },
+  {
+    "start": 720,
+    "value": "node1",
+  },
+  {
+    "start": 721,
+    "value": "node1",
+  },
+  {
+    "start": 722,
+    "value": "node2",
+  },
+  {
+    "start": 736,
+    "value": "node2",
+  },
+  {
+    "start": 741,
+    "value": "node2",
+  },
+  {
+    "start": 741,
+    "value": "node2",
+  },
+  {
+    "start": 741,
+    "value": "node1",
+  },
+  {
+    "start": 741,
+    "value": "node1",
+  },
+  {
+    "start": 741,
+    "value": "node7",
+  },
+  {
+    "start": 762,
+    "value": "node5",
+  },
+  {
+    "start": 766,
+    "value": "node5",
+  },
+  {
+    "start": 766,
+    "value": "node7",
+  },
+  {
+    "start": 766,
+    "value": "node0",
+  },
+  {
+    "start": 766,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: ForElseBreakReturn: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 782,
+    "value": "node0",
+  },
+  {
+    "start": 813,
+    "value": "node7",
+  },
+  {
+    "start": 824,
+    "value": "node1",
+  },
+  {
+    "start": 834,
+    "value": "node7",
+  },
+  {
+    "start": 834,
+    "value": "node1",
+  },
+  {
+    "start": 837,
+    "value": "node1",
+  },
+  {
+    "start": 838,
+    "value": "node1",
+  },
+  {
+    "start": 839,
+    "value": "node8",
+  },
+  {
+    "start": 853,
+    "value": "node8",
+  },
+  {
+    "start": 858,
+    "value": "node8",
+  },
+  {
+    "start": 858,
+    "value": "node8",
+  },
+  {
+    "start": 858,
+    "value": "node1",
+  },
+  {
+    "start": 858,
+    "value": "node1",
+  },
+  {
+    "start": 858,
+    "value": "node7",
+  },
+  {
+    "start": 879,
+    "value": "node5",
+  },
+  {
+    "start": 885,
+    "value": "node5",
+  },
+  {
+    "start": 885,
+    "value": "node7",
+  },
+  {
+    "start": 885,
+    "value": "node0",
+  },
+  {
+    "start": 885,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: While: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 901,
+    "value": "node0",
+  },
+  {
+    "start": 925,
+    "value": "node1",
+  },
+  {
+    "start": 926,
+    "value": "node0",
+  },
+  {
+    "start": 927,
+    "value": "node2",
+  },
+  {
+    "start": 937,
+    "value": "node2",
+  },
+  {
+    "start": 941,
+    "value": "node2",
+  },
+  {
+    "start": 941,
+    "value": "node0",
+  },
+  {
+    "start": 941,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: WhileContinue: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 957,
+    "value": "node0",
+  },
+  {
+    "start": 989,
+    "value": "node1",
+  },
+  {
+    "start": 990,
+    "value": "node0",
+  },
+  {
+    "start": 991,
+    "value": "node2",
+  },
+  {
+    "start": 1001,
+    "value": "node0",
+  },
+  {
+    "start": 1001,
+    "value": "node2",
+  },
+  {
+    "start": 1004,
+    "value": "node2",
+  },
+  {
+    "start": 1005,
+    "value": "node2",
+  },
+  {
+    "start": 1006,
+    "value": "node3",
+  },
+  {
+    "start": 1020,
+    "value": "node3",
+  },
+  {
+    "start": 1028,
+    "value": "node3",
+  },
+  {
+    "start": 1028,
+    "value": "node3",
+  },
+  {
+    "start": 1028,
+    "value": "node2",
+  },
+  {
+    "start": 1028,
+    "value": "node6",
+  },
+  {
+    "start": 1038,
+    "value": "node6",
+  },
+  {
+    "start": 1042,
+    "value": "node2",
+  },
+  {
+    "start": 1042,
+    "value": "node0",
+  },
+  {
+    "start": 1042,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: WhileBreak: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 1058,
+    "value": "node0",
+  },
+  {
+    "start": 1087,
+    "value": "node1",
+  },
+  {
+    "start": 1088,
+    "value": "node0",
+  },
+  {
+    "start": 1089,
+    "value": "node2",
+  },
+  {
+    "start": 1099,
+    "value": "node0",
+  },
+  {
+    "start": 1099,
+    "value": "node2",
+  },
+  {
+    "start": 1102,
+    "value": "node2",
+  },
+  {
+    "start": 1103,
+    "value": "node2",
+  },
+  {
+    "start": 1104,
+    "value": "node3",
+  },
+  {
+    "start": 1118,
+    "value": "node3",
+  },
+  {
+    "start": 1123,
+    "value": "node3",
+  },
+  {
+    "start": 1123,
+    "value": "node3",
+  },
+  {
+    "start": 1123,
+    "value": "node2",
+  },
+  {
+    "start": 1123,
+    "value": "node2",
+  },
+  {
+    "start": 1123,
+    "value": "node0",
+  },
+  {
+    "start": 1123,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: WhileElse: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 1147,
+    "value": "node0",
+  },
+  {
+    "start": 1175,
+    "value": "node1",
+  },
+  {
+    "start": 1176,
+    "value": "node0",
+  },
+  {
+    "start": 1177,
+    "value": "node2",
+  },
+  {
+    "start": 1187,
+    "value": "node2",
+  },
+  {
+    "start": 1191,
+    "value": "node2",
+  },
+  {
+    "start": 1191,
+    "value": "node0",
+  },
+  {
+    "start": 1212,
+    "value": "node5",
+  },
+  {
+    "start": 1216,
+    "value": "node5",
+  },
+  {
+    "start": 1216,
+    "value": "node0",
+  },
+  {
+    "start": 1216,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: WhileElseBreak: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 1232,
+    "value": "node0",
+  },
+  {
+    "start": 1265,
+    "value": "node1",
+  },
+  {
+    "start": 1266,
+    "value": "node0",
+  },
+  {
+    "start": 1267,
+    "value": "node2",
+  },
+  {
+    "start": 1277,
+    "value": "node0",
+  },
+  {
+    "start": 1277,
+    "value": "node2",
+  },
+  {
+    "start": 1280,
+    "value": "node2",
+  },
+  {
+    "start": 1281,
+    "value": "node2",
+  },
+  {
+    "start": 1282,
+    "value": "node3",
+  },
+  {
+    "start": 1296,
+    "value": "node3",
+  },
+  {
+    "start": 1301,
+    "value": "node3",
+  },
+  {
+    "start": 1301,
+    "value": "node3",
+  },
+  {
+    "start": 1301,
+    "value": "node2",
+  },
+  {
+    "start": 1301,
+    "value": "node6",
+  },
+  {
+    "start": 1311,
+    "value": "node6",
+  },
+  {
+    "start": 1315,
+    "value": "node2",
+  },
+  {
+    "start": 1315,
+    "value": "node0",
+  },
+  {
+    "start": 1336,
+    "value": "node7",
+  },
+  {
+    "start": 1340,
+    "value": "node7",
+  },
+  {
+    "start": 1340,
+    "value": "node0",
+  },
+  {
+    "start": 1340,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: Match: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 1356,
+    "value": "node1",
+  },
+  {
+    "start": 1374,
+    "value": "node1",
+  },
+  {
+    "start": 1380,
+    "value": "node1",
+  },
+  {
+    "start": 1381,
+    "value": "node1",
+  },
+  {
+    "start": 1392,
+    "value": "node4",
+  },
+  {
+    "start": 1397,
+    "value": "node4",
+  },
+  {
+    "start": 1398,
+    "value": "node4",
+  },
+  {
+    "start": 1399,
+    "value": "node3",
+  },
+  {
+    "start": 1413,
+    "value": "node3",
+  },
+  {
+    "start": 1417,
+    "value": "node3",
+  },
+  {
+    "start": 1417,
+    "value": "node4",
+  },
+  {
+    "start": 1417,
+    "value": "node1",
+  },
+  {
+    "start": 1427,
+    "value": "node6",
+  },
+  {
+    "start": 1432,
+    "value": "node6",
+  },
+  {
+    "start": 1433,
+    "value": "node6",
+  },
+  {
+    "start": 1434,
+    "value": "node5",
+  },
+  {
+    "start": 1448,
+    "value": "node5",
+  },
+  {
+    "start": 1452,
+    "value": "node5",
+  },
+  {
+    "start": 1452,
+    "value": "node6",
+  },
+  {
+    "start": 1452,
+    "value": "node1",
+  },
+  {
+    "start": 1452,
+    "value": "node1",
+  },
+  {
+    "start": 1452,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`Python: MatchMultiPattern: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 1468,
+    "value": "node1",
+  },
+  {
+    "start": 1498,
+    "value": "node1",
+  },
+  {
+    "start": 1504,
+    "value": "node1",
+  },
+  {
+    "start": 1505,
+    "value": "node1",
+  },
+  {
+    "start": 1516,
+    "value": "node4",
+  },
+  {
+    "start": 1521,
+    "value": "node4",
+  },
+  {
+    "start": 1522,
+    "value": "node4",
+  },
+  {
+    "start": 1523,
+    "value": "node4",
+  },
+  {
+    "start": 1524,
+    "value": "node4",
+  },
+  {
+    "start": 1525,
+    "value": "node4",
+  },
+  {
+    "start": 1526,
+    "value": "node4",
+  },
+  {
+    "start": 1527,
+    "value": "node3",
+  },
+  {
+    "start": 1541,
+    "value": "node3",
+  },
+  {
+    "start": 1547,
+    "value": "node3",
+  },
+  {
+    "start": 1547,
+    "value": "node4",
+  },
+  {
+    "start": 1547,
+    "value": "node1",
+  },
+  {
+    "start": 1557,
+    "value": "node6",
+  },
+  {
+    "start": 1562,
+    "value": "node6",
+  },
+  {
+    "start": 1563,
+    "value": "node6",
+  },
+  {
+    "start": 1564,
+    "value": "node6",
+  },
+  {
+    "start": 1565,
+    "value": "node6",
+  },
+  {
+    "start": 1566,
+    "value": "node5",
+  },
+  {
+    "start": 1580,
+    "value": "node5",
+  },
+  {
+    "start": 1586,
+    "value": "node5",
+  },
+  {
+    "start": 1586,
+    "value": "node6",
+  },
+  {
+    "start": 1586,
+    "value": "node1",
+  },
+  {
+    "start": 1586,
+    "value": "node1",
+  },
+  {
+    "start": 1586,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`Python: Return: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 1602,
+    "value": "node1",
+  },
+  {
+    "start": 1621,
+    "value": "node1",
+  },
+  {
+    "start": 1624,
+    "value": "node1",
+  },
+  {
+    "start": 1625,
+    "value": "node1",
+  },
+  {
+    "start": 1626,
+    "value": "node2",
+  },
+  {
+    "start": 1636,
+    "value": "node2",
+  },
+  {
+    "start": 1644,
+    "value": "node2",
+  },
+  {
+    "start": 1644,
+    "value": "node2",
+  },
+  {
+    "start": 1644,
+    "value": "node1",
+  },
+  {
+    "start": 1644,
+    "value": "node5",
+  },
+  {
+    "start": 1650,
+    "value": "node1",
+  },
+  {
+    "start": 1650,
+    "value": "node5",
+  },
+  {
+    "start": 1658,
+    "value": "node1",
+  },
+  {
+    "start": 1658,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`Python: WithCluster: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 1693,
+    "value": "node2",
+  },
+  {
+    "start": 1717,
+    "value": "node2",
+  },
+  {
+    "start": 1721,
+    "value": "node2",
+  },
+  {
+    "start": 1721,
+    "value": "Not found",
+  },
+  {
+    "start": 1727,
+    "value": "node2",
+  },
+  {
+    "start": 1732,
+    "value": "node2",
+  },
+  {
+    "start": 1733,
+    "value": "node2",
+  },
+  {
+    "start": 1734,
+    "value": "node3",
+  },
+  {
+    "start": 1744,
+    "value": "node2",
+  },
+  {
+    "start": 1744,
+    "value": "node3",
+  },
+  {
+    "start": 1747,
+    "value": "node3",
+  },
+  {
+    "start": 1750,
+    "value": "node3",
+  },
+  {
+    "start": 1751,
+    "value": "node4",
+  },
+  {
+    "start": 1765,
+    "value": "node4",
+  },
+  {
+    "start": 1768,
+    "value": "node4",
+  },
+  {
+    "start": 1768,
+    "value": "node4",
+  },
+  {
+    "start": 1768,
+    "value": "node3",
+  },
+  {
+    "start": 1768,
+    "value": "node7",
+  },
+  {
+    "start": 1778,
+    "value": "node7",
+  },
+  {
+    "start": 1781,
+    "value": "node3",
+  },
+  {
+    "start": 1781,
+    "value": "Not found",
+  },
+  {
+    "start": 1787,
+    "value": "node2",
+  },
+  {
+    "start": 1792,
+    "value": "node8",
+  },
+  {
+    "start": 1793,
+    "value": "node2",
+  },
+  {
+    "start": 1794,
+    "value": "node9",
+  },
+  {
+    "start": 1804,
+    "value": "node9",
+  },
+  {
+    "start": 1808,
+    "value": "node9",
+  },
+  {
+    "start": 1808,
+    "value": "node2",
+  },
+  {
+    "start": 1808,
+    "value": "node11",
+  },
+  {
+    "start": 1814,
+    "value": "node11",
+  },
+  {
+    "start": 1818,
+    "value": "node2",
+  },
+  {
+    "start": 1818,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`Python: WithNestedCluster: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 1853,
+    "value": "node1",
+  },
+  {
+    "start": 1888,
+    "value": "node1",
+  },
+  {
+    "start": 1889,
+    "value": "node1",
+  },
+  {
+    "start": 1890,
+    "value": "node2",
+  },
+  {
+    "start": 1900,
+    "value": "node1",
+  },
+  {
+    "start": 1900,
+    "value": "node2",
+  },
+  {
+    "start": 1903,
+    "value": "node2",
+  },
+  {
+    "start": 1906,
+    "value": "node2",
+  },
+  {
+    "start": 1907,
+    "value": "node3",
+  },
+  {
+    "start": 1921,
+    "value": "node3",
+  },
+  {
+    "start": 1924,
+    "value": "node3",
+  },
+  {
+    "start": 1924,
+    "value": "node3",
+  },
+  {
+    "start": 1924,
+    "value": "node2",
+  },
+  {
+    "start": 1924,
+    "value": "node6",
+  },
+  {
+    "start": 1934,
+    "value": "node6",
+  },
+  {
+    "start": 1937,
+    "value": "node2",
+  },
+  {
+    "start": 1937,
+    "value": "Not found",
+  },
+  {
+    "start": 1943,
+    "value": "node1",
+  },
+  {
+    "start": 1948,
+    "value": "node7",
+  },
+  {
+    "start": 1949,
+    "value": "node1",
+  },
+  {
+    "start": 1950,
+    "value": "node8",
+  },
+  {
+    "start": 1960,
+    "value": "node1",
+  },
+  {
+    "start": 1960,
+    "value": "node8",
+  },
+  {
+    "start": 1963,
+    "value": "node8",
+  },
+  {
+    "start": 1964,
+    "value": "node8",
+  },
+  {
+    "start": 1965,
+    "value": "node9",
+  },
+  {
+    "start": 1979,
+    "value": "node8",
+  },
+  {
+    "start": 1979,
+    "value": "node9",
+  },
+  {
+    "start": 1984,
+    "value": "node9",
+  },
+  {
+    "start": 1985,
+    "value": "node9",
+  },
+  {
+    "start": 1986,
+    "value": "node10",
+  },
+  {
+    "start": 2004,
+    "value": "node9",
+  },
+  {
+    "start": 2004,
+    "value": "node10",
+  },
+  {
+    "start": 2010,
+    "value": "node10",
+  },
+  {
+    "start": 2011,
+    "value": "node10",
+  },
+  {
+    "start": 2034,
+    "value": "node13",
+  },
+  {
+    "start": 2039,
+    "value": "node13",
+  },
+  {
+    "start": 2040,
+    "value": "node13",
+  },
+  {
+    "start": 2041,
+    "value": "node12",
+  },
+  {
+    "start": 2041,
+    "value": "node12",
+  },
+  {
+    "start": 2045,
+    "value": "node12",
+  },
+  {
+    "start": 2045,
+    "value": "node13",
+  },
+  {
+    "start": 2045,
+    "value": "node10",
+  },
+  {
+    "start": 2067,
+    "value": "node15",
+  },
+  {
+    "start": 2072,
+    "value": "node15",
+  },
+  {
+    "start": 2073,
+    "value": "node15",
+  },
+  {
+    "start": 2074,
+    "value": "node14",
+  },
+  {
+    "start": 2074,
+    "value": "node14",
+  },
+  {
+    "start": 2078,
+    "value": "node14",
+  },
+  {
+    "start": 2078,
+    "value": "node15",
+  },
+  {
+    "start": 2078,
+    "value": "node10",
+  },
+  {
+    "start": 2078,
+    "value": "node10",
+  },
+  {
+    "start": 2078,
+    "value": "node9",
+  },
+  {
+    "start": 2078,
+    "value": "node9",
+  },
+  {
+    "start": 2078,
+    "value": "node16",
+  },
+  {
+    "start": 2088,
+    "value": "node8",
+  },
+  {
+    "start": 2088,
+    "value": "node16",
+  },
+  {
+    "start": 2093,
+    "value": "node16",
+  },
+  {
+    "start": 2107,
+    "value": "node16",
+  },
+  {
+    "start": 2113,
+    "value": "node16",
+  },
+  {
+    "start": 2113,
+    "value": "node16",
+  },
+  {
+    "start": 2113,
+    "value": "node8",
+  },
+  {
+    "start": 2113,
+    "value": "node8",
+  },
+  {
+    "start": 2113,
+    "value": "node1",
+  },
+  {
+    "start": 2113,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`Python: raise_exception: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 2161,
+    "value": "node0",
+  },
+  {
+    "start": 2189,
+    "value": "node1",
+  },
+  {
+    "start": 2194,
+    "value": "node0",
+  },
+  {
+    "start": 2194,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: raise_again: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 2240,
+    "value": "node0",
+  },
+  {
+    "start": 2264,
+    "value": "node2",
+  },
+  {
+    "start": 2278,
+    "value": "node2",
+  },
+  {
+    "start": 2285,
+    "value": "node2",
+  },
+  {
+    "start": 2285,
+    "value": "node2",
+  },
+  {
+    "start": 2291,
+    "value": "node3",
+  },
+  {
+    "start": 2309,
+    "value": "node3",
+  },
+  {
+    "start": 2312,
+    "value": "node3",
+  },
+  {
+    "start": 2313,
+    "value": "node3",
+  },
+  {
+    "start": 2314,
+    "value": "node4",
+  },
+  {
+    "start": 2328,
+    "value": "node4",
+  },
+  {
+    "start": 2332,
+    "value": "node4",
+  },
+  {
+    "start": 2332,
+    "value": "node4",
+  },
+  {
+    "start": 2332,
+    "value": "node3",
+  },
+  {
+    "start": 2332,
+    "value": "node3",
+  },
+  {
+    "start": 2332,
+    "value": "node3",
+  },
+  {
+    "start": 2332,
+    "value": "node2",
+  },
+  {
+    "start": 2338,
+    "value": "node10",
+  },
+  {
+    "start": 2354,
+    "value": "node10",
+  },
+  {
+    "start": 2357,
+    "value": "node7",
+  },
+  {
+    "start": 2358,
+    "value": "node10",
+  },
+  {
+    "start": 2359,
+    "value": "node8",
+  },
+  {
+    "start": 2373,
+    "value": "node8",
+  },
+  {
+    "start": 2377,
+    "value": "node8",
+  },
+  {
+    "start": 2377,
+    "value": "node8",
+  },
+  {
+    "start": 2377,
+    "value": "node10",
+  },
+  {
+    "start": 2377,
+    "value": "node10",
+  },
+  {
+    "start": 2377,
+    "value": "node10",
+  },
+  {
+    "start": 2377,
+    "value": "node2",
+  },
+  {
+    "start": 2377,
+    "value": "node0",
+  },
+  {
+    "start": 2377,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: yield_value: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 2423,
+    "value": "node0",
+  },
+  {
+    "start": 2447,
+    "value": "node3",
+  },
+  {
+    "start": 2458,
+    "value": "node1",
+  },
+  {
+    "start": 2468,
+    "value": "node1",
+  },
+  {
+    "start": 2475,
+    "value": "node1",
+  },
+  {
+    "start": 2475,
+    "value": "node3",
+  },
+  {
+    "start": 2475,
+    "value": "node0",
+  },
+  {
+    "start": 2475,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: try_except: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 2527,
+    "value": "node0",
+  },
+  {
+    "start": 2550,
+    "value": "node2",
+  },
+  {
+    "start": 2564,
+    "value": "node2",
+  },
+  {
+    "start": 2567,
+    "value": "node2",
+  },
+  {
+    "start": 2567,
+    "value": "node2",
+  },
+  {
+    "start": 2573,
+    "value": "node3",
+  },
+  {
+    "start": 2590,
+    "value": "node3",
+  },
+  {
+    "start": 2593,
+    "value": "node3",
+  },
+  {
+    "start": 2593,
+    "value": "node3",
+  },
+  {
+    "start": 2593,
+    "value": "node2",
+  },
+  {
+    "start": 2593,
+    "value": "node4",
+  },
+  {
+    "start": 2599,
+    "value": "node0",
+  },
+  {
+    "start": 2599,
+    "value": "node4",
+  },
+  {
+    "start": 2605,
+    "value": "node0",
+  },
+  {
+    "start": 2605,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: try_except_finally: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 2651,
+    "value": "node0",
+  },
+  {
+    "start": 2682,
+    "value": "node2",
+  },
+  {
+    "start": 2696,
+    "value": "node2",
+  },
+  {
+    "start": 2699,
+    "value": "node2",
+  },
+  {
+    "start": 2699,
+    "value": "node2",
+  },
+  {
+    "start": 2705,
+    "value": "node3",
+  },
+  {
+    "start": 2722,
+    "value": "node3",
+  },
+  {
+    "start": 2725,
+    "value": "node3",
+  },
+  {
+    "start": 2725,
+    "value": "node3",
+  },
+  {
+    "start": 2725,
+    "value": "node2",
+  },
+  {
+    "start": 2731,
+    "value": "node4",
+  },
+  {
+    "start": 2749,
+    "value": "node4",
+  },
+  {
+    "start": 2752,
+    "value": "node4",
+  },
+  {
+    "start": 2752,
+    "value": "node4",
+  },
+  {
+    "start": 2752,
+    "value": "node2",
+  },
+  {
+    "start": 2752,
+    "value": "node5",
+  },
+  {
+    "start": 2758,
+    "value": "node0",
+  },
+  {
+    "start": 2758,
+    "value": "node5",
+  },
+  {
+    "start": 2764,
+    "value": "node0",
+  },
+  {
+    "start": 2764,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: try_many_except_finally: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 2810,
+    "value": "node0",
+  },
+  {
+    "start": 2846,
+    "value": "node2",
+  },
+  {
+    "start": 2860,
+    "value": "node2",
+  },
+  {
+    "start": 2863,
+    "value": "node2",
+  },
+  {
+    "start": 2863,
+    "value": "node2",
+  },
+  {
+    "start": 2869,
+    "value": "node3",
+  },
+  {
+    "start": 2888,
+    "value": "node3",
+  },
+  {
+    "start": 2891,
+    "value": "node3",
+  },
+  {
+    "start": 2891,
+    "value": "node3",
+  },
+  {
+    "start": 2891,
+    "value": "node2",
+  },
+  {
+    "start": 2897,
+    "value": "node4",
+  },
+  {
+    "start": 2916,
+    "value": "node4",
+  },
+  {
+    "start": 2920,
+    "value": "node4",
+  },
+  {
+    "start": 2920,
+    "value": "node4",
+  },
+  {
+    "start": 2920,
+    "value": "node2",
+  },
+  {
+    "start": 2926,
+    "value": "node7",
+  },
+  {
+    "start": 2934,
+    "value": "node7",
+  },
+  {
+    "start": 2940,
+    "value": "node7",
+  },
+  {
+    "start": 2940,
+    "value": "node7",
+  },
+  {
+    "start": 2940,
+    "value": "node2",
+  },
+  {
+    "start": 2946,
+    "value": "node8",
+  },
+  {
+    "start": 2964,
+    "value": "node8",
+  },
+  {
+    "start": 2967,
+    "value": "node8",
+  },
+  {
+    "start": 2967,
+    "value": "node8",
+  },
+  {
+    "start": 2967,
+    "value": "node8",
+  },
+  {
+    "start": 2967,
+    "value": "node8",
+  },
+  {
+    "start": 2967,
+    "value": "node2",
+  },
+  {
+    "start": 2967,
+    "value": "node9",
+  },
+  {
+    "start": 2973,
+    "value": "node0",
+  },
+  {
+    "start": 2973,
+    "value": "node9",
+  },
+  {
+    "start": 2979,
+    "value": "node0",
+  },
+  {
+    "start": 2979,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: try_except_else_finally: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 3027,
+    "value": "node0",
+  },
+  {
+    "start": 3063,
+    "value": "node2",
+  },
+  {
+    "start": 3068,
+    "value": "node2",
+  },
+  {
+    "start": 3072,
+    "value": "node2",
+  },
+  {
+    "start": 3072,
+    "value": "node2",
+  },
+  {
+    "start": 3078,
+    "value": "node3",
+  },
+  {
+    "start": 3086,
+    "value": "node3",
+  },
+  {
+    "start": 3090,
+    "value": "node3",
+  },
+  {
+    "start": 3090,
+    "value": "node3",
+  },
+  {
+    "start": 3090,
+    "value": "node2",
+  },
+  {
+    "start": 3096,
+    "value": "node4",
+  },
+  {
+    "start": 3102,
+    "value": "node4",
+  },
+  {
+    "start": 3106,
+    "value": "node4",
+  },
+  {
+    "start": 3106,
+    "value": "node4",
+  },
+  {
+    "start": 3106,
+    "value": "node2",
+  },
+  {
+    "start": 3112,
+    "value": "node5",
+  },
+  {
+    "start": 3121,
+    "value": "node5",
+  },
+  {
+    "start": 3125,
+    "value": "node5",
+  },
+  {
+    "start": 3125,
+    "value": "node5",
+  },
+  {
+    "start": 3125,
+    "value": "node2",
+  },
+  {
+    "start": 3125,
+    "value": "node0",
+  },
+  {
+    "start": 3125,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: massive_try_except_else_finally: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 3145,
+    "value": "node0",
+  },
+  {
+    "start": 3189,
+    "value": "node3",
+  },
+  {
+    "start": 3204,
+    "value": "node3",
+  },
+  {
+    "start": 3209,
+    "value": "node3",
+  },
+  {
+    "start": 3213,
+    "value": "node3",
+  },
+  {
+    "start": 3213,
+    "value": "node3",
+  },
+  {
+    "start": 3223,
+    "value": "node4",
+  },
+  {
+    "start": 3231,
+    "value": "node4",
+  },
+  {
+    "start": 3235,
+    "value": "node4",
+  },
+  {
+    "start": 3235,
+    "value": "node4",
+  },
+  {
+    "start": 3235,
+    "value": "node3",
+  },
+  {
+    "start": 3245,
+    "value": "node5",
+  },
+  {
+    "start": 3251,
+    "value": "node5",
+  },
+  {
+    "start": 3255,
+    "value": "node5",
+  },
+  {
+    "start": 3255,
+    "value": "node5",
+  },
+  {
+    "start": 3255,
+    "value": "node3",
+  },
+  {
+    "start": 3265,
+    "value": "node6",
+  },
+  {
+    "start": 3274,
+    "value": "node6",
+  },
+  {
+    "start": 3278,
+    "value": "node6",
+  },
+  {
+    "start": 3278,
+    "value": "node6",
+  },
+  {
+    "start": 3278,
+    "value": "node3",
+  },
+  {
+    "start": 3278,
+    "value": "node3",
+  },
+  {
+    "start": 3278,
+    "value": "node3",
+  },
+  {
+    "start": 3284,
+    "value": "node8",
+  },
+  {
+    "start": 3301,
+    "value": "node8",
+  },
+  {
+    "start": 3306,
+    "value": "node8",
+  },
+  {
+    "start": 3310,
+    "value": "node8",
+  },
+  {
+    "start": 3310,
+    "value": "node8",
+  },
+  {
+    "start": 3320,
+    "value": "node9",
+  },
+  {
+    "start": 3328,
+    "value": "node9",
+  },
+  {
+    "start": 3332,
+    "value": "node9",
+  },
+  {
+    "start": 3332,
+    "value": "node9",
+  },
+  {
+    "start": 3332,
+    "value": "node8",
+  },
+  {
+    "start": 3342,
+    "value": "node10",
+  },
+  {
+    "start": 3348,
+    "value": "node10",
+  },
+  {
+    "start": 3352,
+    "value": "node10",
+  },
+  {
+    "start": 3352,
+    "value": "node10",
+  },
+  {
+    "start": 3352,
+    "value": "node8",
+  },
+  {
+    "start": 3362,
+    "value": "node11",
+  },
+  {
+    "start": 3371,
+    "value": "node11",
+  },
+  {
+    "start": 3375,
+    "value": "node11",
+  },
+  {
+    "start": 3375,
+    "value": "node11",
+  },
+  {
+    "start": 3375,
+    "value": "node8",
+  },
+  {
+    "start": 3375,
+    "value": "node8",
+  },
+  {
+    "start": 3375,
+    "value": "node8",
+  },
+  {
+    "start": 3375,
+    "value": "node3",
+  },
+  {
+    "start": 3381,
+    "value": "node12",
+  },
+  {
+    "start": 3397,
+    "value": "node12",
+  },
+  {
+    "start": 3400,
+    "value": "node12",
+  },
+  {
+    "start": 3401,
+    "value": "node12",
+  },
+  {
+    "start": 3402,
+    "value": "node13",
+  },
+  {
+    "start": 3416,
+    "value": "node13",
+  },
+  {
+    "start": 3420,
+    "value": "node13",
+  },
+  {
+    "start": 3420,
+    "value": "node13",
+  },
+  {
+    "start": 3420,
+    "value": "node12",
+  },
+  {
+    "start": 3420,
+    "value": "node14",
+  },
+  {
+    "start": 3430,
+    "value": "node12",
+  },
+  {
+    "start": 3430,
+    "value": "node14",
+  },
+  {
+    "start": 3435,
+    "value": "node14",
+  },
+  {
+    "start": 3449,
+    "value": "node14",
+  },
+  {
+    "start": 3453,
+    "value": "node14",
+  },
+  {
+    "start": 3453,
+    "value": "node14",
+  },
+  {
+    "start": 3453,
+    "value": "node12",
+  },
+  {
+    "start": 3453,
+    "value": "node18",
+  },
+  {
+    "start": 3463,
+    "value": "node12",
+  },
+  {
+    "start": 3463,
+    "value": "node18",
+  },
+  {
+    "start": 3481,
+    "value": "node18",
+  },
+  {
+    "start": 3485,
+    "value": "node18",
+  },
+  {
+    "start": 3485,
+    "value": "node18",
+  },
+  {
+    "start": 3495,
+    "value": "node19",
+  },
+  {
+    "start": 3504,
+    "value": "node19",
+  },
+  {
+    "start": 3508,
+    "value": "node19",
+  },
+  {
+    "start": 3508,
+    "value": "node19",
+  },
+  {
+    "start": 3508,
+    "value": "node18",
+  },
+  {
+    "start": 3508,
+    "value": "node12",
+  },
+  {
+    "start": 3508,
+    "value": "node12",
+  },
+  {
+    "start": 3508,
+    "value": "node3",
+  },
+  {
+    "start": 3514,
+    "value": "node20",
+  },
+  {
+    "start": 3533,
+    "value": "node20",
+  },
+  {
+    "start": 3538,
+    "value": "node20",
+  },
+  {
+    "start": 3539,
+    "value": "node20",
+  },
+  {
+    "start": 3540,
+    "value": "node23",
+  },
+  {
+    "start": 3554,
+    "value": "node20",
+  },
+  {
+    "start": 3554,
+    "value": "node23",
+  },
+  {
+    "start": 3565,
+    "value": "node21",
+  },
+  {
+    "start": 3583,
+    "value": "node21",
+  },
+  {
+    "start": 3587,
+    "value": "node21",
+  },
+  {
+    "start": 3587,
+    "value": "node23",
+  },
+  {
+    "start": 3587,
+    "value": "node23",
+  },
+  {
+    "start": 3587,
+    "value": "node20",
+  },
+  {
+    "start": 3587,
+    "value": "node20",
+  },
+  {
+    "start": 3587,
+    "value": "node3",
+  },
+  {
+    "start": 3587,
+    "value": "node0",
+  },
+  {
+    "start": 3587,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: try_finally: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 3633,
+    "value": "node0",
+  },
+  {
+    "start": 3657,
+    "value": "node2",
+  },
+  {
+    "start": 3671,
+    "value": "node2",
+  },
+  {
+    "start": 3674,
+    "value": "node2",
+  },
+  {
+    "start": 3675,
+    "value": "node2",
+  },
+  {
+    "start": 3676,
+    "value": "node8",
+  },
+  {
+    "start": 3690,
+    "value": "node8",
+  },
+  {
+    "start": 3696,
+    "value": "node8",
+  },
+  {
+    "start": 3696,
+    "value": "node8",
+  },
+  {
+    "start": 3696,
+    "value": "node2",
+  },
+  {
+    "start": 3696,
+    "value": "node6",
+  },
+  {
+    "start": 3706,
+    "value": "node6",
+  },
+  {
+    "start": 3710,
+    "value": "node2",
+  },
+  {
+    "start": 3710,
+    "value": "node2",
+  },
+  {
+    "start": 3716,
+    "value": "node9",
+  },
+  {
+    "start": 3734,
+    "value": "node9",
+  },
+  {
+    "start": 3738,
+    "value": "node9",
+  },
+  {
+    "start": 3738,
+    "value": "node9",
+  },
+  {
+    "start": 3738,
+    "value": "node9",
+  },
+  {
+    "start": 3738,
+    "value": "node9",
+  },
+  {
+    "start": 3738,
+    "value": "node2",
+  },
+  {
+    "start": 3738,
+    "value": "node0",
+  },
+  {
+    "start": 3738,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Python: try_with_finally: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 3784,
+    "value": "node0",
+  },
+  {
+    "start": 3813,
+    "value": "node2",
+  },
+  {
+    "start": 3827,
+    "value": "node2",
+  },
+  {
+    "start": 3832,
+    "value": "node2",
+  },
+  {
+    "start": 3833,
+    "value": "node2",
+  },
+  {
+    "start": 3834,
+    "value": "node6",
+  },
+  {
+    "start": 3848,
+    "value": "node6",
+  },
+  {
+    "start": 3854,
+    "value": "node6",
+  },
+  {
+    "start": 3854,
+    "value": "node2",
+  },
+  {
+    "start": 3854,
+    "value": "node4",
+  },
+  {
+    "start": 3864,
+    "value": "node4",
+  },
+  {
+    "start": 3868,
+    "value": "node2",
+  },
+  {
+    "start": 3868,
+    "value": "node2",
+  },
+  {
+    "start": 3874,
+    "value": "node7",
+  },
+  {
+    "start": 3892,
+    "value": "node7",
+  },
+  {
+    "start": 3896,
+    "value": "node7",
+  },
+  {
+    "start": 3896,
+    "value": "node7",
+  },
+  {
+    "start": 3896,
+    "value": "node7",
+  },
+  {
+    "start": 3896,
+    "value": "node7",
+  },
+  {
+    "start": 3896,
+    "value": "node2",
+  },
+  {
+    "start": 3896,
+    "value": "node0",
+  },
+  {
+    "start": 3896,
+    "value": "node0",
+  },
+]
+`;

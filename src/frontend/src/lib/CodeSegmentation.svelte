@@ -1,7 +1,11 @@
 <script lang="ts">
   import Parser, { type Point } from "web-tree-sitter";
   import { newCFGBuilder, type Language } from "../../../control-flow/cfg";
-  import { mergeNodeAttrs, type CFG } from "../../../control-flow/cfg-defs";
+  import {
+    mergeNodeAttrs,
+    remapNodeTargets,
+    type CFG,
+  } from "../../../control-flow/cfg-defs";
   import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
   import {
@@ -86,22 +90,6 @@
       ...lines.slice(start.row + 1, stop.row),
       lines[stop.row].slice(0, stop.column),
     ].join("\n");
-  }
-
-  function remapNodeTargets(cfg: CFG): CFG {
-    const remap = new Map<string, string>();
-    cfg.graph.forEachNode((node, { targets }) => {
-      targets.forEach((target) => remap.set(target, node));
-    });
-    const offsetToNode = cfg.offsetToNode.map(({ start, value: node }) => ({
-      start,
-      value: remap.get(node) ?? node,
-    }));
-
-    // Copying the graph is needed.
-    // Seems that some of the graph properties don't survive the structured clone.
-    const graph = cfg.graph.copy();
-    return evolve(cfg, { graph, offsetToNode });
   }
 
   type Options = { simplify: boolean; trim: boolean };
