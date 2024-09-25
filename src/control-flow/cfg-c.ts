@@ -10,6 +10,7 @@ import {
 import { Match } from "./block-matcher.ts";
 import type { Context, StatementHandlers } from "./statement-handlers.ts";
 import { GenericCFGBuilder } from "./generic-cfg-builder.ts";
+import { pairwise, zip } from "./zip.ts";
 
 function getChildFieldText(node: Parser.SyntaxNode, fieldName: string): string {
   const child = node.childForFieldName(fieldName);
@@ -240,8 +241,8 @@ function processIfStatement(
 ): BasicBlock {
   const queryString = `
       (if_statement
-        condition: (_) @cond
-        consequence: (_) @then
+        condition: (_ ")" @closing-paren) @cond
+        consequence: (_ "}" @closing-brace) @then
         alternative: (
             else_clause ([
                 (if_statement) @else-if
@@ -259,18 +260,33 @@ function processIfStatement(
     return [match, ...getIfs(elseifSyntax)];
   };
 
-  const blocks = getIfs(ifSyntax).map((ifMatch) => ({
+  const allIfs = getIfs(ifSyntax);
+  const blocks = allIfs.map((ifMatch) => ({
     condBlock: ifMatch.getBlock(ifMatch.requireSyntax("cond")),
     thenBlock: ifMatch.getBlock(ifMatch.requireSyntax("then")),
     elseBlock: ifMatch.getBlock(ifMatch.getSyntax("else-body")),
   }));
 
+  for (const [ifMatch, { condBlock }] of zip(allIfs, blocks)) {
+    ctx.link(ifMatch.requireSyntax("if"), condBlock.entry);
+    ctx.linkGap(
+      ifMatch.requireSyntax("closing-paren"),
+      ifMatch.requireSyntax("then"),
+    );
+  }
+  for (const [prevIf, thisIf] of pairwise(allIfs)) {
+    ctx.linkGap(
+      prevIf.requireSyntax("closing-brace"),
+      thisIf.requireSyntax("if"),
+    );
+  }
+
   const headNode = ctx.builder.addNode("CONDITION", "if-else head");
   const mergeNode = ctx.builder.addNode("MERGE", "if-else merge");
 
   // An ugly hack to make tsc not hate us.
-  const firstBlock = blocks[0] as (typeof blocks)[0];
-  if (firstBlock.condBlock.entry)
+  const firstBlock = blocks[0];
+  if (firstBlock?.condBlock.entry)
     ctx.builder.addEdge(headNode, firstBlock.condBlock.entry);
 
   let previous: string | null | undefined = null;
@@ -294,6 +310,11 @@ function processIfStatement(
 
   const elseBlock = last(blocks)?.elseBlock;
   if (elseBlock) {
+    const lastMatch = last(allIfs) as Match;
+    const elseSyntax = lastMatch.requireSyntax("else");
+    ctx.link(elseSyntax, elseBlock.entry);
+    ctx.linkGap(lastMatch.requireSyntax("closing-brace"), elseSyntax);
+
     if (previous && elseBlock.entry) {
       ctx.builder.addEdge(previous, elseBlock.entry, "alternative");
     }
