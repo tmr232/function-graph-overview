@@ -32,10 +32,10 @@ const supportedLanguages: SupportedLanguage[] = [
   },
 ];
 
-const functionNodeTypes: { [key: string]: string[] } = {
-  go: ["function_declaration", "method_declaration", "func_literal"],
-  c: ["function_definition"],
-  python: ["function_definition"],
+const functionNodeTypes: { [key in Language]: string[] } = {
+  Go: ["function_declaration", "method_declaration", "func_literal"],
+  C: ["function_definition"],
+  Python: ["function_definition"],
 };
 
 const supportedLanguageIds = supportedLanguages.map((lang) => lang.languageId);
@@ -48,8 +48,11 @@ const idToLanguage = (languageId: string): Language | null => {
   return null;
 };
 
-async function initializeParsers(context: vscode.ExtensionContext) {
-  const parsers: { [key: string]: Parser } = {};
+async function initializeParsers(
+  context: vscode.ExtensionContext,
+): Promise<Record<Language, Parser>> {
+  // const parsers: { [key in Language]: Parser } = {};
+  const parsers: Partial<Record<Language, Parser>> = {};
 
   for (const lang of supportedLanguages) {
     const languagePath = vscode.Uri.joinPath(
@@ -57,10 +60,10 @@ async function initializeParsers(context: vscode.ExtensionContext) {
       "parsers",
       lang.parserName,
     ).fsPath;
-    parsers[lang.languageId] = await initializeParser(context, languagePath);
+    parsers[lang.language] = await initializeParser(context, languagePath);
   }
 
-  return parsers;
+  return parsers as Record<Language, Parser>;
 }
 
 async function initializeParser(
@@ -82,7 +85,11 @@ async function initializeParser(
   return parser;
 }
 
-function getCurrentCode(): { code: string; languageId: string } | null {
+function getCurrentCode(): {
+  code: string;
+  languageId: string;
+  language: Language;
+} | null {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     return null;
@@ -94,9 +101,13 @@ function getCurrentCode(): { code: string; languageId: string } | null {
     return null;
   }
 
-  const code = document.getText();
+  const language = idToLanguage(languageId);
+  if (!language) {
+    return null;
+  }
 
-  return { code, languageId };
+  const code = document.getText();
+  return { code, languageId, language };
 }
 
 // This method is called when your extension is activated
@@ -126,12 +137,12 @@ export async function activate(context: vscode.ExtensionContext) {
       const editor = event.textEditor;
       const position = editor.selection.active;
 
-      const { code, languageId } = getCurrentCode() ?? {};
-      if (!code || !languageId) {
+      const { code, languageId, language } = getCurrentCode() ?? {};
+      if (!code || !languageId || !language) {
         return null;
       }
 
-      const tree = parsers[languageId].parse(code);
+      const tree = parsers[language].parse(code);
 
       console.log(
         `Cursor position changed: Line ${position.line + 1}, Column ${position.character + 1}`,
@@ -142,7 +153,7 @@ export async function activate(context: vscode.ExtensionContext) {
       });
 
       while (node) {
-        if (functionNodeTypes[languageId].includes(node.type)) {
+        if (functionNodeTypes[language].includes(node.type)) {
           break;
         }
         node = node.parent;
