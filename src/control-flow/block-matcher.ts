@@ -68,11 +68,11 @@ function getSyntaxMany(
 
 export class BlockMatcher {
   private blockHandler: BlockHandler = new BlockHandler();
-  private processBlock: (syntax: Parser.SyntaxNode | null) => BasicBlock;
+  private dispatchSingle: (syntax: Parser.SyntaxNode | null) => BasicBlock;
   public update = this.blockHandler.update.bind(this.blockHandler);
 
-  constructor(processBlock: BlockMatcher["processBlock"]) {
-    this.processBlock = processBlock;
+  constructor(dispatchSingle: BlockMatcher["dispatchSingle"]) {
+    this.dispatchSingle = dispatchSingle;
   }
 
   public match(
@@ -81,7 +81,7 @@ export class BlockMatcher {
     options?: Parser.QueryOptions,
   ): Match {
     const match = matchQuery(syntax, queryString, options);
-    return new Match(match, this.blockHandler, this.processBlock);
+    return new Match(match, this.blockHandler, this.dispatchSingle);
   }
 
   public tryMatch(
@@ -103,15 +103,15 @@ export class BlockMatcher {
 export class Match {
   private match: Parser.QueryMatch;
   private blockHandler: BlockHandler;
-  private processBlock: BlockMatcher["processBlock"];
+  private dispatchSingle: BlockMatcher["dispatchSingle"];
   constructor(
     match: Parser.QueryMatch,
     blockHandler: BlockHandler,
-    processBlock: BlockMatcher["processBlock"],
+    dispatchSingle: BlockMatcher["dispatchSingle"],
   ) {
     this.match = match;
     this.blockHandler = blockHandler;
-    this.processBlock = processBlock;
+    this.dispatchSingle = dispatchSingle;
   }
 
   public getSyntax(name: string): ReturnType<typeof getSyntax> {
@@ -136,7 +136,9 @@ export class Match {
   public getBlock(
     syntax: Parser.SyntaxNode | null | undefined,
   ): BasicBlock | null {
-    return syntax ? this.blockHandler.update(this.processBlock(syntax)) : null;
+    return syntax
+      ? this.blockHandler.update(this.dispatchSingle(syntax))
+      : null;
   }
 
   public getManyBlocks(syntaxMany: Parser.SyntaxNode[]): BasicBlock[] {

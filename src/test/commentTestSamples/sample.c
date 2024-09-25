@@ -110,3 +110,46 @@ void switch_2() {
     case 3:
     }
 }
+
+/*
+nodes: 15,
+exits: 1
+*/
+void ManyIfs() {
+    if (x) {
+    }
+
+    if (x) {
+    } else {
+    }
+
+    if (x) {
+    } else if (x) {
+    }
+
+    if (x) {
+    } else if (x) {
+
+    } else {
+    }
+}
+
+/*
+nodes: 7
+*/
+void IfWithoutBraces() {
+    /*
+    It's important to make sure the braces in the if-query are optional.
+    So the following two loops should behave identically.
+    */
+    for (;;) {
+        if (x)
+            break;
+    }
+
+    for (;;) {
+        if (x) {
+            break;
+        }
+    }
+}
