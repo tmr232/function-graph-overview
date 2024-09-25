@@ -105,12 +105,12 @@ function processTryStatement(
 
     // We handle `except` blocks before the `finally` block to support `return` handling.
     const exceptBlocks = exceptSyntaxMany.map((exceptSyntax) =>
-      builder.withCluster(
-        "except",
-        () => match.getBlock(exceptSyntax),
-      ),
+      builder.withCluster("except", () => match.getBlock(exceptSyntax)),
     );
-    for (const [syntax, { entry }] of zip(match.getSyntaxMany("except"), exceptBlocks)) {
+    for (const [syntax, { entry }] of zip(
+      match.getSyntaxMany("except"),
+      exceptBlocks,
+    )) {
       ctx.link(syntax, entry);
     }
     // We attach the except-blocks to the top of the `try` body.
@@ -126,7 +126,7 @@ function processTryStatement(
     // Create the `else` block before `finally` to handle returns correctly.
     const elseBlock = match.getBlock(elseSyntax);
     if (elseBlock) {
-      ctx.link(match.requireSyntax("else"), elseBlock.entry)
+      ctx.link(match.requireSyntax("else"), elseBlock.entry);
     }
 
     const finallyBlock = builder.withCluster("finally", () => {
@@ -136,9 +136,7 @@ function processTryStatement(
         matcher.state.forEachReturn((returnNode) => {
           // We create a new finally block for each return node,
           // so that we can link them.
-          const duplicateFinallyBlock = match.getBlock(
-            finallySyntax,
-          );
+          const duplicateFinallyBlock = match.getBlock(finallySyntax);
           // We also clone the return node, to place it _after_ the finally block
           // We also override the cluster node, pulling it up to the `try-complex`,
           // as the return is neither in a `try`, `except`, or `finally` context.
@@ -276,7 +274,7 @@ function processMatchStatement(
       "consequence",
     ) as Parser.SyntaxNode;
     return { consequence, patterns };
-  }
+  };
 
   const subjectBlock = match.getBlock(subjectSyntax);
   const mergeNode = builder.addNode("MERGE", "match merge");
@@ -287,19 +285,20 @@ function processMatchStatement(
     builder.addEdge(subjectBlock.exit, mergeNode, "alternative");
 
   let previous = subjectBlock.exit as string;
-  for (const [caseSyntax, caseColon] of zip(match.getSyntaxMany("case"), match.getSyntaxMany("case-colon"))) {
-    const {
-      consequence: consequenceSyntax,
-      patterns: patternSyntaxMany,
-    } = parseCase(caseSyntax);
+  for (const [caseSyntax, caseColon] of zip(
+    match.getSyntaxMany("case"),
+    match.getSyntaxMany("case-colon"),
+  )) {
+    const { consequence: consequenceSyntax, patterns: patternSyntaxMany } =
+      parseCase(caseSyntax);
     const consequenceBlock = match.getBlock(consequenceSyntax);
     const patternNode = builder.addNode(
       "CASE_CONDITION",
       `case ${patternSyntaxMany.map((pat) => pat.text).join(", ")}:`,
     );
-    patternSyntaxMany.forEach(syntax => ctx.link(syntax, patternNode));
+    patternSyntaxMany.forEach((syntax) => ctx.link(syntax, patternNode));
     ctx.linkGap(caseColon, consequenceSyntax);
-    ctx.link(caseSyntax, patternNode)
+    ctx.link(caseSyntax, patternNode);
 
     builder.addEdge(patternNode, consequenceBlock.entry, "consequence");
     if (consequenceBlock.exit)
