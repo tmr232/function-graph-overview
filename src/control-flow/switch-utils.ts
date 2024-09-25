@@ -3,6 +3,9 @@ import type { Case, EdgeType } from "./cfg-defs";
 import type { Context } from "./statement-handlers";
 import { pairwise } from "./zip";
 export interface SwitchOptions {
+  /// A Go `select` blocks until one of the branches matches.
+  /// This means that we never add an alternative edge from the
+  /// head to the merge node. There is no implicit-default.
   noImplicitDefault?: boolean;
 }
 
