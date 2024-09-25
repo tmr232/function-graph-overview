@@ -86,7 +86,6 @@ export type CFGGraph = MultiDirectedGraph<GraphNode, GraphEdge>;
 export interface CFG {
   graph: CFGGraph;
   entry: string;
-  syntaxToNode: Map<number, string>;
   offsetToNode: SimpleRange<string>[];
 }
 
@@ -205,6 +204,10 @@ export interface CFGBuilder {
   buildCFG(functionSyntax: Parser.SyntaxNode): CFG;
 }
 
+/**
+ * Nodes are changes during simplification, and we need to remap them to match.
+ * @param cfg
+ */
 export function remapNodeTargets(cfg: CFG): CFG {
   const remap = new Map<string, string>();
   cfg.graph.forEachNode((node, { targets }) => {

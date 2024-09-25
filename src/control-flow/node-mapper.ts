@@ -1,6 +1,5 @@
 import type Parser from "web-tree-sitter";
 import { inplaceAddRange, newRanges, type SimpleRange } from "./ranges";
-import type { Point } from "web-tree-sitter";
 /* TODO: It seem that AST-based mapping does not fit with what a user expects.
 We need to move to a range-based option, based on offsets in the code.
 
@@ -96,36 +95,10 @@ The bonus of using end-of for this is that we always have end-of then, but not a
 that said, it's not strictly necessary to map all the way to the end of then, as we'll get that from the then-block anyhow.
 */
 
-function* _parentsUpTo(
-  syntax: Parser.SyntaxNode,
-  stopBefore: Parser.SyntaxNode,
-): Generator<Parser.SyntaxNode> {
-  if (syntax.id === stopBefore.id) {
-    return;
-  }
-  let current = syntax.parent;
-  if (
-    stopBefore.startIndex > syntax.startIndex ||
-    stopBefore.endIndex < syntax.endIndex
-  ) {
-    throw new Error("Must be a parent!");
-  }
-  for (; current && current.id !== stopBefore.id; current = current.parent) {
-    yield current;
-  }
-  if (current?.id !== stopBefore.id) {
-    throw new Error(`stopAt must be a parent of the input`);
-  }
-}
 export class NodeMapper {
   private syntaxToNode: Map<Parser.SyntaxNode, string> = new Map();
   private ranges: { start: number; stop: number; value: Parser.SyntaxNode }[] =
     [];
-  private pointRanges: {
-    start: Point;
-    stop: Point;
-    value: Parser.SyntaxNode;
-  }[] = [];
 
   public add(syntax: Parser.SyntaxNode, node: string) {
     this.syntaxToNode.set(syntax, node);
@@ -133,17 +106,6 @@ export class NodeMapper {
     this.ranges.push({
       start: syntax.startIndex,
       stop: syntax.endIndex,
-      value: syntax,
-    });
-    // this.pointRanges.push({
-    //   start: syntax.startPosition,
-    //   stop: syntax.endPosition,
-    //   value: syntax,
-    // });
-    this.pointRanges.push({
-      start: syntax.startPosition,
-      // start: { row: syntax.startPosition.row, column: 0 },
-      stop: syntax.endPosition,
       value: syntax,
     });
   }
@@ -157,64 +119,22 @@ export class NodeMapper {
     const toIndex = options?.includeTo ? to.endIndex : to.startIndex;
     const fromIndex = options?.includeFrom ? from.startIndex : from.endIndex;
     this.range(fromIndex, toIndex, target);
-    this.pointRanges.push({
-      start: from.endPosition,
-      stop: to.startPosition,
-      // stop: { row: to.startPosition.row, column: 0 },
-      value: target,
-    });
   }
 
   public range(start: number, stop: number, syntax: Parser.SyntaxNode) {
     this.ranges.push({ start, stop, value: syntax });
   }
 
-  private propagateInside(
-    _container: Parser.SyntaxNode,
-  ): Map<Parser.SyntaxNode, string> {
-    return this.syntaxToNode;
-    // const mappedIds = new Set(
-    //   [...this.syntaxToNode.keys()].map((syntax) => syntax.id),
-    // );
-    // const propagated: [Parser.SyntaxNode, string][] = [];
-    // for (const [syntax, node] of this.syntaxToNode.entries()) {
-    //   for (const parent of _parentsUpTo(syntax, container)) {
-    //     // If the parent is already mapped, we stop propagation.
-    //     if (mappedIds.has(parent.id)) break;
-    //     // Otherwise, we map it to the current node.
-    //     propagated.push([parent, node]);
-    //   }
-    // }
-    // return new Map([...this.syntaxToNode.entries(), ...propagated]);
-  }
-
   /**
    *
    * @returns Mapping from syntax-IDs to node names
    */
-  public getMapping(functionSyntax: Parser.SyntaxNode): Map<number, string> {
-    // console.log(
-    //   [...this.syntaxToNode.entries()].map(([syntax, node]) => [
-    //     syntax.id,
-    //     syntax.type,
-    //     syntax.startPosition.row + 1,
-    //     node,
-    //   ]),
-    // );
-    // console.log(
-    //   [...this.propagateInside(functionSyntax).entries()].map(
-    //     ([syntax, node]) => [
-    //       syntax.id,
-    //       syntax.type,
-    //       syntax.startPosition.row + 1,
-    //       node,
-    //     ],
-    //   ),
-    // );
+  private getMapping(): Map<number, string> {
     return new Map(
-      [...this.propagateInside(functionSyntax).entries()].map(
-        ([syntax, node]) => [syntax.id, node],
-      ),
+      [...this.syntaxToNode.entries()].map(([syntax, node]) => [
+        syntax.id,
+        node,
+      ]),
     );
   }
 
@@ -233,7 +153,7 @@ export class NodeMapper {
   public getIndexMapping(
     functionSyntax: Parser.SyntaxNode,
   ): SimpleRange<string>[] {
-    const syntaxToNode = this.getMapping(functionSyntax);
+    const syntaxToNode = this.getMapping();
     const ranges = this.buildRanges(functionSyntax);
     return ranges.map(({ start, value }) => ({
       start,

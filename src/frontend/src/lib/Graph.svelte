@@ -3,8 +3,8 @@
   import { newCFGBuilder, type Language } from "../../../control-flow/cfg";
   import {
     mergeNodeAttrs,
+    remapNodeTargets,
     type CFG,
-    type CFGGraph,
   } from "../../../control-flow/cfg-defs";
   import { graphToDot, graphToLineNumbers } from "../../../control-flow/render";
   import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
@@ -49,31 +49,6 @@
     readonly verbose: boolean;
     readonly trim: boolean;
     readonly flatSwitch: boolean;
-  }
-
-  /**
-   * Nodes are changes during simplification, and we need to remap them to match.
-   * @param cfg
-   */
-  function remapNodeTargets(cfg: CFG): CFG {
-    const remap = new Map<string, string>();
-    cfg.graph.forEachNode((node, { targets }) => {
-      targets.forEach((target) => remap.set(target, node));
-    });
-    const syntaxToNode = new Map(
-      [...cfg.syntaxToNode.entries()].map(([syntaxId, node]) => [
-        syntaxId,
-        remap.get(node),
-      ]),
-    );
-    const offsetToNode = cfg.offsetToNode.map(({ start, value: node }) => ({
-      start,
-      value: remap.get(node),
-    }));
-    // Copying the graph is needed.
-    // Seems that some of the graph properties don't survive the structured clone.
-    const graph = cfg.graph.copy();
-    return evolve(cfg, { syntaxToNode, graph, offsetToNode });
   }
 
   function renderCode(

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Parser, { type Point } from "web-tree-sitter";
+  import Parser from "web-tree-sitter";
   import { newCFGBuilder, type Language } from "../../../control-flow/cfg";
   import {
     mergeNodeAttrs,
@@ -13,7 +13,6 @@
     initialize as initializeUtils,
     type Parsers,
   } from "./utils";
-  import { evolve } from "../../../control-flow/evolve";
   import { iterRanges } from "../../../control-flow/ranges";
 
   let parsers: Parsers;
@@ -73,23 +72,6 @@
       .map(([name, color]) => withBackground(name, color))
       .join("\n");
     return result + "\n\n\n" + legend;
-  }
-
-  function sliceLines(lines: string[], start: Point, stop?: Point): string {
-    if (stop === undefined) {
-      return [
-        lines[start.row].slice(start.column),
-        ...lines.slice(start.row + 1),
-      ].join("\n");
-    }
-    if (start.row === stop.row) {
-      return lines[start.row].slice(start.column, stop.column);
-    }
-    return [
-      lines[start.row].slice(start.column),
-      ...lines.slice(start.row + 1, stop.row),
-      lines[stop.row].slice(0, stop.column),
-    ].join("\n");
   }
 
   type Options = { simplify: boolean; trim: boolean };

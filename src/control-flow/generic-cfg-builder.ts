@@ -45,7 +45,6 @@ export class GenericCFGBuilder {
     return {
       graph: this.builder.getGraph(),
       entry: startNode,
-      syntaxToNode: this.nodeMapper.getMapping(functionNode),
       offsetToNode: this.nodeMapper.getIndexMapping(functionNode),
     };
   }
