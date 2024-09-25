@@ -314,11 +314,11 @@ function processWhileStatement(
   `;
   const match = ctx.matcher.match(whileSyntax, queryString);
 
-  const condSyntax = match.getSyntax("cond");
-  const bodySyntax = match.getSyntax("body");
+  const condSyntax = match.requireSyntax("cond");
+  const bodySyntax = match.requireSyntax("body");
 
-  const condBlock = match.getBlock(condSyntax) as BasicBlock;
-  const bodyBlock = match.getBlock(bodySyntax) as BasicBlock;
+  const condBlock = match.getBlock(condSyntax);
+  const bodyBlock = match.getBlock(bodySyntax);
 
   const exitNode = ctx.builder.addNode("FOR_EXIT", "loop exit");
 
@@ -338,27 +338,31 @@ function processWhileStatement(
     ctx.builder.addEdge(breakNode, exitNode);
   });
 
+  ctx.link(bodySyntax, bodyBlock.entry);
+  ctx.link(condSyntax, condBlock.entry);
+  ctx.link(whileSyntax, condBlock.entry);
+
   return ctx.matcher.update({ entry: condBlock.entry, exit: exitNode });
 }
 
 function processDoStatement(
-  whileSyntax: Parser.SyntaxNode,
+  doSyntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const queryString = `
   (do_statement
       body: (_) @body
       condition: (_) @cond
-      ) @while
+      ) @do
   `;
 
-  const match = ctx.matcher.match(whileSyntax, queryString);
+  const match = ctx.matcher.match(doSyntax, queryString);
 
-  const condSyntax = match.getSyntax("cond");
-  const bodySyntax = match.getSyntax("body");
+  const condSyntax = match.requireSyntax("cond");
+  const bodySyntax = match.requireSyntax("body");
 
-  const condBlock = match.getBlock(condSyntax) as BasicBlock;
-  const bodyBlock = match.getBlock(bodySyntax) as BasicBlock;
+  const condBlock = match.getBlock(condSyntax);
+  const bodyBlock = match.getBlock(bodySyntax);
 
   const exitNode = ctx.builder.addNode("FOR_EXIT", "loop exit");
 
@@ -377,6 +381,10 @@ function processDoStatement(
   ctx.matcher.state.forEachBreak((breakNode) => {
     ctx.builder.addEdge(breakNode, exitNode);
   });
+
+  ctx.link(bodySyntax, bodyBlock.entry);
+  ctx.link(condSyntax, condBlock.entry);
+  ctx.link(doSyntax, bodyBlock.entry);
 
   return ctx.matcher.update({ entry: bodyBlock.entry, exit: exitNode });
 }
@@ -387,6 +395,7 @@ function processGotoStatement(
 ): BasicBlock {
   const name = gotoSyntax.firstNamedChild?.text as string;
   const gotoNode = ctx.builder.addNode("GOTO", name);
+  ctx.link(gotoSyntax, gotoNode);
   return {
     entry: gotoNode,
     exit: null,
@@ -401,6 +410,7 @@ function processLabeledStatement(
   const blockHandler = new BlockHandler();
   const name = getChildFieldText(labelSyntax, "label");
   const labelNode = ctx.builder.addNode("LABEL", name);
+  ctx.link(labelSyntax, labelNode);
   const { entry: labeledEntry, exit: labeledExit } = blockHandler.update(
     ctx.dispatch.single(labelSyntax.namedChildren[1]),
   );
@@ -413,18 +423,20 @@ function processLabeledStatement(
 }
 
 function processContinueStatement(
-  _continueSyntax: Parser.SyntaxNode,
+  continueSyntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const continueNode = ctx.builder.addNode("CONTINUE", "CONTINUE");
+  ctx.link(continueSyntax, continueNode);
   return { entry: continueNode, exit: null, continues: [continueNode] };
 }
 
 function processBreakStatement(
-  _breakSyntax: Parser.SyntaxNode,
+  breakSyntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const breakNode = ctx.builder.addNode("BREAK", "BREAK");
+  ctx.link(breakSyntax, breakNode);
   return { entry: breakNode, exit: null, breaks: [breakNode] };
 }
 
@@ -435,6 +447,8 @@ function processComment(
   // We only ever ger here when marker comments are enabled,
   // and only for marker comments as the rest are filtered out.
   const commentNode = ctx.builder.addNode("MARKER_COMMENT", commentSyntax.text);
+  ctx.link(commentSyntax, commentNode);
+
   if (ctx.options.markerPattern) {
     const marker = commentSyntax.text.match(ctx.options.markerPattern)?.[1];
     if (marker) ctx.builder.addMarker(commentNode, marker);
@@ -446,7 +460,9 @@ function processCompoundStatement(
   syntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  return ctx.dispatch.many(syntax.namedChildren);
+  const blockBlock = ctx.dispatch.many(syntax.namedChildren);
+  ctx.link(syntax, blockBlock.entry);
+  return blockBlock;
 }
 
 function processReturnStatement(
@@ -454,6 +470,7 @@ function processReturnStatement(
   ctx: Context,
 ): BasicBlock {
   const returnNode = ctx.builder.addNode("RETURN", syntax.text);
+  ctx.link(syntax, returnNode);
   return { entry: returnNode, exit: null };
 }
 
@@ -462,5 +479,6 @@ function defaultProcessStatement(
   ctx: Context,
 ): BasicBlock {
   const newNode = ctx.builder.addNode("STATEMENT", syntax.text);
+  ctx.link(syntax, newNode);
   return { entry: newNode, exit: newNode };
 }
