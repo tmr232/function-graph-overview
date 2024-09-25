@@ -278,8 +278,6 @@ function renderNode(
 
   dotAttrs.style = "filled";
   dotAttrs.label = "";
-  dotAttrs.label = `${node} ${nodeAttrs.firstLineNumber}`;
-  dotAttrs.label = `${node} ${nodeAttrs.type} ${graph.getNodeAttributes(node).code.replaceAll('"', '\\"')}`;
   // This is needed to rename nodes for go-to-line
   dotAttrs.id = `${node}`;
   if (context.verbose) {

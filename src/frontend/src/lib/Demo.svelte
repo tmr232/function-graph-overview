@@ -10,6 +10,7 @@
   export let codeGo = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
   export let codeC = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";
   export let codePython = "def example():\n    if x:\n        return";
+
   let languages: {
     language: Language;
     text: string;
@@ -32,6 +33,9 @@
     );
   }
 
+  let simplify = true;
+  let flatSwitch = false;
+  let verbose = urlParams.has("verbose");
   let showSegmentation = urlParams.has("segmentation");
 
   let selection = languages[parseInt(urlParams.get("language")) || 0];
@@ -49,9 +53,6 @@
         break;
     }
   }
-
-  let simplify = true;
-  let flatSwitch = false;
 
   function share() {
     const compressedCode = LZString.compressToEncodedURIComponent(code);
@@ -174,6 +175,7 @@
       language={selection.language}
       {simplify}
       {flatSwitch}
+      {verbose}
       bind:this={graph}
       on:goto={gotoLine}
     />
