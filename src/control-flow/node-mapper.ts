@@ -148,7 +148,8 @@ export class NodeMapper {
     //   value: syntax,
     // });
     this.pointRanges.push({
-      start: { row: syntax.startPosition.row, column: 0 },
+      start: syntax.startPosition,
+      // start: { row: syntax.startPosition.row, column: 0 },
       stop: syntax.endPosition,
       value: syntax,
     });
@@ -158,7 +159,8 @@ export class NodeMapper {
     this.range(from.endIndex, to.startIndex, to);
     this.pointRanges.push({
       start: from.endPosition,
-      stop: { row: to.startPosition.row, column: 0 },
+      stop: to.startPosition,
+      // stop: { row: to.startPosition.row, column: 0 },
       value: to,
     });
   }

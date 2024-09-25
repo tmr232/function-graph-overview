@@ -18,6 +18,25 @@ func ifThen() {
 }
 
 /*
+exits: 1,
+nodes: 13
+*/
+func ManyIfStatements() {
+	if x {
+	} else {
+	}
+
+	if x {
+	} else if y {
+	}
+
+	if x {
+	} else if y {
+	} else {
+	}
+}
+
+/*
 nodes: 9
 */
 func Switch() {

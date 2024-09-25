@@ -59,7 +59,9 @@ function processBlockStatement(
   syntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  return ctx.dispatch.many(syntax.namedChildren);
+  const blockBlock = ctx.dispatch.many(syntax.namedChildren);
+  ctx.link(syntax, blockBlock.entry);
+  return blockBlock;
 }
 
 function processReturnStatement(
@@ -193,17 +195,21 @@ function processIfStatement(
 
   mergeNode ??= ctx.builder.addNode("MERGE", "MERGE");
 
-  const consequenceChild = ifNode.childForFieldName("consequence");
+  const consequenceChild = ifNode.childForFieldName(
+    "consequence",
+  ) as Parser.SyntaxNode;
 
   const { entry: thenEntry, exit: thenExit } = ctx.state.update(
     ctx.dispatch.single(consequenceChild),
   );
+  ctx.link(consequenceChild, thenEntry);
 
   ctx.builder.addEdge(conditionNode, thenEntry || mergeNode, "consequence");
   if (thenExit) ctx.builder.addEdge(thenExit, mergeNode);
 
   const alternativeChild = ifNode.childForFieldName("alternative");
   if (alternativeChild) {
+    ctx.linkGap(consequenceChild, alternativeChild);
     const elseIf = alternativeChild.type === "if_statement";
     const { entry: elseEntry, exit: elseExit } = (() => {
       if (elseIf) {
