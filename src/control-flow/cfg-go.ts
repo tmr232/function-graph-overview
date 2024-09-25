@@ -347,12 +347,14 @@ function collectCases(
     );
     ctx.link(caseSyntax, conditionNode);
     const consequenceNode = blockHandler.update(ctx.dispatch.many(consequence));
-    ctx.linkGap(
-      ctx.matcher
-        .match(caseSyntax, `(_ (":") @colon)`, { maxStartDepth: 1 })
-        .requireSyntax("colon"),
-      consequence[0],
-    );
+    if (consequence.length > 0) {
+      ctx.linkGap(
+        ctx.matcher
+          .match(caseSyntax, `(_ (":") @colon)`, { maxStartDepth: 1 })
+          .requireSyntax("colon"),
+        consequence[0],
+      );
+    }
 
     cases.push({
       conditionEntry: conditionNode,
