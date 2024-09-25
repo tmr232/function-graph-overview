@@ -90,7 +90,7 @@ function processTryStatement(
       `,
   );
 
-  const bodySyntax = match.getSyntax("try-body");
+  const bodySyntax = match.requireSyntax("try-body");
   const exceptSyntaxMany = match.getSyntaxMany("except-body");
   const elseSyntax = match.getSyntax("else-body");
   const finallySyntax = match.getSyntax("finally-body");
@@ -100,15 +100,19 @@ function processTryStatement(
   return builder.withCluster("try-complex", (tryComplexCluster) => {
     const bodyBlock = builder.withCluster("try", () =>
       match.getBlock(bodySyntax),
-    ) as BasicBlock;
+    );
+    ctx.link(trySyntax, bodyBlock.entry);
 
     // We handle `except` blocks before the `finally` block to support `return` handling.
     const exceptBlocks = exceptSyntaxMany.map((exceptSyntax) =>
       builder.withCluster(
         "except",
-        () => match.getBlock(exceptSyntax) as BasicBlock,
+        () => match.getBlock(exceptSyntax),
       ),
     );
+    for (const [syntax, { entry }] of zip(match.getSyntaxMany("except"), exceptBlocks)) {
+      ctx.link(syntax, entry);
+    }
     // We attach the except-blocks to the top of the `try` body.
     // In the rendering, we will connect them to the side of the node, and use invisible lines for it.
     if (bodyBlock.entry) {
@@ -123,6 +127,9 @@ function processTryStatement(
 
     // Create the `else` block before `finally` to handle returns correctly.
     const elseBlock = match.getBlock(elseSyntax);
+    if (elseBlock) {
+      ctx.link(match.requireSyntax("else"), elseBlock.entry)
+    }
 
     const finallyBlock = builder.withCluster("finally", () => {
       // Handle all the return statements from the try block
@@ -158,6 +165,9 @@ function processTryStatement(
       const finallyBlock = match.getBlock(finallySyntax);
       return finallyBlock;
     });
+    if (finallyBlock) {
+      ctx.link(match.requireSyntax("finally"), finallyBlock.entry);
+    }
 
     // This is the exit we get to if we don't have an exception
     let happyExit: string | null = bodyBlock.exit;
@@ -203,18 +213,20 @@ function processWithStatement(
     `
       (with_statement
         (with_clause) @with_clause
+        (":") @colon
           body: (block) @body
       ) @with
       `,
   );
 
-  const withClauseSyntax = match.getSyntax("with_clause");
-  const withClauseBlock = match.getBlock(withClauseSyntax) as BasicBlock;
+  const withClauseSyntax = match.requireSyntax("with_clause");
+  const withClauseBlock = match.getBlock(withClauseSyntax);
   return builder.withCluster("with", () => {
-    const bodySyntax = match.getSyntax("body");
-    const bodyBlock = match.getBlock(bodySyntax) as BasicBlock;
+    const bodySyntax = match.requireSyntax("body");
+    const bodyBlock = match.getBlock(bodySyntax);
+    ctx.linkGap(match.requireSyntax("colon"), bodySyntax);
 
-    if (withClauseBlock.exit && bodyBlock.entry)
+    if (withClauseBlock.exit)
       builder.addEdge(withClauseBlock.exit, bodyBlock.entry);
 
     return matcher.state.update({
