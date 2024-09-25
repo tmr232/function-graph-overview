@@ -29,7 +29,7 @@ export function maybe<T>(value: T | undefined): T[] {
   return [value];
 }
 
-export function* pairwise<T>(items: T[]): Generator<[T, T], void, unknown> {
+export function* pairwise<T>(items: T[]): IterableIterator<[T, T]> {
   const iterator = items[Symbol.iterator]();
   let { value: a } = iterator.next();
   for (const b of iterator) {
@@ -38,5 +38,11 @@ export function* pairwise<T>(items: T[]): Generator<[T, T], void, unknown> {
     // But tsc can't deduce it, so we help it.
     yield [a as T, b];
     a = b;
+  }
+}
+
+export function* chain<T>(...arrays: T[][]): IterableIterator<T> {
+  for (const array of arrays) {
+    yield* array;
   }
 }

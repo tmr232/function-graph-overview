@@ -163,9 +163,12 @@ function processForStatement(
   const queryString = `
     (for_statement
         "(" @open-parens
-        initializer: (_)? @init
+        [
+        	initializer: (_ ";" @init-semi)? @init
+        	";" @init-semi
+        ]
         condition: (_)? @cond
-        ";" @semicolon
+        ";" @cond-semi
         update: (_)? @update
         ")" @close-parens
         body: (_) @body) @for
@@ -189,23 +192,33 @@ function processForStatement(
 
   ctx.link(forNode, entryNode);
   if (condBlock) {
-    ctx.link(match.requireSyntax("semicolon"), condBlock.entry);
+    ctx.link(match.requireSyntax("cond-semi"), condBlock.entry);
   }
 
-  const gapSequence = [
-    match.requireSyntax("open-parens"),
-    initSyntax,
-    condSyntax,
-    match.requireSyntax("semicolon"),
-    updateSyntax,
-    match.requireSyntax("close-parens"),
-    bodySyntax,
-  ].filter(Boolean) as Parser.SyntaxNode[];
-  for (const [prev, curr] of pairwise(gapSequence)) {
-    ctx.linkGap(prev, curr);
-  }
+  const closeParens = match.requireSyntax("close-parens");
 
-  const chain = (entry: string | null, blocks: (BasicBlock | null)[]) => {
+  if (initSyntax)
+    ctx.linkGap(initSyntax, match.requireSyntax("init-semi"), {
+      reverse: true,
+      includeTo: true,
+    });
+  if (condSyntax)
+    ctx.linkGap(condSyntax, match.requireSyntax("cond-semi"), {
+      reverse: true,
+      includeTo: true,
+    });
+  if (!condSyntax && initSyntax)
+    ctx.linkGap(initSyntax, match.requireSyntax("cond-semi"), {
+      includeTo: true,
+      reverse: true,
+    });
+  if (updateSyntax)
+    ctx.linkGap(updateSyntax, closeParens, { reverse: true, includeTo: true });
+  if (condSyntax && !updateSyntax)
+    ctx.linkGap(condSyntax, closeParens, { reverse: true, includeTo: true });
+  ctx.linkGap(closeParens, bodySyntax);
+
+  const chainBlocks = (entry: string | null, blocks: (BasicBlock | null)[]) => {
     let prevExit: string | null = entry;
     for (const block of blocks) {
       if (!block) continue;
@@ -232,16 +245,16 @@ function processForStatement(
   chain(continue, head)
   chain(break, exit)
   */
-  const topExit = chain(entryNode, [initBlock]);
+  const topExit = chainBlocks(entryNode, [initBlock]);
   if (condBlock) {
-    chain(topExit, [condBlock]);
+    chainBlocks(topExit, [condBlock]);
     if (condBlock.exit) {
       ctx.builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
       ctx.builder.addEdge(condBlock.exit, exitNode, "alternative");
-      chain(bodyBlock.exit ?? null, [headBlock, updateBlock, condBlock]);
+      chainBlocks(bodyBlock.exit ?? null, [headBlock, updateBlock, condBlock]);
     }
   } else {
-    chain(topExit, [bodyBlock, headBlock, updateBlock, bodyBlock]);
+    chainBlocks(topExit, [bodyBlock, headBlock, updateBlock, bodyBlock]);
   }
 
   ctx.matcher.state.forEachContinue((continueNode) => {

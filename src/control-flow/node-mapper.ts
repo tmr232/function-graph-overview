@@ -151,11 +151,12 @@ export class NodeMapper {
   public linkGap(
     from: Parser.SyntaxNode,
     to: Parser.SyntaxNode,
-    options?: { reverse?: boolean; includeTo?: boolean },
+    options?: { reverse?: boolean; includeTo?: boolean; includeFrom?: boolean },
   ) {
     const target = options?.reverse ? from : to;
     const toIndex = options?.includeTo ? to.endIndex : to.startIndex;
-    this.range(from.endIndex, toIndex, target);
+    const fromIndex = options?.includeFrom ? from.startIndex : from.endIndex;
+    this.range(fromIndex, toIndex, target);
     this.pointRanges.push({
       start: from.endPosition,
       stop: to.startPosition,

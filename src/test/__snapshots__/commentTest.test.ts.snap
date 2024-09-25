@@ -531,6 +531,631 @@ color="blue";
 }"
 `;
 
+exports[`C: ManyIfs: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+fillcolor="lightgray";
+height=0.8999999999999999;
+];
+    node6 [style="filled";
+label="";
+id="node6";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node7 [style="filled";
+label="";
+id="node7";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node10 [style="filled";
+label="";
+id="node10";
+shape="box";
+fillcolor="lightgray";
+height=0.8999999999999999;
+];
+    node11 [style="filled";
+label="";
+id="node11";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node12 [style="filled";
+label="";
+id="node12";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node13 [style="filled";
+label="";
+id="node13";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node16 [style="filled";
+label="";
+id="node16";
+shape="box";
+fillcolor="lightgray";
+height=0.8999999999999999;
+];
+    node17 [style="filled";
+label="";
+id="node17";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node18 [style="filled";
+label="";
+id="node18";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node19 [style="filled";
+label="";
+id="node19";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node20 [style="filled";
+label="";
+id="node20";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node23 [style="filled";
+label="";
+id="node23";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="green";
+];
+    node5 -> node6 [penwidth=1;
+color="green";
+];
+    node5 -> node7 [penwidth=1;
+color="red";
+];
+    node10 -> node11 [penwidth=1;
+color="green";
+];
+    node10 -> node12 [penwidth=1;
+color="red";
+];
+    node12 -> node13 [penwidth=1;
+color="green";
+];
+    node16 -> node17 [penwidth=1;
+color="green";
+];
+    node16 -> node18 [penwidth=1;
+color="red";
+];
+    node18 -> node19 [penwidth=1;
+color="green";
+];
+    node18 -> node20 [penwidth=1;
+color="red";
+];
+    node2 -> node5 [penwidth=1;
+color="blue";
+];
+    node1 -> node5 [penwidth=1;
+color="red";
+];
+    node6 -> node10 [penwidth=1;
+color="blue";
+];
+    node7 -> node10 [penwidth=1;
+color="blue";
+];
+    node11 -> node16 [penwidth=1;
+color="blue";
+];
+    node13 -> node16 [penwidth=1;
+color="blue";
+];
+    node12 -> node16 [penwidth=1;
+color="red";
+];
+    node17 -> node23 [penwidth=1;
+color="blue";
+];
+    node19 -> node23 [penwidth=1;
+color="blue";
+];
+    node20 -> node23 [penwidth=1;
+color="blue";
+];
+}"
+`;
+
+exports[`C: IfWithoutBraces: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node5 [style="filled";
+label="";
+id="node5";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node7 [style="filled";
+label="";
+id="node7";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node12 [style="filled";
+label="";
+id="node12";
+shape="box";
+fillcolor="lightgray";
+height=0.8999999999999999;
+];
+    node8 [style="filled";
+label="";
+id="node8";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node14 [style="filled";
+label="";
+id="node14";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node15 [style="filled";
+label="";
+id="node15";
+shape="house";
+fillcolor="#AB3030";
+height=0.8999999999999999;
+];
+    node5 -> node1 [penwidth=1;
+color="blue";
+];
+    node7 -> node1 [penwidth=2;
+color="blue";
+];
+    node1 -> node7 [penwidth=1;
+color="red";
+];
+    node1 -> node12 [penwidth=1;
+color="green";
+];
+    node12 -> node8 [penwidth=1;
+color="blue";
+];
+    node14 -> node8 [penwidth=2;
+color="blue";
+];
+    node8 -> node14 [penwidth=1;
+color="red";
+];
+    node8 -> node15 [penwidth=1;
+color="green";
+];
+}"
+`;
+
+exports[`C: ForLoops: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node7 [style="filled";
+label="";
+id="node7";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node15 [style="filled";
+label="";
+id="node15";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node10 [style="filled";
+label="";
+id="node10";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+fillcolor="lightgray";
+height=0.8999999999999999;
+];
+    node11 [style="filled";
+label="";
+id="node11";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node23 [style="filled";
+label="";
+id="node23";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node12 [style="filled";
+label="";
+id="node12";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node17 [style="filled";
+label="";
+id="node17";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node19 [style="filled";
+label="";
+id="node19";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node30 [style="filled";
+label="";
+id="node30";
+shape="box";
+fillcolor="lightgray";
+height=0.8999999999999999;
+];
+    node18 [style="filled";
+label="";
+id="node18";
+shape="box";
+fillcolor="lightgray";
+height=0.8999999999999999;
+];
+    node26 [style="filled";
+label="";
+id="node26";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node32 [style="filled";
+label="";
+id="node32";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node39 [style="filled";
+label="";
+id="node39";
+shape="box";
+fillcolor="lightgray";
+height=0.8999999999999999;
+];
+    node33 [style="filled";
+label="";
+id="node33";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node35 [style="filled";
+label="";
+id="node35";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node47 [style="filled";
+label="";
+id="node47";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node36 [style="filled";
+label="";
+id="node36";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node42 [style="filled";
+label="";
+id="node42";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node34 [style="filled";
+label="";
+id="node34";
+shape="box";
+fillcolor="lightgray";
+height=0.8999999999999999;
+];
+    node43 [style="filled";
+label="";
+id="node43";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node55 [style="filled";
+label="";
+id="node55";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node44 [style="filled";
+label="";
+id="node44";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node49 [style="filled";
+label="";
+id="node49";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node51 [style="filled";
+label="";
+id="node51";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node62 [style="filled";
+label="";
+id="node62";
+shape="box";
+fillcolor="lightgray";
+height=0.8999999999999999;
+];
+    node50 [style="filled";
+label="";
+id="node50";
+shape="box";
+fillcolor="lightgray";
+height=0.8999999999999999;
+];
+    node58 [style="filled";
+label="";
+id="node58";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node64 [style="filled";
+label="";
+id="node64";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node65 [style="filled";
+label="";
+id="node65";
+shape="house";
+fillcolor="#AB3030";
+height=0.8999999999999999;
+];
+    node3 -> node4 [penwidth=1;
+color="green";
+];
+    node7 -> node1 [penwidth=1;
+color="blue";
+];
+    node2 -> node1 [penwidth=2;
+color="blue";
+];
+    node11 -> node12 [penwidth=1;
+color="green";
+];
+    node15 -> node10 [penwidth=1;
+color="blue";
+];
+    node17 -> node10 [penwidth=2;
+color="blue";
+];
+    node35 -> node36 [penwidth=1;
+color="green";
+];
+    node39 -> node33 [penwidth=1;
+color="blue";
+];
+    node34 -> node33 [penwidth=2;
+color="blue";
+];
+    node43 -> node44 [penwidth=1;
+color="green";
+];
+    node47 -> node42 [penwidth=1;
+color="blue";
+];
+    node49 -> node42 [penwidth=2;
+color="blue";
+];
+    node1 -> node3 [penwidth=1;
+color="green";
+];
+    node1 -> node15 [penwidth=1;
+color="red";
+];
+    node4 -> node15 [penwidth=1;
+color="blue";
+];
+    node3 -> node2 [penwidth=1;
+color="red";
+];
+    node10 -> node11 [penwidth=1;
+color="green";
+];
+    node10 -> node23 [penwidth=1;
+color="red";
+];
+    node12 -> node23 [penwidth=1;
+color="blue";
+];
+    node11 -> node17 [penwidth=1;
+color="red";
+];
+    node23 -> node19 [penwidth=1;
+color="blue";
+];
+    node18 -> node19 [penwidth=2;
+color="blue";
+];
+    node19 -> node18 [penwidth=1;
+color="red";
+];
+    node19 -> node30 [penwidth=1;
+color="green";
+];
+    node30 -> node26 [penwidth=1;
+color="blue";
+];
+    node32 -> node26 [penwidth=2;
+color="blue";
+];
+    node26 -> node32 [penwidth=1;
+color="red";
+];
+    node26 -> node39 [penwidth=1;
+color="green";
+];
+    node33 -> node35 [penwidth=1;
+color="green";
+];
+    node33 -> node47 [penwidth=1;
+color="red";
+];
+    node36 -> node47 [penwidth=1;
+color="blue";
+];
+    node35 -> node34 [penwidth=1;
+color="red";
+];
+    node42 -> node43 [penwidth=1;
+color="green";
+];
+    node42 -> node55 [penwidth=1;
+color="red";
+];
+    node44 -> node55 [penwidth=1;
+color="blue";
+];
+    node43 -> node49 [penwidth=1;
+color="red";
+];
+    node55 -> node51 [penwidth=1;
+color="blue";
+];
+    node50 -> node51 [penwidth=2;
+color="blue";
+];
+    node51 -> node50 [penwidth=1;
+color="red";
+];
+    node51 -> node62 [penwidth=1;
+color="green";
+];
+    node62 -> node58 [penwidth=1;
+color="blue";
+];
+    node64 -> node58 [penwidth=2;
+color="blue";
+];
+    node58 -> node64 [penwidth=1;
+color="red";
+];
+    node58 -> node65 [penwidth=1;
+color="green";
+];
+}"
+`;
+
 exports[`Go: trivial: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box];
@@ -581,6 +1206,156 @@ color="blue";
 ];
     node1 -> node4 [penwidth=1;
 color="red";
+];
+}"
+`;
+
+exports[`Go: ManyIfStatements: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node7 [style="filled";
+label="";
+id="node7";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node8 [style="filled";
+label="";
+id="node8";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node9 [style="filled";
+label="";
+id="node9";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node10 [style="filled";
+label="";
+id="node10";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node12 [style="filled";
+label="";
+id="node12";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node13 [style="filled";
+label="";
+id="node13";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node14 [style="filled";
+label="";
+id="node14";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node15 [style="filled";
+label="";
+id="node15";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node16 [style="filled";
+label="";
+id="node16";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node3 [penwidth=1;
+color="green";
+];
+    node1 -> node4 [penwidth=1;
+color="red";
+];
+    node5 -> node7 [penwidth=1;
+color="green";
+];
+    node8 -> node9 [penwidth=1;
+color="green";
+];
+    node5 -> node8 [penwidth=1;
+color="red";
+];
+    node10 -> node12 [penwidth=1;
+color="green";
+];
+    node13 -> node14 [penwidth=1;
+color="green";
+];
+    node13 -> node15 [penwidth=1;
+color="red";
+];
+    node10 -> node13 [penwidth=1;
+color="red";
+];
+    node3 -> node5 [penwidth=1;
+color="blue";
+];
+    node4 -> node5 [penwidth=1;
+color="blue";
+];
+    node7 -> node10 [penwidth=1;
+color="blue";
+];
+    node9 -> node10 [penwidth=1;
+color="blue";
+];
+    node8 -> node10 [penwidth=1;
+color="red";
+];
+    node12 -> node16 [penwidth=1;
+color="blue";
+];
+    node14 -> node16 [penwidth=1;
+color="blue";
+];
+    node15 -> node16 [penwidth=1;
+color="blue";
 ];
 }"
 `;
@@ -4178,410 +4953,6 @@ color="blue";
 }"
 `;
 
-exports[`Go: ManyIfStatements: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box];
-    edge [headport=n tailport=s]
-    bgcolor="transparent"
-    node1 [style="filled";
-label="";
-id="node1";
-shape="invhouse";
-fillcolor="#48AB30";
-height=0.6;
-];
-    node3 [style="filled";
-label="";
-id="node3";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node4 [style="filled";
-label="";
-id="node4";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node5 [style="filled";
-label="";
-id="node5";
-shape="box";
-fillcolor="lightgray";
-height=0.6;
-];
-    node7 [style="filled";
-label="";
-id="node7";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node8 [style="filled";
-label="";
-id="node8";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node9 [style="filled";
-label="";
-id="node9";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node10 [style="filled";
-label="";
-id="node10";
-shape="box";
-fillcolor="lightgray";
-height=0.6;
-];
-    node12 [style="filled";
-label="";
-id="node12";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node13 [style="filled";
-label="";
-id="node13";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node14 [style="filled";
-label="";
-id="node14";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node15 [style="filled";
-label="";
-id="node15";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node16 [style="filled";
-label="";
-id="node16";
-shape="house";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node1 -> node3 [penwidth=1;
-color="green";
-];
-    node1 -> node4 [penwidth=1;
-color="red";
-];
-    node5 -> node7 [penwidth=1;
-color="green";
-];
-    node8 -> node9 [penwidth=1;
-color="green";
-];
-    node5 -> node8 [penwidth=1;
-color="red";
-];
-    node10 -> node12 [penwidth=1;
-color="green";
-];
-    node13 -> node14 [penwidth=1;
-color="green";
-];
-    node13 -> node15 [penwidth=1;
-color="red";
-];
-    node10 -> node13 [penwidth=1;
-color="red";
-];
-    node3 -> node5 [penwidth=1;
-color="blue";
-];
-    node4 -> node5 [penwidth=1;
-color="blue";
-];
-    node7 -> node10 [penwidth=1;
-color="blue";
-];
-    node9 -> node10 [penwidth=1;
-color="blue";
-];
-    node8 -> node10 [penwidth=1;
-color="red";
-];
-    node12 -> node16 [penwidth=1;
-color="blue";
-];
-    node14 -> node16 [penwidth=1;
-color="blue";
-];
-    node15 -> node16 [penwidth=1;
-color="blue";
-];
-}"
-`;
-
-exports[`C: ManyIfs: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box];
-    edge [headport=n tailport=s]
-    bgcolor="transparent"
-    node1 [style="filled";
-label="";
-id="node1";
-shape="invhouse";
-fillcolor="#48AB30";
-height=0.8999999999999999;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node5 [style="filled";
-label="";
-id="node5";
-shape="box";
-fillcolor="lightgray";
-height=0.8999999999999999;
-];
-    node6 [style="filled";
-label="";
-id="node6";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node7 [style="filled";
-label="";
-id="node7";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node10 [style="filled";
-label="";
-id="node10";
-shape="box";
-fillcolor="lightgray";
-height=0.8999999999999999;
-];
-    node11 [style="filled";
-label="";
-id="node11";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node12 [style="filled";
-label="";
-id="node12";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node13 [style="filled";
-label="";
-id="node13";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node16 [style="filled";
-label="";
-id="node16";
-shape="box";
-fillcolor="lightgray";
-height=0.8999999999999999;
-];
-    node17 [style="filled";
-label="";
-id="node17";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node18 [style="filled";
-label="";
-id="node18";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node19 [style="filled";
-label="";
-id="node19";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node20 [style="filled";
-label="";
-id="node20";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node23 [style="filled";
-label="";
-id="node23";
-shape="house";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node1 -> node2 [penwidth=1;
-color="green";
-];
-    node5 -> node6 [penwidth=1;
-color="green";
-];
-    node5 -> node7 [penwidth=1;
-color="red";
-];
-    node10 -> node11 [penwidth=1;
-color="green";
-];
-    node10 -> node12 [penwidth=1;
-color="red";
-];
-    node12 -> node13 [penwidth=1;
-color="green";
-];
-    node16 -> node17 [penwidth=1;
-color="green";
-];
-    node16 -> node18 [penwidth=1;
-color="red";
-];
-    node18 -> node19 [penwidth=1;
-color="green";
-];
-    node18 -> node20 [penwidth=1;
-color="red";
-];
-    node2 -> node5 [penwidth=1;
-color="blue";
-];
-    node1 -> node5 [penwidth=1;
-color="red";
-];
-    node6 -> node10 [penwidth=1;
-color="blue";
-];
-    node7 -> node10 [penwidth=1;
-color="blue";
-];
-    node11 -> node16 [penwidth=1;
-color="blue";
-];
-    node13 -> node16 [penwidth=1;
-color="blue";
-];
-    node12 -> node16 [penwidth=1;
-color="red";
-];
-    node17 -> node23 [penwidth=1;
-color="blue";
-];
-    node19 -> node23 [penwidth=1;
-color="blue";
-];
-    node20 -> node23 [penwidth=1;
-color="blue";
-];
-}"
-`;
-
-exports[`C: IfWithoutBraces: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box];
-    edge [headport=n tailport=s]
-    bgcolor="transparent"
-    node5 [style="filled";
-label="";
-id="node5";
-shape="invhouse";
-fillcolor="#48AB30";
-height=0.6;
-];
-    node1 [style="filled";
-label="";
-id="node1";
-shape="box";
-fillcolor="lightgray";
-height=0.6;
-];
-    node7 [style="filled";
-label="";
-id="node7";
-shape="box";
-fillcolor="lightgray";
-height=0.6;
-];
-    node12 [style="filled";
-label="";
-id="node12";
-shape="box";
-fillcolor="lightgray";
-height=0.8999999999999999;
-];
-    node8 [style="filled";
-label="";
-id="node8";
-shape="box";
-fillcolor="lightgray";
-height=0.6;
-];
-    node14 [style="filled";
-label="";
-id="node14";
-shape="box";
-fillcolor="lightgray";
-height=0.6;
-];
-    node15 [style="filled";
-label="";
-id="node15";
-shape="house";
-fillcolor="#AB3030";
-height=0.8999999999999999;
-];
-    node5 -> node1 [penwidth=1;
-color="blue";
-];
-    node7 -> node1 [penwidth=2;
-color="blue";
-];
-    node1 -> node7 [penwidth=1;
-color="red";
-];
-    node1 -> node12 [penwidth=1;
-color="green";
-];
-    node12 -> node8 [penwidth=1;
-color="blue";
-];
-    node14 -> node8 [penwidth=2;
-color="blue";
-];
-    node8 -> node14 [penwidth=1;
-color="red";
-];
-    node8 -> node15 [penwidth=1;
-color="green";
-];
-}"
-`;
-
 exports[`C: trivial: Segmentation 1`] = `
 [
   {
@@ -4756,22 +5127,6 @@ exports[`C: forever: Segmentation 1`] = `
     "value": "node2",
   },
   {
-    "start": 265,
-    "value": "Not found",
-  },
-  {
-    "start": 265,
-    "value": "node2",
-  },
-  {
-    "start": 266,
-    "value": "Not found",
-  },
-  {
-    "start": 267,
-    "value": "node2",
-  },
-  {
     "start": 268,
     "value": "node4",
   },
@@ -4817,12 +5172,8 @@ exports[`C: forever2: Segmentation 1`] = `
     "value": "node1",
   },
   {
-    "start": 341,
-    "value": "node1",
-  },
-  {
     "start": 351,
-    "value": "Not found",
+    "value": "node1",
   },
   {
     "start": 351,
@@ -4830,10 +5181,6 @@ exports[`C: forever2: Segmentation 1`] = `
   },
   {
     "start": 352,
-    "value": "node2",
-  },
-  {
-    "start": 353,
     "value": "node1",
   },
   {
@@ -4842,11 +5189,7 @@ exports[`C: forever2: Segmentation 1`] = `
   },
   {
     "start": 356,
-    "value": "Not found",
-  },
-  {
-    "start": 356,
-    "value": "node1",
+    "value": "node2",
   },
   {
     "start": 357,
@@ -4894,23 +5237,15 @@ exports[`C: forLoop: Segmentation 1`] = `
     "value": "node1",
   },
   {
-    "start": 462,
+    "start": 472,
     "value": "node1",
   },
   {
     "start": 472,
-    "value": "node2",
-  },
-  {
-    "start": 473,
     "value": "node1",
   },
   {
     "start": 473,
-    "value": "node2",
-  },
-  {
-    "start": 479,
     "value": "node2",
   },
   {
@@ -4919,10 +5254,10 @@ exports[`C: forLoop: Segmentation 1`] = `
   },
   {
     "start": 480,
-    "value": "node3",
+    "value": "node2",
   },
   {
-    "start": 481,
+    "start": 480,
     "value": "node1",
   },
   {
@@ -4931,11 +5266,7 @@ exports[`C: forLoop: Segmentation 1`] = `
   },
   {
     "start": 484,
-    "value": "Not found",
-  },
-  {
-    "start": 484,
-    "value": "node1",
+    "value": "node3",
   },
   {
     "start": 485,
@@ -5441,22 +5772,6 @@ exports[`C: IfWithoutBraces: Segmentation 1`] = `
     "value": "node5",
   },
   {
-    "start": 1577,
-    "value": "Not found",
-  },
-  {
-    "start": 1577,
-    "value": "node5",
-  },
-  {
-    "start": 1578,
-    "value": "Not found",
-  },
-  {
-    "start": 1579,
-    "value": "node5",
-  },
-  {
     "start": 1580,
     "value": "node1",
   },
@@ -5510,22 +5825,6 @@ exports[`C: IfWithoutBraces: Segmentation 1`] = `
   },
   {
     "start": 1633,
-    "value": "node12",
-  },
-  {
-    "start": 1638,
-    "value": "Not found",
-  },
-  {
-    "start": 1638,
-    "value": "node12",
-  },
-  {
-    "start": 1639,
-    "value": "Not found",
-  },
-  {
-    "start": 1640,
     "value": "node12",
   },
   {
@@ -5587,6 +5886,571 @@ exports[`C: IfWithoutBraces: Segmentation 1`] = `
   {
     "start": 1702,
     "value": "node5",
+  },
+]
+`;
+
+exports[`C: ForLoops: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node7",
+  },
+  {
+    "start": 1725,
+    "value": "node7",
+  },
+  {
+    "start": 1773,
+    "value": "node7",
+  },
+  {
+    "start": 1781,
+    "value": "node1",
+  },
+  {
+    "start": 1782,
+    "value": "node1",
+  },
+  {
+    "start": 1783,
+    "value": "node1",
+  },
+  {
+    "start": 1783,
+    "value": "node7",
+  },
+  {
+    "start": 1784,
+    "value": "node2",
+  },
+  {
+    "start": 1785,
+    "value": "node2",
+  },
+  {
+    "start": 1786,
+    "value": "node3",
+  },
+  {
+    "start": 1787,
+    "value": "node7",
+  },
+  {
+    "start": 1787,
+    "value": "node3",
+  },
+  {
+    "start": 1789,
+    "value": "node3",
+  },
+  {
+    "start": 1792,
+    "value": "node3",
+  },
+  {
+    "start": 1795,
+    "value": "node4",
+  },
+  {
+    "start": 1796,
+    "value": "node3",
+  },
+  {
+    "start": 1796,
+    "value": "node4",
+  },
+  {
+    "start": 1802,
+    "value": "node3",
+  },
+  {
+    "start": 1802,
+    "value": "node3",
+  },
+  {
+    "start": 1803,
+    "value": "node7",
+  },
+  {
+    "start": 1803,
+    "value": "node15",
+  },
+  {
+    "start": 1809,
+    "value": "node7",
+  },
+  {
+    "start": 1809,
+    "value": "node15",
+  },
+  {
+    "start": 1817,
+    "value": "node10",
+  },
+  {
+    "start": 1818,
+    "value": "node15",
+  },
+  {
+    "start": 1818,
+    "value": "node10",
+  },
+  {
+    "start": 1819,
+    "value": "node10",
+  },
+  {
+    "start": 1819,
+    "value": "node10",
+  },
+  {
+    "start": 1822,
+    "value": "node11",
+  },
+  {
+    "start": 1823,
+    "value": "node15",
+  },
+  {
+    "start": 1823,
+    "value": "node11",
+  },
+  {
+    "start": 1825,
+    "value": "node11",
+  },
+  {
+    "start": 1828,
+    "value": "node11",
+  },
+  {
+    "start": 1831,
+    "value": "node12",
+  },
+  {
+    "start": 1832,
+    "value": "node11",
+  },
+  {
+    "start": 1832,
+    "value": "node12",
+  },
+  {
+    "start": 1838,
+    "value": "node11",
+  },
+  {
+    "start": 1838,
+    "value": "node11",
+  },
+  {
+    "start": 1839,
+    "value": "node15",
+  },
+  {
+    "start": 1839,
+    "value": "node23",
+  },
+  {
+    "start": 1845,
+    "value": "node7",
+  },
+  {
+    "start": 1845,
+    "value": "node23",
+  },
+  {
+    "start": 1856,
+    "value": "node18",
+  },
+  {
+    "start": 1857,
+    "value": "node18",
+  },
+  {
+    "start": 1858,
+    "value": "node19",
+  },
+  {
+    "start": 1859,
+    "value": "node23",
+  },
+  {
+    "start": 1859,
+    "value": "node19",
+  },
+  {
+    "start": 1861,
+    "value": "node19",
+  },
+  {
+    "start": 1864,
+    "value": "node19",
+  },
+  {
+    "start": 1867,
+    "value": "node30",
+  },
+  {
+    "start": 1868,
+    "value": "node19",
+  },
+  {
+    "start": 1868,
+    "value": "node30",
+  },
+  {
+    "start": 1874,
+    "value": "node19",
+  },
+  {
+    "start": 1874,
+    "value": "node19",
+  },
+  {
+    "start": 1875,
+    "value": "node23",
+  },
+  {
+    "start": 1875,
+    "value": "node30",
+  },
+  {
+    "start": 1881,
+    "value": "node7",
+  },
+  {
+    "start": 1881,
+    "value": "node30",
+  },
+  {
+    "start": 1894,
+    "value": "node26",
+  },
+  {
+    "start": 1895,
+    "value": "node30",
+  },
+  {
+    "start": 1895,
+    "value": "node26",
+  },
+  {
+    "start": 1897,
+    "value": "node26",
+  },
+  {
+    "start": 1900,
+    "value": "node26",
+  },
+  {
+    "start": 1903,
+    "value": "node39",
+  },
+  {
+    "start": 1904,
+    "value": "node26",
+  },
+  {
+    "start": 1904,
+    "value": "node39",
+  },
+  {
+    "start": 1910,
+    "value": "node26",
+  },
+  {
+    "start": 1910,
+    "value": "node26",
+  },
+  {
+    "start": 1911,
+    "value": "node30",
+  },
+  {
+    "start": 1911,
+    "value": "node39",
+  },
+  {
+    "start": 1917,
+    "value": "node7",
+  },
+  {
+    "start": 1917,
+    "value": "node39",
+  },
+  {
+    "start": 1925,
+    "value": "node33",
+  },
+  {
+    "start": 1926,
+    "value": "node33",
+  },
+  {
+    "start": 1927,
+    "value": "node33",
+  },
+  {
+    "start": 1927,
+    "value": "node39",
+  },
+  {
+    "start": 1928,
+    "value": "node34",
+  },
+  {
+    "start": 1929,
+    "value": "node34",
+  },
+  {
+    "start": 1930,
+    "value": "node35",
+  },
+  {
+    "start": 1931,
+    "value": "node39",
+  },
+  {
+    "start": 1931,
+    "value": "node35",
+  },
+  {
+    "start": 1933,
+    "value": "node35",
+  },
+  {
+    "start": 1936,
+    "value": "node35",
+  },
+  {
+    "start": 1939,
+    "value": "node36",
+  },
+  {
+    "start": 1940,
+    "value": "node35",
+  },
+  {
+    "start": 1940,
+    "value": "node36",
+  },
+  {
+    "start": 1946,
+    "value": "node35",
+  },
+  {
+    "start": 1946,
+    "value": "node35",
+  },
+  {
+    "start": 1947,
+    "value": "node39",
+  },
+  {
+    "start": 1947,
+    "value": "node47",
+  },
+  {
+    "start": 1953,
+    "value": "node7",
+  },
+  {
+    "start": 1953,
+    "value": "node47",
+  },
+  {
+    "start": 1961,
+    "value": "node42",
+  },
+  {
+    "start": 1962,
+    "value": "node47",
+  },
+  {
+    "start": 1962,
+    "value": "node42",
+  },
+  {
+    "start": 1963,
+    "value": "node42",
+  },
+  {
+    "start": 1963,
+    "value": "node42",
+  },
+  {
+    "start": 1966,
+    "value": "node43",
+  },
+  {
+    "start": 1967,
+    "value": "node47",
+  },
+  {
+    "start": 1967,
+    "value": "node43",
+  },
+  {
+    "start": 1969,
+    "value": "node43",
+  },
+  {
+    "start": 1972,
+    "value": "node43",
+  },
+  {
+    "start": 1975,
+    "value": "node44",
+  },
+  {
+    "start": 1976,
+    "value": "node43",
+  },
+  {
+    "start": 1976,
+    "value": "node44",
+  },
+  {
+    "start": 1982,
+    "value": "node43",
+  },
+  {
+    "start": 1982,
+    "value": "node43",
+  },
+  {
+    "start": 1983,
+    "value": "node47",
+  },
+  {
+    "start": 1983,
+    "value": "node55",
+  },
+  {
+    "start": 1989,
+    "value": "node7",
+  },
+  {
+    "start": 1989,
+    "value": "node55",
+  },
+  {
+    "start": 2000,
+    "value": "node50",
+  },
+  {
+    "start": 2001,
+    "value": "node50",
+  },
+  {
+    "start": 2002,
+    "value": "node51",
+  },
+  {
+    "start": 2003,
+    "value": "node55",
+  },
+  {
+    "start": 2003,
+    "value": "node51",
+  },
+  {
+    "start": 2005,
+    "value": "node51",
+  },
+  {
+    "start": 2008,
+    "value": "node51",
+  },
+  {
+    "start": 2011,
+    "value": "node62",
+  },
+  {
+    "start": 2012,
+    "value": "node51",
+  },
+  {
+    "start": 2012,
+    "value": "node62",
+  },
+  {
+    "start": 2018,
+    "value": "node51",
+  },
+  {
+    "start": 2018,
+    "value": "node51",
+  },
+  {
+    "start": 2019,
+    "value": "node55",
+  },
+  {
+    "start": 2019,
+    "value": "node62",
+  },
+  {
+    "start": 2025,
+    "value": "node7",
+  },
+  {
+    "start": 2025,
+    "value": "node62",
+  },
+  {
+    "start": 2038,
+    "value": "node58",
+  },
+  {
+    "start": 2039,
+    "value": "node62",
+  },
+  {
+    "start": 2039,
+    "value": "node58",
+  },
+  {
+    "start": 2041,
+    "value": "node58",
+  },
+  {
+    "start": 2044,
+    "value": "node58",
+  },
+  {
+    "start": 2047,
+    "value": "node65",
+  },
+  {
+    "start": 2048,
+    "value": "node58",
+  },
+  {
+    "start": 2048,
+    "value": "node65",
+  },
+  {
+    "start": 2054,
+    "value": "node58",
+  },
+  {
+    "start": 2054,
+    "value": "node58",
+  },
+  {
+    "start": 2055,
+    "value": "node62",
+  },
+  {
+    "start": 2055,
+    "value": "node7",
+  },
+  {
+    "start": 2081,
+    "value": "node7",
   },
 ]
 `;

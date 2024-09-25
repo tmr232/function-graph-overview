@@ -153,3 +153,19 @@ void IfWithoutBraces() {
         }
     }
 }
+
+/*
+exits: 1
+ */
+void ForLoops() {
+    // clang-format off
+    for (a; b; c) { if (x) break;}
+    for (a; b;  ) { if (x) break;}
+    for (a;  ; c) { if (x) break;}
+    for (a;  ;  ) { if (x) break;}
+    for ( ; b; c) { if (x) break;}
+    for ( ; b;  ) { if (x) break;}
+    for ( ;  ; c) { if (x) break;}
+    for ( ;  ;  ) { if (x) break;}
+    //clang-format on
+}
