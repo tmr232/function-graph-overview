@@ -16,6 +16,10 @@
     "strict": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
     "forceConsistentCasingInFileNames": true,
     "paths": {
       "vscode": ["./mocks/vscode.ts"]

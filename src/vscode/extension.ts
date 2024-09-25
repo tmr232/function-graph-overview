@@ -133,13 +133,13 @@ export async function activate(context: vscode.ExtensionContext) {
   const parsers = await initializeParsers(context);
 
   const cursorMove = vscode.window.onDidChangeTextEditorSelection(
-    (event: vscode.TextEditorSelectionChangeEvent) => {
+    (event: vscode.TextEditorSelectionChangeEvent): void => {
       const editor = event.textEditor;
       const position = editor.selection.active;
 
       const { code, languageId, language } = getCurrentCode() ?? {};
       if (!code || !languageId || !language) {
-        return null;
+        return;
       }
 
       const tree = parsers[language].parse(code);

@@ -96,7 +96,7 @@ The bonus of using end-of for this is that we always have end-of then, but not a
 that said, it's not strictly necessary to map all the way to the end of then, as we'll get that from the then-block anyhow.
 */
 
-function* parentsUpTo(
+function* _parentsUpTo(
   syntax: Parser.SyntaxNode,
   stopBefore: Parser.SyntaxNode,
 ): Generator<Parser.SyntaxNode> {
@@ -169,22 +169,22 @@ export class NodeMapper {
   }
 
   private propagateInside(
-    container: Parser.SyntaxNode,
+    _container: Parser.SyntaxNode,
   ): Map<Parser.SyntaxNode, string> {
     return this.syntaxToNode;
-    const mappedIds = new Set(
-      [...this.syntaxToNode.keys()].map((syntax) => syntax.id),
-    );
-    const propagated: [Parser.SyntaxNode, string][] = [];
-    for (const [syntax, node] of this.syntaxToNode.entries()) {
-      for (const parent of parentsUpTo(syntax, container)) {
-        // If the parent is already mapped, we stop propagation.
-        if (mappedIds.has(parent.id)) break;
-        // Otherwise, we map it to the current node.
-        propagated.push([parent, node]);
-      }
-    }
-    return new Map([...this.syntaxToNode.entries(), ...propagated]);
+    // const mappedIds = new Set(
+    //   [...this.syntaxToNode.keys()].map((syntax) => syntax.id),
+    // );
+    // const propagated: [Parser.SyntaxNode, string][] = [];
+    // for (const [syntax, node] of this.syntaxToNode.entries()) {
+    //   for (const parent of _parentsUpTo(syntax, container)) {
+    //     // If the parent is already mapped, we stop propagation.
+    //     if (mappedIds.has(parent.id)) break;
+    //     // Otherwise, we map it to the current node.
+    //     propagated.push([parent, node]);
+    //   }
+    // }
+    // return new Map([...this.syntaxToNode.entries(), ...propagated]);
   }
 
   /**
