@@ -9,6 +9,7 @@ import {
 } from "./cfg-defs";
 import type { Context, StatementHandlers } from "./statement-handlers";
 import { GenericCFGBuilder } from "./generic-cfg-builder";
+import { pairwise } from "./zip";
 
 interface SwitchOptions {
   noImplicitDefault: boolean;
@@ -258,17 +259,16 @@ function buildSwitch(
   let previous: string | null = switchHeadNode;
   cases.forEach((thisCase) => {
     if (ctx.options.flatSwitch) {
-      if (thisCase.consequenceEntry) {
-        ctx.builder.addEdge(switchHeadNode, thisCase.consequenceEntry);
-        if (fallthrough) {
-          ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
-        }
-        if (thisCase.isDefault) {
-          previous = null;
-        }
+      ctx.builder.addEdge(switchHeadNode, thisCase.conditionEntry);
+      ctx.builder.addEdge(thisCase.conditionExit, thisCase.consequenceEntry);
+      if (fallthrough) {
+        ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
+      }
+      if (thisCase.isDefault) {
+        previous = null;
       }
     } else {
-      if (fallthrough && thisCase.consequenceEntry) {
+      if (fallthrough) {
         ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
       }
       if (previous && thisCase.conditionEntry) {
@@ -279,7 +279,7 @@ function buildSwitch(
         );
       }
 
-      if (thisCase.consequenceEntry && thisCase.conditionExit)
+      if (thisCase.conditionExit)
         ctx.builder.addEdge(
           thisCase.conditionExit,
           thisCase.consequenceEntry,

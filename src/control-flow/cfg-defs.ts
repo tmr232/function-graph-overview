@@ -188,9 +188,9 @@ export function mergeNodeAttrs(
   };
 }
 export interface Case {
-  conditionEntry: string | null;
-  conditionExit: string | null;
-  consequenceEntry: string | null;
+  conditionEntry: string;
+  conditionExit: string;
+  consequenceEntry: string;
   consequenceExit: string | null;
   alternativeExit: string;
   hasFallthrough: boolean;
