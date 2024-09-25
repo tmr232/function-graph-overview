@@ -258,7 +258,6 @@ function processComment(
   return { entry: commentNode, exit: commentNode };
 }
 
-
 const caseTypes = [
   "default_case",
   "communication_case",
@@ -322,7 +321,6 @@ function collectCases(
   return cases;
 }
 
-
 function buildSwitch(
   cases: Case[],
   mergeNode: string,
@@ -340,6 +338,7 @@ function buildSwitch(
         ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
       }
       if (thisCase.isDefault) {
+        // If we have any default node - then we don't connect the head to the merge node.
         previous = null;
       }
     } else {

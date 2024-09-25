@@ -1,6 +1,5 @@
 import Parser from "web-tree-sitter";
 import {
-  BlockHandler,
   type BasicBlock,
   type BuilderOptions,
   type Case,
@@ -38,7 +37,6 @@ const statementHandlers: StatementHandlers = {
 export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
   return new GenericCFGBuilder(statementHandlers, options);
 }
-
 
 function processForStatement(
   forNode: Parser.SyntaxNode,
@@ -430,38 +428,55 @@ function defaultProcessStatement(
   ctx.link(syntax, newNode);
   return { entry: newNode, exit: newNode };
 }
+const caseTypes = ["case_statement"];
+function getCases(switchSyntax: Parser.SyntaxNode): Parser.SyntaxNode[] {
+  const switchBody = switchSyntax.namedChildren[1] as Parser.SyntaxNode;
+  return switchBody.namedChildren.filter((child) =>
+    caseTypes.includes(child.type),
+  );
+}
 
 function collectCases(switchSyntax: Parser.SyntaxNode, ctx: Context): Case[] {
   const cases: Case[] = [];
-  const caseTypes = ["case_statement"];
-  const switchBody = switchSyntax.namedChildren[1] as Parser.SyntaxNode;
-  switchBody.namedChildren
-    .filter((child) => caseTypes.includes(child.type))
-    .forEach((caseSyntax) => {
-      const isDefault = !caseSyntax.childForFieldName("value");
+  const caseSyntaxMany = getCases(switchSyntax);
+  for (const [prev, curr] of pairwise(caseSyntaxMany)) {
+    ctx.linkGap(prev, curr);
+  }
+  for (const caseSyntax of caseSyntaxMany) {
+    const isDefault = !caseSyntax.childForFieldName("value");
 
-      const consequence = caseSyntax.namedChildren.slice(isDefault ? 0 : 1);
-      const hasFallthrough = true;
+    const consequence = caseSyntax.namedChildren.slice(isDefault ? 0 : 1);
+    const hasFallthrough = true;
 
-      const conditionNode = ctx.builder.addNode(
-        "CASE_CONDITION",
-        isDefault ? "default" : (caseSyntax.firstNamedChild?.text ?? ""),
+    const conditionNode = ctx.builder.addNode(
+      "CASE_CONDITION",
+      isDefault ? "default" : (caseSyntax.firstNamedChild?.text ?? ""),
+    );
+    ctx.link(caseSyntax, conditionNode);
+
+    const consequenceBlock = ctx.matcher.state.update(
+      ctx.dispatch.many(consequence),
+    );
+    if (consequence.length > 0) {
+      ctx.linkGap(
+        ctx.matcher
+          .match(caseSyntax, `(_ (":") @colon)`, { maxStartDepth: 1 })
+          .requireSyntax("colon"),
+        // @ts-expect-error: We know there's at least one element
+        consequence[0],
       );
+    }
 
-      const consequenceBlock = ctx.matcher.state.update(
-        ctx.dispatch.many(consequence),
-      );
-
-      cases.push({
-        conditionEntry: conditionNode,
-        conditionExit: conditionNode,
-        consequenceEntry: consequenceBlock.entry,
-        consequenceExit: consequenceBlock.exit,
-        alternativeExit: conditionNode,
-        hasFallthrough,
-        isDefault,
-      });
+    cases.push({
+      conditionEntry: conditionNode,
+      conditionExit: conditionNode,
+      consequenceEntry: consequenceBlock.entry,
+      consequenceExit: consequenceBlock.exit,
+      alternativeExit: conditionNode,
+      hasFallthrough,
+      isDefault,
     });
+  }
 
   return cases;
 }
@@ -476,18 +491,17 @@ function buildSwitch(
   let previous: string | null = switchHeadNode;
   cases.forEach((thisCase) => {
     if (ctx.options.flatSwitch) {
-      if (thisCase.consequenceEntry) {
-        ctx.builder.addEdge(switchHeadNode, thisCase.consequenceEntry);
-        if (fallthrough) {
-          ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
-        }
-        if (thisCase.isDefault) {
-          // If we have any default node - then we don't connect the head to the merge node.
-          previous = null;
-        }
+      ctx.builder.addEdge(switchHeadNode, thisCase.conditionEntry);
+      ctx.builder.addEdge(thisCase.conditionExit, thisCase.consequenceEntry);
+      if (fallthrough) {
+        ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
+      }
+      if (thisCase.isDefault) {
+        // If we have any default node - then we don't connect the head to the merge node.
+        previous = null;
       }
     } else {
-      if (fallthrough && thisCase.consequenceEntry) {
+      if (fallthrough) {
         ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
       }
       if (previous && thisCase.conditionEntry) {
@@ -498,7 +512,7 @@ function buildSwitch(
         );
       }
 
-      if (thisCase.consequenceEntry && thisCase.conditionExit)
+      if (thisCase.conditionExit)
         ctx.builder.addEdge(
           thisCase.conditionExit,
           thisCase.consequenceEntry,
@@ -538,12 +552,33 @@ function processSwitchlike(
     "SWITCH_CONDITION",
     getChildFieldText(switchSyntax, "value"),
   );
+  ctx.link(switchSyntax, headNode);
   const mergeNode: string = ctx.builder.addNode("SWITCH_MERGE", "");
   buildSwitch(cases, mergeNode, headNode, ctx);
 
   blockHandler.forEachBreak((breakNode) => {
     ctx.builder.addEdge(breakNode, mergeNode);
   });
+
+  const braceMatch = ctx.matcher.match(
+    switchSyntax,
+    `
+    (switch_statement 
+	      body: (compound_statement "{" @opening-brace "}" @closing-brace)
+    ) @switch
+    `,
+  );
+  const openingBrace = braceMatch.requireSyntax("opening-brace");
+  const closingBrace = braceMatch.requireSyntax("closing-brace");
+  const caseSyntaxMany = getCases(switchSyntax);
+  const firstCase = caseSyntaxMany[0];
+  if (firstCase) {
+    ctx.linkGap(openingBrace, firstCase);
+  }
+  const lastCase = caseSyntaxMany[caseSyntaxMany.length - 1];
+  if (lastCase) {
+    ctx.linkGap(lastCase, closingBrace, { reverse: true, includeTo: true });
+  }
 
   return blockHandler.update({ entry: headNode, exit: mergeNode });
 }

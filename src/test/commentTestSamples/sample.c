@@ -169,3 +169,17 @@ void ForLoops() {
     for ( ;  ;  ) { if (x) break;}
     //clang-format on
 }
+
+/*
+exits: 1
+*/
+void MoreSwitch() {
+    // This is mostly here to test code segmentation and mapping to CFG nodes
+    switch (x) {
+        case 1: break;
+        case 2: break;
+        case 3: f();
+        case 4: break;
+        default: f();
+    }
+}

@@ -1156,6 +1156,123 @@ color="green";
 }"
 `;
 
+exports[`C: MoreSwitch: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node13 [style="filled";
+label="";
+id="node13";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node6 [style="filled";
+label="";
+id="node6";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node7 [style="filled";
+label="";
+id="node7";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node8 [style="filled";
+label="";
+id="node8";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node10 [style="filled";
+label="";
+id="node10";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="green";
+];
+    node1 -> node3 [penwidth=1;
+color="red";
+];
+    node3 -> node4 [penwidth=1;
+color="green";
+];
+    node3 -> node5 [penwidth=1;
+color="red";
+];
+    node5 -> node6 [penwidth=1;
+color="green";
+];
+    node6 -> node8 [penwidth=1;
+color="blue";
+];
+    node5 -> node7 [penwidth=1;
+color="red";
+];
+    node7 -> node8 [penwidth=1;
+color="green";
+];
+    node10 -> node13 [penwidth=1;
+color="blue";
+];
+    node2 -> node13 [penwidth=1;
+color="blue";
+];
+    node4 -> node13 [penwidth=1;
+color="blue";
+];
+    node8 -> node13 [penwidth=1;
+color="blue";
+];
+    node7 -> node10 [penwidth=1;
+color="red";
+];
+}"
+`;
+
 exports[`Go: trivial: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box];
@@ -5465,6 +5582,30 @@ exports[`C: switch_1: Segmentation 1`] = `
     "value": "node1",
   },
   {
+    "start": 876,
+    "value": "node1",
+  },
+  {
+    "start": 888,
+    "value": "node1",
+  },
+  {
+    "start": 894,
+    "value": "node1",
+  },
+  {
+    "start": 894,
+    "value": "node1",
+  },
+  {
+    "start": 901,
+    "value": "Not found",
+  },
+  {
+    "start": 911,
+    "value": "node1",
+  },
+  {
     "start": 930,
     "value": "node2",
   },
@@ -5473,11 +5614,55 @@ exports[`C: switch_1: Segmentation 1`] = `
     "value": "node1",
   },
   {
+    "start": 944,
+    "value": "node3",
+  },
+  {
+    "start": 950,
+    "value": "node1",
+  },
+  {
+    "start": 950,
+    "value": "node3",
+  },
+  {
+    "start": 957,
+    "value": "node5",
+  },
+  {
+    "start": 963,
+    "value": "node1",
+  },
+  {
+    "start": 963,
+    "value": "node5",
+  },
+  {
+    "start": 970,
+    "value": "Not found",
+  },
+  {
+    "start": 980,
+    "value": "node5",
+  },
+  {
     "start": 999,
     "value": "node6",
   },
   {
     "start": 1013,
+    "value": "node5",
+  },
+  {
+    "start": 1013,
+    "value": "node5",
+  },
+  {
+    "start": 1020,
+    "value": "node1",
+  },
+  {
+    "start": 1020,
     "value": "node1",
   },
   {
@@ -5498,11 +5683,67 @@ exports[`C: switch_2: Segmentation 1`] = `
     "value": "node1",
   },
   {
+    "start": 1079,
+    "value": "node1",
+  },
+  {
+    "start": 1091,
+    "value": "node1",
+  },
+  {
+    "start": 1097,
+    "value": "node1",
+  },
+  {
+    "start": 1097,
+    "value": "node1",
+  },
+  {
+    "start": 1104,
+    "value": "node2",
+  },
+  {
     "start": 1114,
     "value": "node2",
   },
   {
     "start": 1120,
+    "value": "node1",
+  },
+  {
+    "start": 1120,
+    "value": "node3",
+  },
+  {
+    "start": 1126,
+    "value": "node1",
+  },
+  {
+    "start": 1126,
+    "value": "node3",
+  },
+  {
+    "start": 1133,
+    "value": "node5",
+  },
+  {
+    "start": 1139,
+    "value": "node1",
+  },
+  {
+    "start": 1139,
+    "value": "node5",
+  },
+  {
+    "start": 1146,
+    "value": "node5",
+  },
+  {
+    "start": 1153,
+    "value": "node1",
+  },
+  {
+    "start": 1153,
     "value": "node1",
   },
   {
@@ -6451,6 +6692,179 @@ exports[`C: ForLoops: Segmentation 1`] = `
   {
     "start": 2081,
     "value": "node7",
+  },
+]
+`;
+
+exports[`C: MoreSwitch: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 2103,
+    "value": "node1",
+  },
+  {
+    "start": 2207,
+    "value": "node1",
+  },
+  {
+    "start": 2219,
+    "value": "node1",
+  },
+  {
+    "start": 2229,
+    "value": "node1",
+  },
+  {
+    "start": 2229,
+    "value": "node1",
+  },
+  {
+    "start": 2236,
+    "value": "node2",
+  },
+  {
+    "start": 2237,
+    "value": "node1",
+  },
+  {
+    "start": 2237,
+    "value": "node2",
+  },
+  {
+    "start": 2243,
+    "value": "node1",
+  },
+  {
+    "start": 2243,
+    "value": "node3",
+  },
+  {
+    "start": 2253,
+    "value": "node1",
+  },
+  {
+    "start": 2253,
+    "value": "node3",
+  },
+  {
+    "start": 2260,
+    "value": "node4",
+  },
+  {
+    "start": 2261,
+    "value": "node3",
+  },
+  {
+    "start": 2261,
+    "value": "node4",
+  },
+  {
+    "start": 2267,
+    "value": "node3",
+  },
+  {
+    "start": 2267,
+    "value": "node5",
+  },
+  {
+    "start": 2277,
+    "value": "node1",
+  },
+  {
+    "start": 2277,
+    "value": "node5",
+  },
+  {
+    "start": 2284,
+    "value": "node6",
+  },
+  {
+    "start": 2285,
+    "value": "node5",
+  },
+  {
+    "start": 2285,
+    "value": "node6",
+  },
+  {
+    "start": 2289,
+    "value": "node5",
+  },
+  {
+    "start": 2289,
+    "value": "node7",
+  },
+  {
+    "start": 2299,
+    "value": "node1",
+  },
+  {
+    "start": 2299,
+    "value": "node7",
+  },
+  {
+    "start": 2306,
+    "value": "node8",
+  },
+  {
+    "start": 2307,
+    "value": "node7",
+  },
+  {
+    "start": 2307,
+    "value": "node8",
+  },
+  {
+    "start": 2313,
+    "value": "node7",
+  },
+  {
+    "start": 2313,
+    "value": "node10",
+  },
+  {
+    "start": 2323,
+    "value": "node1",
+  },
+  {
+    "start": 2323,
+    "value": "node10",
+  },
+  {
+    "start": 2331,
+    "value": "node10",
+  },
+  {
+    "start": 2332,
+    "value": "node10",
+  },
+  {
+    "start": 2332,
+    "value": "node10",
+  },
+  {
+    "start": 2336,
+    "value": "node10",
+  },
+  {
+    "start": 2336,
+    "value": "node10",
+  },
+  {
+    "start": 2343,
+    "value": "node1",
+  },
+  {
+    "start": 2343,
+    "value": "node1",
+  },
+  {
+    "start": 2346,
+    "value": "node1",
   },
 ]
 `;
