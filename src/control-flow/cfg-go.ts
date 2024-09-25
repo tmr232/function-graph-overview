@@ -102,15 +102,25 @@ function processLabeledStatement(
   const name = getChildFieldText(labelSyntax, "label");
   const labelNode = ctx.builder.addNode("LABEL", name);
   ctx.link(labelSyntax, labelNode);
-  const { entry: labeledEntry, exit: labeledExit } = ctx.state.update(
-    ctx.dispatch.single(labelSyntax.namedChildren[1]),
-  );
-  if (labeledEntry) ctx.builder.addEdge(labelNode, labeledEntry);
-  return ctx.state.update({
-    entry: labelNode,
-    exit: labeledExit,
-    labels: new Map([[name, labelNode]]),
-  });
+  const labelContentSyntax = labelSyntax.namedChildren[1];
+  if (labelContentSyntax) {
+    const { entry: labeledEntry, exit: labeledExit } = ctx.state.update(
+      ctx.dispatch.single(labelContentSyntax),
+    );
+    if (labeledEntry) ctx.builder.addEdge(labelNode, labeledEntry);
+    return ctx.state.update({
+      entry: labelNode,
+      exit: labeledExit,
+      labels: new Map([[name, labelNode]]),
+    });
+  } else {
+    // Go allows for empty labels.
+    return ctx.state.update({
+      entry: labelNode,
+      exit: labelNode,
+      labels: new Map([[name, labelNode]]),
+    });
+  }
 }
 
 function processContinueStatement(
@@ -160,7 +170,7 @@ function processForStatement(
       const headNode = ctx.builder.addNode("LOOP_HEAD", "loop head");
       ctx.link(forNode, headNode);
       const { entry: bodyEntry, exit: bodyExit } = state.update(
-        ctx.dispatch.single(forNode.namedChildren[1]),
+        ctx.dispatch.single(forNode.namedChildren[1] as Parser.SyntaxNode),
       );
       const exitNode = ctx.builder.addNode("LOOP_EXIT", "loop exit");
       if (bodyEntry) {
@@ -352,6 +362,7 @@ function collectCases(
         ctx.matcher
           .match(caseSyntax, `(_ (":") @colon)`, { maxStartDepth: 1 })
           .requireSyntax("colon"),
+        // @ts-expect-error: We know there's at least one element
         consequence[0],
       );
     }
@@ -399,12 +410,10 @@ function processSwitchlike(
   const closingBrace = braceMatch.requireSyntax("closing-brace");
   const caseSyntaxMany = getCases(switchSyntax);
   const firstCase = caseSyntaxMany[0];
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (firstCase) {
     ctx.linkGap(openingBrace, firstCase);
   }
   const lastCase = caseSyntaxMany[caseSyntaxMany.length - 1];
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (lastCase) {
     ctx.linkGap(lastCase, closingBrace, { reverse: true, includeTo: true });
   }

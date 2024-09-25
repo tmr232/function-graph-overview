@@ -36,12 +36,16 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
     ) {
       const captures = match.captures;
       const comments = [];
+      // @ts-expect-error: We know that the captures are OK
       for (; captures[i].name === "comment"; ++i) {
+        // @ts-expect-error: We know that the captures are OK
         comments.push(captures[i].node.text.slice(1).trim());
       }
       yield {
+        // @ts-expect-error: We know that the captures are OK
         function: captures[i].node,
         reqs: parseComment(comments.join("\n")),
+        // @ts-expect-error: We know that the captures are OK
         name: captures[i + 1].node.text,
         language: "Python",
       };

@@ -47,7 +47,6 @@ export class GenericCFGBuilder {
       entry: startNode,
       syntaxToNode: this.nodeMapper.getMapping(functionNode),
       offsetToNode: this.nodeMapper.getIndexMapping(functionNode),
-      pointToNode: this.nodeMapper.getPointMapping(functionNode),
     };
   }
 
@@ -109,7 +108,9 @@ export class GenericCFGBuilder {
     }
 
     return blockHandler.update({
+      // @ts-expect-error: We know there's at least one block
       entry: blocks[0].entry,
+      // @ts-expect-error: We know there's at least one block
       exit: blocks[blocks.length - 1].exit,
     });
   }

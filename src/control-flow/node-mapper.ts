@@ -1,12 +1,5 @@
 import type Parser from "web-tree-sitter";
 import { inplaceAddRange, newRanges, type SimpleRange } from "./ranges";
-import {
-  type PointRange,
-  comparePoints,
-  newRanges as newPointRanges,
-  inplaceAddRange as inplaceAddPointRange,
-  pointDiff,
-} from "./point-ranges";
 import type { Point } from "web-tree-sitter";
 /* TODO: It seem that AST-based mapping does not fit with what a user expects.
 We need to move to a range-based option, based on offsets in the code.
@@ -241,29 +234,6 @@ export class NodeMapper {
   ): SimpleRange<string>[] {
     const syntaxToNode = this.getMapping(functionSyntax);
     const ranges = this.buildRanges(functionSyntax);
-    return ranges.map(({ start, value }) => ({
-      start,
-      value: syntaxToNode.get(value.id) ?? "Not found",
-    }));
-  }
-
-  private buildPointRanges(
-    functionSyntax: Parser.SyntaxNode,
-  ): PointRange<Parser.SyntaxNode>[] {
-    const ranges = newPointRanges(functionSyntax);
-    for (const { start, stop, value } of this.pointRanges.toSorted((b, a) =>
-      comparePoints(pointDiff(a.stop, a.start), pointDiff(b.stop, b.start)),
-    )) {
-      inplaceAddPointRange(ranges, start, stop, value);
-    }
-    return ranges;
-  }
-
-  public getPointMapping(
-    functionSyntax: Parser.SyntaxNode,
-  ): PointRange<string>[] {
-    const syntaxToNode = this.getMapping(functionSyntax);
-    const ranges = this.buildPointRanges(functionSyntax);
     return ranges.map(({ start, value }) => ({
       start,
       value: syntaxToNode.get(value.id) ?? "Not found",

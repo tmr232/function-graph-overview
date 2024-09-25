@@ -415,7 +415,6 @@ function processLabeledStatement(
   const labelNode = ctx.builder.addNode("LABEL", name);
   ctx.link(labelSyntax, labelNode);
   const labelContentSyntax = labelSyntax.namedChildren[1];
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (labelContentSyntax) {
     const { entry: labeledEntry, exit: labeledExit } = blockHandler.update(
       ctx.dispatch.single(labelContentSyntax),
