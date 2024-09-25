@@ -11,10 +11,6 @@
   } from "./utils";
   import { evolve } from "../../../control-flow/evolve";
   import { iterRanges } from "../../../control-flow/ranges";
-  import {
-    comparePoints,
-    iterRanges as iterPointRanges,
-  } from "../../../control-flow/point-ranges";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
@@ -92,45 +88,6 @@
     ].join("\n");
   }
 
-  function renderPointRanges(
-    cfg: CFG,
-    functionSyntax: Parser.SyntaxNode,
-    sourceText: string,
-    nodeColors: NodeColors,
-  ): string {
-    let result = "";
-    const lines = sourceText.split("\n");
-    const funcStart = functionSyntax.startPosition;
-    const funcEnd = functionSyntax.endPosition;
-    for (const { start, stop, value: node } of iterPointRanges(
-      cfg.pointToNode,
-    )) {
-      if (
-        stop === undefined ||
-        comparePoints(stop, funcStart) < 0 ||
-        comparePoints(start, funcEnd) > 0
-      ) {
-        continue;
-      }
-      const sliceStart =
-        comparePoints(start, funcStart) > 0 ? start : funcStart;
-      const sliceEnd = stop
-        ? comparePoints(stop, funcEnd) < 0
-          ? stop
-          : funcEnd
-        : undefined;
-      const textPart = (result += withBackground(
-        sliceLines(lines, sliceStart, sliceEnd),
-        nodeColors.get(node) ?? "red",
-      ));
-    }
-
-    let legend = [...nodeColors.entries()]
-      .map(([name, color]) => withBackground(name, color))
-      .join("\n");
-    return result + "\n\n\n" + legend;
-  }
-
   function remapNodeTargets(cfg: CFG): CFG {
     const remap = new Map<string, string>();
     cfg.graph.forEachNode((node, { targets }) => {
@@ -140,14 +97,11 @@
       start,
       value: remap.get(node) ?? node,
     }));
-    const pointToNode = cfg.pointToNode.map(({ start, value: node }) => ({
-      start,
-      value: remap.get(node) ?? node,
-    }));
+
     // Copying the graph is needed.
     // Seems that some of the graph properties don't survive the structured clone.
     const graph = cfg.graph.copy();
-    return evolve(cfg, { graph, offsetToNode, pointToNode });
+    return evolve(cfg, { graph, offsetToNode });
   }
 
   type Options = { simplify: boolean; trim: boolean };
