@@ -87,7 +87,7 @@ export function collectCases(
   const caseSyntaxMany = callbacks.getCases(switchSyntax);
 
   for (const [prev, curr] of pairwise(caseSyntaxMany)) {
-    ctx.linkGap(prev, curr);
+    ctx.link.offsetToSyntax(prev, curr);
   }
   for (const caseSyntax of caseSyntaxMany) {
     const { consequence, isDefault, hasFallthrough } =
@@ -97,11 +97,11 @@ export function collectCases(
       "CASE_CONDITION",
       isDefault ? "default" : (caseSyntax.firstNamedChild?.text ?? ""),
     );
-    ctx.link(caseSyntax, conditionNode);
+    ctx.link.syntaxToNode(caseSyntax, conditionNode);
 
     const consequenceBlock = ctx.state.update(ctx.dispatch.many(consequence));
     if (consequence.length > 0) {
-      ctx.linkGap(
+      ctx.link.offsetToSyntax(
         ctx.matcher
           .match(caseSyntax, `(_ (":") @colon)`, { maxStartDepth: 1 })
           .requireSyntax("colon"),

@@ -67,8 +67,10 @@ export class GenericCFGBuilder {
         single: this.dispatchSingle.bind(this),
         many: this.dispatchMany.bind(this),
       },
-      link: this.nodeMapper.add.bind(this.nodeMapper),
-      linkGap: this.nodeMapper.linkGap.bind(this.nodeMapper),
+      link: {
+        syntaxToNode: this.nodeMapper.add.bind(this.nodeMapper),
+        offsetToSyntax: this.nodeMapper.linkGap.bind(this.nodeMapper),
+      },
     });
   }
 

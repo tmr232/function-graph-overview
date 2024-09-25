@@ -8,14 +8,17 @@ interface Dispatch {
   single(syntax: Parser.SyntaxNode | null): BasicBlock;
   many(statements: Parser.SyntaxNode[]): BasicBlock;
 }
+interface Link {
+  syntaxToNode: InstanceType<typeof NodeMapper>["add"];
+  offsetToSyntax: InstanceType<typeof NodeMapper>["linkGap"];
+}
 export interface Context {
   builder: Builder;
   options: BuilderOptions;
   matcher: BlockMatcher;
   dispatch: Dispatch;
   state: BlockHandler;
-  link: InstanceType<typeof NodeMapper>["add"];
-  linkGap: InstanceType<typeof NodeMapper>["linkGap"];
+  link: Link;
 }
 
 type StatementHandler = (syntax: Parser.SyntaxNode, ctx: Context) => BasicBlock;

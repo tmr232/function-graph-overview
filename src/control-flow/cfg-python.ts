@@ -39,11 +39,11 @@ function defaultProcessStatement(
   const hasYield = matchExistsIn(syntax, `(yield) @yield`);
   if (hasYield) {
     const yieldNode = builder.addNode("YIELD", syntax.text);
-    ctx.link(syntax, yieldNode);
+    ctx.link.syntaxToNode(syntax, yieldNode);
     return { entry: yieldNode, exit: yieldNode };
   }
   const newNode = builder.addNode("STATEMENT", syntax.text);
-  ctx.link(syntax, newNode);
+  ctx.link.syntaxToNode(syntax, newNode);
   return { entry: newNode, exit: newNode };
 }
 function processRaiseStatement(
@@ -52,7 +52,7 @@ function processRaiseStatement(
 ): BasicBlock {
   const { builder } = ctx;
   const raiseNode = builder.addNode("THROW", raiseSyntax.text);
-  ctx.link(raiseSyntax, raiseNode);
+  ctx.link.syntaxToNode(raiseSyntax, raiseNode);
   return { entry: raiseNode, exit: null };
 }
 function processReturnStatement(
@@ -61,7 +61,7 @@ function processReturnStatement(
 ): BasicBlock {
   const { builder } = ctx;
   const returnNode = builder.addNode("RETURN", returnSyntax.text);
-  ctx.link(returnSyntax, returnNode);
+  ctx.link.syntaxToNode(returnSyntax, returnNode);
   return { entry: returnNode, exit: null, returns: [returnNode] };
 }
 function processTryStatement(
@@ -101,7 +101,7 @@ function processTryStatement(
     const bodyBlock = builder.withCluster("try", () =>
       match.getBlock(bodySyntax),
     );
-    ctx.link(trySyntax, bodyBlock.entry);
+    ctx.link.syntaxToNode(trySyntax, bodyBlock.entry);
 
     // We handle `except` blocks before the `finally` block to support `return` handling.
     const exceptBlocks = exceptSyntaxMany.map((exceptSyntax) =>
@@ -111,7 +111,7 @@ function processTryStatement(
       match.getSyntaxMany("except"),
       exceptBlocks,
     )) {
-      ctx.link(syntax, entry);
+      ctx.link.syntaxToNode(syntax, entry);
     }
     // We attach the except-blocks to the top of the `try` body.
     // In the rendering, we will connect them to the side of the node, and use invisible lines for it.
@@ -126,7 +126,7 @@ function processTryStatement(
     // Create the `else` block before `finally` to handle returns correctly.
     const elseBlock = match.getBlock(elseSyntax);
     if (elseBlock) {
-      ctx.link(match.requireSyntax("else"), elseBlock.entry);
+      ctx.link.syntaxToNode(match.requireSyntax("else"), elseBlock.entry);
     }
 
     const finallyBlock = builder.withCluster("finally", () => {
@@ -161,7 +161,7 @@ function processTryStatement(
       return finallyBlock;
     });
     if (finallyBlock) {
-      ctx.link(match.requireSyntax("finally"), finallyBlock.entry);
+      ctx.link.syntaxToNode(match.requireSyntax("finally"), finallyBlock.entry);
     }
 
     // This is the exit we get to if we don't have an exception
@@ -219,7 +219,7 @@ function processWithStatement(
   return builder.withCluster("with", () => {
     const bodySyntax = match.requireSyntax("body");
     const bodyBlock = match.getBlock(bodySyntax);
-    ctx.linkGap(match.requireSyntax("colon"), bodySyntax);
+    ctx.link.offsetToSyntax(match.requireSyntax("colon"), bodySyntax);
 
     if (withClauseBlock.exit)
       builder.addEdge(withClauseBlock.exit, bodyBlock.entry);
@@ -239,7 +239,7 @@ function processComment(
   // We only ever ger here when marker comments are enabled,
   // and only for marker comments as the rest are filtered out.
   const commentNode = builder.addNode("MARKER_COMMENT", commentSyntax.text);
-  ctx.link(commentSyntax, commentNode);
+  ctx.link.syntaxToNode(commentSyntax, commentNode);
   if (options.markerPattern) {
     const marker = commentSyntax.text.match(options.markerPattern)?.[1];
     if (marker) builder.addMarker(commentNode, marker);
@@ -278,7 +278,7 @@ function processMatchStatement(
 
   const subjectBlock = match.getBlock(subjectSyntax);
   const mergeNode = builder.addNode("MERGE", "match merge");
-  ctx.link(matchSyntax, subjectBlock.entry);
+  ctx.link.syntaxToNode(matchSyntax, subjectBlock.entry);
 
   // This is the case where case matches
   if (subjectBlock.exit)
@@ -296,9 +296,11 @@ function processMatchStatement(
       "CASE_CONDITION",
       `case ${patternSyntaxMany.map((pat) => pat.text).join(", ")}:`,
     );
-    patternSyntaxMany.forEach((syntax) => ctx.link(syntax, patternNode));
-    ctx.linkGap(caseColon, consequenceSyntax);
-    ctx.link(caseSyntax, patternNode);
+    patternSyntaxMany.forEach((syntax) =>
+      ctx.link.syntaxToNode(syntax, patternNode),
+    );
+    ctx.link.offsetToSyntax(caseColon, consequenceSyntax);
+    ctx.link.syntaxToNode(caseSyntax, patternNode);
 
     builder.addEdge(patternNode, consequenceBlock.entry, "consequence");
     if (consequenceBlock.exit)
@@ -321,7 +323,7 @@ function processContinueStatement(
 ): BasicBlock {
   const { builder } = ctx;
   const continueNode = builder.addNode("CONTINUE", "CONTINUE");
-  ctx.link(continueSyntax, continueNode);
+  ctx.link.syntaxToNode(continueSyntax, continueNode);
   return { entry: continueNode, exit: null, continues: [continueNode] };
 }
 function processBreakStatement(
@@ -330,7 +332,7 @@ function processBreakStatement(
 ): BasicBlock {
   const { builder } = ctx;
   const breakNode = builder.addNode("BREAK", "BREAK");
-  ctx.link(breakSyntax, breakNode);
+  ctx.link.syntaxToNode(breakSyntax, breakNode);
   return { entry: breakNode, exit: null, breaks: [breakNode] };
 }
 
@@ -373,36 +375,37 @@ function processIfStatement(
   const elseBlock = match.getBlock(elseSyntax);
 
   for (const elifClause of maybe(match.getSyntax("elif-clause"))) {
-    ctx.linkGap(thenSyntax, elifClause);
+    ctx.link.offsetToSyntax(thenSyntax, elifClause);
   }
   for (const [elifClause, elseClause] of zip(
     maybe(match.getLastSyntax("elif-clause") ?? thenSyntax),
     maybe(match.getSyntax("else-clause")),
   )) {
-    ctx.linkGap(elifClause, elseClause);
+    ctx.link.offsetToSyntax(elifClause, elseClause);
   }
-  ctx.linkGap(match.requireSyntax("colon"), thenSyntax);
-  ctx.link(thenSyntax, thenBlock.entry);
+  ctx.link.offsetToSyntax(match.requireSyntax("colon"), thenSyntax);
+  ctx.link.syntaxToNode(thenSyntax, thenBlock.entry);
 
   for (const [elifClauseSyntax, elifCondBlock] of zip(
     match.getSyntaxMany("elif-clause"),
     elifCondBlocks,
   )) {
-    ctx.link(elifClauseSyntax, elifCondBlock.entry);
+    ctx.link.syntaxToNode(elifClauseSyntax, elifCondBlock.entry);
   }
 
   for (const [colonSyntax, elifSyntax] of zip(
     match.getSyntaxMany("elif-colon"),
     elifSyntaxMany,
   )) {
-    ctx.linkGap(colonSyntax, elifSyntax);
+    ctx.link.offsetToSyntax(colonSyntax, elifSyntax);
   }
-  if (elseSyntax) ctx.linkGap(match.requireSyntax("else-colon"), elseSyntax);
+  if (elseSyntax)
+    ctx.link.offsetToSyntax(match.requireSyntax("else-colon"), elseSyntax);
 
   const mergeNode = builder.addNode("MERGE", "if merge");
   const headNode = builder.addNode("CONDITION", "if condition");
 
-  ctx.link(ifNode, headNode);
+  ctx.link.syntaxToNode(ifNode, headNode);
 
   builder.addEdge(headNode, condBlock.entry);
 
@@ -425,7 +428,7 @@ function processIfStatement(
   }
 
   if (elseBlock) {
-    ctx.link(match.requireSyntax("else-clause"), elseBlock.entry);
+    ctx.link.syntaxToNode(match.requireSyntax("else-clause"), elseBlock.entry);
     if (previous?.exit)
       builder.addEdge(previous.exit, elseBlock.entry, "alternative");
     if (elseBlock.exit) builder.addEdge(elseBlock.exit, mergeNode);
@@ -466,8 +469,8 @@ function processForStatement(
   const headNode = builder.addNode("LOOP_HEAD", "loop head");
   const headBlock = { entry: headNode, exit: headNode };
 
-  ctx.link(forNode, headNode);
-  ctx.linkGap(match.requireSyntax("colon"), bodySyntax);
+  ctx.link.syntaxToNode(forNode, headNode);
+  ctx.link.offsetToSyntax(match.requireSyntax("colon"), bodySyntax);
 
   /*
   head +-> body -> head
@@ -522,7 +525,7 @@ function processWhileStatement(
 
   const exitNode = builder.addNode("FOR_EXIT", "loop exit");
 
-  ctx.linkGap(match.requireSyntax("colon"), bodySyntax);
+  ctx.link.offsetToSyntax(match.requireSyntax("colon"), bodySyntax);
 
   if (condBlock.exit) {
     builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
@@ -552,6 +555,6 @@ function processBlockStatement(
   ctx: Context,
 ): BasicBlock {
   const blockBlock = ctx.dispatch.many(blockSyntax.namedChildren);
-  ctx.link(blockSyntax, blockBlock.entry);
+  ctx.link.syntaxToNode(blockSyntax, blockBlock.entry);
   return blockBlock;
 }

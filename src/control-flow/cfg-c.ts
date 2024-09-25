@@ -71,33 +71,39 @@ function processForStatement(
   const headNode = ctx.builder.addNode("LOOP_HEAD", "loop head");
   const headBlock = { entry: headNode, exit: headNode };
 
-  ctx.link(forNode, entryNode);
+  ctx.link.syntaxToNode(forNode, entryNode);
   if (condBlock) {
-    ctx.link(match.requireSyntax("cond-semi"), condBlock.entry);
+    ctx.link.syntaxToNode(match.requireSyntax("cond-semi"), condBlock.entry);
   }
 
   const closeParens = match.requireSyntax("close-parens");
 
   if (initSyntax)
-    ctx.linkGap(initSyntax, match.requireSyntax("init-semi"), {
+    ctx.link.offsetToSyntax(initSyntax, match.requireSyntax("init-semi"), {
       reverse: true,
       includeTo: true,
     });
   if (condSyntax)
-    ctx.linkGap(condSyntax, match.requireSyntax("cond-semi"), {
+    ctx.link.offsetToSyntax(condSyntax, match.requireSyntax("cond-semi"), {
       reverse: true,
       includeTo: true,
     });
   if (!condSyntax && initSyntax)
-    ctx.linkGap(initSyntax, match.requireSyntax("cond-semi"), {
+    ctx.link.offsetToSyntax(initSyntax, match.requireSyntax("cond-semi"), {
       includeTo: true,
       reverse: true,
     });
   if (updateSyntax)
-    ctx.linkGap(updateSyntax, closeParens, { reverse: true, includeTo: true });
+    ctx.link.offsetToSyntax(updateSyntax, closeParens, {
+      reverse: true,
+      includeTo: true,
+    });
   if (condSyntax && !updateSyntax)
-    ctx.linkGap(condSyntax, closeParens, { reverse: true, includeTo: true });
-  ctx.linkGap(closeParens, bodySyntax);
+    ctx.link.offsetToSyntax(condSyntax, closeParens, {
+      reverse: true,
+      includeTo: true,
+    });
+  ctx.link.offsetToSyntax(closeParens, bodySyntax);
 
   const chainBlocks = (entry: string | null, blocks: (BasicBlock | null)[]) => {
     let prevExit: string | null = entry;
@@ -181,14 +187,14 @@ function processIfStatement(
   }));
 
   for (const [ifMatch, { condBlock }] of zip(allIfs, blocks)) {
-    ctx.link(ifMatch.requireSyntax("if"), condBlock.entry);
-    ctx.linkGap(
+    ctx.link.syntaxToNode(ifMatch.requireSyntax("if"), condBlock.entry);
+    ctx.link.offsetToSyntax(
       ifMatch.requireSyntax("closing-paren"),
       ifMatch.requireSyntax("then"),
     );
   }
   for (const [prevIf, thisIf] of pairwise(allIfs)) {
-    ctx.linkGap(
+    ctx.link.offsetToSyntax(
       prevIf.requireSyntax("closing-brace"),
       thisIf.requireSyntax("if"),
     );
@@ -225,8 +231,11 @@ function processIfStatement(
   if (elseBlock) {
     const lastMatch = last(allIfs) as Match;
     const elseSyntax = lastMatch.requireSyntax("else");
-    ctx.link(elseSyntax, elseBlock.entry);
-    ctx.linkGap(lastMatch.requireSyntax("closing-brace"), elseSyntax);
+    ctx.link.syntaxToNode(elseSyntax, elseBlock.entry);
+    ctx.link.offsetToSyntax(
+      lastMatch.requireSyntax("closing-brace"),
+      elseSyntax,
+    );
 
     if (previous && elseBlock.entry) {
       ctx.builder.addEdge(previous, elseBlock.entry, "alternative");
@@ -274,9 +283,9 @@ function processWhileStatement(
     ctx.builder.addEdge(breakNode, exitNode);
   });
 
-  ctx.link(bodySyntax, bodyBlock.entry);
-  ctx.link(condSyntax, condBlock.entry);
-  ctx.link(whileSyntax, condBlock.entry);
+  ctx.link.syntaxToNode(bodySyntax, bodyBlock.entry);
+  ctx.link.syntaxToNode(condSyntax, condBlock.entry);
+  ctx.link.syntaxToNode(whileSyntax, condBlock.entry);
 
   return ctx.matcher.update({ entry: condBlock.entry, exit: exitNode });
 }
@@ -318,9 +327,9 @@ function processDoStatement(
     ctx.builder.addEdge(breakNode, exitNode);
   });
 
-  ctx.link(bodySyntax, bodyBlock.entry);
-  ctx.link(condSyntax, condBlock.entry);
-  ctx.link(doSyntax, bodyBlock.entry);
+  ctx.link.syntaxToNode(bodySyntax, bodyBlock.entry);
+  ctx.link.syntaxToNode(condSyntax, condBlock.entry);
+  ctx.link.syntaxToNode(doSyntax, bodyBlock.entry);
 
   return ctx.matcher.update({ entry: bodyBlock.entry, exit: exitNode });
 }
@@ -331,7 +340,7 @@ function processGotoStatement(
 ): BasicBlock {
   const name = gotoSyntax.firstNamedChild?.text as string;
   const gotoNode = ctx.builder.addNode("GOTO", name);
-  ctx.link(gotoSyntax, gotoNode);
+  ctx.link.syntaxToNode(gotoSyntax, gotoNode);
   return {
     entry: gotoNode,
     exit: null,
@@ -345,7 +354,7 @@ function processLabeledStatement(
 ): BasicBlock {
   const name = getChildFieldText(labelSyntax, "label");
   const labelNode = ctx.builder.addNode("LABEL", name);
-  ctx.link(labelSyntax, labelNode);
+  ctx.link.syntaxToNode(labelSyntax, labelNode);
   const labelContentSyntax = labelSyntax.namedChildren[1];
   if (labelContentSyntax) {
     const { entry: labeledEntry, exit: labeledExit } = ctx.state.update(
@@ -372,7 +381,7 @@ function processContinueStatement(
   ctx: Context,
 ): BasicBlock {
   const continueNode = ctx.builder.addNode("CONTINUE", "CONTINUE");
-  ctx.link(continueSyntax, continueNode);
+  ctx.link.syntaxToNode(continueSyntax, continueNode);
   return { entry: continueNode, exit: null, continues: [continueNode] };
 }
 
@@ -381,7 +390,7 @@ function processBreakStatement(
   ctx: Context,
 ): BasicBlock {
   const breakNode = ctx.builder.addNode("BREAK", "BREAK");
-  ctx.link(breakSyntax, breakNode);
+  ctx.link.syntaxToNode(breakSyntax, breakNode);
   return { entry: breakNode, exit: null, breaks: [breakNode] };
 }
 
@@ -392,7 +401,7 @@ function processComment(
   // We only ever ger here when marker comments are enabled,
   // and only for marker comments as the rest are filtered out.
   const commentNode = ctx.builder.addNode("MARKER_COMMENT", commentSyntax.text);
-  ctx.link(commentSyntax, commentNode);
+  ctx.link.syntaxToNode(commentSyntax, commentNode);
 
   if (ctx.options.markerPattern) {
     const marker = commentSyntax.text.match(ctx.options.markerPattern)?.[1];
@@ -406,7 +415,7 @@ function processCompoundStatement(
   ctx: Context,
 ): BasicBlock {
   const blockBlock = ctx.dispatch.many(syntax.namedChildren);
-  ctx.link(syntax, blockBlock.entry);
+  ctx.link.syntaxToNode(syntax, blockBlock.entry);
   return blockBlock;
 }
 
@@ -415,7 +424,7 @@ function processReturnStatement(
   ctx: Context,
 ): BasicBlock {
   const returnNode = ctx.builder.addNode("RETURN", syntax.text);
-  ctx.link(syntax, returnNode);
+  ctx.link.syntaxToNode(syntax, returnNode);
   return { entry: returnNode, exit: null };
 }
 
@@ -424,7 +433,7 @@ function defaultProcessStatement(
   ctx: Context,
 ): BasicBlock {
   const newNode = ctx.builder.addNode("STATEMENT", syntax.text);
-  ctx.link(syntax, newNode);
+  ctx.link.syntaxToNode(syntax, newNode);
   return { entry: newNode, exit: newNode };
 }
 
@@ -459,7 +468,7 @@ function processSwitchlike(
     "SWITCH_CONDITION",
     getChildFieldText(switchSyntax, "value"),
   );
-  ctx.link(switchSyntax, headNode);
+  ctx.link.syntaxToNode(switchSyntax, headNode);
   const mergeNode: string = ctx.builder.addNode("SWITCH_MERGE", "");
   buildSwitch(cases, mergeNode, headNode, {}, ctx);
 
@@ -480,11 +489,14 @@ function processSwitchlike(
   const caseSyntaxMany = getCases(switchSyntax);
   const firstCase = caseSyntaxMany[0];
   if (firstCase) {
-    ctx.linkGap(openingBrace, firstCase);
+    ctx.link.offsetToSyntax(openingBrace, firstCase);
   }
   const lastCase = caseSyntaxMany[caseSyntaxMany.length - 1];
   if (lastCase) {
-    ctx.linkGap(lastCase, closingBrace, { reverse: true, includeTo: true });
+    ctx.link.offsetToSyntax(lastCase, closingBrace, {
+      reverse: true,
+      includeTo: true,
+    });
   }
 
   return blockHandler.update({ entry: headNode, exit: mergeNode });
