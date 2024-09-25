@@ -118,10 +118,8 @@ function processTryStatement(
     if (bodyBlock.entry) {
       const headNode = bodyBlock.entry;
       exceptBlocks.forEach((exceptBlock) => {
-        if (exceptBlock.entry) {
-          // Yes, this is effectively a head-to-head link. But that's ok.
-          builder.addEdge(headNode, exceptBlock.entry, "exception");
-        }
+        // Yes, this is effectively a head-to-head link. But that's ok.
+        builder.addEdge(headNode, exceptBlock.entry, "exception");
       });
     }
 
@@ -140,7 +138,7 @@ function processTryStatement(
           // so that we can link them.
           const duplicateFinallyBlock = match.getBlock(
             finallySyntax,
-          ) as BasicBlock;
+          );
           // We also clone the return node, to place it _after_ the finally block
           // We also override the cluster node, pulling it up to the `try-complex`,
           // as the return is neither in a `try`, `except`, or `finally` context.
@@ -148,8 +146,7 @@ function processTryStatement(
             cluster: tryComplexCluster,
           });
 
-          if (duplicateFinallyBlock.entry)
-            builder.addEdge(returnNode, duplicateFinallyBlock.entry);
+          builder.addEdge(returnNode, duplicateFinallyBlock.entry);
           if (duplicateFinallyBlock.exit)
             builder.addEdge(duplicateFinallyBlock.exit, returnNodeClone);
 
