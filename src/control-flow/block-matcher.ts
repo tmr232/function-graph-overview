@@ -2,7 +2,7 @@ import Parser from "web-tree-sitter";
 import { type BasicBlock, BlockHandler } from "./cfg-defs.ts";
 import { evolve } from "./evolve.ts";
 
-const defaultQueryOptions: Parser.QueryOptions = { maxStartDepth: 0 }
+const defaultQueryOptions: Parser.QueryOptions = { maxStartDepth: 0 };
 
 function matchQuery(
   syntax: Parser.SyntaxNode,
@@ -106,7 +106,11 @@ export class BlockMatcher {
     this.processBlock = processBlock;
   }
 
-  public match(syntax: Parser.SyntaxNode, queryString: string, options?: Parser.QueryOptions): Match {
+  public match(
+    syntax: Parser.SyntaxNode,
+    queryString: string,
+    options?: Parser.QueryOptions,
+  ): Match {
     const match = matchQuery(syntax, queryString, options);
     return new Match(match, this.blockHandler, this.processBlock);
   }

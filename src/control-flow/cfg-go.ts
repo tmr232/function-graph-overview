@@ -320,37 +320,45 @@ function collectCases(
     "type_case",
     "expression_case",
   ];
-  switchSyntax.namedChildren
-    .filter((child) => caseTypes.includes(child.type))
-    .forEach((caseSyntax) => {
-      const isDefault = caseSyntax.type === "default_case";
+  const caseSyntaxMany = switchSyntax.namedChildren.filter((child) =>
+    caseTypes.includes(child.type),
+  );
 
-      const consequence = caseSyntax.namedChildren.slice(isDefault ? 0 : 1);
-      const hasFallthrough = consequence
-        .map((node) => node.type)
-        .includes("fallthrough_statement");
+  for (const [prev, curr] of pairwise(caseSyntaxMany)) {
+    ctx.linkGap(prev, curr);
+  }
+  for (const caseSyntax of caseSyntaxMany) {
+    const isDefault = caseSyntax.type === "default_case";
 
-      const conditionNode = ctx.builder.addNode(
-        "CASE_CONDITION",
-        isDefault ? "default" : (caseSyntax.firstNamedChild?.text ?? ""),
-      );
-      ctx.link(caseSyntax, conditionNode);
-      const consequenceNode = blockHandler.update(
-        ctx.dispatch.many(consequence),
-      );
-      console.log("case-syntax", caseSyntax.type, caseSyntax.toString())
-      ctx.linkGap(ctx.matcher.match(caseSyntax, `(_ (":") @colon)`, { maxStartDepth: 1 }).requireSyntax("colon"), consequence[0]);
+    const consequence = caseSyntax.namedChildren.slice(isDefault ? 0 : 1);
+    const hasFallthrough = consequence
+      .map((node) => node.type)
+      .includes("fallthrough_statement");
 
-      cases.push({
-        conditionEntry: conditionNode,
-        conditionExit: conditionNode,
-        consequenceEntry: consequenceNode.entry,
-        consequenceExit: consequenceNode.exit,
-        alternativeExit: conditionNode,
-        hasFallthrough,
-        isDefault,
-      });
+    const conditionNode = ctx.builder.addNode(
+      "CASE_CONDITION",
+      isDefault ? "default" : (caseSyntax.firstNamedChild?.text ?? ""),
+    );
+    ctx.link(caseSyntax, conditionNode);
+    const consequenceNode = blockHandler.update(ctx.dispatch.many(consequence));
+    console.log("case-syntax", caseSyntax.type, caseSyntax.toString());
+    ctx.linkGap(
+      ctx.matcher
+        .match(caseSyntax, `(_ (":") @colon)`, { maxStartDepth: 1 })
+        .requireSyntax("colon"),
+      consequence[0],
+    );
+
+    cases.push({
+      conditionEntry: conditionNode,
+      conditionExit: conditionNode,
+      consequenceEntry: consequenceNode.entry,
+      consequenceExit: consequenceNode.exit,
+      alternativeExit: conditionNode,
+      hasFallthrough,
+      isDefault,
     });
+  }
 
   return cases;
 }
