@@ -24,8 +24,18 @@
 
   function updateCursorPosition() {
     const pos = editorView.state.selection.main.head;
-    let { number, from } = editorView.state.doc.lineAt(pos);
-    const newCursorPos = { row: number - 1, column: pos - from, index: pos };
+    let { number, from, to } = editorView.state.doc.lineAt(pos);
+    if (pos === to) {
+      console.log("end of line!");
+    }
+    const newCursorPos = {
+      row: number - 1,
+      column: pos - from,
+      // If we're at the end of a line, we decrement the position by 1
+      // to make it feel more natural.
+      // TODO: Make this consistent.
+      index: pos === to ? pos - 1 : pos,
+    };
 
     if (
       !cursorPos ||
