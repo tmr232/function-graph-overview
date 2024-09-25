@@ -260,14 +260,15 @@ function processMatchStatement(
       (match_statement
         subject: (_) @subject
           body: (block 
-            alternative: (case_clause)+  @case
+            alternative: (case_clause (":") @case-colon)+  @case
           )
       ) @match
       `,
   );
 
-  const subjectSyntax = match.getSyntax("subject");
-  const alternatives = match.getSyntaxMany("case").map((caseSyntax) => {
+  const subjectSyntax = match.requireSyntax("subject");
+
+  const parseCase = (caseSyntax: Parser.SyntaxNode) => {
     const patterns = caseSyntax.children.filter(
       (c) => c.type === "case_pattern",
     ) as Parser.SyntaxNode[];
@@ -275,25 +276,30 @@ function processMatchStatement(
       "consequence",
     ) as Parser.SyntaxNode;
     return { consequence, patterns };
-  });
+  }
 
-  const subjectBlock = match.getBlock(subjectSyntax) as BasicBlock;
+  const subjectBlock = match.getBlock(subjectSyntax);
   const mergeNode = builder.addNode("MERGE", "match merge");
+  ctx.link(matchSyntax, subjectBlock.entry);
 
   // This is the case where case matches
   if (subjectBlock.exit)
     builder.addEdge(subjectBlock.exit, mergeNode, "alternative");
 
   let previous = subjectBlock.exit as string;
-  for (const {
-    consequence: consequenceSyntax,
-    patterns: patternSyntaxMany,
-  } of alternatives) {
+  for (const [caseSyntax, caseColon] of zip(match.getSyntaxMany("case"), match.getSyntaxMany("case-colon"))) {
+    const {
+      consequence: consequenceSyntax,
+      patterns: patternSyntaxMany,
+    } = parseCase(caseSyntax);
     const consequenceBlock = match.getBlock(consequenceSyntax);
     const patternNode = builder.addNode(
       "CASE_CONDITION",
       `case ${patternSyntaxMany.map((pat) => pat.text).join(", ")}:`,
     );
+    patternSyntaxMany.forEach(syntax => ctx.link(syntax, patternNode));
+    ctx.linkGap(caseColon, consequenceSyntax);
+    ctx.link(caseSyntax, patternNode)
 
     builder.addEdge(patternNode, consequenceBlock.entry, "consequence");
     if (consequenceBlock.exit)
@@ -305,6 +311,7 @@ function processMatchStatement(
       previous = patternNode;
     }
   }
+  if (previous) builder.addEdge(previous, mergeNode, "alternative");
 
   return matcher.update({ entry: subjectBlock.entry, exit: mergeNode });
 }
