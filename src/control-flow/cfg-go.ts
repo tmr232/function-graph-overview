@@ -390,17 +390,23 @@ function processSwitchlike(
     ctx.builder.addEdge(breakNode, mergeNode);
   });
 
-  const braceMatch = ctx.matcher.match(switchSyntax, `(_ "{" @opening-brace "}" @closing-brace) @switch`, { maxStartDepth: 1 })
-  const openingBrace = braceMatch.requireSyntax("opening-brace")
-  const closingBrace = braceMatch.requireSyntax("closing-brace")
-  const caseSyntaxMany = getCases(switchSyntax)
+  const braceMatch = ctx.matcher.match(
+    switchSyntax,
+    `(_ "{" @opening-brace "}" @closing-brace) @switch`,
+    { maxStartDepth: 1 },
+  );
+  const openingBrace = braceMatch.requireSyntax("opening-brace");
+  const closingBrace = braceMatch.requireSyntax("closing-brace");
+  const caseSyntaxMany = getCases(switchSyntax);
   const firstCase = caseSyntaxMany[0];
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (firstCase) {
-    ctx.linkGap(openingBrace, firstCase)
+    ctx.linkGap(openingBrace, firstCase);
   }
-  const lastCase = caseSyntaxMany[caseSyntaxMany.length - 1]
+  const lastCase = caseSyntaxMany[caseSyntaxMany.length - 1];
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (lastCase) {
-    ctx.linkGap(lastCase, closingBrace, { reverse: true, includeTo: true })
+    ctx.linkGap(lastCase, closingBrace, { reverse: true, includeTo: true });
   }
 
   return blockHandler.update({ entry: headNode, exit: mergeNode });
