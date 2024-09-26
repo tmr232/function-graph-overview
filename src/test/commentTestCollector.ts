@@ -9,10 +9,10 @@ const languages: {
   ext: string;
   getTestFuncs: (code: string) => Generator<TestFunction>;
 }[] = [
-    { ext: "c", getTestFuncs: getTestFuncsForC },
-    { ext: "go", getTestFuncs: getTestFuncsForGo },
-    { ext: "py", getTestFuncs: getTestsForPython },
-  ];
+  { ext: "c", getTestFuncs: getTestFuncsForC },
+  { ext: "go", getTestFuncs: getTestFuncsForGo },
+  { ext: "py", getTestFuncs: getTestsForPython },
+];
 
 const sampleGlob = new Glob(
   `**/*.{${languages.map(({ ext }) => ext).join(",")}}`,

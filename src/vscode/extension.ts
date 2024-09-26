@@ -116,7 +116,11 @@ function getCurrentCode(): {
   return { code, languageId, language };
 }
 
-type Settings = { flatSwitch: boolean; simplify: boolean, highlightCurrentNode: boolean };
+type Settings = {
+  flatSwitch: boolean;
+  simplify: boolean;
+  highlightCurrentNode: boolean;
+};
 function loadSettings(): Settings {
   const config = vscode.workspace.getConfiguration("functionGraphOverview");
 
@@ -230,7 +234,9 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       // TODO: Highlighting in the DOT is a cute trick, but might become less effective on larger functions.
       //       So it works for now, but I'll probably need to replace it with CSS so that I only render once per function.
-      const nodeToHighlight = highlightCurrentNode ? getValue(cfg.offsetToNode, offset) : undefined;
+      const nodeToHighlight = highlightCurrentNode
+        ? getValue(cfg.offsetToNode, offset)
+        : undefined;
       const dot = graphToDot(cfg, false, nodeToHighlight);
       const svg = graphviz.dot(dot);
 
@@ -242,6 +248,6 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() { }
+export function deactivate() {}
 
 //------------------------------------------------

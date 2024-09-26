@@ -10,7 +10,7 @@
   export let codeGo = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
   export let codeC = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";
   export let codePython = "def example():\n    if x:\n        return";
-
+  let offsetToHighlight: number | undefined = undefined;
   let languages: {
     language: Language;
     text: string;
@@ -99,8 +99,8 @@
   let editor: Editor;
 
   function cursorMoved(event): void {
-    const { row, column, index } = event.detail.pos;
-    graph.setCursor(row, column, index);
+    const { index } = event.detail.pos;
+    offsetToHighlight = index;
   }
 </script>
 
@@ -172,6 +172,7 @@
     </div>
     <Graph
       {code}
+      {offsetToHighlight}
       language={selection.language}
       {simplify}
       {flatSwitch}
