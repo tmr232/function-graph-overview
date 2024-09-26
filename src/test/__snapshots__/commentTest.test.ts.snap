@@ -5129,6 +5129,10 @@ exports[`C: simpleIf: Segmentation 1`] = `
     "start": 98,
     "value": "node1",
   },
+  {
+    "start": 98,
+    "value": "node1",
+  },
 ]
 `;
 
@@ -5226,6 +5230,10 @@ exports[`C: ifElse: Segmentation 1`] = `
     "start": 205,
     "value": "node1",
   },
+  {
+    "start": 205,
+    "value": "node1",
+  },
 ]
 `;
 
@@ -5261,6 +5269,10 @@ exports[`C: forever: Segmentation 1`] = `
   },
   {
     "start": 277,
+    "value": "node2",
+  },
+  {
+    "start": 280,
     "value": "node2",
   },
   {
@@ -5326,6 +5338,10 @@ exports[`C: forever2: Segmentation 1`] = `
   },
   {
     "start": 366,
+    "value": "node1",
+  },
+  {
+    "start": 369,
     "value": "node1",
   },
   {
@@ -5409,6 +5425,10 @@ exports[`C: forLoop: Segmentation 1`] = `
     "start": 535,
     "value": "node1",
   },
+  {
+    "start": 535,
+    "value": "node1",
+  },
 ]
 `;
 
@@ -5452,6 +5472,10 @@ exports[`C: whileLoop: Segmentation 1`] = `
   },
   {
     "start": 612,
+    "value": "node1",
+  },
+  {
+    "start": 615,
     "value": "node0",
   },
   {
@@ -5501,6 +5525,10 @@ exports[`C: doWhile: Segmentation 1`] = `
   },
   {
     "start": 694,
+    "value": "node1",
+  },
+  {
+    "start": 697,
     "value": "node0",
   },
   {
@@ -5562,6 +5590,10 @@ exports[`C: gotoA: Segmentation 1`] = `
   },
   {
     "start": 794,
+    "value": "node2",
+  },
+  {
+    "start": 797,
     "value": "node0",
   },
   {
@@ -5669,6 +5701,10 @@ exports[`C: switch_1: Segmentation 1`] = `
     "start": 1023,
     "value": "node1",
   },
+  {
+    "start": 1023,
+    "value": "node1",
+  },
 ]
 `;
 
@@ -5744,6 +5780,10 @@ exports[`C: switch_2: Segmentation 1`] = `
   },
   {
     "start": 1153,
+    "value": "node1",
+  },
+  {
+    "start": 1156,
     "value": "node1",
   },
   {
@@ -5989,6 +6029,10 @@ exports[`C: ManyIfs: Segmentation 1`] = `
   },
   {
     "start": 1368,
+    "value": "node16",
+  },
+  {
+    "start": 1371,
     "value": "node1",
   },
   {
@@ -6122,6 +6166,10 @@ exports[`C: IfWithoutBraces: Segmentation 1`] = `
   },
   {
     "start": 1699,
+    "value": "node12",
+  },
+  {
+    "start": 1702,
     "value": "node5",
   },
   {
@@ -6690,6 +6738,14 @@ exports[`C: ForLoops: Segmentation 1`] = `
     "value": "node7",
   },
   {
+    "start": 2079,
+    "value": "Not found",
+  },
+  {
+    "start": 2081,
+    "value": "node7",
+  },
+  {
     "start": 2081,
     "value": "node7",
   },
@@ -6866,6 +6922,10 @@ exports[`C: MoreSwitch: Segmentation 1`] = `
     "start": 2346,
     "value": "node1",
   },
+  {
+    "start": 2346,
+    "value": "node1",
+  },
 ]
 `;
 
@@ -6914,6 +6974,10 @@ exports[`Go: ifThen: Segmentation 1`] = `
   },
   {
     "start": 121,
+    "value": "node1",
+  },
+  {
+    "start": 124,
     "value": "node1",
   },
   {
@@ -7079,6 +7143,10 @@ exports[`Go: ManyIfStatements: Segmentation 1`] = `
   },
   {
     "start": 280,
+    "value": "node10",
+  },
+  {
+    "start": 283,
     "value": "node1",
   },
   {
@@ -7160,6 +7228,10 @@ exports[`Go: Switch: Segmentation 1`] = `
   },
   {
     "start": 377,
+    "value": "node1",
+  },
+  {
+    "start": 380,
     "value": "node1",
   },
   {
@@ -7329,6 +7401,10 @@ exports[`Go: switchAndLabelsAndGoto: Segmentation 1`] = `
   },
   {
     "start": 562,
+    "value": "node13",
+  },
+  {
+    "start": 565,
     "value": "node1",
   },
   {
@@ -7346,6 +7422,14 @@ exports[`Go: trivialReachability: Segmentation 1`] = `
   },
   {
     "start": 616,
+    "value": "node2",
+  },
+  {
+    "start": 669,
+    "value": "Not found",
+  },
+  {
+    "start": 671,
     "value": "node2",
   },
   {
@@ -7441,6 +7525,10 @@ exports[`Go: hasFallthrough: Segmentation 1`] = `
     "start": 832,
     "value": "node1",
   },
+  {
+    "start": 832,
+    "value": "node1",
+  },
 ]
 `;
 
@@ -7468,6 +7556,10 @@ exports[`Go: forever: Segmentation 1`] = `
   },
   {
     "start": 882,
+    "value": "node2",
+  },
+  {
+    "start": 885,
     "value": "node0",
   },
   {
@@ -7501,6 +7593,10 @@ exports[`Go: forCond: Segmentation 1`] = `
   },
   {
     "start": 942,
+    "value": "node1",
+  },
+  {
+    "start": 945,
     "value": "node0",
   },
   {
@@ -7534,6 +7630,10 @@ exports[`Go: forCStyle: Segmentation 1`] = `
   },
   {
     "start": 1019,
+    "value": "node1",
+  },
+  {
+    "start": 1022,
     "value": "node0",
   },
   {
@@ -7567,6 +7667,10 @@ exports[`Go: forRange: Segmentation 1`] = `
   },
   {
     "start": 1086,
+    "value": "node1",
+  },
+  {
+    "start": 1089,
     "value": "node0",
   },
   {
@@ -7624,6 +7728,10 @@ exports[`Go: typeSwitch: Segmentation 1`] = `
   },
   {
     "start": 1179,
+    "value": "node1",
+  },
+  {
+    "start": 1182,
     "value": "node1",
   },
   {
@@ -7737,6 +7845,10 @@ exports[`Go: Select: Segmentation 1`] = `
   },
   {
     "start": 1356,
+    "value": "node2",
+  },
+  {
+    "start": 1359,
     "value": "node2",
   },
   {
@@ -7880,6 +7992,10 @@ exports[`Go: Select2: Segmentation 1`] = `
     "start": 1556,
     "value": "node2",
   },
+  {
+    "start": 1556,
+    "value": "node2",
+  },
 ]
 `;
 
@@ -7895,6 +8011,10 @@ exports[`Python: trivial: Segmentation 1`] = `
   },
   {
     "start": 45,
+    "value": "node2",
+  },
+  {
+    "start": 49,
     "value": "node2",
   },
   {
@@ -7961,6 +8081,10 @@ exports[`Python: If: Segmentation 1`] = `
   {
     "start": 109,
     "value": "node1",
+  },
+  {
+    "start": 109,
+    "value": "node6",
   },
   {
     "start": 109,
@@ -8054,6 +8178,10 @@ exports[`Python: IfElse: Segmentation 1`] = `
   {
     "start": 195,
     "value": "node1",
+  },
+  {
+    "start": 195,
+    "value": "node7",
   },
   {
     "start": 195,
@@ -8186,6 +8314,10 @@ exports[`Python: IfElifElse: Segmentation 1`] = `
   },
   {
     "start": 311,
+    "value": "node9",
+  },
+  {
+    "start": 311,
     "value": "node1",
   },
 ]
@@ -8224,6 +8356,10 @@ exports[`Python: For: Segmentation 1`] = `
   {
     "start": 381,
     "value": "node0",
+  },
+  {
+    "start": 381,
+    "value": "node3",
   },
   {
     "start": 381,
@@ -8308,6 +8444,10 @@ exports[`Python: ForContinue: Segmentation 1`] = `
   },
   {
     "start": 483,
+    "value": "node7",
+  },
+  {
+    "start": 483,
     "value": "node0",
   },
 ]
@@ -8381,6 +8521,10 @@ exports[`Python: ForBreak: Segmentation 1`] = `
   },
   {
     "start": 565,
+    "value": "node6",
+  },
+  {
+    "start": 565,
     "value": "node0",
   },
 ]
@@ -8431,6 +8575,10 @@ exports[`Python: ForElse: Segmentation 1`] = `
   {
     "start": 655,
     "value": "node0",
+  },
+  {
+    "start": 655,
+    "value": "node4",
   },
   {
     "start": 655,
@@ -8519,6 +8667,10 @@ exports[`Python: ForElseBreak: Segmentation 1`] = `
   },
   {
     "start": 766,
+    "value": "node7",
+  },
+  {
+    "start": 766,
     "value": "node0",
   },
 ]
@@ -8604,6 +8756,10 @@ exports[`Python: ForElseBreakReturn: Segmentation 1`] = `
   },
   {
     "start": 885,
+    "value": "node7",
+  },
+  {
+    "start": 885,
     "value": "node0",
   },
 ]
@@ -8642,6 +8798,10 @@ exports[`Python: While: Segmentation 1`] = `
   {
     "start": 941,
     "value": "node0",
+  },
+  {
+    "start": 941,
+    "value": "Not found",
   },
   {
     "start": 941,
@@ -8726,6 +8886,10 @@ exports[`Python: WhileContinue: Segmentation 1`] = `
   },
   {
     "start": 1042,
+    "value": "Not found",
+  },
+  {
+    "start": 1042,
     "value": "node0",
   },
 ]
@@ -8799,6 +8963,10 @@ exports[`Python: WhileBreak: Segmentation 1`] = `
   },
   {
     "start": 1123,
+    "value": "Not found",
+  },
+  {
+    "start": 1123,
     "value": "node0",
   },
 ]
@@ -8849,6 +9017,10 @@ exports[`Python: WhileElse: Segmentation 1`] = `
   {
     "start": 1216,
     "value": "node0",
+  },
+  {
+    "start": 1216,
+    "value": "Not found",
   },
   {
     "start": 1216,
@@ -8945,6 +9117,10 @@ exports[`Python: WhileElseBreak: Segmentation 1`] = `
   },
   {
     "start": 1340,
+    "value": "Not found",
+  },
+  {
+    "start": 1340,
     "value": "node0",
   },
 ]
@@ -9031,6 +9207,10 @@ exports[`Python: Match: Segmentation 1`] = `
   {
     "start": 1452,
     "value": "node6",
+  },
+  {
+    "start": 1452,
+    "value": "node1",
   },
   {
     "start": 1452,
@@ -9165,6 +9345,10 @@ exports[`Python: MatchMultiPattern: Segmentation 1`] = `
     "start": 1586,
     "value": "node1",
   },
+  {
+    "start": 1586,
+    "value": "node1",
+  },
 ]
 `;
 
@@ -9225,6 +9409,10 @@ exports[`Python: Return: Segmentation 1`] = `
   {
     "start": 1658,
     "value": "node1",
+  },
+  {
+    "start": 1658,
+    "value": "node5",
   },
   {
     "start": 1658,
@@ -9362,6 +9550,10 @@ exports[`Python: WithCluster: Segmentation 1`] = `
   {
     "start": 1818,
     "value": "node2",
+  },
+  {
+    "start": 1818,
+    "value": "node11",
   },
   {
     "start": 1818,
@@ -9634,6 +9826,10 @@ exports[`Python: WithNestedCluster: Segmentation 1`] = `
   },
   {
     "start": 2113,
+    "value": "Not found",
+  },
+  {
+    "start": 2113,
     "value": "node1",
   },
 ]
@@ -9656,6 +9852,10 @@ exports[`Python: raise_exception: Segmentation 1`] = `
   {
     "start": 2194,
     "value": "node0",
+  },
+  {
+    "start": 2194,
+    "value": "node1",
   },
   {
     "start": 2194,
@@ -9792,6 +9992,10 @@ exports[`Python: raise_again: Segmentation 1`] = `
   },
   {
     "start": 2377,
+    "value": "node2",
+  },
+  {
+    "start": 2377,
     "value": "node0",
   },
 ]
@@ -9830,6 +10034,10 @@ exports[`Python: yield_value: Segmentation 1`] = `
   {
     "start": 2475,
     "value": "node0",
+  },
+  {
+    "start": 2475,
+    "value": "node3",
   },
   {
     "start": 2475,
@@ -9899,6 +10107,10 @@ exports[`Python: try_except: Segmentation 1`] = `
   {
     "start": 2605,
     "value": "node0",
+  },
+  {
+    "start": 2605,
+    "value": "node4",
   },
   {
     "start": 2605,
@@ -9988,6 +10200,10 @@ exports[`Python: try_except_finally: Segmentation 1`] = `
   {
     "start": 2764,
     "value": "node0",
+  },
+  {
+    "start": 2764,
+    "value": "node5",
   },
   {
     "start": 2764,
@@ -10128,6 +10344,10 @@ exports[`Python: try_many_except_finally: Segmentation 1`] = `
   },
   {
     "start": 2979,
+    "value": "node9",
+  },
+  {
+    "start": 2979,
     "value": "node0",
   },
 ]
@@ -10222,6 +10442,10 @@ exports[`Python: try_except_else_finally: Segmentation 1`] = `
   {
     "start": 3125,
     "value": "node0",
+  },
+  {
+    "start": 3125,
+    "value": "node2",
   },
   {
     "start": 3125,
@@ -10610,6 +10834,10 @@ exports[`Python: massive_try_except_else_finally: Segmentation 1`] = `
   },
   {
     "start": 3587,
+    "value": "node3",
+  },
+  {
+    "start": 3587,
     "value": "node0",
   },
 ]
@@ -10711,6 +10939,10 @@ exports[`Python: try_finally: Segmentation 1`] = `
   },
   {
     "start": 3738,
+    "value": "node2",
+  },
+  {
+    "start": 3738,
     "value": "node0",
   },
 ]
@@ -10805,6 +11037,10 @@ exports[`Python: try_with_finally: Segmentation 1`] = `
   {
     "start": 3896,
     "value": "node0",
+  },
+  {
+    "start": 3896,
+    "value": "node2",
   },
   {
     "start": 3896,
