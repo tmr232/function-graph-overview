@@ -52,6 +52,7 @@ export class Builder {
       lines,
       markers: [],
       cluster,
+      targets: [id],
     });
     return id;
   }

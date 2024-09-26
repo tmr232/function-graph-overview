@@ -1,3 +1,4 @@
+import { remapNodeTargets } from "../control-flow/cfg-defs";
 import { graphToDot } from "../control-flow/render";
 import {
   buildSimpleCFG,
@@ -52,6 +53,18 @@ export class TestManager {
         const cfg = buildSimpleCFG(testFunc.language, testFunc.function);
         const dot = graphToDot(cfg);
         return dot;
+      };
+      return [testName, handler];
+    });
+  }
+
+  public get segmentationTests() {
+    return this.testFunctions.map((testFunc) => {
+      const testName = `${testFunc.language}: ${testFunc.name}: Segmentation`;
+      const handler = () => {
+        const cfg = buildSimpleCFG(testFunc.language, testFunc.function);
+        const offsetToNode = remapNodeTargets(cfg).offsetToNode;
+        return offsetToNode;
       };
       return [testName, handler];
     });

@@ -110,3 +110,76 @@ void switch_2() {
     case 3:
     }
 }
+
+/*
+nodes: 15,
+exits: 1
+*/
+void ManyIfs() {
+    if (x) {
+    }
+
+    if (x) {
+    } else {
+    }
+
+    if (x) {
+    } else if (x) {
+    }
+
+    if (x) {
+    } else if (x) {
+
+    } else {
+    }
+}
+
+/*
+nodes: 7
+*/
+void IfWithoutBraces() {
+    /*
+    It's important to make sure the braces in the if-query are optional.
+    So the following two loops should behave identically.
+    */
+    for (;;) {
+        if (x)
+            break;
+    }
+
+    for (;;) {
+        if (x) {
+            break;
+        }
+    }
+}
+
+/*
+exits: 1
+ */
+void ForLoops() {
+    // clang-format off
+    for (a; b; c) { if (x) break;}
+    for (a; b;  ) { if (x) break;}
+    for (a;  ; c) { if (x) break;}
+    for (a;  ;  ) { if (x) break;}
+    for ( ; b; c) { if (x) break;}
+    for ( ; b;  ) { if (x) break;}
+    for ( ;  ; c) { if (x) break;}
+    for ( ;  ;  ) { if (x) break;}
+    //clang-format on
+}
+
+/*
+exits: 1
+*/
+void MoreSwitch() {
+    // This is mostly here to test code segmentation and mapping to CFG nodes
+    switch (x) {
+        case 1: break;
+        case 2: break;
+        case 3: f();
+        case 4: break;
+        default: f();
+    }
+}

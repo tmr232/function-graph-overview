@@ -20,3 +20,12 @@ test.each(testManager.snapshotTests)(
     expect(dot).toMatchSnapshot();
   },
 );
+
+test.each(testManager.segmentationTests)(
+  testManager.nameFormat,
+  (_name, handler) => {
+    // @ts-expect-error: Mismatch between function types
+    const offsetToNode = handler();
+    expect(offsetToNode).toMatchSnapshot();
+  },
+);

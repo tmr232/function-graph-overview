@@ -1,5 +1,7 @@
 import { MultiDirectedGraph } from "graphology";
 import type Parser from "web-tree-sitter";
+import type { SimpleRange } from "./ranges";
+import { evolve } from "./evolve";
 
 export type NodeType =
   | "YIELD"
@@ -54,6 +56,7 @@ export interface GraphNode {
   lines: number;
   markers: string[];
   cluster?: Cluster;
+  targets: string[];
 }
 
 export interface GraphEdge {
@@ -66,7 +69,7 @@ export interface Goto {
 }
 
 export interface BasicBlock {
-  entry: string | null;
+  entry: string;
   exit: string | null;
   continues?: string[];
   breaks?: string[];
@@ -82,6 +85,7 @@ export type CFGGraph = MultiDirectedGraph<GraphNode, GraphEdge>;
 export interface CFG {
   graph: CFGGraph;
   entry: string;
+  offsetToNode: SimpleRange<string>[];
 }
 
 export class BlockHandler {
@@ -164,12 +168,13 @@ export function mergeNodeAttrs(
     lines: from.lines + into.lines,
     markers: [...from.markers, ...into.markers],
     cluster: from.cluster,
+    targets: [...from.targets, ...into.targets],
   };
 }
 export interface Case {
-  conditionEntry: string | null;
-  conditionExit: string | null;
-  consequenceEntry: string | null;
+  conditionEntry: string;
+  conditionExit: string;
+  consequenceEntry: string;
   consequenceExit: string | null;
   alternativeExit: string;
   hasFallthrough: boolean;
@@ -183,4 +188,24 @@ export interface BuilderOptions {
 
 export interface CFGBuilder {
   buildCFG(functionSyntax: Parser.SyntaxNode): CFG;
+}
+
+/**
+ * Nodes are changes during simplification, and we need to remap them to match.
+ * @param cfg
+ */
+export function remapNodeTargets(cfg: CFG): CFG {
+  const remap = new Map<string, string>();
+  cfg.graph.forEachNode((node, { targets }) => {
+    targets.forEach((target) => remap.set(target, node));
+  });
+  const offsetToNode = cfg.offsetToNode.map(({ start, value: node }) => ({
+    start,
+    value: remap.get(node) ?? node,
+  }));
+
+  // Copying the graph is needed.
+  // Seems that some of the graph properties don't survive the structured clone.
+  const graph = cfg.graph.copy();
+  return evolve(cfg, { graph, offsetToNode });
 }

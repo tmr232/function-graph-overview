@@ -1,7 +1,11 @@
 <script lang="ts">
   import Parser from "web-tree-sitter";
   import { newCFGBuilder, type Language } from "../../../control-flow/cfg";
-  import { mergeNodeAttrs } from "../../../control-flow/cfg-defs";
+  import {
+    mergeNodeAttrs,
+    remapNodeTargets,
+    type CFG,
+  } from "../../../control-flow/cfg-defs";
   import { graphToDot } from "../../../control-flow/render";
   import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
@@ -10,10 +14,14 @@
     initialize as initializeUtils,
     type Parsers,
   } from "./utils";
+  import { getValue } from "../../../control-flow/ranges";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
   let dot: string;
+  let cfg: CFG;
+  let tree: Parser.Tree;
+  export let offsetToHighlight: number | undefined = undefined;
   export let code: string;
   export let language: Language;
   export let verbose: boolean = false;
@@ -37,20 +45,22 @@
   function renderCode(
     code: string,
     language: Language,
+    highlightOffset: number | undefined,
     options: RenderOptions,
   ) {
     const { trim, simplify, verbose, flatSwitch } = options;
-    const tree = parsers[language].parse(code);
+    tree = parsers[language].parse(code);
     const functionSyntax = getFirstFunction(tree);
     const builder = newCFGBuilder(language, { flatSwitch });
 
-    let cfg = builder.buildCFG(functionSyntax);
+    cfg = builder.buildCFG(functionSyntax);
 
     if (!cfg) return "";
     if (trim) cfg = trimFor(cfg);
     if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
-
-    dot = graphToDot(cfg, verbose);
+    cfg = remapNodeTargets(cfg);
+    const nodeToHighlight = getValue(cfg.offsetToNode, highlightOffset);
+    dot = graphToDot(cfg, verbose, nodeToHighlight);
 
     return graphviz.dot(dot);
   }
@@ -58,11 +68,13 @@
   function renderWrapper(
     code: string,
     language: Language,
+    highlightOffset: number | undefined,
     options: RenderOptions,
   ) {
     try {
-      return renderCode(code, language, options);
+      return renderCode(code, language, highlightOffset, options);
     } catch (error) {
+      console.trace(error);
       return `<p style='border: 2px red solid;'>${error.toString()}</p>`;
     }
   }
@@ -75,7 +87,7 @@
 <div class="results">
   {#await initialize() then}
     <div class="graph">
-      {@html renderWrapper(code, language, {
+      {@html renderWrapper(code, language, offsetToHighlight, {
         simplify,
         verbose,
         trim,

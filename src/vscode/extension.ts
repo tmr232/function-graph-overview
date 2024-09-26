@@ -6,7 +6,13 @@ import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import { graphToDot } from "../control-flow/render";
 import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
 import { newCFGBuilder, type Language } from "../control-flow/cfg";
-import { mergeNodeAttrs } from "../control-flow/cfg-defs";
+import {
+  mergeNodeAttrs,
+  remapNodeTargets,
+  type CFG,
+} from "../control-flow/cfg-defs";
+import { OverviewViewProvider } from "./overview-view";
+import { getValue } from "../control-flow/ranges";
 
 let graphviz: Graphviz;
 interface SupportedLanguage {
@@ -32,10 +38,10 @@ const supportedLanguages: SupportedLanguage[] = [
   },
 ];
 
-const functionNodeTypes: { [key: string]: string[] } = {
-  go: ["function_declaration", "method_declaration", "func_literal"],
-  c: ["function_definition"],
-  python: ["function_definition"],
+const functionNodeTypes: { [key in Language]: string[] } = {
+  Go: ["function_declaration", "method_declaration", "func_literal"],
+  C: ["function_definition"],
+  Python: ["function_definition"],
 };
 
 const supportedLanguageIds = supportedLanguages.map((lang) => lang.languageId);
@@ -48,8 +54,11 @@ const idToLanguage = (languageId: string): Language | null => {
   return null;
 };
 
-async function initializeParsers(context: vscode.ExtensionContext) {
-  const parsers: { [key: string]: Parser } = {};
+async function initializeParsers(
+  context: vscode.ExtensionContext,
+): Promise<Record<Language, Parser>> {
+  // const parsers: { [key in Language]: Parser } = {};
+  const parsers: Partial<Record<Language, Parser>> = {};
 
   for (const lang of supportedLanguages) {
     const languagePath = vscode.Uri.joinPath(
@@ -57,10 +66,10 @@ async function initializeParsers(context: vscode.ExtensionContext) {
       "parsers",
       lang.parserName,
     ).fsPath;
-    parsers[lang.languageId] = await initializeParser(context, languagePath);
+    parsers[lang.language] = await initializeParser(context, languagePath);
   }
 
-  return parsers;
+  return parsers as Record<Language, Parser>;
 }
 
 async function initializeParser(
@@ -82,7 +91,11 @@ async function initializeParser(
   return parser;
 }
 
-function getCurrentCode(): { code: string; languageId: string } | null {
+function getCurrentCode(): {
+  code: string;
+  languageId: string;
+  language: Language;
+} | null {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     return null;
@@ -94,17 +107,63 @@ function getCurrentCode(): { code: string; languageId: string } | null {
     return null;
   }
 
-  const code = document.getText();
+  const language = idToLanguage(languageId);
+  if (!language) {
+    return null;
+  }
 
-  return { code, languageId };
+  const code = document.getText();
+  return { code, languageId, language };
 }
 
+type Settings = {
+  flatSwitch: boolean;
+  simplify: boolean;
+  highlightCurrentNode: boolean;
+};
+function loadSettings(): Settings {
+  const config = vscode.workspace.getConfiguration("functionGraphOverview");
+
+  return {
+    flatSwitch: config.get("flatSwitch") ?? false,
+    simplify: config.get("simplify") ?? false,
+    highlightCurrentNode: config.get("highlightCurrentNode") ?? true,
+  };
+}
+type CFGKey = { functionText: string; flatSwitch: boolean; simplify: boolean };
+
+function isSameKey(a: CFGKey, b: CFGKey): boolean {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
+function getFunctionAtPosition(
+  tree: Parser.Tree,
+  position: vscode.Position,
+  language: Language,
+): Parser.SyntaxNode | null {
+  let syntax: SyntaxNode | null = tree.rootNode.descendantForPosition({
+    row: position.line,
+    column: position.character,
+  });
+
+  while (syntax) {
+    if (functionNodeTypes[language].includes(syntax.type)) {
+      break;
+    }
+    syntax = syntax.parent;
+  }
+  return syntax;
+}
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
   graphviz = await Graphviz.load();
+  const helloWorldSvg = graphviz.dot("digraph G { Hello -> World }");
 
-  const provider = new OverviewViewProvider(context.extensionUri);
+  const provider = new OverviewViewProvider(
+    context.extensionUri,
+    helloWorldSvg,
+  );
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
@@ -121,74 +180,67 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const parsers = await initializeParsers(context);
 
+  let cfgKey: CFGKey | undefined;
+  let savedCFG: CFG;
+
   const cursorMove = vscode.window.onDidChangeTextEditorSelection(
-    (event: vscode.TextEditorSelectionChangeEvent) => {
+    (event: vscode.TextEditorSelectionChangeEvent): void => {
       const editor = event.textEditor;
       const position = editor.selection.active;
-
-      const { code, languageId } = getCurrentCode() ?? {};
-      if (!code || !languageId) {
-        return null;
-      }
-
-      const tree = parsers[languageId].parse(code);
+      const offset = editor.document.offsetAt(position);
 
       console.log(
         `Cursor position changed: Line ${position.line + 1}, Column ${position.character + 1}`,
       );
-      let node: SyntaxNode | null = tree.rootNode.descendantForPosition({
-        row: position.line,
-        column: position.character,
-      });
 
-      while (node) {
-        if (functionNodeTypes[languageId].includes(node.type)) {
-          break;
-        }
-        node = node.parent;
+      const { code, languageId, language } = getCurrentCode() ?? {};
+      if (!code || !languageId || !language) {
+        return;
       }
 
-      if (node) {
-        console.log(node);
-        const nameNode = node.childForFieldName("name");
-        if (nameNode) {
-          const name = editor.document.getText(
-            new vscode.Range(
-              new vscode.Position(
-                nameNode.startPosition.row,
-                nameNode.startPosition.column,
-              ),
-              new vscode.Position(
-                nameNode.endPosition.row,
-                nameNode.endPosition.column,
-              ),
-            ),
-          );
-          console.log("Currently in", name);
-        }
-        const flatSwitch = Boolean(
-          vscode.workspace
-            .getConfiguration("functionGraphOverview")
-            .get("flatSwitch"),
-        );
-        const language = idToLanguage(languageId);
-        if (!language) {
-          return;
-        }
+      const tree = parsers[language].parse(code);
+
+      const functionSyntax = getFunctionAtPosition(tree, position, language);
+      if (!functionSyntax) return;
+
+      console.log(functionSyntax);
+      const nameSyntax = functionSyntax.childForFieldName("name");
+      if (nameSyntax) {
+        console.log("Currently in", nameSyntax.text);
+      }
+
+      const { flatSwitch, simplify, highlightCurrentNode } = loadSettings();
+      // We'd like to avoid re-running CFG generation for a function if nothing changed.
+      const newKey: CFGKey = {
+        flatSwitch,
+        simplify,
+        functionText: functionSyntax.text,
+      };
+      let cfg: CFG;
+      if (cfgKey && isSameKey(newKey, cfgKey)) {
+        cfg = savedCFG;
+      } else {
+        cfgKey = newKey;
+
         const builder = newCFGBuilder(language, { flatSwitch });
-        let cfg = builder.buildCFG(node);
+        cfg = builder.buildCFG(functionSyntax);
         cfg = trimFor(cfg);
-        if (
-          vscode.workspace
-            .getConfiguration("functionGraphOverview")
-            .get("simplify")
-        ) {
+        if (simplify) {
           cfg = simplifyCFG(cfg, mergeNodeAttrs);
         }
-        const dot = graphToDot(cfg);
-        const svg = graphviz.dot(dot);
-        provider.setSVG(svg);
+        cfg = remapNodeTargets(cfg);
+
+        savedCFG = cfg;
       }
+      // TODO: Highlighting in the DOT is a cute trick, but might become less effective on larger functions.
+      //       So it works for now, but I'll probably need to replace it with CSS so that I only render once per function.
+      const nodeToHighlight = highlightCurrentNode
+        ? getValue(cfg.offsetToNode, offset)
+        : undefined;
+      const dot = graphToDot(cfg, false, nodeToHighlight);
+      const svg = graphviz.dot(dot);
+
+      provider.setSVG(svg);
     },
   );
 
@@ -199,96 +251,3 @@ export async function activate(context: vscode.ExtensionContext) {
 export function deactivate() {}
 
 //------------------------------------------------
-
-class OverviewViewProvider implements vscode.WebviewViewProvider {
-  public static readonly viewType = "functionGraphOverview.overview";
-
-  private _view?: vscode.WebviewView;
-
-  constructor(private readonly _extensionUri: vscode.Uri) {}
-
-  public setSVG(svg: string) {
-    if (this._view) {
-      this._view.webview.postMessage({ type: "svgImage", svg });
-    }
-  }
-
-  resolveWebviewView(
-    webviewView: vscode.WebviewView,
-    _context: vscode.WebviewViewResolveContext,
-    _token: vscode.CancellationToken,
-  ): Thenable<void> | void {
-    this._view = webviewView;
-
-    webviewView.webview.options = {
-      // Allow scripts in the webview
-      enableScripts: true,
-
-      localResourceRoots: [this._extensionUri],
-    };
-
-    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
-  }
-  private _getHtmlForWebview(webview: vscode.Webview): string {
-    // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
-    const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "webview-content", "main.js"),
-    );
-
-    // Do the same for the stylesheet.
-    const styleResetUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "webview-content", "reset.css"),
-    );
-    const styleVSCodeUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "webview-content", "vscode.css"),
-    );
-    const styleMainUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "webview-content", "main.css"),
-    );
-
-    // Use a nonce to only allow a specific script to be run.
-    const nonce = getNonce();
-
-    const svg = graphviz.dot("digraph G { Hello -> World }");
-    return `<!DOCTYPE html>
-			<html lang="en">
-			<head>
-				<meta charset="UTF-8">
-
-				<!--
-					Use a content security policy to only allow loading styles from our extension directory,
-					and only allow scripts that have a specific nonce.
-					(See the 'webview-sample' extension sample for img-src content security policy examples)
-				-->
-				<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
-
-				<link href="${styleResetUri}" rel="stylesheet">
-				<link href="${styleVSCodeUri}" rel="stylesheet">
-				<link href="${styleMainUri}" rel="stylesheet">
-
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<title>Overview</title>
-				<style>
-
-				</style>
-			</head>
-			<body>
-			<div id="overview">
-				${svg}
-				</div>
-
-				<script nonce="${nonce}" src="${scriptUri}"></script>
-			</body>
-			</html>`;
-  }
-}
-
-function getNonce() {
-  let text = "";
-  const possible =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  for (let i = 0; i < 32; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-}

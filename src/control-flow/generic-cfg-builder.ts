@@ -6,13 +6,38 @@ import {
   type BuilderOptions,
   type CFG,
 } from "./cfg-defs";
-import type { StatementHandlers } from "./statement-handlers";
 import { BlockMatcher } from "./block-matcher";
+import { NodeMapper } from "./node-mapper";
+import { pairwise } from "./zip";
+
+interface Dispatch {
+  single(syntax: Parser.SyntaxNode | null): BasicBlock;
+  many(statements: Parser.SyntaxNode[]): BasicBlock;
+}
+interface Link {
+  syntaxToNode: InstanceType<typeof NodeMapper>["linkSytaxToNode"];
+  offsetToSyntax: InstanceType<typeof NodeMapper>["linkOffsetToSyntax"];
+}
+export interface Context {
+  builder: Builder;
+  options: BuilderOptions;
+  matcher: BlockMatcher;
+  dispatch: Dispatch;
+  state: BlockHandler;
+  link: Link;
+}
+
+type StatementHandler = (syntax: Parser.SyntaxNode, ctx: Context) => BasicBlock;
+export type StatementHandlers = {
+  named: { [key: string]: StatementHandler };
+  default: StatementHandler;
+};
 
 export class GenericCFGBuilder {
   private builder: Builder = new Builder();
   private readonly options: BuilderOptions;
   private readonly handlers: StatementHandlers;
+  private readonly nodeMapper: NodeMapper = new NodeMapper();
 
   constructor(handlers: StatementHandlers, options: BuilderOptions) {
     this.options = options;
@@ -21,12 +46,12 @@ export class GenericCFGBuilder {
 
   public buildCFG(functionNode: Parser.SyntaxNode): CFG {
     const startNode = this.builder.addNode("START", "START");
-
+    this.nodeMapper.linkSytaxToNode(functionNode, startNode);
     const bodySyntax = functionNode.childForFieldName("body");
     if (bodySyntax) {
       const blockHandler = new BlockHandler();
       const { entry, exit } = blockHandler.update(
-        this.processStatements(bodySyntax.namedChildren),
+        this.dispatchMany(bodySyntax.namedChildren),
       );
 
       blockHandler.processGotos((gotoNode, labelNode) =>
@@ -37,28 +62,52 @@ export class GenericCFGBuilder {
       // `entry` will be non-null for any valid code
       if (entry) this.builder.addEdge(startNode, entry);
       if (exit) this.builder.addEdge(exit, endNode);
+
+      // Make sure the end of the function is linked to the last piece of code, not to the top of the function.
+      const lastStatement =
+        bodySyntax.namedChildren[bodySyntax.namedChildren.length - 1];
+      if (lastStatement) {
+        this.nodeMapper.linkOffsetToSyntax(lastStatement, functionNode, {
+          includeTo: true,
+          reverse: true,
+        });
+      }
     }
-    return { graph: this.builder.getGraph(), entry: startNode };
+
+    return {
+      graph: this.builder.getGraph(),
+      entry: startNode,
+      offsetToNode: this.nodeMapper.getIndexMapping(functionNode),
+    };
   }
 
-  private processBlock(syntax: Parser.SyntaxNode | null): BasicBlock {
-    if (!syntax) return { entry: null, exit: null };
+  private dispatchSingle(syntax: Parser.SyntaxNode | null): BasicBlock {
+    if (!syntax) {
+      const emptyNode = this.builder.addNode("EMPTY", "Empty node");
+      return { entry: emptyNode, exit: emptyNode };
+    }
 
     const handler = this.handlers.named[syntax.type] ?? this.handlers.default;
-    const matcher = new BlockMatcher(this.processBlock.bind(this));
+    const matcher = new BlockMatcher(this.dispatchSingle.bind(this));
     return handler(syntax, {
       builder: this.builder,
       matcher: matcher,
       state: matcher.state,
       options: this.options,
       dispatch: {
-        single: this.processBlock.bind(this),
-        many: this.processStatements.bind(this),
+        single: this.dispatchSingle.bind(this),
+        many: this.dispatchMany.bind(this),
+      },
+      link: {
+        syntaxToNode: this.nodeMapper.linkSytaxToNode.bind(this.nodeMapper),
+        offsetToSyntax: this.nodeMapper.linkOffsetToSyntax.bind(
+          this.nodeMapper,
+        ),
       },
     });
   }
 
-  private processStatements(statements: Parser.SyntaxNode[]): BasicBlock {
+  private dispatchMany(statements: Parser.SyntaxNode[]): BasicBlock {
     const blockHandler = new BlockHandler();
     // Ignore comments
     const codeStatements = statements.filter((syntax) => {
@@ -77,17 +126,27 @@ export class GenericCFGBuilder {
       return { entry: emptyNode, exit: emptyNode };
     }
 
-    let entry: string | null = null;
-    let previous: string | null = null;
-    for (const statement of codeStatements) {
-      const { entry: currentEntry, exit: currentExit } = blockHandler.update(
-        this.processBlock(statement),
-      );
-      if (!entry) entry = currentEntry;
-      if (previous && currentEntry)
-        this.builder.addEdge(previous, currentEntry);
-      previous = currentExit;
+    const blocks = codeStatements.map((statement) =>
+      blockHandler.update(this.dispatchSingle(statement)),
+    );
+
+    for (const [prevStatement, statement] of pairwise(codeStatements)) {
+      this.nodeMapper.linkOffsetToSyntax(prevStatement, statement);
     }
-    return blockHandler.update({ entry, exit: previous });
+
+    for (const [{ exit: prevExit }, { entry: currentEntry }] of pairwise(
+      blocks,
+    )) {
+      if (prevExit) {
+        this.builder.addEdge(prevExit, currentEntry);
+      }
+    }
+
+    return blockHandler.update({
+      // @ts-expect-error: We know there's at least one block
+      entry: blocks[0].entry,
+      // @ts-expect-error: We know there's at least one block
+      exit: blocks[blocks.length - 1].exit,
+    });
   }
 }

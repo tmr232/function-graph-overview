@@ -1,15 +1,16 @@
 <script lang="ts">
-  import CodeMirror from "svelte-codemirror-editor";
   import { go } from "@codemirror/lang-go";
   import { cpp } from "@codemirror/lang-cpp";
   import { python } from "@codemirror/lang-python";
   import Graph from "./Graph.svelte";
   import type { Language } from "../../../control-flow/cfg";
   import * as LZString from "lz-string";
+  import Editor from "./Editor.svelte";
+  import CodeSegmentation from "./CodeSegmentation.svelte";
   export let codeGo = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
   export let codeC = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";
   export let codePython = "def example():\n    if x:\n        return";
-
+  let offsetToHighlight: number | undefined = undefined;
   let languages: {
     language: Language;
     text: string;
@@ -32,6 +33,11 @@
     );
   }
 
+  let simplify = true;
+  let flatSwitch = false;
+  let verbose = urlParams.has("verbose");
+  let showSegmentation = urlParams.has("segmentation");
+
   let selection = languages[parseInt(urlParams.get("language")) || 0];
   let code = codeGo;
   $: {
@@ -47,9 +53,6 @@
         break;
     }
   }
-
-  let simplify = true;
-  let flatSwitch = false;
 
   function share() {
     const compressedCode = LZString.compressToEncodedURIComponent(code);
@@ -88,6 +91,11 @@
     const svg = graph.getSVG();
     downloadString(svg, "image/svg+xml", "function-graph-overview.svg");
   }
+
+  function cursorMoved(event): void {
+    const { index } = event.detail.pos;
+    offsetToHighlight = index;
+  }
 </script>
 
 <main>
@@ -114,29 +122,24 @@
     </div>
     <div class="codemirror">
       {#if selection.language === "Go"}
-        <CodeMirror
-          bind:value={codeGo}
-          lang={go()}
-          tabSize={4}
-          lineWrapping={true}
-        />
+        <Editor bind:code={codeGo} lang={go()} on:cursorMoved={cursorMoved} />
       {:else if selection.language === "C"}
-        <CodeMirror
-          bind:value={codeC}
-          lang={cpp()}
-          tabSize={4}
-          lineWrapping={true}
-        />
+        <Editor bind:code={codeC} lang={cpp()} on:cursorMoved={cursorMoved} />
       {:else if selection.language === "Python"}
-        <CodeMirror
-          bind:value={codePython}
+        <Editor
+          bind:code={codePython}
           lang={python()}
-          tabSize={4}
-          lineWrapping={true}
+          on:cursorMoved={cursorMoved}
         />
       {/if}
     </div>
+    {#if showSegmentation}
+      <div class="segmentation">
+        <CodeSegmentation {code} language={selection.language} {simplify} />
+      </div>
+    {/if}
   </div>
+
   <div class="graph">
     <div class="graph-controls">
       <div class="settings">
@@ -152,9 +155,11 @@
     </div>
     <Graph
       {code}
+      {offsetToHighlight}
       language={selection.language}
       {simplify}
       {flatSwitch}
+      {verbose}
       bind:this={graph}
     />
   </div>
@@ -198,6 +203,7 @@
     padding-top: 1rem;
   }
   .graph,
+  .segmentation,
   .editor {
     background-color: white;
     filter: drop-shadow(0 0 0.3rem gray);

@@ -6,18 +6,29 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Added
+
+- The CFG view now highlights (in black) the node matching the cursor position.
+- Basic CFG caching for tests, making them twice as fast.
+- The extension learned to only generate a CFG on code or config changes.
+  If the cursor just moves inside the same function, we don't regenerate the CFG.
+
 ### Fixed
 
 - Rendering of `select` blocks in Go was broken.
+- Empty case clauses in `switch` statements no longer cause crashes.
+- Last case of a Python `match` statement no longer assumed to match.
 
 ### Changed
 
 - Massive refactoring of `CFGBuilder` classes.
-  New design now uses the same`GenericCGBuilder` class
-  for all languages, and takes statement handlers as
-  arguments.
+  New design now uses the same`GenericCFGBuilder` class for all languages,
+  and takes statement handlers as arguments.
   This reduces code duplication and makes it easier to add
   new languages in the future.
+- Flat switches now generate nodes for the conditions, and not only the consequence.
+- The CodeMirror editor in the demo got it's own Svelte component now, `Editor.svelte`.
+  This allows better state management and handling/dispatching events.
 
 ## [0.0.5] - 2024-09-18
 

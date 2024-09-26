@@ -2,6 +2,7 @@ import { MultiDirectedGraph } from "graphology";
 import { subgraph } from "graphology-operators";
 import { bfsFromNode } from "graphology-traversal";
 import type { CFG, GraphNode } from "./cfg-defs";
+import { evolve } from "./evolve";
 
 export function distanceFromEntry(cfg: CFG): Map<string, number> {
   const { graph, entry } = cfg;
@@ -60,14 +61,14 @@ function collapseNode(
 export function simplifyCFG(cfg: CFG, mergeAttrs?: AttrMerger): CFG {
   const graph = cfg.graph.copy();
 
-  const toCollapse: string[][] = graph
-    .mapEdges((edge, attrs, source, target) => {
+  const toCollapse: [string, string][] = graph
+    .mapEdges((_edge, _attrs, source, target): [string, string] | null => {
       if (graph.outDegree(source) === 1 && graph.inDegree(target) === 1) {
         return [source, target];
       }
       return null;
     })
-    .filter((x) => x) as string[][];
+    .filter((x) => x) as [string, string][];
 
   // Sort merges based on topological order
   const levels = distanceFromEntry(cfg);
@@ -98,15 +99,6 @@ export function trimFor(cfg: CFG): CFG {
   });
 
   return evolve(cfg, { graph: subgraph(graph, reachable) });
-}
-
-function evolve<T extends object>(
-  obj: T,
-  attrs: { [key: string]: unknown },
-): T {
-  const newObj = structuredClone(obj);
-  Object.assign(newObj, attrs);
-  return newObj;
 }
 
 export function detectBacklinks(
