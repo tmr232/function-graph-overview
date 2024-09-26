@@ -25,9 +25,6 @@
   function updateCursorPosition() {
     const pos = editorView.state.selection.main.head;
     let { number, from, to } = editorView.state.doc.lineAt(pos);
-    if (pos === to) {
-      console.log("end of line!");
-    }
     const newCursorPos = {
       row: number - 1,
       column: pos - from,

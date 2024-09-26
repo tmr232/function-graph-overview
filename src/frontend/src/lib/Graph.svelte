@@ -14,8 +14,7 @@
     initialize as initializeUtils,
     type Parsers,
   } from "./utils";
-  import { createEventDispatcher, onMount } from "svelte";
-  import { evolve } from "../../../control-flow/evolve";
+  import { createEventDispatcher, onDestroy, onMount } from "svelte";
   import { getValue } from "../../../control-flow/ranges";
 
   let parsers: Parsers;
@@ -26,6 +25,7 @@
   let cfg: CFG;
   let tree: Parser.Tree;
   let highlightTemplate: Element;
+  let highlightOffset: number;
   export let code: string;
   export let language: Language;
   export let verbose: boolean = false;
@@ -70,7 +70,6 @@
 
     dot = graphToDot(cfg, verbose);
     lineNumbers = graphToLineNumbers(cfg);
-    // console.log(lineNumbers);
 
     return graphviz.dot(dot);
   }
@@ -94,16 +93,31 @@
 
   let highlightedNode: Element;
   export function setCursor(row: number, column: number, index: number) {
-    // console.log(index);
-    const nodeId = getValue(cfg.offsetToNode, index);
-    // if (!cfg.syntaxToNode) return;
-    // let syntax = tree.rootNode.descendantForPosition({ row, column });
-    // for (; syntax && !cfg.syntaxToNode.has(syntax.id); syntax = syntax.parent);
-    // if (!syntax) return;
-    // const nodeId = cfg.syntaxToNode.get(syntax.id);
-    // console.log("Marking", nodeId);
-    const svgNode = document.querySelector(`#${nodeId}`);
-    setHighlightedNode(svgNode);
+    highlightOffset = index;
+    // highlightNodeId = getValue(cfg.offsetToNode, index);
+    // console.log(
+    //   "Node to highlight",
+    //   highlightNodeId,
+    //   document.querySelector(`#${highlightNodeId}`),
+    // );
+    updateHighlight();
+  }
+
+  function updateHighlight() {
+    const highlightNodeId = getValue(cfg.offsetToNode, highlightOffset);
+    console.log(
+      "Update",
+      highlightOffset,
+      highlightNodeId,
+      document.querySelector(`#${highlightNodeId}`),
+    );
+    setHighlightBySelector(`#${highlightNodeId}`);
+    // tryUntilSuccess(() => setHighlightBySelector(`#${highlightNodeId}`), 1, 10);
+  }
+
+  function setHighlightBySelector(selector: string) {
+    const node = document.querySelector(selector);
+    setHighlightedNode(node);
   }
 
   function setHighlightedNode(node: Element) {
@@ -112,6 +126,23 @@
       highlightedNode.classList.remove(...highlightTemplate.classList);
     }
     highlightedNode = node;
+  }
+
+  function tryUntilSuccess(
+    fn: () => void,
+    timeout: number = 10,
+    maxAttempts: number = -1,
+  ) {
+    if (maxAttempts === 0) {
+      return;
+    }
+    try {
+      fn();
+      console.log("success");
+    } catch {
+      console.log("failed, setting timer");
+      setTimeout(() => tryUntilSuccess(fn, timeout, maxAttempts - 1), timeout);
+    }
   }
 
   function findParentGraphNode(
@@ -133,23 +164,35 @@
         return;
       }
       const lineNumber = lineNumbers.get(nodeElement.id);
-      // console.log(nodeElement.id, lineNumber);
       if (lineNumber !== undefined) {
         goto(lineNumber);
       }
     });
-
-    // container.addEventListener("mouseover", (e) => {
-    //   const nodeElement = findParentGraphNode(e.target, container);
-    //   if (!nodeElement) {
-    //     return;
-    //   }
-    //   setHighlightedNode(nodeElement);
-    // });
   }
+  const observer = new MutationObserver((records) => {
+    for (const record of records) {
+      for (const node of record.addedNodes) {
+        if (node instanceof Element && node.tagName === "svg") {
+          const highlightNodeId = getValue(cfg.offsetToNode, highlightOffset);
+          console.log(
+            "Observe",
+            highlightOffset,
+            highlightNodeId,
+            document.querySelector(`#${highlightNodeId}`),
+          );
+          updateHighlight();
+        }
+      }
+    }
+  });
 
   onMount(() => {
     registerClickHandler(mainElement);
+    observer.observe(mainElement, { childList: true, subtree: true });
+  });
+
+  onDestroy(() => {
+    observer.disconnect();
   });
 </script>
 
