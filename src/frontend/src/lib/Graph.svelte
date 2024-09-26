@@ -103,11 +103,15 @@
     // const nodeId = cfg.syntaxToNode.get(syntax.id);
     // console.log("Marking", nodeId);
     const svgNode = document.querySelector(`#${nodeId}`);
-    svgNode.classList.add(...highlightTemplate.classList);
-    if (highlightedNode && highlightedNode !== svgNode) {
+    setHighlightedNode(svgNode);
+  }
+
+  function setHighlightedNode(node: Element) {
+    node.classList.add(...highlightTemplate.classList);
+    if (highlightedNode && highlightedNode !== node) {
       highlightedNode.classList.remove(...highlightTemplate.classList);
     }
-    highlightedNode = svgNode;
+    highlightedNode = node;
   }
 
   function findParentGraphNode(
@@ -134,6 +138,14 @@
         goto(lineNumber);
       }
     });
+
+    // container.addEventListener("mouseover", (e) => {
+    //   const nodeElement = findParentGraphNode(e.target, container);
+    //   if (!nodeElement) {
+    //     return;
+    //   }
+    //   setHighlightedNode(nodeElement);
+    // });
   }
 
   onMount(() => {
@@ -163,6 +175,6 @@
     padding: 1em;
   }
   .highlight {
-    filter: drop-shadow(0 0 5px red);
+    filter: brightness(10%) drop-shadow(0 0 5px red);
   }
 </style>
