@@ -20,6 +20,6 @@
    */
   function displaySVG(svgMarkup) {
     const div = document.querySelector("#overview");
-    div.innerHTML = svgMarkup;
+    if (div) div.innerHTML = svgMarkup;
   }
 })();
