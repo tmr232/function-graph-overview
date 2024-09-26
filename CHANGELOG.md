@@ -6,6 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.6] - 2024-09-26
+
 ### Added
 
 - The CFG view now highlights (in black) the node matching the cursor position.
