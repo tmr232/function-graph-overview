@@ -19,7 +19,6 @@
   let parsers: Parsers;
   let graphviz: Graphviz;
   let dot: string;
-  let mainElement;
   let cfg: CFG;
   let tree: Parser.Tree;
   export let offsetToHighlight: number | undefined = undefined;
@@ -85,7 +84,7 @@
   }
 </script>
 
-<div class="results" bind:this={mainElement}>
+<div class="results">
   {#await initialize() then}
     <div class="graph">
       {@html renderWrapper(code, language, offsetToHighlight, {
