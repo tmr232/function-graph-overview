@@ -6,10 +6,15 @@ import { MultiDirectedGraph } from "graphology";
 class RenderContext {
   public readonly verbose: boolean;
   private readonly backlinks: { from: string; to: string }[];
-
-  constructor(verbose: boolean, backlinks: { from: string; to: string }[]) {
+  private readonly highlightedNode: string | undefined;
+  constructor(
+    verbose: boolean,
+    backlinks: { from: string; to: string }[],
+    highlightedNode?: string,
+  ) {
     this.verbose = verbose;
     this.backlinks = backlinks;
+    this.highlightedNode = highlightedNode;
   }
 
   public isBacklink(from: string, to: string): boolean {
@@ -18,6 +23,9 @@ class RenderContext {
         (backlink) => from === backlink.from && to === backlink.to,
       ) != -1
     );
+  }
+  public isHighlighted(node: string): boolean {
+    return node == this.highlightedNode;
   }
 }
 
@@ -181,10 +189,18 @@ function renderSubgraphs(
   return dotContent;
 }
 
-export function graphToDot(cfg: CFG, verbose: boolean = false): string {
+export function graphToDot(
+  cfg: CFG,
+  verbose: boolean = false,
+  nodeToHighlight?: string,
+): string {
   const hierarchy = buildHierarchy(cfg);
   const backlinks = detectBacklinks(cfg.graph, cfg.entry);
-  return renderHierarchy(cfg, hierarchy, new RenderContext(verbose, backlinks));
+  return renderHierarchy(
+    cfg,
+    hierarchy,
+    new RenderContext(verbose, backlinks, nodeToHighlight),
+  );
 }
 
 export function graphToLineNumbers(cfg: CFG): Map<string, number> {
@@ -316,5 +332,8 @@ function renderNode(
     graph.getNodeAttribute(node, "lines") * 0.3,
     minHeight,
   );
+  if (context.isHighlighted(node)) {
+    dotAttrs.fillcolor = "black";
+  }
   return `    ${node} [${formatStyle(dotAttrs)}];\n`;
 }

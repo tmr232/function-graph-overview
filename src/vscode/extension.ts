@@ -6,8 +6,13 @@ import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import { graphToDot } from "../control-flow/render";
 import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
 import { newCFGBuilder, type Language } from "../control-flow/cfg";
-import { mergeNodeAttrs } from "../control-flow/cfg-defs";
+import {
+  mergeNodeAttrs,
+  remapNodeTargets,
+  type CFG,
+} from "../control-flow/cfg-defs";
 import { OverviewViewProvider } from "./overview-view";
+import { getValue } from "../control-flow/ranges";
 
 let graphviz: Graphviz;
 interface SupportedLanguage {
@@ -111,13 +116,19 @@ function getCurrentCode(): {
   return { code, languageId, language };
 }
 
-type Settings = { flatSwitch?: boolean; simplify?: boolean };
+type Settings = { flatSwitch: boolean; simplify: boolean };
 function loadSettings(): Settings {
   const config = vscode.workspace.getConfiguration("functionGraphOverview");
+
   return {
-    flatSwitch: config.get("flatSwitch"),
-    simplify: config.get("simplify"),
+    flatSwitch: config.get("flatSwitch") ?? false,
+    simplify: config.get("simplify") ?? false,
   };
+}
+type CFGKey = { functionText: string; flatSwitch: boolean; simplify: boolean };
+
+function isSameKey(a: CFGKey, b: CFGKey): boolean {
+  return JSON.stringify(a) === JSON.stringify(b);
 }
 
 function getFunctionAtPosition(
@@ -164,11 +175,14 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const parsers = await initializeParsers(context);
 
+  let cfgKey: CFGKey | undefined;
+  let savedCFG: CFG;
+
   const cursorMove = vscode.window.onDidChangeTextEditorSelection(
     (event: vscode.TextEditorSelectionChangeEvent): void => {
       const editor = event.textEditor;
       const position = editor.selection.active;
-      // const offset = editor.document.offsetAt(position);
+      const offset = editor.document.offsetAt(position);
 
       console.log(
         `Cursor position changed: Line ${position.line + 1}, Column ${position.character + 1}`,
@@ -182,7 +196,6 @@ export async function activate(context: vscode.ExtensionContext) {
       const tree = parsers[language].parse(code);
 
       const functionSyntax = getFunctionAtPosition(tree, position, language);
-
       if (!functionSyntax) return;
 
       console.log(functionSyntax);
@@ -192,14 +205,31 @@ export async function activate(context: vscode.ExtensionContext) {
       }
 
       const { flatSwitch, simplify } = loadSettings();
-      const builder = newCFGBuilder(language, { flatSwitch });
-      let cfg = builder.buildCFG(functionSyntax);
-      cfg = trimFor(cfg);
-      if (simplify) {
-        cfg = simplifyCFG(cfg, mergeNodeAttrs);
+      // We'd like to avoid re-running CFG generation for a function if nothing changed.
+      const newKey: CFGKey = {
+        flatSwitch,
+        simplify,
+        functionText: functionSyntax.text,
+      };
+      let cfg: CFG;
+      if (cfgKey && isSameKey(newKey, cfgKey)) {
+        cfg = savedCFG;
+      } else {
+        cfgKey = newKey;
+
+        const builder = newCFGBuilder(language, { flatSwitch });
+        cfg = builder.buildCFG(functionSyntax);
+        cfg = trimFor(cfg);
+        if (simplify) {
+          cfg = simplifyCFG(cfg, mergeNodeAttrs);
+        }
+        cfg = remapNodeTargets(cfg);
+
+        savedCFG = cfg;
       }
 
-      const dot = graphToDot(cfg);
+      const nodeToHighlight = getValue(cfg.offsetToNode, offset);
+      const dot = graphToDot(cfg, false, nodeToHighlight);
       const svg = graphviz.dot(dot);
 
       provider.setSVG(svg);
