@@ -9,8 +9,8 @@ interface Dispatch {
   many(statements: Parser.SyntaxNode[]): BasicBlock;
 }
 interface Link {
-  syntaxToNode: InstanceType<typeof NodeMapper>["add"];
-  offsetToSyntax: InstanceType<typeof NodeMapper>["linkGap"];
+  syntaxToNode: InstanceType<typeof NodeMapper>["linkSytaxToNode"];
+  offsetToSyntax: InstanceType<typeof NodeMapper>["linkOffsetToSyntax"];
 }
 export interface Context {
   builder: Builder;

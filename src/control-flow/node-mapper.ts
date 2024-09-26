@@ -1,106 +1,45 @@
 import type Parser from "web-tree-sitter";
 import { inplaceAddRange, newRanges, type SimpleRange } from "./ranges";
-/* TODO: It seem that AST-based mapping does not fit with what a user expects.
-We need to move to a range-based option, based on offsets in the code.
-
-Here we get some issues, though.
-A node should, by default, select its entire range.
-But sub-nodes will need to overwrite that.
-We need a way to maintain that hierarchy.
-
-Additionally, a line with nothing mapped to it should (probably)
-default to the first mapped line below it.
-
-Range-operations aside (I'll probably have to write them all),
-we need to somehow resolve the hierarchy.
-
-Some ideas:
-
-1. Sort ranges from longest to shortest, break the long ones apart when overwriting is needed.
-    Since the structure is inherently hierarchical, there should be no conflicts.
-    We do need to make sure empty lines are mapped to the first non-empty line below them, and not to the function head.
-2. Structure CFG creation to map nodes in hierarchical order. This _might_ be possible, but would make it hell to write.
-
-
-We should also somehow mind the difference between block statements and regular ones.
-Something to do with `dispatch.many` and `dispatch.single`?
-Because they are important for the line stuff.
-
-## Range data type
-
-I am thinking about using an array, with markers for the START of every range.
-So basically. So if we have a range from 1 to the end, it'll be `[{start:1, node:1}]`.
-If we later split it, adding a node that ranges from line 4 to 8 (inclusive), we'll get:
-`[{start:1, node:1}, {start:4, node:2}, {start:9, node:1}]`.
-This makes both lookups and insertions simple.
-We can easily achieve this with splicing.
-We don't have a pre-written binary-search, but with our data sizes linear search should be ok.
-*/
-/*
-TODO: This would probably requrie a second pass on the AST.
-I think I'll have to go with multiple passes.
-
-The CFG pass builds the CFG and maps syntax-nodes to CFG-nodes.
-This is necessary and we can't do without teh syntax-cfg mapping.
-
-The second pass will build mapping between text positions to syntax nodes.
-This _can_ be done in the same pass, but is generally code with different concerns.
-This does impose _some_ requirements on the CFG code, as the syntax-nodes we map to
-must be mapped to CFG-nodes for things to work.
-But the CFG creation is responsible for different things, and it'd be nice to
-separate those concerns to the degree possible.
-This would probably mean adding more meta-nodes in the non-simplified version of the graph,
-but that is generally a non-issue, as no-one should be using that anyhow...
-
-An example would be including an `ELSE` node before the statements of the else block, 
-so that we can easily link the else syntax-node to that.
-*/
-
-/*
-OK, after playing a bit with Python it seems that I don't need a second pass, only to know what I'm doing with the current one.
-Also, it seems that nodes don't capture whitespace very well, so...
-
-For a Python `if`, I need a query that looks like:
-
-```
-(if_statement
-  (":") @colon
-)
-```
-
-To capture the colon and know where the whitespace beyond it starts.
-To actually use that, I need a link function that can handle that.
-Something along the lines of:
-1. Link from end-of-A to start-of-B
-
-So with:
-      (if_statement
-          condition: (_) @if-cond
-          (":") @colon
-          consequence: (block) @then
-          alternative: [
-              (elif_clause 
-                  condition: (_) @elif-cond
-                  consequence: (block) @elif) @elif-clause
-              (else_clause (block) @else) @else-clause
-                            ]*
-      ) @if
-
-This'd be something like `link(from-end-of: colon, to-start-of: then, to-node-for: then)
-Which would eat the space.
-The alternative is end-of-A to end-of-B.
-Also - we can link from the end-of colon to end-of then / start-of-alternative.
-The bonus of using end-of for this is that we always have end-of then, but not always start-of-alternative.
-
-that said, it's not strictly necessary to map all the way to the end of then, as we'll get that from the then-block anyhow.
-*/
+/**
+ * This module provides the facilities for matching code offsets to CFG nodes.
+ *
+ * As it happens, this is not a straight-forward, 1-to-1 mapping, and requires some care.
+ * Generally, AST nodes are converted into CFG nodes, and this mapping is relatively straightforward.
+ * However, a lof of the code does not belong to any node in particular,
+ * and some mappings need to be changed to make the matching more intuitive.
+ *
+ * In the following explanation, we'll use "syntax" to refer to AST nodes,
+ * and "nodes" to refer to CFG nodes. This matches the code for the most part.
+ *
+ * To deal with that, we use a multi-level mapping system:
+ *
+ * 1. Syntax is mapped to nodes
+ * 2. Offsets are mapped to syntax.
+ *
+ * This allows us to separate some concerns, and makes the resulting code a bit easier to read.
+ *
+ * As the CFG is generated, we add the relevant mappings to a collection.
+ * Once CFG creation is complete, we sort the ranges from large to small,
+ * and construct a `SimpleRange[]` mapping for them.
+ * Note that during construction, no smaller node may overlap more than a single larger node.
+ * This matches the hierarchical nature of the AST, and makes our life easier as there are
+ * no conflicts to resolve.
+ *
+ * Once the ranges are created, they can be used to query the node matching a specific offset.
+ *
+ * In some cases, there is another step (not implemented here).
+ * If the graph is simplified, and nodes are collapsed together, the mappings will change.
+ * To manage that, nodes contain a `targets` field that holds their name.
+ * When two nodes are collaped, the new `targets` fiels will contain both their targets.
+ * Generally, we'll remap the nodes using the per-node targets after simplification.
+ */
 
 export class NodeMapper {
   private syntaxToNode: Map<Parser.SyntaxNode, string> = new Map();
   private ranges: { start: number; stop: number; value: Parser.SyntaxNode }[] =
     [];
 
-  public add(syntax: Parser.SyntaxNode, node: string) {
+  public linkSytaxToNode(syntax: Parser.SyntaxNode, node: string) {
     this.syntaxToNode.set(syntax, node);
 
     this.ranges.push({
@@ -110,7 +49,7 @@ export class NodeMapper {
     });
   }
 
-  public linkGap(
+  public linkOffsetToSyntax(
     from: Parser.SyntaxNode,
     to: Parser.SyntaxNode,
     options?: { reverse?: boolean; includeTo?: boolean; includeFrom?: boolean },
@@ -118,10 +57,10 @@ export class NodeMapper {
     const target = options?.reverse ? from : to;
     const toIndex = options?.includeTo ? to.endIndex : to.startIndex;
     const fromIndex = options?.includeFrom ? from.startIndex : from.endIndex;
-    this.range(fromIndex, toIndex, target);
+    this.addRange(fromIndex, toIndex, target);
   }
 
-  public range(start: number, stop: number, syntax: Parser.SyntaxNode) {
+  private addRange(start: number, stop: number, syntax: Parser.SyntaxNode) {
     this.ranges.push({ start, stop, value: syntax });
   }
 

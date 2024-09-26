@@ -100,6 +100,9 @@ export class BlockMatcher {
   }
 }
 
+/**
+ * Maintains a single {Parser.QueryMatch} and allows accesing the captures within it.
+ */
 export class Match {
   private match: Parser.QueryMatch;
   private blockHandler: BlockHandler;
@@ -114,6 +117,11 @@ export class Match {
     this.dispatchSingle = dispatchSingle;
   }
 
+  /**
+   * Get the first named syntax node from the query match.
+   * @param name Name of the capture
+   * @returns {Parser.SyntaxNode|undefined} The syntax matching the capture name, if captured.
+   */
   public getSyntax(name: string): ReturnType<typeof getSyntax> {
     return getSyntax(this.match, name);
   }

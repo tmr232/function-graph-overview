@@ -24,7 +24,7 @@ export class GenericCFGBuilder {
 
   public buildCFG(functionNode: Parser.SyntaxNode): CFG {
     const startNode = this.builder.addNode("START", "START");
-    this.nodeMapper.add(functionNode, startNode);
+    this.nodeMapper.linkSytaxToNode(functionNode, startNode);
     const bodySyntax = functionNode.childForFieldName("body");
     if (bodySyntax) {
       const blockHandler = new BlockHandler();
@@ -45,7 +45,7 @@ export class GenericCFGBuilder {
       const lastStatement =
         bodySyntax.namedChildren[bodySyntax.namedChildren.length - 1];
       if (lastStatement) {
-        this.nodeMapper.linkGap(lastStatement, functionNode, {
+        this.nodeMapper.linkOffsetToSyntax(lastStatement, functionNode, {
           includeTo: true,
           reverse: true,
         });
@@ -77,8 +77,10 @@ export class GenericCFGBuilder {
         many: this.dispatchMany.bind(this),
       },
       link: {
-        syntaxToNode: this.nodeMapper.add.bind(this.nodeMapper),
-        offsetToSyntax: this.nodeMapper.linkGap.bind(this.nodeMapper),
+        syntaxToNode: this.nodeMapper.linkSytaxToNode.bind(this.nodeMapper),
+        offsetToSyntax: this.nodeMapper.linkOffsetToSyntax.bind(
+          this.nodeMapper,
+        ),
       },
     });
   }
@@ -107,7 +109,7 @@ export class GenericCFGBuilder {
     );
 
     for (const [prevStatement, statement] of pairwise(codeStatements)) {
-      this.nodeMapper.linkGap(prevStatement, statement);
+      this.nodeMapper.linkOffsetToSyntax(prevStatement, statement);
     }
 
     for (const [{ exit: prevExit }, { entry: currentEntry }] of pairwise(
