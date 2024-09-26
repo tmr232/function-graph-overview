@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { LanguageSupport } from "@codemirror/language";
-  import { EditorSelection } from "@codemirror/state";
   import type { EditorView } from "@codemirror/view";
   import { createEventDispatcher } from "svelte";
   import CodeMirror from "svelte-codemirror-editor";
@@ -11,16 +10,6 @@
   let cursorPos: { row: number; column: number; index: number };
 
   const dispatch = createEventDispatcher();
-
-  export function goto(row: number, column: number = 0) {
-    if (!editorView) return;
-    const pos = editorView.state.doc.line(row + 1).from + column;
-    editorView.dispatch({
-      selection: EditorSelection.create([EditorSelection.cursor(pos)]),
-    });
-    // TODO: actually enable this, once we fix the node mapping.
-    // updateCursorPosition();
-  }
 
   function updateCursorPosition() {
     const pos = editorView.state.selection.main.head;

@@ -24,6 +24,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   This reduces code duplication and makes it easier to add
   new languages in the future.
 - Flat switches now generate nodes for the conditions, and not only the consequence.
+- The CodeMirror editor in the demo got it's own Svelte component now, `Editor.svelte`.
+  This allows better state management and handling/dispatching events.
 
 ## [0.0.5] - 2024-09-18
 

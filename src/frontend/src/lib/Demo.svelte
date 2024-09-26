@@ -92,12 +92,6 @@
     downloadString(svg, "image/svg+xml", "function-graph-overview.svg");
   }
 
-  function gotoLine(event) {
-    if (!editor) return;
-    editor.goto(event.detail.lineNumber);
-  }
-  let editor: Editor;
-
   function cursorMoved(event): void {
     const { index } = event.detail.pos;
     offsetToHighlight = index;
@@ -128,24 +122,13 @@
     </div>
     <div class="codemirror">
       {#if selection.language === "Go"}
-        <Editor
-          bind:code={codeGo}
-          lang={go()}
-          bind:this={editor}
-          on:cursorMoved={cursorMoved}
-        />
+        <Editor bind:code={codeGo} lang={go()} on:cursorMoved={cursorMoved} />
       {:else if selection.language === "C"}
-        <Editor
-          bind:code={codeC}
-          lang={cpp()}
-          bind:this={editor}
-          on:cursorMoved={cursorMoved}
-        />
+        <Editor bind:code={codeC} lang={cpp()} on:cursorMoved={cursorMoved} />
       {:else if selection.language === "Python"}
         <Editor
           bind:code={codePython}
           lang={python()}
-          bind:this={editor}
           on:cursorMoved={cursorMoved}
         />
       {/if}
@@ -178,7 +161,6 @@
       {flatSwitch}
       {verbose}
       bind:this={graph}
-      on:goto={gotoLine}
     />
   </div>
 </main>
