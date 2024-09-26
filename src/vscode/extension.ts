@@ -234,7 +234,10 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       // TODO: Highlighting in the DOT is a cute trick, but might become less effective on larger functions.
       //       So it works for now, but I'll probably need to replace it with CSS so that I only render once per function.
-      const nodeToHighlight = highlightCurrentNode
+
+      // Only highlight if there's more than one node to the graph.
+      const shouldHighlight = highlightCurrentNode && cfg.graph.order > 1;
+      const nodeToHighlight = shouldHighlight
         ? getValue(cfg.offsetToNode, offset)
         : undefined;
       const dot = graphToDot(cfg, false, nodeToHighlight);
