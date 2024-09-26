@@ -116,13 +116,14 @@ function getCurrentCode(): {
   return { code, languageId, language };
 }
 
-type Settings = { flatSwitch: boolean; simplify: boolean };
+type Settings = { flatSwitch: boolean; simplify: boolean, highlightCurrentNode: boolean };
 function loadSettings(): Settings {
   const config = vscode.workspace.getConfiguration("functionGraphOverview");
 
   return {
     flatSwitch: config.get("flatSwitch") ?? false,
     simplify: config.get("simplify") ?? false,
+    highlightCurrentNode: config.get("highlightCurrentNode") ?? true,
   };
 }
 type CFGKey = { functionText: string; flatSwitch: boolean; simplify: boolean };
@@ -204,7 +205,7 @@ export async function activate(context: vscode.ExtensionContext) {
         console.log("Currently in", nameSyntax.text);
       }
 
-      const { flatSwitch, simplify } = loadSettings();
+      const { flatSwitch, simplify, highlightCurrentNode } = loadSettings();
       // We'd like to avoid re-running CFG generation for a function if nothing changed.
       const newKey: CFGKey = {
         flatSwitch,
@@ -228,7 +229,7 @@ export async function activate(context: vscode.ExtensionContext) {
         savedCFG = cfg;
       }
 
-      const nodeToHighlight = getValue(cfg.offsetToNode, offset);
+      const nodeToHighlight = highlightCurrentNode ? getValue(cfg.offsetToNode, offset) : undefined;
       const dot = graphToDot(cfg, false, nodeToHighlight);
       const svg = graphviz.dot(dot);
 
@@ -240,6 +241,6 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
 
 //------------------------------------------------
