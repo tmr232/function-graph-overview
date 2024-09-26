@@ -4,8 +4,11 @@ import {
   type BuilderOptions,
   type CFGBuilder,
 } from "./cfg-defs";
-import type { Context, StatementHandlers } from "./statement-handlers.ts";
-import { GenericCFGBuilder } from "./generic-cfg-builder.ts";
+import {
+  GenericCFGBuilder,
+  type Context,
+  type StatementHandlers,
+} from "./generic-cfg-builder.ts";
 import { matchExistsIn } from "./block-matcher.ts";
 import { maybe, zip } from "./zip.ts";
 

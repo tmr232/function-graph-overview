@@ -5,8 +5,11 @@ import {
   type CFGBuilder,
 } from "./cfg-defs";
 import { Match } from "./block-matcher.ts";
-import type { Context, StatementHandlers } from "./statement-handlers.ts";
-import { GenericCFGBuilder } from "./generic-cfg-builder.ts";
+import {
+  GenericCFGBuilder,
+  type Context,
+  type StatementHandlers,
+} from "./generic-cfg-builder.ts";
 import { pairwise, zip } from "./zip.ts";
 import { buildSwitch, collectCases } from "./switch-utils.ts";
 

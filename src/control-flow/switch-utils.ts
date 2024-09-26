@@ -1,7 +1,7 @@
 import type Parser from "web-tree-sitter";
 import type { Case, EdgeType } from "./cfg-defs";
-import type { Context } from "./statement-handlers";
 import { pairwise } from "./zip";
+import type { Context } from "./generic-cfg-builder";
 export interface SwitchOptions {
   /// A Go `select` blocks until one of the branches matches.
   /// This means that we never add an alternative edge from the

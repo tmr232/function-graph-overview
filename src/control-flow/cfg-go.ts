@@ -4,8 +4,11 @@ import {
   type BuilderOptions,
   type CFGBuilder,
 } from "./cfg-defs";
-import type { Context, StatementHandlers } from "./statement-handlers";
-import { GenericCFGBuilder } from "./generic-cfg-builder";
+import {
+  GenericCFGBuilder,
+  type Context,
+  type StatementHandlers,
+} from "./generic-cfg-builder";
 import { buildSwitch, collectCases, type SwitchOptions } from "./switch-utils";
 
 function getChildFieldText(node: Parser.SyntaxNode, fieldName: string): string {
