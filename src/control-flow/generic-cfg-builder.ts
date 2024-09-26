@@ -49,7 +49,6 @@ export class GenericCFGBuilder {
           includeTo: true,
           reverse: true,
         });
-        console.log(lastStatement.text);
       }
     }
 
