@@ -9,6 +9,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Added
 
 - The CFG view now highlights (in black) the node matching the cursor position.
+- Basic CFG caching for tests, making them twice as fast.
+- The extension learned to only generate a CFG on code or config changes.
+  If the cursor just moves inside the same function, we don't regenerate the CFG.
 
 ### Fixed
 
