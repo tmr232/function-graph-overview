@@ -40,7 +40,16 @@ export class GenericCFGBuilder {
       // `entry` will be non-null for any valid code
       if (entry) this.builder.addEdge(startNode, entry);
       if (exit) this.builder.addEdge(exit, endNode);
+
+
+      // Make sure the end of the function is linked to the last piece of code, not to the top of the function.
+      const lastStatement = bodySyntax.namedChildren[bodySyntax.namedChildren.length - 1];
+      if (lastStatement) {
+        this.nodeMapper.linkGap(lastStatement, functionNode, { includeTo: true, reverse: true });
+        console.log(lastStatement.text)
+      }
     }
+
 
     return {
       graph: this.builder.getGraph(),
