@@ -203,19 +203,6 @@ export function graphToDot(
   );
 }
 
-export function graphToLineNumbers(cfg: CFG): Map<string, number> {
-  const lineNumbers = new Map();
-
-  cfg.graph.forEachNode((node, attrs) => {
-    // console.log(node, attrs.firstLineNumber);
-    if (attrs.firstLineNumber !== undefined) {
-      lineNumbers.set(node, attrs.firstLineNumber);
-    }
-  });
-
-  return lineNumbers;
-}
-
 type DotAttributes = { [attribute: string]: number | string | undefined };
 function formatStyle(style: DotAttributes): string {
   return [...Object.entries(style)]

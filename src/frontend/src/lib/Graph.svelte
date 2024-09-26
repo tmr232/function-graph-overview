@@ -6,7 +6,7 @@
     remapNodeTargets,
     type CFG,
   } from "../../../control-flow/cfg-defs";
-  import { graphToDot, graphToLineNumbers } from "../../../control-flow/render";
+  import { graphToDot } from "../../../control-flow/render";
   import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
   import {
@@ -19,7 +19,6 @@
   let parsers: Parsers;
   let graphviz: Graphviz;
   let dot: string;
-  let lineNumbers: Map<string, number>;
   let mainElement;
   let cfg: CFG;
   let tree: Parser.Tree;
@@ -63,7 +62,6 @@
     cfg = remapNodeTargets(cfg);
     const nodeToHighlight = getValue(cfg.offsetToNode, highlightOffset);
     dot = graphToDot(cfg, verbose, nodeToHighlight);
-    lineNumbers = graphToLineNumbers(cfg);
 
     return graphviz.dot(dot);
   }
