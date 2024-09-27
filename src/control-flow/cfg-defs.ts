@@ -57,6 +57,7 @@ export interface GraphNode {
   markers: string[];
   cluster?: Cluster;
   targets: string[];
+  block?: number;
 }
 
 export interface GraphEdge {
@@ -158,6 +159,9 @@ export function mergeNodeAttrs(
   if (from.cluster !== into.cluster) {
     return null;
   }
+  if (from.block !== into.block) {
+    return null;
+  }
   const noMergeTypes: NodeType[] = ["YIELD", "THROW"];
   if (noMergeTypes.includes(from.type) || noMergeTypes.includes(into.type)) {
     return null;
@@ -169,6 +173,7 @@ export function mergeNodeAttrs(
     markers: [...from.markers, ...into.markers],
     cluster: from.cluster,
     targets: [...from.targets, ...into.targets],
+    block: from.block
   };
 }
 export interface Case {

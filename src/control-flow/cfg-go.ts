@@ -56,9 +56,11 @@ function processBlockStatement(
   syntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  const blockBlock = ctx.dispatch.many(syntax.namedChildren);
-  ctx.link.syntaxToNode(syntax, blockBlock.entry);
-  return blockBlock;
+  return ctx.builder.withBlock(syntax.id, () => {
+    const blockBlock = ctx.dispatch.many(syntax.namedChildren);
+    ctx.link.syntaxToNode(syntax, blockBlock.entry);
+    return blockBlock;
+  });
 }
 
 function processReturnStatement(
@@ -287,7 +289,7 @@ function processSwitchlike(
 ): BasicBlock {
   const blockHandler = ctx.matcher.state;
 
-  const cases = collectCases(switchSyntax, ctx, { parseCase, getCases });
+  const cases = ctx.builder.withBlock(switchSyntax.id, () => { return collectCases(switchSyntax, ctx, { parseCase, getCases }); });
   const headNode = ctx.builder.addNode(
     "SWITCH_CONDITION",
     getChildFieldText(switchSyntax, "value"),

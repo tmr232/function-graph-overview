@@ -13,6 +13,7 @@ export class Builder {
   private nodeId: number = 0;
   private clusterId: ClusterId = 0;
   private activeClusters: Cluster[] = [];
+  private activeBlocks: number[] = []
 
   private startCluster(type: ClusterType): Cluster {
     const parent =
@@ -42,6 +43,14 @@ export class Builder {
       this.endCluster(cluster);
     }
   }
+  public withBlock<T>(blockId: number, fn: () => T): T {
+    this.activeBlocks.push(blockId);
+    try {
+      return fn();
+    } finally {
+      this.activeBlocks.pop();
+    }
+  }
 
   public addNode(type: NodeType, code: string, lines: number = 1): string {
     const id = `node${this.nodeId++}`;
@@ -53,6 +62,7 @@ export class Builder {
       markers: [],
       cluster,
       targets: [id],
+      block: this.activeBlocks[this.activeBlocks.length - 1]
     });
     return id;
   }
