@@ -1,5 +1,3 @@
-import { watch } from "fs";
-import { parseArgs } from "util";
 import { type TestReport, type TestResults } from "../src/test/reporting";
 import { collectTests } from "../src/test/commentTestCollector";
 import type { TestFunction } from "../src/test/commentTestTypes";
@@ -13,17 +11,6 @@ import { Graphviz } from "@hpcc-js/wasm-graphviz";
 
 const watchDir = import.meta.dir + "/../src";
 const graphviz = await Graphviz.load();
-const { values } = parseArgs({
-  args: Bun.argv,
-  options: {
-    watch: {
-      type: "boolean",
-      default: false,
-    },
-  },
-  strict: true,
-  allowPositionals: true,
-});
 
 function runTestsFor(testFunc: TestFunction): TestResults[] {
   const testResults: TestResults[] = [];
@@ -86,27 +73,6 @@ async function logAndContinue(fn: () => Promise<void>): Promise<void> {
 
 async function main() {
   await logAndContinue(writeReport);
-  if (values.watch) {
-    console.log(
-      "Watch is currently broken, as we're supposed to watch files we're importing.",
-    );
-    const watcher = watch(
-      watchDir,
-      { recursive: true },
-      async (event, filename) => {
-        console.log(`${event}: ${filename}, regenerating commentTests.json`);
-        await logAndContinue(writeReport);
-      },
-    );
-
-    process.on("SIGINT", () => {
-      // close watcher when Ctrl-C is pressed
-      console.log("Closing watcher...");
-      watcher.close();
-
-      process.exit(0);
-    });
-  }
 }
 
 await main();

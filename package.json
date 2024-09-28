@@ -56,7 +56,8 @@
     "lint": "bun format && bun run eslint || bun run tsc --noEmit",
     "generate-parsers": "bun run ./scripts/generate-parsers.ts",
     "dot-snapshots": "bun run ./scripts/generate-dot-snapshots.ts",
-    "update-snapshots": "bun run dot-snapshots && bun test --update-snapshots"
+    "update-snapshots": "bun run dot-snapshots && bun test --update-snapshots",
+    "watch-tests": "bun run ./scripts/watch-tests.ts"
   },
   "//": "START EXTENSION ATTRIBUTES",
   "publisher": "tamir-bahar",
