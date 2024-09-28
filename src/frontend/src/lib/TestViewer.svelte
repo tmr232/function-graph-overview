@@ -1,103 +1,58 @@
 <script lang="ts">
-  import testRecordsJson from "../../../../dist/tests/commentTests.json?json";
-  import type { TestFuncRecord } from "../../../test/commentTestUtils";
-  import TestGraph from "./TestGraph.svelte";
-  import {
-    runTest,
-    type TestResults,
-    initialize as initializeUtils,
-  } from "./utils";
+  import testReportsJson from "../../../../dist/tests/testReport.json?json";
+  import type { TestReport } from "../../../test/reporting";
+  import DotRender from "./DotRender.svelte";
 
-  const testRecords = testRecordsJson as TestFuncRecord[];
-
-  async function runAllTests() {
-    await initializeUtils();
-
-    const testResults = testRecords.map((record) => {
-      let results: TestResults[];
-      try {
-        results = runTest(record);
-      } catch (error) {
-        console.trace(
-          `\nFailed running tests for ${record.language}: ${record.name}\n`,
-          error,
-        );
-        results = [
-          {
-            reqName: "Tests",
-            reqValue: "Failed to complete",
-            failure: `${error}`,
-          },
-        ];
-      }
-      return {
-        record,
-        failed: !results.every((result) => result.failure === null),
-        results,
-      };
-    });
-
-    const failCount = testResults.filter(({ failed }) => failed).length;
-
-    return { testResults, failCount };
-  }
-
-  let simplify: boolean = true;
-  let verbose: boolean = false;
-  let trim: boolean = true;
-  let flatSwitch: boolean = false;
   let showAll: boolean = false;
+  const testReports = testReportsJson as TestReport[];
+
+  const failCount = testReports.filter((report) => report.failed).length;
 </script>
 
 <div class="controls">
-  <input type="checkbox" id="simplify" bind:checked={simplify} />
-  <label for="simplify">Simplify</label>
-
-  <input type="checkbox" id="verbose" bind:checked={verbose} />
-  <label for="verbose">Verbose</label>
-
-  <input type="checkbox" id="trim" bind:checked={trim} />
-  <label for="trim">Trim</label>
-
-  <input type="checkbox" id="flatSwitch" bind:checked={flatSwitch} />
-  <label for="flatSwitch">Flat Switch</label>
-
   <input type="checkbox" id="showAll" bind:checked={showAll} />
   <label for="showAll">Show All</label>
 </div>
-{#await runAllTests() then { failCount, testResults }}
-  <div class="content">
-    <div class="summary" class:green={failCount === 0} class:red={failCount}>
-      {#if failCount === 0}
-        All tests pass.
-      {:else}
-        {failCount} failing test{failCount > 1 ? "s" : ""}.
-      {/if}
-    </div>
-    <div class="container">
-      {#each testResults as { record, failed, results } (record)}
-        {#if failed || showAll}
-          <div class="code-side" data-failed={failed}>
-            <div class="test-name">{record.language}: {record.name}</div>
-            <div class="code"><pre>{record.code}</pre></div>
-            <div class="results">
-              {#each results as { reqName, reqValue, failure } (reqName)}
-                {#if failure !== null}
-                  <div class="result">
-                    {reqName}: {reqValue}; {failure}
-                  </div>
-                {/if}
-              {/each}
-            </div>
-          </div>
-          <TestGraph {record} {simplify} {verbose} {trim} {flatSwitch} />
-        {/if}
-      {/each}
-    </div>
+<div class="content">
+  <div class="summary" class:green={failCount === 0} class:red={failCount}>
+    {#if failCount === 0}
+      All tests pass.
+    {:else}
+      {failCount} failing test{failCount > 1 ? "s" : ""}.
+    {/if}
   </div>
-{/await}
+  <div class="container">
+    {#each testReports as { name, language, code, dot, failed, results } (name)}
+      {#if failed || showAll}
+        <div class="code-side" data-failed={failed}>
+          <div class="test-name">{language}: {name}</div>
+          <div class="code"><pre>{code}</pre></div>
+          <div class="results">
+            {#each results as { reqName, reqValue, failure } (reqName)}
+              {#if failure !== null}
+                <div class="result">
+                  {reqName}: {reqValue}; {failure}
+                </div>
+              {/if}
+            {/each}
+          </div>
+        </div>
+        <div class="dot">
+          {#if dot.current !== dot.snapshot}
+            <DotRender dot={dot.snapshot} />
+          {/if}
+          <DotRender dot={dot.current} />
+        </div>
+      {/if}
+    {/each}
+  </div>
+</div>
 
 <style>
+  .dot {
+    display: flex;
+    flex-direction: row;
+  }
   .content {
     position: relative;
     top: 2em;
