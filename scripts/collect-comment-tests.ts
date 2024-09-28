@@ -1,10 +1,6 @@
 import { watch } from "fs";
 import { parseArgs } from "util";
-import {
-  generateReport,
-  type TestReport,
-  type TestResults,
-} from "../src/test/reporting";
+import { type TestReport, type TestResults } from "../src/test/reporting";
 import { collectTests } from "../src/test/commentTestCollector";
 import type { TestFunction } from "../src/test/commentTestTypes";
 import {
@@ -12,10 +8,11 @@ import {
   requirementTests,
 } from "../src/test/commentTestHandlers";
 import { graphToDot } from "../src/control-flow/render";
-import { formatSnapshotName, loadDOTSnapshots } from "./generate-dot-snapshots";
+import { formatSnapshotName, loadDOTSnapshots } from "./dot-snapshots.lib";
+import { Graphviz } from "@hpcc-js/wasm-graphviz";
 
 const watchDir = import.meta.dir + "/../src";
-
+const graphviz = await Graphviz.load();
 const { values } = parseArgs({
   args: Bun.argv,
   options: {
@@ -61,11 +58,15 @@ export async function generateReport(
       current: generateDOTFor(testFunc),
       snapshot: dotSnapshots[formatSnapshotName(testFunc)] as string,
     };
+    const svg = {
+      current: graphviz.dot(dot.current),
+      snapshot: graphviz.dot(dot.snapshot),
+    };
     const failed =
       results.some((result) => result.failure) || dot.current !== dot.snapshot;
     const name = formatSnapshotName(testFunc);
     const code = testFunc.function.text;
-    testReports.push({ dot, results, failed, name, code });
+    testReports.push({ dot, results, failed, name, code, svg });
   }
   return testReports;
 }
@@ -86,6 +87,9 @@ async function logAndContinue(fn: () => Promise<void>): Promise<void> {
 async function main() {
   await logAndContinue(writeReport);
   if (values.watch) {
+    console.log(
+      "Watch is currently broken, as we're supposed to watch files we're importing.",
+    );
     const watcher = watch(
       watchDir,
       { recursive: true },

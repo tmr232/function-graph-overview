@@ -22,10 +22,10 @@
     {/if}
   </div>
   <div class="container">
-    {#each testReports as { name, language, code, dot, failed, results } (name)}
+    {#each testReports as { name, code, dot, svg, failed, results } (name)}
       {#if failed || showAll}
         <div class="code-side" data-failed={failed}>
-          <div class="test-name">{language}: {name}</div>
+          <div class="test-name">{name}</div>
           <div class="code"><pre>{code}</pre></div>
           <div class="results">
             {#each results as { reqName, reqValue, failure } (reqName)}
@@ -38,10 +38,12 @@
           </div>
         </div>
         <div class="dot">
+          <div class="golden">
+            {@html svg.snapshot}
+          </div>
           {#if dot.current !== dot.snapshot}
-            <DotRender dot={dot.snapshot} />
+            {@html svg.current}
           {/if}
-          <DotRender dot={dot.current} />
         </div>
       {/if}
     {/each}
@@ -76,6 +78,9 @@
     font-size: 2rem;
     text-align: center;
     margin-bottom: 1rem;
+  }
+  .golden {
+    border: 2px gold solid;
   }
   .green {
     background-color: greenyellow;
