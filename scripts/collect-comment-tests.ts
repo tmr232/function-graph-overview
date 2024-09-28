@@ -1,9 +1,16 @@
 import { watch } from "fs";
 import { parseArgs } from "util";
-import { generateReport, type TestReport, type TestResults } from "../src/test/reporting";
+import {
+  generateReport,
+  type TestReport,
+  type TestResults,
+} from "../src/test/reporting";
 import { collectTests } from "../src/test/commentTestCollector";
 import type { TestFunction } from "../src/test/commentTestTypes";
-import { buildSimpleCFG, requirementTests } from "../src/test/commentTestHandlers";
+import {
+  buildSimpleCFG,
+  requirementTests,
+} from "../src/test/commentTestHandlers";
 import { graphToDot } from "../src/control-flow/render";
 import { formatSnapshotName, loadDOTSnapshots } from "./generate-dot-snapshots";
 
@@ -20,7 +27,6 @@ const { values } = parseArgs({
   strict: true,
   allowPositionals: true,
 });
-
 
 function runTestsFor(testFunc: TestFunction): TestResults[] {
   const testResults: TestResults[] = [];
@@ -44,27 +50,25 @@ function generateDOTFor(testFunc: TestFunction): string {
   return dot;
 }
 
-
-
-export async function generateReport(tests: TestFunction[]): Promise<TestReport[]> {
+export async function generateReport(
+  tests: TestFunction[],
+): Promise<TestReport[]> {
   const testReports: TestReport[] = [];
   const dotSnapshots = await loadDOTSnapshots();
   for (const testFunc of tests) {
     const results = runTestsFor(testFunc);
     const dot = {
       current: generateDOTFor(testFunc),
-      snapshot: dotSnapshots[formatSnapshotName(testFunc)] as string
+      snapshot: dotSnapshots[formatSnapshotName(testFunc)] as string,
     };
-    const failed = results.some(result => result.failure) || dot.current !== dot.snapshot;
+    const failed =
+      results.some((result) => result.failure) || dot.current !== dot.snapshot;
     const name = formatSnapshotName(testFunc);
-    const code = testFunc.function.text
-    testReports.push({ dot, results, failed, name, code })
+    const code = testFunc.function.text;
+    testReports.push({ dot, results, failed, name, code });
   }
   return testReports;
 }
-
-
-
 
 async function writeReport() {
   const report = await generateReport(await collectTests());

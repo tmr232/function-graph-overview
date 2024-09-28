@@ -7,11 +7,11 @@ export const dotSnapshotPath = "./src/test/__snapshots__/dotSnapshots.json";
 
 export async function loadDOTSnapshots(): Promise<Record<string, string>> {
   const snapshotFile = Bun.file(dotSnapshotPath);
-  return JSON.parse(await snapshotFile.text())
+  return JSON.parse(await snapshotFile.text());
 }
 
 export function formatSnapshotName(testFunc: TestFunction): string {
-  return `${testFunc.language}: ${testFunc.name}`
+  return `${testFunc.language}: ${testFunc.name}`;
 }
 
 async function generateSnapshots() {
@@ -22,10 +22,7 @@ async function generateSnapshots() {
     const dot = graphToDot(cfg);
     snapshots[formatSnapshotName(testFunc)] = dot;
   }
-  await Bun.write(
-    dotSnapshotPath,
-    JSON.stringify(snapshots),
-  );
+  await Bun.write(dotSnapshotPath, JSON.stringify(snapshots));
 }
 
 async function main() {
