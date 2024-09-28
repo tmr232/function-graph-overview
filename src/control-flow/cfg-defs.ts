@@ -159,9 +159,9 @@ export function mergeNodeAttrs(
   if (from.cluster !== into.cluster) {
     return null;
   }
-  if (from.block !== into.block) {
-    return null;
-  }
+  // if (from.block !== into.block) {
+  //   return null;
+  // }
   const noMergeTypes: NodeType[] = ["YIELD", "THROW"];
   if (noMergeTypes.includes(from.type) || noMergeTypes.includes(into.type)) {
     return null;
