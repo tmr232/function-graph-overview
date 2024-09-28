@@ -10,7 +10,7 @@ export async function loadDOTSnapshots(): Promise<Record<string, string>> {
   return JSON.parse(await snapshotFile.text())
 }
 
-export function formatSnapshotName(testFunc:TestFunction):string {
+export function formatSnapshotName(testFunc: TestFunction): string {
   return `${testFunc.language}: ${testFunc.name}`
 }
 
