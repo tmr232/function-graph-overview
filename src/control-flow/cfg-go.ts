@@ -289,7 +289,9 @@ function processSwitchlike(
 ): BasicBlock {
   const blockHandler = ctx.matcher.state;
 
-  const cases = ctx.builder.withBlock(switchSyntax.id, () => { return collectCases(switchSyntax, ctx, { parseCase, getCases }); });
+  const cases = ctx.builder.withBlock(switchSyntax.id, () => {
+    return collectCases(switchSyntax, ctx, { parseCase, getCases });
+  });
   const headNode = ctx.builder.addNode(
     "SWITCH_CONDITION",
     getChildFieldText(switchSyntax, "value"),

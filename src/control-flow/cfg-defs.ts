@@ -173,7 +173,7 @@ export function mergeNodeAttrs(
     markers: [...from.markers, ...into.markers],
     cluster: from.cluster,
     targets: [...from.targets, ...into.targets],
-    block: from.block
+    block: from.block,
   };
 }
 export interface Case {

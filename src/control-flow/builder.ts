@@ -13,7 +13,7 @@ export class Builder {
   private nodeId: number = 0;
   private clusterId: ClusterId = 0;
   private activeClusters: Cluster[] = [];
-  private activeBlocks: number[] = []
+  private activeBlocks: number[] = [];
 
   private startCluster(type: ClusterType): Cluster {
     const parent =
@@ -62,7 +62,7 @@ export class Builder {
       markers: [],
       cluster,
       targets: [id],
-      block: this.activeBlocks[this.activeBlocks.length - 1]
+      block: this.activeBlocks[this.activeBlocks.length - 1],
     });
     return id;
   }

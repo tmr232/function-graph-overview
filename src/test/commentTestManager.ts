@@ -1,4 +1,5 @@
 import { remapNodeTargets } from "../control-flow/cfg-defs";
+import type { SimpleRange } from "../control-flow/ranges";
 import { graphToDot } from "../control-flow/render";
 import {
   buildSimpleCFG,
@@ -31,8 +32,8 @@ export class TestManager {
     };
   }
 
-  public get allTests() {
-    const tests = [];
+  public get allTests(): [string, TestFunction, RequirementHandler][] {
+    const tests: [string, TestFunction, RequirementHandler][] = [];
     for (const testFunc of this.testFunctions) {
       for (const [key, _value] of Object.entries(testFunc.reqs)) {
         const testName = `${testFunc.language}: ${testFunc.name}: ${key}`;
@@ -46,7 +47,7 @@ export class TestManager {
     return tests;
   }
 
-  public get snapshotTests() {
+  public get snapshotTests(): [string, () => string][] {
     return this.testFunctions.map((testFunc) => {
       const testName = `${testFunc.language}: ${testFunc.name}: DOT Snapshot`;
       const handler = () => {
@@ -58,7 +59,7 @@ export class TestManager {
     });
   }
 
-  public get segmentationTests() {
+  public get segmentationTests(): [string, () => SimpleRange<string>[]][] {
     return this.testFunctions.map((testFunc) => {
       const testName = `${testFunc.language}: ${testFunc.name}: Segmentation`;
       const handler = () => {
