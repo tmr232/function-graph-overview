@@ -6,6 +6,14 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Added
+
+- The demo has a `debug` URL parameter to enable some debug features.
+
+### Changed
+
+- Backlinks are now using the `dir=back` DOT attribute to improve graph layouts.
+
 ## [0.0.6] - 2024-09-26
 
 ### Added

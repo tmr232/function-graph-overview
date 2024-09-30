@@ -159,6 +159,18 @@
 
         <input type="checkbox" id="flatSwitch" bind:checked={flatSwitch} />
         <label for="flatSwitch">Flat Switch</label>
+
+        {#if debugMode}
+          <input type="checkbox" id="verbose" bind:checked={verbose} />
+          <label for="verbose">Verbose</label>
+
+          <input
+            type="checkbox"
+            id="showSegmentation"
+            bind:checked={showSegmentation}
+          />
+          <label for="showSegmentation">Show Segmnetation</label>
+        {/if}
       </div>
       <div class="download">
         <button on:click={saveSVG}>Save SVG</button>
