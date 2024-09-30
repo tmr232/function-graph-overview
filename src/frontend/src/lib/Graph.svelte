@@ -28,6 +28,7 @@
   export let simplify: boolean = true;
   export let trim: boolean = true;
   export let flatSwitch: boolean = false;
+  export let highlight: boolean = true;
 
   async function initialize() {
     const utils = await initializeUtils();
@@ -40,6 +41,7 @@
     readonly verbose: boolean;
     readonly trim: boolean;
     readonly flatSwitch: boolean;
+    readonly highlight: boolean;
   }
 
   function renderCode(
@@ -48,7 +50,7 @@
     highlightOffset: number | undefined,
     options: RenderOptions,
   ) {
-    const { trim, simplify, verbose, flatSwitch } = options;
+    const { trim, simplify, verbose, flatSwitch, highlight } = options;
     tree = parsers[language].parse(code);
     const functionSyntax = getFirstFunction(tree);
     const builder = newCFGBuilder(language, { flatSwitch });
@@ -59,7 +61,9 @@
     if (trim) cfg = trimFor(cfg);
     if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
     cfg = remapNodeTargets(cfg);
-    const nodeToHighlight = getValue(cfg.offsetToNode, highlightOffset);
+    const nodeToHighlight = highlight
+      ? getValue(cfg.offsetToNode, highlightOffset)
+      : undefined;
     dot = graphToDot(cfg, verbose, nodeToHighlight);
 
     return graphviz.dot(dot);
@@ -96,6 +100,7 @@
         verbose,
         trim,
         flatSwitch,
+        highlight,
       })}
     </div>
   {/await}

@@ -35,6 +35,7 @@
 
   let simplify = true;
   let flatSwitch = false;
+  let highlight = true;
   let verbose = urlParams.has("verbose");
   let showSegmentation = urlParams.has("segmentation");
   let debugMode = urlParams.has("debug");
@@ -170,6 +171,9 @@
             bind:checked={showSegmentation}
           />
           <label for="showSegmentation">Show Segmnetation</label>
+
+          <input type="checkbox" id="highlight" bind:checked={highlight} />
+          <label for="highlight">Highlight</label>
         {/if}
       </div>
       <div class="download">
@@ -186,6 +190,7 @@
       {simplify}
       {flatSwitch}
       {verbose}
+      {highlight}
       bind:this={graph}
     />
   </div>
