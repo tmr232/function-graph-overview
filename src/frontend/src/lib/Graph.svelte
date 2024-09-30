@@ -82,6 +82,10 @@
   export function getSVG() {
     return graphviz.dot(dot);
   }
+  export function getDOT() {
+    // @ts-expect-error: "canon" not supported in type signature
+    return graphviz.dot(dot, "canon");
+  }
 </script>
 
 <div class="results">
