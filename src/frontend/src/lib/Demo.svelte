@@ -37,6 +37,7 @@
   let flatSwitch = false;
   let verbose = urlParams.has("verbose");
   let showSegmentation = urlParams.has("segmentation");
+  let debugMode = urlParams.has("debug");
 
   let selection = languages[parseInt(urlParams.get("language")) || 0];
   let code = codeGo;
@@ -90,6 +91,16 @@
   function saveSVG() {
     const svg = graph.getSVG();
     downloadString(svg, "image/svg+xml", "function-graph-overview.svg");
+  }
+
+  function editDotLink(dot: string): string {
+    return `https://dreampuf.github.io/GraphvizOnline/?compressed=${LZString.compressToEncodedURIComponent(dot)}`;
+  }
+
+  function editDOT() {
+    const dot = graph.getDOT();
+    const url = editDotLink(dot);
+    window.open(url, "_blank", "noopener");
   }
 
   function cursorMoved(event): void {
@@ -148,9 +159,24 @@
 
         <input type="checkbox" id="flatSwitch" bind:checked={flatSwitch} />
         <label for="flatSwitch">Flat Switch</label>
+
+        {#if debugMode}
+          <input type="checkbox" id="verbose" bind:checked={verbose} />
+          <label for="verbose">Verbose</label>
+
+          <input
+            type="checkbox"
+            id="showSegmentation"
+            bind:checked={showSegmentation}
+          />
+          <label for="showSegmentation">Show Segmnetation</label>
+        {/if}
       </div>
       <div class="download">
         <button on:click={saveSVG}>Save SVG</button>
+        {#if debugMode}
+          <button on:click={editDOT}>Edit DOT</button>
+        {/if}
       </div>
     </div>
     <Graph

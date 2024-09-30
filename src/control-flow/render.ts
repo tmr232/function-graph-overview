@@ -248,7 +248,8 @@ function renderEdge(
 ) {
   const attributes = topGraph.getEdgeAttributes(edge);
   const dotAttrs: DotAttributes = {};
-  dotAttrs.penwidth = context.isBacklink(source, target) ? 2 : 1;
+  const isBacklink = context.isBacklink(source, target);
+  dotAttrs.penwidth = isBacklink ? 2 : 1;
   dotAttrs.color = "blue";
   switch (attributes.type) {
     case "consequence":
@@ -267,6 +268,15 @@ function renderEdge(
       break;
     default:
       dotAttrs.color = "fuchsia";
+  }
+  if (isBacklink) {
+    // For backlinks, we use `dir=back` to improve the layout.
+    // This tells DOT that this is a backlink, and changes the ranking of nodes.
+    dotAttrs.dir = "back";
+    // To accomodate that, we also flip the node order and the ports.
+    [source, target] = [target, source];
+    dotAttrs.headport = "s";
+    dotAttrs.tailport = "n";
   }
   return `    ${source} -> ${target} [${formatStyle(dotAttrs)}];\n`;
 }
