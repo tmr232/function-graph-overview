@@ -117,7 +117,7 @@
       <a href="https://github.com/tmr232/function-graph-overview/">Repo</a>
       <a
         href="https://marketplace.visualstudio.com/items?itemName=tamir-bahar.function-graph-overview"
-        >Install</a
+        >VSCode Extension</a
       >
     </div>
   </header>
