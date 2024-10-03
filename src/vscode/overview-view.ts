@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
-
+import * as fs from "fs";
+import * as crypto from "crypto";
 export class OverviewViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "functionGraphOverview.overview";
   private readonly helloWorldSvg: string;
@@ -34,63 +35,54 @@ export class OverviewViewProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
   }
+
+  private getUri(filename: string): vscode.Uri {
+    return vscode.Uri.joinPath(this._extensionUri, "webview-content", filename);
+  }
+
+  private getWebviewUri(webview: vscode.Webview, filename: string): vscode.Uri {
+    return webview.asWebviewUri(this.getUri(filename));
+  }
+
   private _getHtmlForWebview(webview: vscode.Webview): string {
     // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
-    const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "webview-content", "main.js"),
-    );
+    const scriptUri = this.getWebviewUri(webview, "main.js");
 
     // Do the same for the stylesheet.
-    const styleResetUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "webview-content", "reset.css"),
-    );
-    const styleVSCodeUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "webview-content", "vscode.css"),
-    );
-    const styleMainUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "webview-content", "main.css"),
-    );
+    const styleResetUri = this.getWebviewUri(webview, "reset.css");
+    const styleVSCodeUri = this.getWebviewUri(webview, "vscode.css");
+    const styleMainUri = this.getWebviewUri(webview, "main.css");
 
     // Use a nonce to only allow a specific script to be run.
     const nonce = getNonce();
 
-    return `<!DOCTYPE html>
-              <html lang="en">
-              <head>
-                  <meta charset="UTF-8">
-  
-                  <!--
-                      Use a content security policy to only allow loading styles from our extension directory,
-                      and only allow scripts that have a specific nonce.
-                      (See the 'webview-sample' extension sample for img-src content security policy examples)
-                  -->
-                  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
-  
-                  <link href="${styleResetUri}" rel="stylesheet">
-                  <link href="${styleVSCodeUri}" rel="stylesheet">
-                  <link href="${styleMainUri}" rel="stylesheet">
-  
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                  <title>Overview</title>
-                  <style>
-  
-                  </style>
-              </head>
-              <body>
-              <div id="overview">${this.helloWorldSvg}</div>
-  
-                  <script nonce="${nonce}" src="${scriptUri}"></script>
-              </body>
-              </html>`;
+    const htmlPath = this.getUri("index.html").fsPath;
+    let html = fs.readFileSync(htmlPath).toString();
+
+    const replacements: [RegExp, string][] = [
+      [/#{nonce}/g, nonce],
+      [/#{cspSource}/g, webview.cspSource],
+      [/#{styleResetUri}/g, styleResetUri.toString()],
+      [/#{styleVSCodeUri}/g, styleVSCodeUri.toString()],
+      [/#{styleMainUri}/g, styleMainUri.toString()],
+      [/#{scriptUri}/g, scriptUri.toString()],
+      [/#{helloWorldSvg}/g, this.helloWorldSvg],
+    ];
+
+    for (const [pattern, substitute] of replacements) {
+      html = html.replaceAll(pattern, substitute);
+    }
+
+    // Make sure we did not forget any replacements
+    const unreplaced = html.match(/#{\w+}/g);
+    if (unreplaced) {
+      console.log("Unreplaced placeholder found!", unreplaced);
+    }
+
+    return html;
   }
 }
 
-function getNonce() {
-  let text = "";
-  const possible =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  for (let i = 0; i < 32; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
+function getNonce(): string {
+  return crypto.randomBytes(16).toString("base64");
 }
