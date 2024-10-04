@@ -43,13 +43,13 @@ export class Builder {
     }
   }
 
-  public addNode(type: NodeType, code: string, lines: number = 1): string {
+  public addNode(type: NodeType, code: string): string {
     const id = `node${this.nodeId++}`;
     const cluster = this.activeClusters[this.activeClusters.length - 1];
     this.graph.addNode(id, {
       type,
       code,
-      lines,
+      lines: 1,
       markers: [],
       cluster,
       targets: [id],
