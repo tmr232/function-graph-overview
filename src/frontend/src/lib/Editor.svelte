@@ -39,6 +39,14 @@
     editorView.dom.addEventListener("keyup", updateCursorPosition);
     editorView.dom.addEventListener("mouseup", updateCursorPosition);
   }
+
+  export function setCursor(offset: number) {
+    if (!editorView) return;
+    editorView.dispatch({
+      selection: { anchor: offset, head: offset },
+      scrollIntoView: true,
+    });
+  }
 </script>
 
 <CodeMirror

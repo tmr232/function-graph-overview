@@ -108,6 +108,16 @@
     const { index } = event.detail.pos;
     offsetToHighlight = index;
   }
+
+  let editor: Editor;
+
+  function onNodeClicked(
+    e: CustomEvent<{ node: string; offset: number | null }>,
+  ): void {
+    console.log("Node clicked!", e.detail.node, e.detail.offset);
+    const offset = e.detail.offset;
+    if (offset !== null && offset !== undefined) editor?.setCursor(offset);
+  }
 </script>
 
 <main>
@@ -134,11 +144,22 @@
     </div>
     <div class="codemirror">
       {#if selection.language === "Go"}
-        <Editor bind:code={codeGo} lang={go()} on:cursorMoved={cursorMoved} />
+        <Editor
+          bind:this={editor}
+          bind:code={codeGo}
+          lang={go()}
+          on:cursorMoved={cursorMoved}
+        />
       {:else if selection.language === "C"}
-        <Editor bind:code={codeC} lang={cpp()} on:cursorMoved={cursorMoved} />
+        <Editor
+          bind:this={editor}
+          bind:code={codeC}
+          lang={cpp()}
+          on:cursorMoved={cursorMoved}
+        />
       {:else if selection.language === "Python"}
         <Editor
+          bind:this={editor}
           bind:code={codePython}
           lang={python()}
           on:cursorMoved={cursorMoved}
@@ -192,6 +213,7 @@
       {verbose}
       {highlight}
       bind:this={graph}
+      on:node-clicked={onNodeClicked}
     />
   </div>
 </main>
