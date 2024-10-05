@@ -3,6 +3,8 @@
 // This script will be run within the webview itself
 // It cannot access the main VS Code APIs directly.
 (function () {
+  const vscode = acquireVsCodeApi();
+
   // Handle messages sent from the extension to the webview
   window.addEventListener("message", (event) => {
     const message = event.data; // The json data that the extension sent
@@ -14,6 +16,8 @@
     }
   });
 
+  window.addEventListener("click", onClick);
+
   /**
    *
    * @param {string} svgMarkup
@@ -21,5 +25,20 @@
   function displaySVG(svgMarkup) {
     const div = document.querySelector("#overview");
     if (div) div.innerHTML = svgMarkup;
+  }
+
+  function onClick(event) {
+    let target = event.target;
+    while (
+      target.tagName !== "div" &&
+      target.tagName !== "svg" &&
+      !target.classList.contains("node")
+    ) {
+      target = target.parentElement;
+    }
+    if (!target.classList.contains("node")) {
+      return;
+    }
+    vscode.postMessage({ event: "node-clicked", node: target.id });
   }
 })();

@@ -154,6 +154,34 @@ function getFunctionAtPosition(
   }
   return syntax;
 }
+
+function focusEditor() {
+  const editor = vscode.window.activeTextEditor;
+  if (editor) {
+    vscode.window.showTextDocument(editor.document, {
+      preserveFocus: false, // This ensures the editor gets focus
+      preview: false, // Don't open in preview mode
+      viewColumn: editor.viewColumn,
+    });
+  }
+}
+
+function moveCursorAndReveal(offset: number) {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor) {
+    return;
+  }
+
+  const position = editor.document.positionAt(offset);
+  editor.selection = new vscode.Selection(position, position);
+
+  // Reveal the cursor position in different ways
+  editor.revealRange(
+    new vscode.Range(position, position),
+    vscode.TextEditorRevealType.InCenterIfOutsideViewport, // Can be Default, InCenter, InCenterIfOutsideViewport, AtTop
+  );
+}
+
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
@@ -163,6 +191,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const provider = new OverviewViewProvider(
     context.extensionUri,
     helloWorldSvg,
+    onNodeClick,
   );
 
   context.subscriptions.push(
@@ -182,6 +211,14 @@ export async function activate(context: vscode.ExtensionContext) {
 
   let cfgKey: CFGKey | undefined;
   let savedCFG: CFG;
+
+  function onNodeClick(node: string): void {
+    const offset = savedCFG.graph.getNodeAttribute(node, "startOffset");
+    if (offset !== null) {
+      moveCursorAndReveal(offset);
+      focusEditor();
+    }
+  }
 
   const cursorMove = vscode.window.onDidChangeTextEditorSelection(
     (event: vscode.TextEditorSelectionChangeEvent): void => {
@@ -251,6 +288,6 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
 
 //------------------------------------------------
