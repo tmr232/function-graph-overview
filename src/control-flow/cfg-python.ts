@@ -41,11 +41,11 @@ function defaultProcessStatement(
   const { builder } = ctx;
   const hasYield = matchExistsIn(syntax, `(yield) @yield`);
   if (hasYield) {
-    const yieldNode = builder.addNode("YIELD", syntax.text);
+    const yieldNode = builder.addNode("YIELD", syntax.text, syntax.startIndex);
     ctx.link.syntaxToNode(syntax, yieldNode);
     return { entry: yieldNode, exit: yieldNode };
   }
-  const newNode = builder.addNode("STATEMENT", syntax.text);
+  const newNode = builder.addNode("STATEMENT", syntax.text, syntax.startIndex);
   ctx.link.syntaxToNode(syntax, newNode);
   return { entry: newNode, exit: newNode };
 }
@@ -54,7 +54,11 @@ function processRaiseStatement(
   ctx: Context,
 ): BasicBlock {
   const { builder } = ctx;
-  const raiseNode = builder.addNode("THROW", raiseSyntax.text);
+  const raiseNode = builder.addNode(
+    "THROW",
+    raiseSyntax.text,
+    raiseSyntax.startIndex,
+  );
   ctx.link.syntaxToNode(raiseSyntax, raiseNode);
   return { entry: raiseNode, exit: null };
 }
@@ -63,7 +67,11 @@ function processReturnStatement(
   ctx: Context,
 ): BasicBlock {
   const { builder } = ctx;
-  const returnNode = builder.addNode("RETURN", returnSyntax.text);
+  const returnNode = builder.addNode(
+    "RETURN",
+    returnSyntax.text,
+    returnSyntax.startIndex,
+  );
   ctx.link.syntaxToNode(returnSyntax, returnNode);
   return { entry: returnNode, exit: null, returns: [returnNode] };
 }
@@ -98,7 +106,11 @@ function processTryStatement(
   const elseSyntax = match.getSyntax("else-body");
   const finallySyntax = match.getSyntax("finally-body");
 
-  const mergeNode = builder.addNode("MERGE", "merge try-complex");
+  const mergeNode = builder.addNode(
+    "MERGE",
+    "merge try-complex",
+    trySyntax.endIndex,
+  );
 
   return builder.withCluster("try-complex", (tryComplexCluster) => {
     const bodyBlock = builder.withCluster("try", () =>
@@ -241,7 +253,11 @@ function processComment(
   const { builder, options } = ctx;
   // We only ever ger here when marker comments are enabled,
   // and only for marker comments as the rest are filtered out.
-  const commentNode = builder.addNode("MARKER_COMMENT", commentSyntax.text);
+  const commentNode = builder.addNode(
+    "MARKER_COMMENT",
+    commentSyntax.text,
+    commentSyntax.startIndex,
+  );
   ctx.link.syntaxToNode(commentSyntax, commentNode);
   if (options.markerPattern) {
     const marker = commentSyntax.text.match(options.markerPattern)?.[1];
@@ -280,7 +296,11 @@ function processMatchStatement(
   };
 
   const subjectBlock = match.getBlock(subjectSyntax);
-  const mergeNode = builder.addNode("MERGE", "match merge");
+  const mergeNode = builder.addNode(
+    "MERGE",
+    "match merge",
+    matchSyntax.endIndex,
+  );
   ctx.link.syntaxToNode(matchSyntax, subjectBlock.entry);
 
   // This is the case where case matches
@@ -298,6 +318,7 @@ function processMatchStatement(
     const patternNode = builder.addNode(
       "CASE_CONDITION",
       `case ${patternSyntaxMany.map((pat) => pat.text).join(", ")}:`,
+      caseSyntax.startIndex,
     );
     patternSyntaxMany.forEach((syntax) =>
       ctx.link.syntaxToNode(syntax, patternNode),
@@ -325,7 +346,11 @@ function processContinueStatement(
   ctx: Context,
 ): BasicBlock {
   const { builder } = ctx;
-  const continueNode = builder.addNode("CONTINUE", "CONTINUE");
+  const continueNode = builder.addNode(
+    "CONTINUE",
+    "CONTINUE",
+    continueSyntax.startIndex,
+  );
   ctx.link.syntaxToNode(continueSyntax, continueNode);
   return { entry: continueNode, exit: null, continues: [continueNode] };
 }
@@ -334,7 +359,7 @@ function processBreakStatement(
   ctx: Context,
 ): BasicBlock {
   const { builder } = ctx;
-  const breakNode = builder.addNode("BREAK", "BREAK");
+  const breakNode = builder.addNode("BREAK", "BREAK", breakSyntax.startIndex);
   ctx.link.syntaxToNode(breakSyntax, breakNode);
   return { entry: breakNode, exit: null, breaks: [breakNode] };
 }
@@ -405,8 +430,12 @@ function processIfStatement(
   if (elseSyntax)
     ctx.link.offsetToSyntax(match.requireSyntax("else-colon"), elseSyntax);
 
-  const mergeNode = builder.addNode("MERGE", "if merge");
-  const headNode = builder.addNode("CONDITION", "if condition");
+  const headNode = builder.addNode(
+    "CONDITION",
+    "if condition",
+    ifNode.startIndex,
+  );
+  const mergeNode = builder.addNode("MERGE", "if merge", ifNode.endIndex);
 
   ctx.link.syntaxToNode(ifNode, headNode);
 
@@ -468,8 +497,12 @@ function processForStatement(
   const bodyBlock = match.getBlock(bodySyntax);
   const elseBlock = match.getBlock(elseSyntax);
 
-  const exitNode = builder.addNode("FOR_EXIT", "loop exit");
-  const headNode = builder.addNode("LOOP_HEAD", "loop head");
+  const headNode = builder.addNode(
+    "LOOP_HEAD",
+    "loop head",
+    forNode.startIndex,
+  );
+  const exitNode = builder.addNode("FOR_EXIT", "loop exit", forNode.endIndex);
   const headBlock = { entry: headNode, exit: headNode };
 
   ctx.link.syntaxToNode(forNode, headNode);
@@ -526,7 +559,11 @@ function processWhileStatement(
   const bodyBlock = match.getBlock(bodySyntax);
   const elseBlock = match.getBlock(elseSyntax);
 
-  const exitNode = builder.addNode("FOR_EXIT", "loop exit");
+  const exitNode = builder.addNode(
+    "FOR_EXIT",
+    "loop exit",
+    whileSyntax.endIndex,
+  );
 
   ctx.link.offsetToSyntax(match.requireSyntax("colon"), bodySyntax);
 

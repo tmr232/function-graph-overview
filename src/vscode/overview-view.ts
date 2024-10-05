@@ -1,16 +1,20 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
 import * as crypto from "crypto";
+
 export class OverviewViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "functionGraphOverview.overview";
   private readonly helloWorldSvg: string;
+  private readonly _nodeClickHandler: (node: string) => void;
   private _view?: vscode.WebviewView;
 
   constructor(
     private readonly _extensionUri: vscode.Uri,
     helloWorldSvg: string,
+    nodeClickHandler: (node: string) => void,
   ) {
     this.helloWorldSvg = helloWorldSvg;
+    this._nodeClickHandler = nodeClickHandler;
   }
 
   public setSVG(svg: string) {
@@ -34,6 +38,12 @@ export class OverviewViewProvider implements vscode.WebviewViewProvider {
     };
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+    webviewView.webview.onDidReceiveMessage((message) => {
+      switch (message.event) {
+        case "node-clicked":
+          this._nodeClickHandler(message.node);
+      }
+    });
   }
 
   private getUri(filename: string): vscode.Uri {

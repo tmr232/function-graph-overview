@@ -15,6 +15,7 @@
     type Parsers,
   } from "./utils";
   import { getValue } from "../../../control-flow/ranges";
+  import { createEventDispatcher } from "svelte";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
@@ -29,6 +30,8 @@
   export let trim: boolean = true;
   export let flatSwitch: boolean = false;
   export let highlight: boolean = true;
+
+  const dispatch = createEventDispatcher();
 
   async function initialize() {
     const utils = await initializeUtils();
@@ -90,11 +93,29 @@
     // @ts-expect-error: "canon" not supported in type signature
     return graphviz.dot(dot, "canon");
   }
+
+  function onClick(event) {
+    let target: Element = event.target;
+    while (
+      target.tagName !== "div" &&
+      target.tagName !== "svg" &&
+      !target.classList.contains("node")
+    ) {
+      target = target.parentElement;
+    }
+    if (!target.classList.contains("node")) {
+      return;
+    }
+    dispatch("node-clicked", {
+      node: target.id,
+      offset: cfg.graph.getNodeAttribute(target.id, "startOffset"),
+    });
+  }
 </script>
 
 <div class="results">
   {#await initialize() then}
-    <div class="graph">
+    <div class="graph" on:click={onClick}>
       {@html renderWrapper(code, language, offsetToHighlight, {
         simplify,
         verbose,

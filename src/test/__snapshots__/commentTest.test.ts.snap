@@ -2379,9 +2379,9 @@ shape="invhouse";
 fillcolor="#48AB30";
 height=0.5;
 ];
-    node3 [style="filled";
+    node2 [style="filled";
 label="";
-id="node3";
+id="node2";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
@@ -2400,102 +2400,25 @@ shape="house";
 fillcolor="#AB3030";
 height=0.6;
 ];
-    node3 -> node1 [penwidth=1;
+    node2 -> node1 [penwidth=1;
 color="green";
 ];
-    node3 -> node1 [penwidth=2;
+    node2 -> node1 [penwidth=2;
 color="blue";
 dir="back";
 headport="s";
 tailport="n";
 ];
-    node0 -> node3 [penwidth=1;
+    node0 -> node2 [penwidth=1;
 color="blue";
 ];
-    node3 -> node4 [penwidth=1;
+    node2 -> node4 [penwidth=1;
 color="red";
 ];
 }"
 `;
 
 exports[`Python: ForContinue: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box];
-    edge [headport=n tailport=s]
-    bgcolor="transparent"
-    node0 [style="filled";
-label="";
-id="node0";
-shape="invhouse";
-fillcolor="#48AB30";
-height=0.5;
-];
-    node7 [style="filled";
-label="";
-id="node7";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node1 [style="filled";
-label="";
-id="node1";
-shape="box";
-fillcolor="lightgray";
-height=0.6;
-];
-    node8 [style="filled";
-label="";
-id="node8";
-shape="house";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-fillcolor="lightgray";
-height=0.3;
-];
-    node5 [style="filled";
-label="";
-id="node5";
-shape="box";
-fillcolor="lightgray";
-height=0.6;
-];
-    node1 -> node2 [penwidth=1;
-color="green";
-];
-    node7 -> node5 [penwidth=2;
-color="blue";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node7 -> node2 [penwidth=2;
-color="blue";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node0 -> node7 [penwidth=1;
-color="blue";
-];
-    node7 -> node1 [penwidth=1;
-color="green";
-];
-    node7 -> node8 [penwidth=1;
-color="red";
-];
-    node1 -> node5 [penwidth=1;
-color="red";
-];
-}"
-`;
-
-exports[`Python: ForBreak: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box];
     edge [headport=n tailport=s]
@@ -2521,6 +2444,83 @@ shape="box";
 fillcolor="lightgray";
 height=0.6;
 ];
+    node8 [style="filled";
+label="";
+id="node8";
+shape="house";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="green";
+];
+    node6 -> node5 [penwidth=2;
+color="blue";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node6 -> node2 [penwidth=2;
+color="blue";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node0 -> node6 [penwidth=1;
+color="blue";
+];
+    node6 -> node1 [penwidth=1;
+color="green";
+];
+    node6 -> node8 [penwidth=1;
+color="red";
+];
+    node1 -> node5 [penwidth=1;
+color="red";
+];
+}"
+`;
+
+exports[`Python: ForBreak: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box];
+    edge [headport=n tailport=s]
+    bgcolor="transparent"
+    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+fillcolor="lightgray";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+fillcolor="lightgray";
+height=0.6;
+];
     node7 [style="filled";
 label="";
 id="node7";
@@ -2535,9 +2535,9 @@ shape="box";
 fillcolor="lightgray";
 height=0.3;
 ];
-    node3 [style="filled";
+    node4 [style="filled";
 label="";
-id="node3";
+id="node4";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
@@ -2545,22 +2545,22 @@ height=0.3;
     node1 -> node2 [penwidth=1;
 color="green";
 ];
-    node1 -> node3 [penwidth=1;
+    node1 -> node4 [penwidth=1;
 color="red";
 ];
-    node6 -> node3 [penwidth=2;
+    node5 -> node4 [penwidth=2;
 color="blue";
 dir="back";
 headport="s";
 tailport="n";
 ];
-    node0 -> node6 [penwidth=1;
+    node0 -> node5 [penwidth=1;
 color="blue";
 ];
-    node6 -> node1 [penwidth=1;
+    node5 -> node1 [penwidth=1;
 color="green";
 ];
-    node6 -> node7 [penwidth=1;
+    node5 -> node7 [penwidth=1;
 color="red";
 ];
     node2 -> node7 [penwidth=1;
@@ -2581,9 +2581,9 @@ shape="invhouse";
 fillcolor="#48AB30";
 height=0.5;
 ];
-    node4 [style="filled";
+    node3 [style="filled";
 label="";
-id="node4";
+id="node3";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
@@ -2602,19 +2602,19 @@ shape="house";
 fillcolor="#AB3030";
 height=0.5;
 ];
-    node4 -> node1 [penwidth=1;
+    node3 -> node1 [penwidth=1;
 color="green";
 ];
-    node4 -> node1 [penwidth=2;
+    node3 -> node1 [penwidth=2;
 color="blue";
 dir="back";
 headport="s";
 tailport="n";
 ];
-    node4 -> node2 [penwidth=1;
+    node3 -> node2 [penwidth=1;
 color="red";
 ];
-    node0 -> node4 [penwidth=1;
+    node0 -> node3 [penwidth=1;
 color="blue";
 ];
 }"
@@ -2632,9 +2632,9 @@ shape="invhouse";
 fillcolor="#48AB30";
 height=0.5;
 ];
-    node7 [style="filled";
+    node6 [style="filled";
 label="";
-id="node7";
+id="node6";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
@@ -2660,9 +2660,9 @@ shape="box";
 fillcolor="lightgray";
 height=0.3;
 ];
-    node3 [style="filled";
+    node4 [style="filled";
 label="";
-id="node3";
+id="node4";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
@@ -2677,22 +2677,22 @@ height=0.6;
     node1 -> node2 [penwidth=1;
 color="green";
 ];
-    node1 -> node3 [penwidth=1;
+    node1 -> node4 [penwidth=1;
 color="red";
 ];
-    node7 -> node3 [penwidth=2;
+    node6 -> node4 [penwidth=2;
 color="blue";
 dir="back";
 headport="s";
 tailport="n";
 ];
-    node7 -> node5 [penwidth=1;
+    node6 -> node5 [penwidth=1;
 color="red";
 ];
-    node0 -> node7 [penwidth=1;
+    node0 -> node6 [penwidth=1;
 color="blue";
 ];
-    node7 -> node1 [penwidth=1;
+    node6 -> node1 [penwidth=1;
 color="green";
 ];
     node5 -> node8 [penwidth=1;
@@ -2716,9 +2716,9 @@ shape="invhouse";
 fillcolor="#48AB30";
 height=0.5;
 ];
-    node7 [style="filled";
+    node6 [style="filled";
 label="";
-id="node7";
+id="node6";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
@@ -2737,9 +2737,9 @@ shape="box";
 fillcolor="lightgray";
 height=0.6;
 ];
-    node3 [style="filled";
+    node4 [style="filled";
 label="";
-id="node3";
+id="node4";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
@@ -2751,22 +2751,22 @@ shape="house";
 fillcolor="#AB3030";
 height=0.8999999999999999;
 ];
-    node1 -> node3 [penwidth=1;
+    node1 -> node4 [penwidth=1;
 color="red";
 ];
-    node7 -> node3 [penwidth=2;
+    node6 -> node4 [penwidth=2;
 color="blue";
 dir="back";
 headport="s";
 tailport="n";
 ];
-    node7 -> node5 [penwidth=1;
+    node6 -> node5 [penwidth=1;
 color="red";
 ];
-    node0 -> node7 [penwidth=1;
+    node0 -> node6 [penwidth=1;
 color="blue";
 ];
-    node7 -> node1 [penwidth=1;
+    node6 -> node1 [penwidth=1;
 color="green";
 ];
     node1 -> node8 [penwidth=1;
@@ -2943,9 +2943,9 @@ shape="box";
 fillcolor="lightgray";
 height=0.3;
 ];
-    node4 [style="filled";
+    node5 [style="filled";
 label="";
-id="node4";
+id="node5";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
@@ -2953,10 +2953,10 @@ height=0.3;
     node2 -> node3 [penwidth=1;
 color="green";
 ];
-    node2 -> node4 [penwidth=1;
+    node2 -> node5 [penwidth=1;
 color="red";
 ];
-    node1 -> node4 [penwidth=2;
+    node1 -> node5 [penwidth=2;
 color="blue";
 dir="back";
 headport="s";
@@ -3470,9 +3470,9 @@ shape="house";
 fillcolor="#AB3030";
 height=0.5;
 ];
-    node17 [style="filled";
+    node18 [style="filled";
 label="";
-id="node17";
+id="node18";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
@@ -3634,9 +3634,9 @@ shape="box";
 fillcolor="lightgray";
 height=0.3;
 ];
-    node17 [style="filled";
+    node18 [style="filled";
 label="";
-id="node17";
+id="node18";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
@@ -3672,13 +3672,13 @@ height=0.3;
     node9 -> node10 [penwidth=1;
 color="blue";
 ];
-    node11 -> node17 [penwidth=1;
+    node11 -> node18 [penwidth=1;
 color="blue";
 ];
     node6 -> node7 [penwidth=1;
 color="blue";
 ];
-    node17 -> node19 [penwidth=1;
+    node18 -> node19 [penwidth=1;
 color="blue";
 ];
     node1 -> node2 [penwidth=1;
@@ -3757,9 +3757,9 @@ shape="box";
 fillcolor="lightgray";
 height=0.3;
 ];
-    node5 [style="filled";
+    node6 [style="filled";
 label="";
-id="node5";
+id="node6";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
@@ -3767,10 +3767,10 @@ height=0.3;
     node3 -> node4 [penwidth=1;
 color="green";
 ];
-    node4 -> node5 [penwidth=1;
+    node4 -> node6 [penwidth=1;
 color="blue";
 ];
-    node3 -> node5 [penwidth=1;
+    node3 -> node6 [penwidth=1;
 color="red";
 ];
 
@@ -3804,9 +3804,9 @@ shape="box";
 fillcolor="lightgray";
 height=0.3;
 ];
-    node5 [style="filled";
+    node6 [style="filled";
 label="";
-id="node5";
+id="node6";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
@@ -3827,7 +3827,7 @@ style="invis";
 headport="e";
 tailport="w";
 ];
-    node5 -> node11 [penwidth=1;
+    node6 -> node11 [penwidth=1;
 color="blue";
 ];
 }"
@@ -3845,9 +3845,9 @@ shape="invhouse";
 fillcolor="#48AB30";
 height=0.5;
 ];
-    node3 [style="filled";
+    node2 [style="filled";
 label="";
-id="node3";
+id="node2";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
@@ -3867,19 +3867,19 @@ shape="house";
 fillcolor="#AB3030";
 height=0.6;
 ];
-    node3 -> node1 [penwidth=1;
+    node2 -> node1 [penwidth=1;
 color="green";
 ];
-    node3 -> node1 [penwidth=2;
+    node2 -> node1 [penwidth=2;
 color="blue";
 dir="back";
 headport="s";
 tailport="n";
 ];
-    node0 -> node3 [penwidth=1;
+    node0 -> node2 [penwidth=1;
 color="blue";
 ];
-    node3 -> node4 [penwidth=1;
+    node2 -> node4 [penwidth=1;
 color="red";
 ];
 }"
@@ -4431,9 +4431,9 @@ shape="box";
 fillcolor="lightgray";
 height=0.3;
 ];
-    node15 [style="filled";
+    node16 [style="filled";
 label="";
-id="node15";
+id="node16";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
@@ -4637,9 +4637,9 @@ subgraph cluster_15 {
 penwidth=0;
 color="white";
 bgcolor="#ffddff";
-    node23 [style="filled";
+    node22 [style="filled";
 label="";
-id="node23";
+id="node22";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
@@ -4651,23 +4651,23 @@ shape="box";
 fillcolor="lightgray";
 height=0.3;
 ];
-    node22 [style="filled";
+    node23 [style="filled";
 label="";
-id="node22";
+id="node23";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
 ];
-    node23 -> node21 [penwidth=1;
+    node22 -> node21 [penwidth=1;
 color="green";
 ];
-    node23 -> node21 [penwidth=2;
+    node22 -> node21 [penwidth=2;
 color="blue";
 dir="back";
 headport="s";
 tailport="n";
 ];
-    node23 -> node22 [penwidth=1;
+    node22 -> node23 [penwidth=1;
 color="red";
 ];
 
@@ -4677,13 +4677,13 @@ color="red";
     node12 -> node13 [penwidth=1;
 color="green";
 ];
-    node13 -> node15 [penwidth=1;
+    node13 -> node16 [penwidth=1;
 color="blue";
 ];
     node12 -> node14 [penwidth=1;
 color="red";
 ];
-    node14 -> node15 [penwidth=1;
+    node14 -> node16 [penwidth=1;
 color="blue";
 ];
 
@@ -4792,16 +4792,16 @@ shape="box";
 fillcolor="lightgray";
 height=0.3;
 ];
-    node23 [style="filled";
+    node22 [style="filled";
 label="";
-id="node23";
+id="node22";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
 ];
-    node15 [style="filled";
+    node16 [style="filled";
 label="";
-id="node15";
+id="node16";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
@@ -4813,9 +4813,9 @@ shape="box";
 fillcolor="lightgray";
 height=0.3;
 ];
-    node22 [style="filled";
+    node23 [style="filled";
 label="";
-id="node22";
+id="node23";
 shape="box";
 fillcolor="lightgray";
 height=0.3;
@@ -4896,10 +4896,10 @@ color="blue";
     node19 -> node17 [penwidth=1;
 color="blue";
 ];
-    node15 -> node18 [penwidth=1;
+    node16 -> node18 [penwidth=1;
 color="blue";
 ];
-    node20 -> node23 [penwidth=1;
+    node20 -> node22 [penwidth=1;
 color="blue";
 ];
     node17 -> node20 [penwidth=1;
@@ -4914,7 +4914,7 @@ color="blue";
     node2 -> node12 [penwidth=1;
 color="blue";
 ];
-    node22 -> node24 [penwidth=1;
+    node23 -> node24 [penwidth=1;
 color="blue";
 ];
 }"
@@ -8444,7 +8444,7 @@ exports[`Python: For: Segmentation 1`] = `
   },
   {
     "start": 324,
-    "value": "node3",
+    "value": "node2",
   },
   {
     "start": 335,
@@ -8460,7 +8460,7 @@ exports[`Python: For: Segmentation 1`] = `
   },
   {
     "start": 348,
-    "value": "node3",
+    "value": "node2",
   },
   {
     "start": 348,
@@ -8468,7 +8468,7 @@ exports[`Python: For: Segmentation 1`] = `
   },
   {
     "start": 348,
-    "value": "node3",
+    "value": "node2",
   },
   {
     "start": 348,
@@ -8489,7 +8489,7 @@ exports[`Python: ForContinue: Segmentation 1`] = `
   },
   {
     "start": 384,
-    "value": "node7",
+    "value": "node6",
   },
   {
     "start": 395,
@@ -8497,7 +8497,7 @@ exports[`Python: ForContinue: Segmentation 1`] = `
   },
   {
     "start": 404,
-    "value": "node7",
+    "value": "node6",
   },
   {
     "start": 404,
@@ -8545,7 +8545,7 @@ exports[`Python: ForContinue: Segmentation 1`] = `
   },
   {
     "start": 443,
-    "value": "node7",
+    "value": "node6",
   },
   {
     "start": 443,
@@ -8553,7 +8553,7 @@ exports[`Python: ForContinue: Segmentation 1`] = `
   },
   {
     "start": 443,
-    "value": "node7",
+    "value": "node6",
   },
   {
     "start": 443,
@@ -8574,7 +8574,7 @@ exports[`Python: ForBreak: Segmentation 1`] = `
   },
   {
     "start": 476,
-    "value": "node6",
+    "value": "node5",
   },
   {
     "start": 487,
@@ -8582,7 +8582,7 @@ exports[`Python: ForBreak: Segmentation 1`] = `
   },
   {
     "start": 496,
-    "value": "node6",
+    "value": "node5",
   },
   {
     "start": 496,
@@ -8622,7 +8622,7 @@ exports[`Python: ForBreak: Segmentation 1`] = `
   },
   {
     "start": 519,
-    "value": "node6",
+    "value": "node5",
   },
   {
     "start": 519,
@@ -8630,7 +8630,7 @@ exports[`Python: ForBreak: Segmentation 1`] = `
   },
   {
     "start": 519,
-    "value": "node6",
+    "value": "node5",
   },
   {
     "start": 519,
@@ -8651,7 +8651,7 @@ exports[`Python: ForElse: Segmentation 1`] = `
   },
   {
     "start": 551,
-    "value": "node4",
+    "value": "node3",
   },
   {
     "start": 562,
@@ -8667,7 +8667,7 @@ exports[`Python: ForElse: Segmentation 1`] = `
   },
   {
     "start": 575,
-    "value": "node4",
+    "value": "node3",
   },
   {
     "start": 594,
@@ -8679,7 +8679,7 @@ exports[`Python: ForElse: Segmentation 1`] = `
   },
   {
     "start": 602,
-    "value": "node4",
+    "value": "node3",
   },
   {
     "start": 602,
@@ -8687,7 +8687,7 @@ exports[`Python: ForElse: Segmentation 1`] = `
   },
   {
     "start": 602,
-    "value": "node4",
+    "value": "node3",
   },
   {
     "start": 602,
@@ -8708,7 +8708,7 @@ exports[`Python: ForElseBreak: Segmentation 1`] = `
   },
   {
     "start": 639,
-    "value": "node7",
+    "value": "node6",
   },
   {
     "start": 650,
@@ -8716,7 +8716,7 @@ exports[`Python: ForElseBreak: Segmentation 1`] = `
   },
   {
     "start": 659,
-    "value": "node7",
+    "value": "node6",
   },
   {
     "start": 659,
@@ -8756,7 +8756,7 @@ exports[`Python: ForElseBreak: Segmentation 1`] = `
   },
   {
     "start": 682,
-    "value": "node7",
+    "value": "node6",
   },
   {
     "start": 701,
@@ -8768,7 +8768,7 @@ exports[`Python: ForElseBreak: Segmentation 1`] = `
   },
   {
     "start": 705,
-    "value": "node7",
+    "value": "node6",
   },
   {
     "start": 705,
@@ -8776,7 +8776,7 @@ exports[`Python: ForElseBreak: Segmentation 1`] = `
   },
   {
     "start": 705,
-    "value": "node7",
+    "value": "node6",
   },
   {
     "start": 705,
@@ -8797,7 +8797,7 @@ exports[`Python: ForElseBreakReturn: Segmentation 1`] = `
   },
   {
     "start": 748,
-    "value": "node7",
+    "value": "node6",
   },
   {
     "start": 759,
@@ -8805,7 +8805,7 @@ exports[`Python: ForElseBreakReturn: Segmentation 1`] = `
   },
   {
     "start": 768,
-    "value": "node7",
+    "value": "node6",
   },
   {
     "start": 768,
@@ -8845,7 +8845,7 @@ exports[`Python: ForElseBreakReturn: Segmentation 1`] = `
   },
   {
     "start": 791,
-    "value": "node7",
+    "value": "node6",
   },
   {
     "start": 810,
@@ -8857,7 +8857,7 @@ exports[`Python: ForElseBreakReturn: Segmentation 1`] = `
   },
   {
     "start": 816,
-    "value": "node7",
+    "value": "node6",
   },
   {
     "start": 816,
@@ -8865,7 +8865,7 @@ exports[`Python: ForElseBreakReturn: Segmentation 1`] = `
   },
   {
     "start": 816,
-    "value": "node7",
+    "value": "node6",
   },
   {
     "start": 816,
@@ -10049,11 +10049,11 @@ exports[`Python: raise_again: Segmentation 1`] = `
   },
   {
     "start": 2165,
-    "value": "node10",
+    "value": "node9",
   },
   {
     "start": 2180,
-    "value": "node10",
+    "value": "node9",
   },
   {
     "start": 2183,
@@ -10061,7 +10061,7 @@ exports[`Python: raise_again: Segmentation 1`] = `
   },
   {
     "start": 2184,
-    "value": "node10",
+    "value": "node9",
   },
   {
     "start": 2185,
@@ -10081,15 +10081,15 @@ exports[`Python: raise_again: Segmentation 1`] = `
   },
   {
     "start": 2202,
-    "value": "node10",
+    "value": "node9",
   },
   {
     "start": 2202,
-    "value": "node10",
+    "value": "node9",
   },
   {
     "start": 2202,
-    "value": "node10",
+    "value": "node9",
   },
   {
     "start": 2202,
@@ -10122,7 +10122,7 @@ exports[`Python: yield_value: Segmentation 1`] = `
   },
   {
     "start": 2266,
-    "value": "node3",
+    "value": "node2",
   },
   {
     "start": 2277,
@@ -10138,7 +10138,7 @@ exports[`Python: yield_value: Segmentation 1`] = `
   },
   {
     "start": 2293,
-    "value": "node3",
+    "value": "node2",
   },
   {
     "start": 2293,
@@ -10146,7 +10146,7 @@ exports[`Python: yield_value: Segmentation 1`] = `
   },
   {
     "start": 2293,
-    "value": "node3",
+    "value": "node2",
   },
   {
     "start": 2293,
@@ -10895,7 +10895,7 @@ exports[`Python: massive_try_except_else_finally: Segmentation 1`] = `
   },
   {
     "start": 3287,
-    "value": "node23",
+    "value": "node22",
   },
   {
     "start": 3300,
@@ -10903,7 +10903,7 @@ exports[`Python: massive_try_except_else_finally: Segmentation 1`] = `
   },
   {
     "start": 3300,
-    "value": "node23",
+    "value": "node22",
   },
   {
     "start": 3311,
@@ -10919,11 +10919,11 @@ exports[`Python: massive_try_except_else_finally: Segmentation 1`] = `
   },
   {
     "start": 3332,
-    "value": "node23",
+    "value": "node22",
   },
   {
     "start": 3332,
-    "value": "node23",
+    "value": "node22",
   },
   {
     "start": 3332,
