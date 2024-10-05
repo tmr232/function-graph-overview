@@ -3,7 +3,7 @@
   import { cpp } from "@codemirror/lang-cpp";
   import { python } from "@codemirror/lang-python";
   import Graph from "./Graph.svelte";
-  import type { Language } from "../../../control-flow/cfg";
+  import type { Language } from "../control-flow/cfg";
   import * as LZString from "lz-string";
   import Editor from "./Editor.svelte";
   import CodeSegmentation from "./CodeSegmentation.svelte";
