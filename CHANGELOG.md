@@ -6,6 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.7] - 2024-10-05
+
 ### Added
 
 - Clicking a node in the graph now places the cursor on the matching line.
