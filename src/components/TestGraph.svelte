@@ -38,7 +38,7 @@
       return svg;
     } catch (error) {
       console.trace(error);
-      return `<p style='border: 2px red solid;'>${error.toString()}</p>`;
+      return `<p style='border: 2px red solid;'>${error}</p>`;
     }
   }
 
