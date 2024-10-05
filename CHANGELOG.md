@@ -8,6 +8,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### Added
 
+- Clicking a node in the graph now places the cursor on the matching line.
 - The demo has a `debug` URL parameter to enable some debug features.
 
 ### Changed
