@@ -417,9 +417,11 @@ function processCompoundStatement(
   syntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  const blockBlock = ctx.dispatch.many(syntax.namedChildren);
-  ctx.link.syntaxToNode(syntax, blockBlock.entry);
-  return blockBlock;
+  return ctx.builder.withBlock(syntax.id, () => {
+    const blockBlock = ctx.dispatch.many(syntax.namedChildren);
+    ctx.link.syntaxToNode(syntax, blockBlock.entry);
+    return blockBlock;
+  });
 }
 
 function processReturnStatement(

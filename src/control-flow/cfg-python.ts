@@ -557,7 +557,9 @@ function processBlockStatement(
   blockSyntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  const blockBlock = ctx.dispatch.many(blockSyntax.namedChildren);
-  ctx.link.syntaxToNode(blockSyntax, blockBlock.entry);
-  return blockBlock;
+  return ctx.builder.withBlock(blockSyntax.id, () => {
+    const blockBlock = ctx.dispatch.many(blockSyntax.namedChildren);
+    ctx.link.syntaxToNode(blockSyntax, blockBlock.entry);
+    return blockBlock;
+  });
 }
