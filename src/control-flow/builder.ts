@@ -43,7 +43,11 @@ export class Builder {
     }
   }
 
-  public addNode(type: NodeType, code: string): string {
+  public addNode(
+    type: NodeType,
+    code: string,
+    startOffset: number | null,
+  ): string {
     const id = `node${this.nodeId++}`;
     const cluster = this.activeClusters[this.activeClusters.length - 1];
     this.graph.addNode(id, {
@@ -53,6 +57,7 @@ export class Builder {
       markers: [],
       cluster,
       targets: [id],
+      startOffset: startOffset,
     });
     return id;
   }

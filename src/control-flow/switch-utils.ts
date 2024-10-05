@@ -96,6 +96,7 @@ export function collectCases(
     const conditionNode = ctx.builder.addNode(
       "CASE_CONDITION",
       isDefault ? "default" : (caseSyntax.firstNamedChild?.text ?? ""),
+      caseSyntax.startIndex,
     );
     ctx.link.syntaxToNode(caseSyntax, conditionNode);
 

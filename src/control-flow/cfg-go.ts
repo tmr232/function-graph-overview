@@ -65,7 +65,11 @@ function processReturnStatement(
   syntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  const returnNode = ctx.builder.addNode("RETURN", syntax.text);
+  const returnNode = ctx.builder.addNode(
+    "RETURN",
+    syntax.text,
+    syntax.startIndex,
+  );
   ctx.link.syntaxToNode(syntax, returnNode);
   return { entry: returnNode, exit: null };
 }
@@ -73,7 +77,11 @@ function defaultProcessStatement(
   syntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  const newNode = ctx.builder.addNode("STATEMENT", syntax.text);
+  const newNode = ctx.builder.addNode(
+    "STATEMENT",
+    syntax.text,
+    syntax.startIndex,
+  );
   ctx.link.syntaxToNode(syntax, newNode);
   return { entry: newNode, exit: newNode };
 }
@@ -83,7 +91,7 @@ function processGotoStatement(
   ctx: Context,
 ): BasicBlock {
   const name = gotoSyntax.firstNamedChild?.text as string;
-  const gotoNode = ctx.builder.addNode("GOTO", name);
+  const gotoNode = ctx.builder.addNode("GOTO", name, gotoSyntax.startIndex);
   ctx.link.syntaxToNode(gotoSyntax, gotoNode);
   return {
     entry: gotoNode,
@@ -96,7 +104,7 @@ function processLabeledStatement(
   ctx: Context,
 ): BasicBlock {
   const name = getChildFieldText(labelSyntax, "label");
-  const labelNode = ctx.builder.addNode("LABEL", name);
+  const labelNode = ctx.builder.addNode("LABEL", name, labelSyntax.startIndex);
   ctx.link.syntaxToNode(labelSyntax, labelNode);
   const labelContentSyntax = labelSyntax.namedChildren[1];
   if (labelContentSyntax) {
@@ -123,7 +131,11 @@ function processContinueStatement(
   continueSyntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  const continueNode = ctx.builder.addNode("CONTINUE", "CONTINUE");
+  const continueNode = ctx.builder.addNode(
+    "CONTINUE",
+    "CONTINUE",
+    continueSyntax.startIndex,
+  );
   ctx.link.syntaxToNode(continueSyntax, continueNode);
   return { entry: continueNode, exit: null, continues: [continueNode] };
 }
@@ -131,7 +143,11 @@ function processBreakStatement(
   breakSyntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  const breakNode = ctx.builder.addNode("BREAK", "BREAK");
+  const breakNode = ctx.builder.addNode(
+    "BREAK",
+    "BREAK",
+    breakSyntax.startIndex,
+  );
   ctx.link.syntaxToNode(breakSyntax, breakNode);
   return { entry: breakNode, exit: null, breaks: [breakNode] };
 }
@@ -144,14 +160,22 @@ function processForStatement(
   switch (forNode.namedChildCount) {
     // One child means only loop body, two children means loop head.
     case 1: {
-      const headNode = ctx.builder.addNode("LOOP_HEAD", "loop head");
+      const headNode = ctx.builder.addNode(
+        "LOOP_HEAD",
+        "loop head",
+        forNode.startIndex,
+      );
       ctx.link.syntaxToNode(forNode, headNode);
       const { entry: bodyEntry, exit: bodyExit } = state.update(
         ctx.dispatch.single(forNode.firstNamedChild),
       );
       if (bodyEntry) ctx.builder.addEdge(headNode, bodyEntry);
       if (bodyExit) ctx.builder.addEdge(bodyExit, headNode);
-      const exitNode = ctx.builder.addNode("LOOP_EXIT", "loop exit");
+      const exitNode = ctx.builder.addNode(
+        "LOOP_EXIT",
+        "loop exit",
+        forNode.endIndex,
+      );
       state.forEachBreak((breakNode) => {
         ctx.builder.addEdge(breakNode, exitNode);
       });
@@ -163,12 +187,20 @@ function processForStatement(
     }
     // TODO: Handle the case where there is no loop condition, only init and update.
     case 2: {
-      const headNode = ctx.builder.addNode("LOOP_HEAD", "loop head");
+      const headNode = ctx.builder.addNode(
+        "LOOP_HEAD",
+        "loop head",
+        forNode.startIndex,
+      );
       ctx.link.syntaxToNode(forNode, headNode);
       const { entry: bodyEntry, exit: bodyExit } = state.update(
         ctx.dispatch.single(forNode.namedChildren[1] as Parser.SyntaxNode),
       );
-      const exitNode = ctx.builder.addNode("LOOP_EXIT", "loop exit");
+      const exitNode = ctx.builder.addNode(
+        "LOOP_EXIT",
+        "loop exit",
+        forNode.endIndex,
+      );
       if (bodyEntry) {
         ctx.builder.addEdge(headNode, bodyEntry, "consequence");
       }
@@ -197,10 +229,11 @@ function processIfStatement(
   const conditionNode = ctx.builder.addNode(
     "CONDITION",
     conditionChild ? conditionChild.text : "Unknown condition",
+    ifNode.startIndex,
   );
   ctx.link.syntaxToNode(ifNode, conditionNode);
 
-  mergeNode ??= ctx.builder.addNode("MERGE", "MERGE");
+  mergeNode ??= ctx.builder.addNode("MERGE", "MERGE", ifNode.endIndex);
 
   const consequenceChild = ifNode.childForFieldName(
     "consequence",
@@ -245,7 +278,11 @@ function processComment(
 ): BasicBlock {
   // We only ever ger here when marker comments are enabled,
   // and only for marker comments as the rest are filtered out.
-  const commentNode = ctx.builder.addNode("MARKER_COMMENT", commentSyntax.text);
+  const commentNode = ctx.builder.addNode(
+    "MARKER_COMMENT",
+    commentSyntax.text,
+    commentSyntax.startIndex,
+  );
   ctx.link.syntaxToNode(commentSyntax, commentNode);
   if (ctx.options.markerPattern) {
     const marker = commentSyntax.text.match(ctx.options.markerPattern)?.[1];
@@ -291,9 +328,14 @@ function processSwitchlike(
   const headNode = ctx.builder.addNode(
     "SWITCH_CONDITION",
     getChildFieldText(switchSyntax, "value"),
+    switchSyntax.startIndex,
   );
   ctx.link.syntaxToNode(switchSyntax, headNode);
-  const mergeNode: string = ctx.builder.addNode("SWITCH_MERGE", "");
+  const mergeNode: string = ctx.builder.addNode(
+    "SWITCH_MERGE",
+    "",
+    switchSyntax.endIndex,
+  );
   buildSwitch(cases, mergeNode, headNode, options, ctx);
 
   blockHandler.forEachBreak((breakNode) => {

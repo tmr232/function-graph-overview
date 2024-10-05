@@ -45,7 +45,11 @@ export class GenericCFGBuilder {
   }
 
   public buildCFG(functionNode: Parser.SyntaxNode): CFG {
-    const startNode = this.builder.addNode("START", "START");
+    const startNode = this.builder.addNode(
+      "START",
+      "START",
+      functionNode.startIndex,
+    );
     this.nodeMapper.linkSytaxToNode(functionNode, startNode);
     const bodySyntax = functionNode.childForFieldName("body");
     if (bodySyntax) {
@@ -58,7 +62,11 @@ export class GenericCFGBuilder {
         this.builder.addEdge(gotoNode, labelNode),
       );
 
-      const endNode = this.builder.addNode("RETURN", "implicit return");
+      const endNode = this.builder.addNode(
+        "RETURN",
+        "implicit return",
+        functionNode.endIndex,
+      );
       // `entry` will be non-null for any valid code
       if (entry) this.builder.addEdge(startNode, entry);
       if (exit) this.builder.addEdge(exit, endNode);
@@ -83,7 +91,7 @@ export class GenericCFGBuilder {
 
   private dispatchSingle(syntax: Parser.SyntaxNode | null): BasicBlock {
     if (!syntax) {
-      const emptyNode = this.builder.addNode("EMPTY", "Empty node");
+      const emptyNode = this.builder.addNode("EMPTY", "Empty node", null);
       return { entry: emptyNode, exit: emptyNode };
     }
 
@@ -122,7 +130,7 @@ export class GenericCFGBuilder {
     });
 
     if (codeStatements.length === 0) {
-      const emptyNode = this.builder.addNode("EMPTY", "empty block");
+      const emptyNode = this.builder.addNode("EMPTY", "empty block", null);
       return { entry: emptyNode, exit: emptyNode };
     }
 

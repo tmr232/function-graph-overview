@@ -57,6 +57,7 @@ export interface GraphNode {
   markers: string[];
   cluster?: Cluster;
   targets: string[];
+  startOffset: number | null;
 }
 
 export interface GraphEdge {
@@ -162,6 +163,14 @@ export function mergeNodeAttrs(
   if (noMergeTypes.includes(from.type) || noMergeTypes.includes(into.type)) {
     return null;
   }
+
+  const startOffset = (() => {
+    if (from.startOffset === null || into.startOffset === null) {
+      return from.startOffset ?? into.startOffset;
+    }
+    return Math.min(from.startOffset, into.startOffset);
+  })();
+
   return {
     type: from.type,
     code: `${from.code}\n${into.code}`,
@@ -169,6 +178,7 @@ export function mergeNodeAttrs(
     markers: [...from.markers, ...into.markers],
     cluster: from.cluster,
     targets: [...from.targets, ...into.targets],
+    startOffset: startOffset,
   };
 }
 export interface Case {

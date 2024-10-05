@@ -69,9 +69,21 @@ function processForStatement(
   const updateBlock = match.getBlock(updateSyntax);
   const bodyBlock = match.getBlock(bodySyntax);
 
-  const entryNode = ctx.builder.addNode("EMPTY", "loop head");
-  const exitNode = ctx.builder.addNode("FOR_EXIT", "loop exit");
-  const headNode = ctx.builder.addNode("LOOP_HEAD", "loop head");
+  const entryNode = ctx.builder.addNode(
+    "EMPTY",
+    "loop head",
+    forNode.startIndex,
+  );
+  const exitNode = ctx.builder.addNode(
+    "FOR_EXIT",
+    "loop exit",
+    forNode.endIndex,
+  );
+  const headNode = ctx.builder.addNode(
+    "LOOP_HEAD",
+    "loop head",
+    forNode.startIndex,
+  );
   const headBlock = { entry: headNode, exit: headNode };
 
   ctx.link.syntaxToNode(forNode, entryNode);
@@ -203,8 +215,16 @@ function processIfStatement(
     );
   }
 
-  const headNode = ctx.builder.addNode("CONDITION", "if-else head");
-  const mergeNode = ctx.builder.addNode("MERGE", "if-else merge");
+  const headNode = ctx.builder.addNode(
+    "CONDITION",
+    "if-else head",
+    ifSyntax.startIndex,
+  );
+  const mergeNode = ctx.builder.addNode(
+    "MERGE",
+    "if-else merge",
+    ifSyntax.endIndex,
+  );
 
   // An ugly hack to make tsc not hate us.
   const firstBlock = blocks[0];
@@ -268,7 +288,11 @@ function processWhileStatement(
   const condBlock = match.getBlock(condSyntax);
   const bodyBlock = match.getBlock(bodySyntax);
 
-  const exitNode = ctx.builder.addNode("FOR_EXIT", "loop exit");
+  const exitNode = ctx.builder.addNode(
+    "FOR_EXIT",
+    "loop exit",
+    whileSyntax.endIndex,
+  );
 
   if (condBlock.exit) {
     if (bodyBlock.entry)
@@ -312,7 +336,11 @@ function processDoStatement(
   const condBlock = match.getBlock(condSyntax);
   const bodyBlock = match.getBlock(bodySyntax);
 
-  const exitNode = ctx.builder.addNode("FOR_EXIT", "loop exit");
+  const exitNode = ctx.builder.addNode(
+    "FOR_EXIT",
+    "loop exit",
+    doSyntax.endIndex,
+  );
 
   if (condBlock.exit) {
     if (bodyBlock.entry)
@@ -342,7 +370,7 @@ function processGotoStatement(
   ctx: Context,
 ): BasicBlock {
   const name = gotoSyntax.firstNamedChild?.text as string;
-  const gotoNode = ctx.builder.addNode("GOTO", name);
+  const gotoNode = ctx.builder.addNode("GOTO", name, gotoSyntax.startIndex);
   ctx.link.syntaxToNode(gotoSyntax, gotoNode);
   return {
     entry: gotoNode,
@@ -356,7 +384,7 @@ function processLabeledStatement(
   ctx: Context,
 ): BasicBlock {
   const name = getChildFieldText(labelSyntax, "label");
-  const labelNode = ctx.builder.addNode("LABEL", name);
+  const labelNode = ctx.builder.addNode("LABEL", name, labelSyntax.startIndex);
   ctx.link.syntaxToNode(labelSyntax, labelNode);
   const labelContentSyntax = labelSyntax.namedChildren[1];
   if (labelContentSyntax) {
@@ -383,7 +411,11 @@ function processContinueStatement(
   continueSyntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  const continueNode = ctx.builder.addNode("CONTINUE", "CONTINUE");
+  const continueNode = ctx.builder.addNode(
+    "CONTINUE",
+    "CONTINUE",
+    continueSyntax.startIndex,
+  );
   ctx.link.syntaxToNode(continueSyntax, continueNode);
   return { entry: continueNode, exit: null, continues: [continueNode] };
 }
@@ -392,7 +424,11 @@ function processBreakStatement(
   breakSyntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  const breakNode = ctx.builder.addNode("BREAK", "BREAK");
+  const breakNode = ctx.builder.addNode(
+    "BREAK",
+    "BREAK",
+    breakSyntax.startIndex,
+  );
   ctx.link.syntaxToNode(breakSyntax, breakNode);
   return { entry: breakNode, exit: null, breaks: [breakNode] };
 }
@@ -403,7 +439,11 @@ function processComment(
 ): BasicBlock {
   // We only ever ger here when marker comments are enabled,
   // and only for marker comments as the rest are filtered out.
-  const commentNode = ctx.builder.addNode("MARKER_COMMENT", commentSyntax.text);
+  const commentNode = ctx.builder.addNode(
+    "MARKER_COMMENT",
+    commentSyntax.text,
+    commentSyntax.startIndex,
+  );
   ctx.link.syntaxToNode(commentSyntax, commentNode);
 
   if (ctx.options.markerPattern) {
@@ -426,7 +466,11 @@ function processReturnStatement(
   syntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  const returnNode = ctx.builder.addNode("RETURN", syntax.text);
+  const returnNode = ctx.builder.addNode(
+    "RETURN",
+    syntax.text,
+    syntax.startIndex,
+  );
   ctx.link.syntaxToNode(syntax, returnNode);
   return { entry: returnNode, exit: null };
 }
@@ -435,7 +479,11 @@ function defaultProcessStatement(
   syntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  const newNode = ctx.builder.addNode("STATEMENT", syntax.text);
+  const newNode = ctx.builder.addNode(
+    "STATEMENT",
+    syntax.text,
+    syntax.startIndex,
+  );
   ctx.link.syntaxToNode(syntax, newNode);
   return { entry: newNode, exit: newNode };
 }
@@ -470,9 +518,14 @@ function processSwitchlike(
   const headNode = ctx.builder.addNode(
     "SWITCH_CONDITION",
     getChildFieldText(switchSyntax, "value"),
+    switchSyntax.startIndex,
   );
   ctx.link.syntaxToNode(switchSyntax, headNode);
-  const mergeNode: string = ctx.builder.addNode("SWITCH_MERGE", "");
+  const mergeNode: string = ctx.builder.addNode(
+    "SWITCH_MERGE",
+    "",
+    switchSyntax.endIndex,
+  );
   buildSwitch(cases, mergeNode, headNode, {}, ctx);
 
   blockHandler.forEachBreak((breakNode) => {
