@@ -4,6 +4,7 @@ import type {
   ClusterId,
   ClusterType,
   EdgeType,
+  GraphNode,
   NodeType,
 } from "./cfg-defs.ts";
 import { MultiDirectedGraph } from "graphology";
@@ -88,5 +89,16 @@ export class Builder {
 
   public getGraph(): CFGGraph {
     return this.graph;
+  }
+
+  public setDefault(node: string, defaults: Partial<GraphNode>): void {
+    this.graph.updateNodeAttributes(node, (existing: GraphNode) => {
+      const result = { ...existing };
+      for (const [name, value] of Object.entries(defaults)) {
+        // @ts-expect-error: typesafety here seems obvious, and making it actually work is a mess.
+        result[name] ??= value;
+      }
+      return result;
+    });
   }
 }
