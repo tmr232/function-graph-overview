@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Fixed
+
+- Nodes for empty blocks now map correctly to the empty block, instead of doing nothing when clicked.
+
 ## [0.0.7] - 2024-10-05
 
 ### Added
