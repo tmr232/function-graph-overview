@@ -1,19 +1,19 @@
 <script lang="ts">
   import Parser from "web-tree-sitter";
-  import { newCFGBuilder, type Language } from "../../../control-flow/cfg";
+  import { newCFGBuilder, type Language } from "../control-flow/cfg";
   import {
     mergeNodeAttrs,
     remapNodeTargets,
     type CFG,
-  } from "../../../control-flow/cfg-defs";
-  import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
+  } from "../control-flow/cfg-defs";
+  import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
   import {
     getFirstFunction,
     initialize as initializeUtils,
     type Parsers,
   } from "./utils";
-  import { iterRanges } from "../../../control-flow/ranges";
+  import { iterRanges } from "../control-flow/ranges";
 
   let parsers: Parsers;
   let graphviz: Graphviz;

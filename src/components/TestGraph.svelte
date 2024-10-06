@@ -1,6 +1,6 @@
 <script lang="ts">
   import { processRecord, type RenderOptions } from "./utils";
-  import { type TestFuncRecord } from "../../../test/commentTestUtils";
+  import { type TestFuncRecord } from "../test/commentTestUtils";
   import * as LZString from "lz-string";
 
   let ast: string = "";
@@ -38,7 +38,7 @@
       return svg;
     } catch (error) {
       console.trace(error);
-      return `<p style='border: 2px red solid;'>${error.toString()}</p>`;
+      return `<p style='border: 2px red solid;'>${error}</p>`;
     }
   }
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import testRecordsJson from "../../../../dist/tests/commentTests.json?json";
-  import type { TestFuncRecord } from "../../../test/commentTestUtils";
+  import testRecordsJson from "../../dist/tests/commentTests.json?json";
+  import type { TestFuncRecord } from "../test/commentTestUtils";
   import TestGraph from "./TestGraph.svelte";
   import {
     runTest,

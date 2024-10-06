@@ -595,6 +595,9 @@ function processBlockStatement(
   ctx: Context,
 ): BasicBlock {
   const blockBlock = ctx.dispatch.many(blockSyntax.namedChildren);
+  ctx.builder.setDefault(blockBlock.entry, {
+    startOffset: blockSyntax.startIndex,
+  });
   ctx.link.syntaxToNode(blockSyntax, blockBlock.entry);
   return blockBlock;
 }

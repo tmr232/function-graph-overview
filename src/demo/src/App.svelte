@@ -1,5 +1,5 @@
 <script>
-  import Demo from "../../frontend/src/lib/Demo.svelte";
+  import Demo from "../../components/Demo.svelte";
   import demoCodeGo from "./assets/demo.go?raw";
   import demoCodeC from "./assets/demo.c?raw";
   import demoCodePython from "./assets/demo.py?raw";

@@ -33,7 +33,7 @@
     cursorPos = newCursorPos;
   }
 
-  function onEditorReady(event) {
+  function onEditorReady(event: { detail: EditorView }) {
     editorView = event.detail;
 
     editorView.dom.addEventListener("keyup", updateCursorPosition);

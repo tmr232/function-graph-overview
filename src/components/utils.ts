@@ -1,16 +1,16 @@
 import Parser from "web-tree-sitter";
 
-import treeSitterGo from "../../../../parsers/tree-sitter-go.wasm?url";
-import treeSitterC from "../../../../parsers/tree-sitter-c.wasm?url";
-import treeSitterPython from "../../../../parsers/tree-sitter-python.wasm?url";
-import treeSitterCore from "../../../../parsers/tree-sitter.wasm?url";
-import { newCFGBuilder, type Language } from "../../../control-flow/cfg";
-import type { TestFuncRecord } from "../../../test/commentTestUtils";
-import type { TestFunction } from "../../../test/commentTestTypes";
-import { requirementTests } from "../../../test/commentTestHandlers";
-import { simplifyCFG, trimFor } from "../../../control-flow/graph-ops";
-import { mergeNodeAttrs } from "../../../control-flow/cfg-defs";
-import { graphToDot } from "../../../control-flow/render";
+import treeSitterGo from "../../parsers/tree-sitter-go.wasm?url";
+import treeSitterC from "../../parsers/tree-sitter-c.wasm?url";
+import treeSitterPython from "../../parsers/tree-sitter-python.wasm?url";
+import treeSitterCore from "../../parsers/tree-sitter.wasm?url";
+import { newCFGBuilder, type Language } from "../control-flow/cfg";
+import type { TestFuncRecord } from "../test/commentTestUtils";
+import type { TestFunction } from "../test/commentTestTypes";
+import { requirementTests } from "../test/commentTestHandlers";
+import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
+import { mergeNodeAttrs } from "../control-flow/cfg-defs";
+import { graphToDot } from "../control-flow/render";
 import { Graphviz, type Format } from "@hpcc-js/wasm-graphviz";
 async function initializeParser(language: Language) {
   await Parser.init({
@@ -86,7 +86,7 @@ export async function initialize() {
 }
 export interface TestResults {
   reqName: string;
-  reqValue: any;
+  reqValue: unknown;
   failure: string | null;
 }
 
@@ -141,7 +141,6 @@ export function processRecord(
     };
   }
 
-  if (!cfg) return { ast };
   if (trim) cfg = trimFor(cfg);
   if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
   const rawDot = graphToDot(cfg, verbose);
