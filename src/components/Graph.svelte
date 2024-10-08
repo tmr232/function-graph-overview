@@ -117,17 +117,37 @@
     });
   }
 
-  function recolor(
-    type: "node" | "edge" | "cluster",
-    style: string,
-    color: string,
-  ): void {
+  function recolorNodes(type: string, fill: string, stroke?: string): void {
     const polygonsToRecolor = document.querySelectorAll(
-      `svg g.${type}.${style} polygon`,
+      `svg g.node.${type} polygon`,
     );
-    const pathsToRecolor = document.querySelectorAll(
-      `svg g.${type}.${style} path`,
+
+    const recolor = (el: Element) => {
+      el.setAttribute("fill", fill);
+      if (stroke !== undefined) el.setAttribute("stroke", stroke);
+    };
+
+    polygonsToRecolor.forEach(recolor);
+  }
+
+  function recolorClusters(type: string, fill: string, stroke?: string): void {
+    const polygonsToRecolor = document.querySelectorAll(
+      `svg g.cluster.${type} polygon`,
     );
+
+    const recolor = (el: Element) => {
+      el.setAttribute("fill", fill);
+      if (stroke !== undefined) el.setAttribute("stroke", stroke);
+    };
+
+    polygonsToRecolor.forEach(recolor);
+  }
+
+  function recolorEdges(type: string, color: string): void {
+    const polygonsToRecolor = document.querySelectorAll(
+      `svg g.edge.${type} polygon`,
+    );
+    const pathsToRecolor = document.querySelectorAll(`svg g.edge.${type} path`);
 
     const recolor = (el: Element) => {
       for (const attr of ["fill", "stroke"]) {
@@ -140,6 +160,22 @@
     polygonsToRecolor.forEach(recolor);
     pathsToRecolor.forEach(recolor);
   }
+
+  function recolorBackground(color: string): void {
+    const svg = document.querySelector("svg");
+    if (!svg) return;
+
+    svg.style.backgroundColor = color;
+  }
+
+  let hue = 0;
+  let saturation = 50;
+  let light = 50;
+
+  // $: recolorNodes("default", `hsl(${hue} ${saturation} ${light})`);
+  // $: recolorEdges("regular", `hsl(${hue} ${saturation} ${light})`);
+  // $: recolorClusters("tryComplex", `hsl(${hue} ${saturation} ${light})`);
+  $: recolorBackground(`hsl(${hue} ${saturation} ${light})`);
 </script>
 
 <div class="results">
@@ -157,7 +193,8 @@
       })}
     </div>
   {/await}
-  <button on:click={() => recolor("node", "default", "pink")}>Recolor!</button>
+  <button on:click={() => recolorNodes("default", "pink")}>Recolor!</button>
+  <input type="range" min="0" max="360" bind:value={hue} />
 </div>
 
 <style>
