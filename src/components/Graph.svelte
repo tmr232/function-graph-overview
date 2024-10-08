@@ -116,6 +116,30 @@
       offset: cfg.graph.getNodeAttribute(target.id, "startOffset"),
     });
   }
+
+  function recolor(
+    type: "node" | "edge" | "cluster",
+    style: string,
+    color: string,
+  ): void {
+    const polygonsToRecolor = document.querySelectorAll(
+      `svg g.${type}.${style} polygon`,
+    );
+    const pathsToRecolor = document.querySelectorAll(
+      `svg g.${type}.${style} path`,
+    );
+
+    const recolor = (el: Element) => {
+      for (const attr of ["fill", "stroke"]) {
+        if (el.getAttribute(attr) !== "none") {
+          el.setAttribute(attr, color);
+        }
+      }
+    };
+
+    polygonsToRecolor.forEach(recolor);
+    pathsToRecolor.forEach(recolor);
+  }
 </script>
 
 <div class="results">
@@ -133,6 +157,7 @@
       })}
     </div>
   {/await}
+  <button on:click={() => recolor("node", "default", "pink")}>Recolor!</button>
 </div>
 
 <style>
