@@ -1,5 +1,7 @@
 <script lang="ts">
   import Parser from "web-tree-sitter";
+  import ColorScheme from "./ColorScheme.svelte";
+  import ColorPicker from "svelte-awesome-color-picker";
   import { newCFGBuilder, type Language } from "../control-flow/cfg";
   import {
     mergeNodeAttrs,
@@ -175,10 +177,22 @@
   // $: recolorNodes("default", `hsl(${hue} ${saturation} ${light})`);
   // $: recolorEdges("regular", `hsl(${hue} ${saturation} ${light})`);
   // $: recolorClusters("tryComplex", `hsl(${hue} ${saturation} ${light})`);
-  $: recolorBackground(`hsl(${hue} ${saturation} ${light})`);
+  // $: recolorBackground(`hsl(${hue} ${saturation} ${light})`);
+
+  function onColor(e) {
+    console.log(e.detail.colors);
+    const colorScheme = Object.fromEntries(
+      e.detail.colors.map(({ name, hex }) => [name, hex]),
+    );
+    console.log(colorScheme);
+    recolorNodes("default", colorScheme["node.default"]);
+    recolorNodes("entry", colorScheme["node.entry"]);
+    recolorNodes("exit", colorScheme["node.exit"]);
+  }
 </script>
 
 <div class="results">
+  <ColorScheme on:color={onColor} />
   {#await initialize() then}
     <!-- I don't know how to make this part accessible. PRs welcome! -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -193,8 +207,6 @@
       })}
     </div>
   {/await}
-  <button on:click={() => recolorNodes("default", "pink")}>Recolor!</button>
-  <input type="range" min="0" max="360" bind:value={hue} />
 </div>
 
 <style>

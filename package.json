@@ -8,6 +8,7 @@
     "graphology": "^0.25.4",
     "graphology-operators": "^1.6.0",
     "graphology-traversal": "^0.3.1",
+    "svelte-awesome-color-picker": "^3.1.4",
     "web-tree-sitter": "^0.23.2"
   },
   "devDependencies": {
