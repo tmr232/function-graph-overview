@@ -62,45 +62,60 @@
   }
 </script>
 
-{#each groups as group}
-  <fieldset>
-    <legend>{group}</legend>
-    <div class="colors">
-      {#each colorsFor(colorList, group) as color (color.name)}
-        <span>{colorLabels.get(color.name)}</span>
-        <div class="border">
-          <ColorPicker
-            hex={color.hex}
-            isAlpha={false}
-            on:input={onColorChange(color)}
-            position="responsive"
-            label=""
-            name={color.name}
-          />
+<div class="wrapper">
+  <div class="main">
+    {#each groups as group}
+      <fieldset>
+        <legend>{group}</legend>
+        <div class="colors">
+          {#each colorsFor(colorList, group) as color (color.name)}
+            <span class="label">{colorLabels.get(color.name)}</span>
+            <div class="border">
+              <ColorPicker
+                hex={color.hex}
+                isAlpha={false}
+                on:input={onColorChange(color)}
+                position="responsive"
+                label=""
+                name={color.name}
+              />
+            </div>
+          {/each}
         </div>
-      {/each}
-    </div>
-  </fieldset>
-{/each}
-<fieldset>
-  <legend>Controls</legend>
-  <div class="controls">
-    <button on:click={copyList} title="Copy color scheme to clipboard"
-      >Copy</button
-    >
-    <button on:click={pasteList} title="Paste color scheme from clipboard"
-      >Paste</button
-    >
-    <button on:click={resetList} title="Reset color scheme to defaults"
-      >Reset</button
-    >
-    <button on:click={applyList} title="Apply current color scheme to graph"
-      >Apply</button
-    >
+      </fieldset>
+    {/each}
+    <fieldset>
+      <legend>Controls</legend>
+      <div class="controls">
+        <button on:click={copyList} title="Copy color scheme to clipboard"
+          >Copy</button
+        >
+        <button on:click={pasteList} title="Paste color scheme from clipboard"
+          >Paste</button
+        >
+        <button on:click={resetList} title="Reset color scheme to defaults"
+          >Reset</button
+        >
+        <button on:click={applyList} title="Apply current color scheme to graph"
+          >Apply</button
+        >
+      </div>
+    </fieldset>
   </div>
-</fieldset>
+</div>
 
 <style>
+  .wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+  }
+  .label {
+    align-self: center;
+  }
+  .main {
+    width: fit-content;
+  }
   .border {
     border: 1px solid black;
     border-radius: 100%;
@@ -112,6 +127,7 @@
   .colors {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    gap: 0.3rem;
   }
 
   .controls {

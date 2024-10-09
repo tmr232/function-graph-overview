@@ -150,44 +150,57 @@
     </div>
   </header>
   <div class="editor">
-    <div class="controls">
-      <select bind:value={selection} on:change={(e) => console.log(selection)}>
-        {#each languages as language}
-          <option value={language}>
-            {language.text}
-          </option>
-        {/each}
-      </select>
-      <button on:click={share}>Share (experimental)</button>
-    </div>
-    <div class="codemirror">
-      {#if selection.language === "Go"}
-        <Editor
-          bind:this={editor}
-          bind:code={codeGo}
-          lang={go()}
-          on:cursorMoved={cursorMoved}
+    {#if colorPicker}
+      <div class="picker">
+        <ColorScheme
+          on:preview={onColorPreview}
+          {colorList}
+          on:apply={onColorApply}
         />
-      {:else if selection.language === "C"}
-        <Editor
-          bind:this={editor}
-          bind:code={codeC}
-          lang={cpp()}
-          on:cursorMoved={cursorMoved}
-        />
-      {:else if selection.language === "Python"}
-        <Editor
-          bind:this={editor}
-          bind:code={codePython}
-          lang={python()}
-          on:cursorMoved={cursorMoved}
-        />
-      {/if}
-    </div>
-    {#if showSegmentation}
-      <div class="segmentation">
-        <CodeSegmentation {code} language={selection.language} {simplify} />
       </div>
+    {:else}
+      <div class="controls">
+        <select
+          bind:value={selection}
+          on:change={(e) => console.log(selection)}
+        >
+          {#each languages as language}
+            <option value={language}>
+              {language.text}
+            </option>
+          {/each}
+        </select>
+        <button on:click={share}>Share (experimental)</button>
+      </div>
+      <div class="codemirror">
+        {#if selection.language === "Go"}
+          <Editor
+            bind:this={editor}
+            bind:code={codeGo}
+            lang={go()}
+            on:cursorMoved={cursorMoved}
+          />
+        {:else if selection.language === "C"}
+          <Editor
+            bind:this={editor}
+            bind:code={codeC}
+            lang={cpp()}
+            on:cursorMoved={cursorMoved}
+          />
+        {:else if selection.language === "Python"}
+          <Editor
+            bind:this={editor}
+            bind:code={codePython}
+            lang={python()}
+            on:cursorMoved={cursorMoved}
+          />
+        {/if}
+      </div>
+      {#if showSegmentation}
+        <div class="segmentation">
+          <CodeSegmentation {code} language={selection.language} {simplify} />
+        </div>
+      {/if}
     {/if}
   </div>
 
@@ -225,13 +238,6 @@
         {/if}
       </div>
     </div>
-    {#if colorPicker}
-      <ColorScheme
-        on:preview={onColorPreview}
-        {colorList}
-        on:apply={onColorApply}
-      />
-    {/if}
     <Graph
       {code}
       {offsetToHighlight}
@@ -308,5 +314,13 @@
     right: 3rem;
     top: 0;
     height: 100%;
+  }
+  .picker {
+    /* position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    background-color: white; */
+    font-family: Arial, Helvetica, sans-serif;
   }
 </style>
