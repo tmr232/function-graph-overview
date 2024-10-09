@@ -13,7 +13,13 @@ import {
 } from "../control-flow/cfg-defs";
 import { OverviewViewProvider } from "./overview-view";
 import { getValue } from "../control-flow/ranges";
-import { deserializeColorList, getDefaultColorList, listToScheme, type ColorList, type ColorScheme } from "../control-flow/colors";
+import {
+  deserializeColorList,
+  getDefaultColorList,
+  listToScheme,
+  type ColorList,
+  type ColorScheme,
+} from "../control-flow/colors";
 
 let graphviz: Graphviz;
 interface SupportedLanguage {
@@ -138,13 +144,13 @@ function loadSettings(): Settings {
       // TODO: Add a user-visible error here.
     }
     return getDefaultColorList();
-  })()
+  })();
 
   return {
     flatSwitch: config.get("flatSwitch") ?? false,
     simplify: config.get("simplify") ?? false,
     highlightCurrentNode: config.get("highlightCurrentNode") ?? true,
-    colorScheme: listToScheme(colorList)
+    colorScheme: listToScheme(colorList),
   };
 }
 type CFGKey = { functionText: string; flatSwitch: boolean; simplify: boolean };
@@ -263,7 +269,8 @@ export async function activate(context: vscode.ExtensionContext) {
         console.log("Currently in", nameSyntax.text);
       }
 
-      const { flatSwitch, simplify, highlightCurrentNode, colorScheme } = loadSettings();
+      const { flatSwitch, simplify, highlightCurrentNode, colorScheme } =
+        loadSettings();
       // We'd like to avoid re-running CFG generation for a function if nothing changed.
       const newKey: CFGKey = {
         flatSwitch,
@@ -305,6 +312,6 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() { }
+export function deactivate() {}
 
 //------------------------------------------------

@@ -182,10 +182,6 @@
     }
   }
 
-  let hue = 0;
-  let saturation = 50;
-  let light = 50;
-
   export function previewColors(colors: ColorList) {
     const colorScheme = listToScheme(colors);
     for (const { name, hex } of colors) {

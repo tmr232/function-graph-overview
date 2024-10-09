@@ -26,6 +26,7 @@ const defaultColorList = [
 ] as const;
 
 export type ColorList = typeof defaultColorList;
+export type Color = { name: ColorList[number]["name"]; hex: `#${string}` };
 export type ColorScheme = Record<ColorList[number]["name"], string>;
 export function listToScheme(colors: ColorList): ColorScheme {
   const scheme = {} as ColorScheme;
@@ -61,7 +62,6 @@ export function deserializeColorList(data: string): ColorList {
   }
   return scheme;
 }
-
 
 // Nice schemes
 /*

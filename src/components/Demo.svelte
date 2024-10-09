@@ -124,17 +124,13 @@
     if (offset !== null && offset !== undefined) editor?.setCursor(offset);
   }
 
-  $: if (!colorPicker) {
-    graph?.resetPreview();
+  $: if (!colorPicker && graph) {
+    graph.applyColors(colorList);
   }
 
   function onColorPreview(e) {
-    graph.previewColors(e.detail.colors);
-  }
-
-  function onColorApply(e) {
     colorList = e.detail.colors;
-    graph.applyColors(colorList);
+    graph.previewColors(colorList);
   }
 </script>
 
@@ -152,11 +148,7 @@
   <div class="editor">
     {#if colorPicker}
       <div class="picker">
-        <ColorScheme
-          on:preview={onColorPreview}
-          {colorList}
-          on:apply={onColorApply}
-        />
+        <ColorScheme on:preview={onColorPreview} {colorList} />
       </div>
     {:else}
       <div class="controls">

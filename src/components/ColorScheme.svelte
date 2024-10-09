@@ -5,6 +5,8 @@
     getDefaultColorList,
     serializeColorList,
     deserializeColorList,
+    type ColorList,
+    type Color,
   } from "../control-flow/colors";
   const dispatch = createEventDispatcher();
 
@@ -28,7 +30,7 @@
     ["cluster.finally", "Finally"],
     ["cluster.except", "Except"],
     ["graph.background", "Background"],
-  ]) as const;
+  ]);
 
   const groups = ["Node", "Edge", "Cluster", "Graph"] as const;
 
@@ -36,7 +38,7 @@
     return colors.filter(({ name }) => name.startsWith(entity.toLowerCase()));
   }
 
-  function onColorChange(color) {
+  function onColorChange(color: Color) {
     return (event) => {
       color.hex = event.detail.hex ?? color.hex;
       dispatch("preview", { colors: colorList });
@@ -53,17 +55,26 @@
     colorList = newColors;
   }
   function resetList() {
-    console.log("Reset!");
     colorList = getDefaultColorList();
-    console.log(colorList);
-  }
-  function applyList() {
-    dispatch("apply", { colors: colorList });
   }
 </script>
 
 <div class="wrapper">
   <div class="main">
+    <fieldset>
+      <legend>Controls</legend>
+      <div class="controls">
+        <button on:click={copyList} title="Copy color scheme to clipboard"
+          >Copy</button
+        >
+        <button on:click={pasteList} title="Paste color scheme from clipboard"
+          >Paste</button
+        >
+        <button on:click={resetList} title="Reset color scheme to defaults"
+          >Reset</button
+        >
+      </div>
+    </fieldset>
     {#each groups as group}
       <fieldset>
         <legend>{group}</legend>
@@ -84,23 +95,6 @@
         </div>
       </fieldset>
     {/each}
-    <fieldset>
-      <legend>Controls</legend>
-      <div class="controls">
-        <button on:click={copyList} title="Copy color scheme to clipboard"
-          >Copy</button
-        >
-        <button on:click={pasteList} title="Paste color scheme from clipboard"
-          >Paste</button
-        >
-        <button on:click={resetList} title="Reset color scheme to defaults"
-          >Reset</button
-        >
-        <button on:click={applyList} title="Apply current color scheme to graph"
-          >Apply</button
-        >
-      </div>
-    </fieldset>
   </div>
 </div>
 
