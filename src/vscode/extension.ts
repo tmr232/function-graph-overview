@@ -123,26 +123,37 @@ function getCurrentCode(): {
   return { code, languageId, language };
 }
 
+function isThemeDark(): boolean {
+  const theme = vscode.window.activeColorTheme;
+  return theme.kind === vscode.ColorThemeKind.Dark;
+}
+
 type Settings = {
   flatSwitch: boolean;
   simplify: boolean;
   highlightCurrentNode: boolean;
   colorScheme: ColorScheme;
 };
-type ColorSchemeOptions = "Light" | "Dark" | "Custom";
+type ColorSchemeOptions = "Light" | "Dark" | "Custom" | "System";
 function loadSettings(): Settings {
   const config = vscode.workspace.getConfiguration("functionGraphOverview");
 
   const colorScheme: ColorSchemeOptions = config.get("colorScheme") ?? "Light";
   const colorList = (() => {
     switch (colorScheme) {
+      case "System":
+        if (isThemeDark()) {
+          return getDarkColorList();
+        } else {
+          return getDefaultColorList();
+        }
       case "Light":
         return getDefaultColorList();
       case "Dark":
         return getDarkColorList();
       case "Custom":
         try {
-          return deserializeColorList(config.get("customColorScheme") ?? "")
+          return deserializeColorList(config.get("customColorScheme") ?? "");
         } catch (error) {
           console.log(error);
           // TODO: Add a user-visible error here.
@@ -248,88 +259,108 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   }
 
-  const configChanged = vscode.workspace.onDidChangeConfiguration((e: vscode.ConfigurationChangeEvent) => {
-    // TODO: This currently only changes the color-scheme.
-    // TODO: Make this react to all the CFG settings.
-    if (e.affectsConfiguration("functionGraphOverview")) {
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration(
+      (e: vscode.ConfigurationChangeEvent) => {
+        // TODO: This currently only changes the color-scheme.
+        // TODO: Make this react to all the CFG settings.
+        if (e.affectsConfiguration("functionGraphOverview")) {
+          const settings = loadSettings();
+          if (!savedCFG) return;
+          const dot = graphToDot(
+            savedCFG,
+            false,
+            undefined,
+            settings.colorScheme,
+          );
+          const svg = graphviz.dot(dot);
+
+          provider.setSVG(svg, settings.colorScheme["graph.background"]);
+        }
+      },
+    ),
+  );
+
+  context.subscriptions.push(
+    vscode.window.onDidChangeActiveColorTheme(() => {
       const settings = loadSettings();
       if (!savedCFG) return;
       const dot = graphToDot(savedCFG, false, undefined, settings.colorScheme);
       const svg = graphviz.dot(dot);
 
       provider.setSVG(svg, settings.colorScheme["graph.background"]);
-    }
-  });
-
-  const cursorMove = vscode.window.onDidChangeTextEditorSelection(
-    (event: vscode.TextEditorSelectionChangeEvent): void => {
-      const editor = event.textEditor;
-      const position = editor.selection.active;
-      const offset = editor.document.offsetAt(position);
-
-      console.log(
-        `Cursor position changed: Line ${position.line + 1}, Column ${position.character + 1}`,
-      );
-
-      const { code, languageId, language } = getCurrentCode() ?? {};
-      if (!code || !languageId || !language) {
-        return;
-      }
-
-      const tree = parsers[language].parse(code);
-
-      const functionSyntax = getFunctionAtPosition(tree, position, language);
-      if (!functionSyntax) return;
-
-      console.log(functionSyntax);
-      const nameSyntax = functionSyntax.childForFieldName("name");
-      if (nameSyntax) {
-        console.log("Currently in", nameSyntax.text);
-      }
-
-      const { flatSwitch, simplify, highlightCurrentNode, colorScheme } =
-        loadSettings();
-      // We'd like to avoid re-running CFG generation for a function if nothing changed.
-      const newKey: CFGKey = {
-        flatSwitch,
-        simplify,
-        functionText: functionSyntax.text,
-      };
-      let cfg: CFG;
-      if (cfgKey && isSameKey(newKey, cfgKey)) {
-        cfg = savedCFG;
-      } else {
-        cfgKey = newKey;
-
-        const builder = newCFGBuilder(language, { flatSwitch });
-        cfg = builder.buildCFG(functionSyntax);
-        cfg = trimFor(cfg);
-        if (simplify) {
-          cfg = simplifyCFG(cfg, mergeNodeAttrs);
-        }
-        cfg = remapNodeTargets(cfg);
-
-        savedCFG = cfg;
-      }
-      // TODO: Highlighting in the DOT is a cute trick, but might become less effective on larger functions.
-      //       So it works for now, but I'll probably need to replace it with CSS so that I only render once per function.
-
-      // Only highlight if there's more than one node to the graph.
-      const shouldHighlight = highlightCurrentNode && cfg.graph.order > 1;
-      const nodeToHighlight = shouldHighlight
-        ? getValue(cfg.offsetToNode, offset)
-        : undefined;
-      const dot = graphToDot(cfg, false, nodeToHighlight, colorScheme);
-      const svg = graphviz.dot(dot);
-
-      provider.setSVG(svg, colorScheme["graph.background"]);
-    },
+    }),
   );
 
-  context.subscriptions.push(cursorMove, configChanged);
+  context.subscriptions.push(
+    vscode.window.onDidChangeTextEditorSelection(
+      (event: vscode.TextEditorSelectionChangeEvent): void => {
+        const editor = event.textEditor;
+        const position = editor.selection.active;
+        const offset = editor.document.offsetAt(position);
+
+        console.log(
+          `Cursor position changed: Line ${position.line + 1}, Column ${position.character + 1}`,
+        );
+
+        const { code, languageId, language } = getCurrentCode() ?? {};
+        if (!code || !languageId || !language) {
+          return;
+        }
+
+        const tree = parsers[language].parse(code);
+
+        const functionSyntax = getFunctionAtPosition(tree, position, language);
+        if (!functionSyntax) return;
+
+        console.log(functionSyntax);
+        const nameSyntax = functionSyntax.childForFieldName("name");
+        if (nameSyntax) {
+          console.log("Currently in", nameSyntax.text);
+        }
+
+        const { flatSwitch, simplify, highlightCurrentNode, colorScheme } =
+          loadSettings();
+        // We'd like to avoid re-running CFG generation for a function if nothing changed.
+        const newKey: CFGKey = {
+          flatSwitch,
+          simplify,
+          functionText: functionSyntax.text,
+        };
+        let cfg: CFG;
+        if (cfgKey && isSameKey(newKey, cfgKey)) {
+          cfg = savedCFG;
+        } else {
+          cfgKey = newKey;
+
+          const builder = newCFGBuilder(language, { flatSwitch });
+          cfg = builder.buildCFG(functionSyntax);
+          cfg = trimFor(cfg);
+          if (simplify) {
+            cfg = simplifyCFG(cfg, mergeNodeAttrs);
+          }
+          cfg = remapNodeTargets(cfg);
+
+          savedCFG = cfg;
+        }
+        // TODO: Highlighting in the DOT is a cute trick, but might become less effective on larger functions.
+        //       So it works for now, but I'll probably need to replace it with CSS so that I only render once per function.
+
+        // Only highlight if there's more than one node to the graph.
+        const shouldHighlight = highlightCurrentNode && cfg.graph.order > 1;
+        const nodeToHighlight = shouldHighlight
+          ? getValue(cfg.offsetToNode, offset)
+          : undefined;
+        const dot = graphToDot(cfg, false, nodeToHighlight, colorScheme);
+        const svg = graphviz.dot(dot);
+
+        provider.setSVG(svg, colorScheme["graph.background"]);
+      },
+    ),
+  );
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() { }
+export function deactivate() {}
 
 //------------------------------------------------

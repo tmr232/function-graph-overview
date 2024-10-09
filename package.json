@@ -95,16 +95,18 @@
         "functionGraphOverview.colorScheme": {
           "type": "string",
           "enum": [
+            "System",
             "Light",
             "Dark",
             "Custom"
           ],
-          "markdownDescription": [
-            "Default, light color scheme",
+          "markdownEnumDescriptions": [
+            "Based on the active color theme",
+            "Light color scheme",
             "Dark-mode",
             "Custom scheme via `#functionGraphOverview.customColorScheme#`"
           ],
-          "default": "Light",
+          "default": "System",
           "description": "Color scheme for rendering the CFG."
         },
         "functionGraphOverview.customColorScheme": {

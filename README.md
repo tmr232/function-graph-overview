@@ -4,7 +4,7 @@
 
 This extension adds a Graph Overview to VS Code, showing the CFG (control-flow graph) for the current function.
 
-![Screenshot of the extension](./media/screenshots/banner.png)
+![Screenshot of the extension](./media/screenshots/banner_dark.png)
 
 ## Installation
 
