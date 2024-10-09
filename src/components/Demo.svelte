@@ -7,10 +7,14 @@
   import * as LZString from "lz-string";
   import Editor from "./Editor.svelte";
   import CodeSegmentation from "./CodeSegmentation.svelte";
+  import ColorScheme from "./ColorScheme.svelte";
+  import { getDefaultColorList } from "../control-flow/colors";
+
   export let codeGo = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
   export let codeC = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";
   export let codePython = "def example():\n    if x:\n        return";
   let offsetToHighlight: number | undefined = undefined;
+  let colorList = getDefaultColorList();
   let languages: {
     language: Language;
     text: string;
@@ -36,6 +40,7 @@
   let simplify = true;
   let flatSwitch = false;
   let highlight = true;
+  let colorPicker = false;
   let verbose = urlParams.has("verbose");
   let showSegmentation = urlParams.has("segmentation");
   let debugMode = urlParams.has("debug");
@@ -118,6 +123,19 @@
     const offset = e.detail.offset;
     if (offset !== null && offset !== undefined) editor?.setCursor(offset);
   }
+
+  $: if (!colorPicker) {
+    graph?.resetPreview();
+  }
+
+  function onColorPreview(e) {
+    graph.previewColors(e.detail.colors);
+  }
+
+  function onColorApply(e) {
+    colorList = e.detail.colors;
+    graph.applyColors(colorList);
+  }
 </script>
 
 <main>
@@ -182,6 +200,9 @@
         <input type="checkbox" id="flatSwitch" bind:checked={flatSwitch} />
         <label for="flatSwitch">Flat Switch</label>
 
+        <input type="checkbox" id="colorPicker" bind:checked={colorPicker} />
+        <label for="colorPicker">Color Picker</label>
+
         {#if debugMode}
           <input type="checkbox" id="verbose" bind:checked={verbose} />
           <label for="verbose">Verbose</label>
@@ -204,6 +225,13 @@
         {/if}
       </div>
     </div>
+    {#if colorPicker}
+      <ColorScheme
+        on:preview={onColorPreview}
+        {colorList}
+        on:apply={onColorApply}
+      />
+    {/if}
     <Graph
       {code}
       {offsetToHighlight}

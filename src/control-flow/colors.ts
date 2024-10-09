@@ -1,4 +1,4 @@
-export const defaultColorList = [
+const defaultColorList = [
   // Node colors
   { name: "node.default", hex: "#d3d3d3" },
   { name: "node.entry", hex: "#48AB30" },
@@ -35,7 +35,15 @@ export function listToScheme(colors: ColorList): ColorScheme {
   return scheme;
 }
 
-export const defaultColorScheme = listToScheme(defaultColorList);
+const defaultColorScheme = listToScheme(defaultColorList);
+
+export function getDefaultColorList(): ColorList {
+  return structuredClone(defaultColorList);
+}
+
+export function getDefaultColorScheme(): ColorScheme {
+  return structuredClone(defaultColorScheme);
+}
 
 export function serializeColorList(colorList: ColorList): string {
   return JSON.stringify({ version: 1, scheme: colorList });

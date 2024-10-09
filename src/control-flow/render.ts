@@ -2,7 +2,7 @@ import { detectBacklinks } from "./graph-ops";
 import type { CFG, CFGGraph, Cluster, ClusterId } from "./cfg-defs";
 import { subgraph } from "graphology-operators";
 import { MultiDirectedGraph } from "graphology";
-import { defaultColorScheme, type ColorScheme } from "./colors";
+import { getDefaultColorScheme, type ColorScheme } from "./colors";
 
 class RenderContext {
   public readonly verbose: boolean;
@@ -207,7 +207,7 @@ export function graphToDot(
     new RenderContext(
       verbose,
       backlinks,
-      colorScheme ?? defaultColorScheme,
+      colorScheme ?? getDefaultColorScheme(),
       nodeToHighlight,
     ),
   );

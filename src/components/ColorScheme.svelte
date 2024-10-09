@@ -2,13 +2,13 @@
   import ColorPicker from "svelte-awesome-color-picker";
   import { createEventDispatcher } from "svelte";
   import {
-    defaultColorList,
+    getDefaultColorList,
     serializeColorList,
     deserializeColorList,
   } from "../control-flow/colors";
   const dispatch = createEventDispatcher();
 
-  let colorScheme = structuredClone(defaultColorList);
+  export let colorList = getDefaultColorList();
 
   const colorLabels = new Map([
     ["node.default", "Default"],
@@ -32,34 +32,33 @@
 
   const groups = ["Node", "Edge", "Cluster", "Graph"] as const;
 
-  function colorsFor(
-    scheme: typeof defaultColorScheme,
-    entity: (typeof groups)[number],
-  ) {
-    return scheme.filter(({ name }) => name.startsWith(entity.toLowerCase()));
+  function colorsFor(colors: ColorList, entity: (typeof groups)[number]) {
+    return colors.filter(({ name }) => name.startsWith(entity.toLowerCase()));
   }
 
   function onColorChange(color) {
     return (event) => {
       color.hex = event.detail.hex ?? color.hex;
-      dispatch("preview", { colors: colorScheme });
+      dispatch("preview", { colors: colorList });
     };
   }
 
-  async function copyScheme() {
-    await navigator.clipboard.writeText(serializeColorList(colorScheme));
+  async function copyList() {
+    await navigator.clipboard.writeText(serializeColorList(colorList));
   }
-  async function pasteScheme() {
-    const newScheme = deserializeColorList(
+  async function pasteList() {
+    const newColors = deserializeColorList(
       await navigator.clipboard.readText(),
     );
-    colorScheme = newScheme;
+    colorList = newColors;
   }
-  function resetScheme() {
-    colorScheme = structuredClone(defaultColorList);
+  function resetList() {
+    console.log("Reset!");
+    colorList = getDefaultColorList();
+    console.log(colorList);
   }
-  function applyScheme() {
-    dispatch("apply", { colors: colorScheme });
+  function applyList() {
+    dispatch("apply", { colors: colorList });
   }
 </script>
 
@@ -67,7 +66,7 @@
   <fieldset>
     <legend>{group}</legend>
     <div class="colors">
-      {#each colorsFor(colorScheme, group) as color (color.name)}
+      {#each colorsFor(colorList, group) as color (color.name)}
         <span>{colorLabels.get(color.name)}</span>
         <div class="border">
           <ColorPicker
@@ -86,16 +85,16 @@
 <fieldset>
   <legend>Controls</legend>
   <div class="controls">
-    <button on:click={copyScheme} title="Copy color scheme to clipboard"
+    <button on:click={copyList} title="Copy color scheme to clipboard"
       >Copy</button
     >
-    <button on:click={pasteScheme} title="Paste color scheme from clipboard"
+    <button on:click={pasteList} title="Paste color scheme from clipboard"
       >Paste</button
     >
-    <button on:click={resetScheme} title="Reset color scheme to defaults"
+    <button on:click={resetList} title="Reset color scheme to defaults"
       >Reset</button
     >
-    <button on:click={applyScheme} title="Apply current color scheme to graph"
+    <button on:click={applyList} title="Apply current color scheme to graph"
       >Apply</button
     >
   </div>

@@ -1,6 +1,5 @@
 <script lang="ts">
   import Parser from "web-tree-sitter";
-  import ColorScheme from "./ColorScheme.svelte";
   import ColorPicker from "svelte-awesome-color-picker";
   import { newCFGBuilder, type Language } from "../control-flow/cfg";
   import {
@@ -20,7 +19,7 @@
   import { createEventDispatcher } from "svelte";
   import {
     listToScheme,
-    defaultColorList,
+    getDefaultColorList,
     type ColorList,
   } from "../control-flow/colors";
 
@@ -29,7 +28,7 @@
   let dot: string;
   let cfg: CFG;
   let tree: Parser.Tree;
-  export let colorList = defaultColorList;
+  export let colorList = getDefaultColorList();
   export let offsetToHighlight: number | undefined = undefined;
   export let code: string;
   export let language: Language;
@@ -187,10 +186,6 @@
   let saturation = 50;
   let light = 50;
 
-  function onColorPreview(e) {
-    previewColors(e.detail.colors);
-  }
-
   export function previewColors(colors: ColorList) {
     const colorScheme = listToScheme(colors);
     for (const { name, hex } of colors) {
@@ -218,13 +213,12 @@
     previewColors(colorList);
   }
 
-  function onColorApply(e) {
-    colorList = e.detail.colors;
+  export function applyColors(colors: ColorList) {
+    colorList = colors;
   }
 </script>
 
 <div class="results">
-  <ColorScheme on:preview={onColorPreview} on:apply={onColorApply} />
   {#await initialize() then}
     <!-- I don't know how to make this part accessible. PRs welcome! -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
