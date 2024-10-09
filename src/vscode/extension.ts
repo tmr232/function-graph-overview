@@ -248,6 +248,19 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   }
 
+  const configChanged = vscode.workspace.onDidChangeConfiguration((e: vscode.ConfigurationChangeEvent) => {
+    // TODO: This currently only changes the color-scheme.
+    // TODO: Make this react to all the CFG settings.
+    if (e.affectsConfiguration("functionGraphOverview")) {
+      const settings = loadSettings();
+      if (!savedCFG) return;
+      const dot = graphToDot(savedCFG, false, undefined, settings.colorScheme);
+      const svg = graphviz.dot(dot);
+
+      provider.setSVG(svg, settings.colorScheme["graph.background"]);
+    }
+  });
+
   const cursorMove = vscode.window.onDidChangeTextEditorSelection(
     (event: vscode.TextEditorSelectionChangeEvent): void => {
       const editor = event.textEditor;
@@ -313,7 +326,7 @@ export async function activate(context: vscode.ExtensionContext) {
     },
   );
 
-  context.subscriptions.push(cursorMove);
+  context.subscriptions.push(cursorMove, configChanged);
 }
 
 // This method is called when your extension is deactivated
