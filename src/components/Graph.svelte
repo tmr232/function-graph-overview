@@ -20,8 +20,8 @@
   import { createEventDispatcher } from "svelte";
   import {
     listToScheme,
-    defaultColorScheme,
-    type ColorScheme as ColorSchemeType,
+    defaultColorList,
+    type ColorList,
   } from "../control-flow/colors";
 
   let parsers: Parsers;
@@ -29,7 +29,7 @@
   let dot: string;
   let cfg: CFG;
   let tree: Parser.Tree;
-  let colorScheme = defaultColorScheme;
+  export let colorList = defaultColorList;
   export let offsetToHighlight: number | undefined = undefined;
   export let code: string;
   export let language: Language;
@@ -60,7 +60,7 @@
     language: Language,
     highlightOffset: number | undefined,
     options: RenderOptions,
-    colorScheme: ColorSchemeType,
+    colorList: ColorList,
   ) {
     const { trim, simplify, verbose, flatSwitch, highlight } = options;
     tree = parsers[language].parse(code);
@@ -81,7 +81,7 @@
       highlightOffset && highlight
         ? getValue(cfg.offsetToNode, highlightOffset)
         : undefined;
-    dot = graphToDot(cfg, verbose, nodeToHighlight, colorScheme);
+    dot = graphToDot(cfg, verbose, nodeToHighlight, listToScheme(colorList));
 
     return graphviz.dot(dot);
   }
@@ -91,10 +91,10 @@
     language: Language,
     highlightOffset: number | undefined,
     options: RenderOptions,
-    colorScheme: ColorSchemeType,
+    colorList: ColorList,
   ) {
     try {
-      return renderCode(code, language, highlightOffset, options, colorScheme);
+      return renderCode(code, language, highlightOffset, options, colorList);
     } catch (error) {
       console.trace(error);
       return `<p style='border: 2px red solid;'>${error}</p>`;
@@ -188,10 +188,12 @@
   let light = 50;
 
   function onColorPreview(e) {
-    const colorScheme = Object.fromEntries(
-      e.detail.colors.map(({ name, hex }) => [name, hex]),
-    );
-    for (const { name, hex } of e.detail.colors) {
+    previewColors(e.detail.colors);
+  }
+
+  export function previewColors(colors: ColorList) {
+    const colorScheme = listToScheme(colors);
+    for (const { name, hex } of colors) {
       const [type, cls] = name.split(".", 2);
       switch (type) {
         case "node":
@@ -212,9 +214,12 @@
     }
   }
 
+  export function resetPreview() {
+    previewColors(colorList);
+  }
+
   function onColorApply(e) {
-    const colorList = e.detail.colors;
-    colorScheme = listToScheme(colorList);
+    colorList = e.detail.colors;
   }
 </script>
 
@@ -236,7 +241,7 @@
           flatSwitch,
           highlight,
         },
-        colorScheme,
+        colorList,
       )}
     </div>
   {/await}
