@@ -6,6 +6,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Added
+
+- Dark-mode and custom color schemes for the extension
+- Color-scheme creation in the interactive demo
+
 ### Fixed
 
 - Nodes for empty blocks now map correctly to the empty block, instead of doing nothing when clicked.
