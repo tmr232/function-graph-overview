@@ -119,9 +119,9 @@
     });
   }
 
-  function recolorNodes(type: string, fill: string, stroke?: string): void {
+  function recolorNodes(cls: string, fill: string, stroke?: string): void {
     const polygonsToRecolor = document.querySelectorAll(
-      `svg g.node.${type} polygon`,
+      `svg g.node.${cls} polygon`,
     );
 
     const recolor = (el: Element) => {
@@ -132,9 +132,9 @@
     polygonsToRecolor.forEach(recolor);
   }
 
-  function recolorClusters(type: string, fill: string, stroke?: string): void {
+  function recolorClusters(cls: string, fill: string, stroke?: string): void {
     const polygonsToRecolor = document.querySelectorAll(
-      `svg g.cluster.${type} polygon`,
+      `svg g.cluster.${cls} polygon`,
     );
 
     const recolor = (el: Element) => {
@@ -145,11 +145,11 @@
     polygonsToRecolor.forEach(recolor);
   }
 
-  function recolorEdges(type: string, color: string): void {
+  function recolorEdges(cls: string, color: string): void {
     const polygonsToRecolor = document.querySelectorAll(
-      `svg g.edge.${type} polygon`,
+      `svg g.edge.${cls} polygon`,
     );
-    const pathsToRecolor = document.querySelectorAll(`svg g.edge.${type} path`);
+    const pathsToRecolor = document.querySelectorAll(`svg g.edge.${cls} path`);
 
     const recolor = (el: Element) => {
       for (const attr of ["fill", "stroke"]) {
@@ -183,9 +183,28 @@
     const colorScheme = Object.fromEntries(
       e.detail.colors.map(({ name, hex }) => [name, hex]),
     );
-    recolorNodes("default", colorScheme["node.default"]);
-    recolorNodes("entry", colorScheme["node.entry"]);
-    recolorNodes("exit", colorScheme["node.exit"]);
+    for (const { name, hex } of e.detail.colors) {
+      const [type, cls] = name.split(".", 2);
+      switch (type) {
+        case "node":
+          recolorNodes(cls, hex, colorScheme["node.border"]);
+          break;
+        case "edge":
+          recolorEdges(cls, hex);
+          break;
+        case "cluster":
+          recolorClusters(cls, hex);
+          break;
+        case "graph":
+          recolorBackground(hex);
+          break;
+        default:
+          console.log(name);
+      }
+    }
+    // recolorNodes("default", colorScheme["node.default"]);
+    // recolorNodes("entry", colorScheme["node.entry"]);
+    // recolorNodes("exit", colorScheme["node.exit"]);
   }
 </script>
 

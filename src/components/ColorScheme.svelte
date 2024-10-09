@@ -38,6 +38,18 @@
       name.startsWith(entity.toLowerCase()),
     );
   }
+
+  let configInput;
+  function onColorChange(color) {
+    return (event) => {
+      color.hex = event.detail.hex ?? color.hex;
+      dispatch("color", { colors: colorScheme });
+      // console.log(configInput);
+      if (configInput) {
+        configInput.value = JSON.stringify(colorScheme);
+      }
+    };
+  }
 </script>
 
 {#each groups as group}
@@ -49,10 +61,7 @@
         <div class="border">
           <ColorPicker
             hex={color.hex}
-            on:input={(event) => {
-              color.hex = event.detail.hex ?? color.hex;
-              dispatch("color", { colors: colorScheme });
-            }}
+            on:input={onColorChange(color)}
             position="responsive"
             label=""
             name={color.name}
@@ -62,6 +71,10 @@
     </div>
   </fieldset>
 {/each}
+<fieldset>
+  <legend>As Text</legend>
+  <input type="text" bind:this={configInput} />
+</fieldset>
 
 <style>
   .border {
