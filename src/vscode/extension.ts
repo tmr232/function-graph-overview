@@ -297,7 +297,7 @@ export async function activate(context: vscode.ExtensionContext) {
       const dot = graphToDot(cfg, false, nodeToHighlight, colorScheme);
       const svg = graphviz.dot(dot);
 
-      provider.setSVG(svg);
+      provider.setSVG(svg, colorScheme["graph.background"]);
     },
   );
 

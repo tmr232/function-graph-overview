@@ -17,9 +17,9 @@ export class OverviewViewProvider implements vscode.WebviewViewProvider {
     this._nodeClickHandler = nodeClickHandler;
   }
 
-  public setSVG(svg: string) {
+  public setSVG(svg: string, bgColor: string) {
     if (this._view) {
-      this._view.webview.postMessage({ type: "svgImage", svg });
+      this._view.webview.postMessage({ type: "svgImage", svg, bgColor });
     }
   }
 
