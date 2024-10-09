@@ -1,37 +1,14 @@
 <script lang="ts">
   import ColorPicker from "svelte-awesome-color-picker";
   import { createEventDispatcher } from "svelte";
-
+  import {
+    defaultColorList,
+    serializeColorList,
+    deserializeColorList,
+  } from "../control-flow/colors";
   const dispatch = createEventDispatcher();
 
-  const defaultColorScheme = [
-    // Node colors
-    { name: "node.default", hex: "#d3d3d3" },
-    { name: "node.entry", hex: "#48AB30" },
-    { name: "node.exit", hex: "#AB3030" },
-    { name: "node.throw", hex: "#ffdddd" },
-    { name: "node.yield", hex: "#00bfff" },
-    { name: "node.border", hex: "#000000" },
-    { name: "node.highlight", hex: "#000000" },
-
-    // Edge Colors
-    { name: "edge.regular", hex: "#0000ff" },
-    { name: "edge.consequence", hex: "#008000" },
-    { name: "edge.alternative", hex: "#ff0000" },
-
-    // Cluster Colors
-    { name: "cluster.border", hex: "#ffffff" },
-    { name: "cluster.with", hex: "#ffddff" },
-    { name: "cluster.tryComplex", hex: "#ddddff" },
-    { name: "cluster.try", hex: "#ddffdd" },
-    { name: "cluster.finally", hex: "#ffffdd" },
-    { name: "cluster.except", hex: "#ffdddd" },
-
-    // Graph Colors
-    { name: "graph.background", hex: "#00000000" },
-  ] as const;
-
-  let colorScheme = structuredClone(defaultColorScheme);
+  let colorScheme = structuredClone(defaultColorList);
 
   const colorLabels = new Map([
     ["node.default", "Default"],
@@ -62,45 +39,28 @@
     return scheme.filter(({ name }) => name.startsWith(entity.toLowerCase()));
   }
 
-  function serializeColorScheme(
-    scheme: { name: string; hex: string }[],
-  ): string {
-    return JSON.stringify({ version: 1, scheme });
-  }
-
-  function deserializeColorScheme(data: string) {
-    const { version, scheme } = JSON.parse(data);
-    if (version !== 1) {
-      throw new Error(`Invalid scheme version: ${version}`);
-    }
-    for (const { hex } of scheme) {
-      if (!hex.match(/^#[0-9a-fA-F]+$/)) {
-        throw new Error(`Invalid color: ${hex}`);
-      }
-    }
-    return scheme;
-  }
-
   function onColorChange(color) {
     return (event) => {
       color.hex = event.detail.hex ?? color.hex;
-      dispatch("color", { colors: colorScheme });
+      dispatch("preview", { colors: colorScheme });
     };
   }
 
   async function copyScheme() {
-    await navigator.clipboard.writeText(serializeColorScheme(colorScheme));
+    await navigator.clipboard.writeText(serializeColorList(colorScheme));
   }
   async function pasteScheme() {
-    const newScheme = deserializeColorScheme(
+    const newScheme = deserializeColorList(
       await navigator.clipboard.readText(),
     );
     colorScheme = newScheme;
   }
   function resetScheme() {
-    colorScheme = structuredClone(defaultColorScheme);
+    colorScheme = structuredClone(defaultColorList);
   }
-  function applyScheme() {}
+  function applyScheme() {
+    dispatch("apply", { colors: colorScheme });
+  }
 </script>
 
 {#each groups as group}
@@ -112,6 +72,7 @@
         <div class="border">
           <ColorPicker
             hex={color.hex}
+            isAlpha={false}
             on:input={onColorChange(color)}
             position="responsive"
             label=""

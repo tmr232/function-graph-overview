@@ -18,12 +18,18 @@
   } from "./utils";
   import { getValue } from "../control-flow/ranges";
   import { createEventDispatcher } from "svelte";
+  import {
+    listToScheme,
+    defaultColorScheme,
+    type ColorScheme as ColorSchemeType,
+  } from "../control-flow/colors";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
   let dot: string;
   let cfg: CFG;
   let tree: Parser.Tree;
+  let colorScheme = defaultColorScheme;
   export let offsetToHighlight: number | undefined = undefined;
   export let code: string;
   export let language: Language;
@@ -54,6 +60,7 @@
     language: Language,
     highlightOffset: number | undefined,
     options: RenderOptions,
+    colorScheme: ColorSchemeType,
   ) {
     const { trim, simplify, verbose, flatSwitch, highlight } = options;
     tree = parsers[language].parse(code);
@@ -74,7 +81,7 @@
       highlightOffset && highlight
         ? getValue(cfg.offsetToNode, highlightOffset)
         : undefined;
-    dot = graphToDot(cfg, verbose, nodeToHighlight);
+    dot = graphToDot(cfg, verbose, nodeToHighlight, colorScheme);
 
     return graphviz.dot(dot);
   }
@@ -84,9 +91,10 @@
     language: Language,
     highlightOffset: number | undefined,
     options: RenderOptions,
+    colorScheme: ColorSchemeType,
   ) {
     try {
-      return renderCode(code, language, highlightOffset, options);
+      return renderCode(code, language, highlightOffset, options, colorScheme);
     } catch (error) {
       console.trace(error);
       return `<p style='border: 2px red solid;'>${error}</p>`;
@@ -168,18 +176,18 @@
     if (!svg) return;
 
     svg.style.backgroundColor = color;
+    svg.parentElement.style.backgroundColor = color;
+    const backgroundRect = svg.querySelector("g.graph > polygon");
+    if (backgroundRect) {
+      backgroundRect.setAttribute("fill", color);
+    }
   }
 
   let hue = 0;
   let saturation = 50;
   let light = 50;
 
-  // $: recolorNodes("default", `hsl(${hue} ${saturation} ${light})`);
-  // $: recolorEdges("regular", `hsl(${hue} ${saturation} ${light})`);
-  // $: recolorClusters("tryComplex", `hsl(${hue} ${saturation} ${light})`);
-  // $: recolorBackground(`hsl(${hue} ${saturation} ${light})`);
-
-  function onColor(e) {
+  function onColorPreview(e) {
     const colorScheme = Object.fromEntries(
       e.detail.colors.map(({ name, hex }) => [name, hex]),
     );
@@ -193,7 +201,7 @@
           recolorEdges(cls, hex);
           break;
         case "cluster":
-          recolorClusters(cls, hex);
+          recolorClusters(cls, hex, colorScheme["cluster.border"]);
           break;
         case "graph":
           recolorBackground(hex);
@@ -202,26 +210,34 @@
           console.log(name);
       }
     }
-    // recolorNodes("default", colorScheme["node.default"]);
-    // recolorNodes("entry", colorScheme["node.entry"]);
-    // recolorNodes("exit", colorScheme["node.exit"]);
+  }
+
+  function onColorApply(e) {
+    const colorList = e.detail.colors;
+    colorScheme = listToScheme(colorList);
   }
 </script>
 
 <div class="results">
-  <ColorScheme on:color={onColor} />
+  <ColorScheme on:preview={onColorPreview} on:apply={onColorApply} />
   {#await initialize() then}
     <!-- I don't know how to make this part accessible. PRs welcome! -->
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="graph" on:click={onClick}>
-      {@html renderWrapper(code, language, offsetToHighlight, {
-        simplify,
-        verbose,
-        trim,
-        flatSwitch,
-        highlight,
-      })}
+      {@html renderWrapper(
+        code,
+        language,
+        offsetToHighlight,
+        {
+          simplify,
+          verbose,
+          trim,
+          flatSwitch,
+          highlight,
+        },
+        colorScheme,
+      )}
     </div>
   {/await}
 </div>
