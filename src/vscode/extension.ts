@@ -17,7 +17,7 @@ import {
   deserializeColorList,
   getDefaultColorList,
   listToScheme,
-  type ColorList,
+  getDarkColorList,
   type ColorScheme,
 } from "../control-flow/colors";
 
@@ -129,21 +129,26 @@ type Settings = {
   highlightCurrentNode: boolean;
   colorScheme: ColorScheme;
 };
+type ColorSchemeOptions = "Light" | "Dark" | "Custom";
 function loadSettings(): Settings {
   const config = vscode.workspace.getConfiguration("functionGraphOverview");
 
-  const colors: string = config.get("colorScheme") ?? "";
+  const colorScheme: ColorSchemeOptions = config.get("colorScheme") ?? "Light";
   const colorList = (() => {
-    if (!colors) {
-      return getDefaultColorList();
+    switch (colorScheme) {
+      case "Light":
+        return getDefaultColorList();
+      case "Dark":
+        return getDarkColorList();
+      case "Custom":
+        try {
+          return deserializeColorList(config.get("customColorScheme") ?? "")
+        } catch (error) {
+          console.log(error);
+          // TODO: Add a user-visible error here.
+        }
+        return getDefaultColorList();
     }
-    try {
-      return deserializeColorList(colors);
-    } catch (error) {
-      console.log(error);
-      // TODO: Add a user-visible error here.
-    }
-    return getDefaultColorList();
   })();
 
   return {
@@ -312,6 +317,6 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
 
 //------------------------------------------------

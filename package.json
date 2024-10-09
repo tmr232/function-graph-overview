@@ -94,8 +94,23 @@
         },
         "functionGraphOverview.colorScheme": {
           "type": "string",
+          "enum": [
+            "Light",
+            "Dark",
+            "Custom"
+          ],
+          "markdownDescription": [
+            "Default, light color scheme",
+            "Dark-mode",
+            "Custom scheme via `#functionGraphOverview.customColorScheme#`"
+          ],
+          "default": "Light",
+          "description": "Color scheme for rendering the CFG."
+        },
+        "functionGraphOverview.customColorScheme": {
+          "type": "string",
           "default": "",
-          "description": "The color scheme to use for rendering the graph.\nUse the interactive demo to generate one."
+          "markdownDescription": "Custom color scheme can be generated using the color-picker's `Copy` button in the [interactive demo](https://tmr232.github.io/function-graph-overview/)"
         }
       }
     },
