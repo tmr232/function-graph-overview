@@ -91,6 +91,11 @@
           "type": "boolean",
           "default": "true",
           "description": "Highlight the CFG node matching the current code cursor position."
+        },
+        "functionGraphOverview.colorScheme": {
+          "type": "string",
+          "default": "",
+          "description": "The color scheme to use for rendering the graph.\nUse the interactive demo to generate one."
         }
       }
     },
