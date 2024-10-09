@@ -61,3 +61,9 @@ export function deserializeColorList(data: string): ColorList {
   }
   return scheme;
 }
+
+
+// Nice schemes
+/*
+Dark mode - {"version":1,"scheme":[{"name":"node.default","hex":"#707070"},{"name":"node.entry","hex":"#48AB30"},{"name":"node.exit","hex":"#AB3030"},{"name":"node.throw","hex":"#ffdddd"},{"name":"node.yield","hex":"#00bfff"},{"name":"node.border","hex":"#000000"},{"name":"node.highlight","hex":"#dddddd"},{"name":"edge.regular","hex":"#2592a1"},{"name":"edge.consequence","hex":"#4ce34c"},{"name":"edge.alternative","hex":"#ff3e3e"},{"name":"cluster.border","hex":"#ffffff"},{"name":"cluster.with","hex":"#ffddff"},{"name":"cluster.tryComplex","hex":"#ddddff"},{"name":"cluster.try","hex":"#ddffdd"},{"name":"cluster.finally","hex":"#ffffdd"},{"name":"cluster.except","hex":"#ffdddd"},{"name":"graph.background","hex":"#302e2e"}]}
+*/
