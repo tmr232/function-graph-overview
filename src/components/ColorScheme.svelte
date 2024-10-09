@@ -84,11 +84,21 @@
   </fieldset>
 {/each}
 <fieldset>
-  <legend>As Text</legend>
-  <button on:click={copyScheme}>Copy</button>
-  <button on:click={pasteScheme}>Paste</button>
-  <button on:click={resetScheme}>Reset</button>
-  <button on:click={applyScheme}>Apply</button>
+  <legend>Controls</legend>
+  <div class="controls">
+    <button on:click={copyScheme} title="Copy color scheme to clipboard"
+      >Copy</button
+    >
+    <button on:click={pasteScheme} title="Paste color scheme from clipboard"
+      >Paste</button
+    >
+    <button on:click={resetScheme} title="Reset color scheme to defaults"
+      >Reset</button
+    >
+    <button on:click={applyScheme} title="Apply current color scheme to graph"
+      >Apply</button
+    >
+  </div>
 </fieldset>
 
 <style>
@@ -103,5 +113,10 @@
   .colors {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .controls {
+    display: flex;
+    gap: 1em;
   }
 </style>
