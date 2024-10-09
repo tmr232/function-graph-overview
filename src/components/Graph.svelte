@@ -180,11 +180,9 @@
   // $: recolorBackground(`hsl(${hue} ${saturation} ${light})`);
 
   function onColor(e) {
-    console.log(e.detail.colors);
     const colorScheme = Object.fromEntries(
       e.detail.colors.map(({ name, hex }) => [name, hex]),
     );
-    console.log(colorScheme);
     recolorNodes("default", colorScheme["node.default"]);
     recolorNodes("entry", colorScheme["node.entry"]);
     recolorNodes("exit", colorScheme["node.exit"]);
