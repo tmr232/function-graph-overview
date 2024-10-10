@@ -7,7 +7,7 @@
   import * as LZString from "lz-string";
   import Editor from "./Editor.svelte";
   import CodeSegmentation from "./CodeSegmentation.svelte";
-  import ColorScheme from "./ColorScheme.svelte";
+  import ColorScheme from "./ColorSchemeEditor.svelte";
   import { getSystemColorList, toggleTheme, isDark } from "./lightdark.ts";
 
   export let codeGo = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";

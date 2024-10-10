@@ -265,9 +265,10 @@ export async function activate(context: vscode.ExtensionContext) {
   const parsers = await initializeParsers(context);
 
   let cfgKey: CFGKey | undefined;
-  let savedCFG: CFG;
+  let savedCFG: CFG | undefined;
 
   function onNodeClick(node: string): void {
+    if (!savedCFG) return;
     const offset = savedCFG.graph.getNodeAttribute(node, "startOffset");
     if (offset !== null) {
       moveCursorAndReveal(offset);
@@ -344,7 +345,7 @@ export async function activate(context: vscode.ExtensionContext) {
           functionText: functionSyntax.text,
         };
         let cfg: CFG;
-        if (cfgKey && isSameKey(newKey, cfgKey)) {
+        if (cfgKey && isSameKey(newKey, cfgKey) && savedCFG) {
           cfg = savedCFG;
         } else {
           cfgKey = newKey;
