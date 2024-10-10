@@ -3,6 +3,7 @@
   import type { EditorView } from "@codemirror/view";
   import { createEventDispatcher } from "svelte";
   import CodeMirror from "svelte-codemirror-editor";
+  import { oneDark } from "@codemirror/theme-one-dark";
   export let code: string;
   export let lang: LanguageSupport;
 
@@ -55,4 +56,5 @@
   tabSize={4}
   lineWrapping={true}
   on:ready={onEditorReady}
+  theme={oneDark}
 />

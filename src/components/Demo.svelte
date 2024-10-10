@@ -259,8 +259,8 @@
     grid-area: header;
     font-family: Arial, Helvetica, sans-serif;
     text-align: center;
-    filter: drop-shadow(0 0 0.3rem gray);
-    background-color: white;
+    filter: drop-shadow(0 0 0.3rem light-dark(gray, #1e1e1e));
+    background-color: light-dark(white, #1e1e1e);
     position: relative;
   }
   .controls {
@@ -284,12 +284,12 @@
   .graph,
   .segmentation,
   .editor {
-    background-color: white;
-    filter: drop-shadow(0 0 0.3rem gray);
+    background-color: light-dark(white, #1e1e1e);
+    filter: drop-shadow(0 0 0.3rem light-dark(gray, #1e1e1e));
   }
 
   .links a {
-    color: black;
+    color: light-dark(black, white);
     padding: 0.5rem;
   }
 
