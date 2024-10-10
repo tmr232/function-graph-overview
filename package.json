@@ -8,7 +8,10 @@
     "graphology": "^0.25.4",
     "graphology-operators": "^1.6.0",
     "graphology-traversal": "^0.3.1",
-    "web-tree-sitter": "^0.23.2"
+    "web-tree-sitter": "^0.23.2",
+    "@vscode/vsce": "^3.1.1",
+    "esbuild": "^0.20.2",
+    "esbuild-plugin-copy": "^2.1.1"
   },
   "devDependencies": {
     "@codemirror/lang-cpp": "^6.0.2",
@@ -20,9 +23,6 @@
     "@sveltejs/vite-plugin-svelte": "^3.1.2",
     "@types/bun": "latest",
     "@types/eslint__js": "^8.42.3",
-    "@vscode/vsce": "^3.1.1",
-    "esbuild": "^0.20.2",
-    "esbuild-plugin-copy": "^2.1.1",
     "eslint": "^9.12.0",
     "graphology-utils": "^2.5.2",
     "lz-string": "^1.5.0",
@@ -61,7 +61,7 @@
   "//": "START EXTENSION ATTRIBUTES",
   "publisher": "tamir-bahar",
   "name": "function-graph-overview",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Function Graph Overview",
   "displayName": "Function Graph Overview",
   "icon": "./media/icon.png",
