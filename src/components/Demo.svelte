@@ -9,12 +9,13 @@
   import CodeSegmentation from "./CodeSegmentation.svelte";
   import ColorScheme from "./ColorScheme.svelte";
   import { getLightColorList, getDarkColorList } from "../control-flow/colors";
+  import { getSystemColorList, toggleTheme } from "./lightdark.ts";
 
   export let codeGo = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
   export let codeC = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";
   export let codePython = "def example():\n    if x:\n        return";
   let offsetToHighlight: number | undefined = undefined;
-  let colorList = getDarkColorList();
+  let colorList = getSystemColorList();
   let languages: {
     language: Language;
     text: string;
@@ -132,6 +133,10 @@
     colorList = e.detail.colors;
     graph.previewColors(colorList);
   }
+
+  function onToggleClick(e) {
+    toggleTheme();
+  }
 </script>
 
 <main>
@@ -143,6 +148,10 @@
         href="https://marketplace.visualstudio.com/items?itemName=tamir-bahar.function-graph-overview"
         >VSCode Extension</a
       >
+    </div>
+    <div class="themeToggleWrapper">
+    <div class="themeToggle" on:click={onToggleClick}>
+    </div>
     </div>
   </header>
   <div class="editor">
@@ -259,8 +268,8 @@
     grid-area: header;
     font-family: Arial, Helvetica, sans-serif;
     text-align: center;
-    filter: drop-shadow(0 0 0.3rem light-dark(gray, #1e1e1e));
-    background-color: light-dark(white, #1e1e1e);
+    filter: drop-shadow(0 0 0.3rem var(--panel-shadow-color));
+    background-color: var(--panel-background-color);
     position: relative;
   }
   .controls {
@@ -284,12 +293,12 @@
   .graph,
   .segmentation,
   .editor {
-    background-color: light-dark(white, #1e1e1e);
-    filter: drop-shadow(0 0 0.3rem light-dark(gray, #1e1e1e));
+    background-color: var(--panel-background-color);
+    filter: drop-shadow(0 0 0.3rem var(--panel-shadow-color));
   }
 
   .links a {
-    color: light-dark(black, white);
+    color: var(--text-color);
     padding: 0.5rem;
   }
 
@@ -306,6 +315,21 @@
     right: 3rem;
     top: 0;
     height: 100%;
+  }
+  .themeToggleWrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      position:absolute;
+      top: 0;
+      left: 3rem;
+      height: 100%;
+      line-height: 3rem;
+  }
+  .themeToggle::before {
+      font-size: 2rem;
+      content: var(--theme-toggle-emoji);
   }
   .picker {
     /* position: fixed;

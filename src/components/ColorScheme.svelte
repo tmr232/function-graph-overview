@@ -81,7 +81,7 @@
         <div class="colors">
           {#each colorsFor(colorList, group) as color (color.name)}
             <span class="label">{colorLabels.get(color.name)}</span>
-            <div class="border dark">
+            <div class="border">
               <ColorPicker
                 hex={color.hex}
                 isAlpha={false}
@@ -111,7 +111,7 @@
     width: fit-content;
   }
   .border {
-    border: 1px solid light-dark(black, white);
+    border: 1px solid var(--color-picker-border);
     border-radius: 100%;
     width: fit-content;
     margin: 0px;
@@ -127,13 +127,5 @@
   .controls {
     display: flex;
     gap: 1em;
-  }
-
-  .dark {
-    --cp-bg-color: #333;
-    --cp-border-color: white;
-    --cp-text-color: white;
-    --cp-input-color: #555;
-    --cp-button-hover-color: #777;
   }
 </style>

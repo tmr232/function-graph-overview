@@ -4,11 +4,14 @@
   import { createEventDispatcher } from "svelte";
   import CodeMirror from "svelte-codemirror-editor";
   import { oneDark } from "@codemirror/theme-one-dark";
+  import { isDarkTheme } from "./lightdark.ts";
   export let code: string;
   export let lang: LanguageSupport;
 
   let editorView: EditorView;
   let cursorPos: { row: number; column: number; index: number };
+
+  const codemirrorTheme = isDarkTheme() ? oneDark : undefined;
 
   const dispatch = createEventDispatcher();
 
@@ -56,5 +59,5 @@
   tabSize={4}
   lineWrapping={true}
   on:ready={onEditorReady}
-  theme={oneDark}
+  theme={codemirrorTheme}
 />
