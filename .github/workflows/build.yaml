@@ -18,11 +18,9 @@ jobs:
 
       - run: bun install
 
-      - name: Lint & Check Formatting
-        run: |
-          failure=0
-          bun prettier . --check || failure=1
-          bun eslint || failure=1
+      - run: bun prettier . --check
+      - run: bun eslint
+      - run: bun run tsc --noEmit
 
       - name: Test
         run: bun test
