@@ -20,9 +20,9 @@ Note that the demo only supports a single function and ignores the cursor locati
 
 Both dark, light, and custom color schemes are supported.
 
-| Dark                                                            | Light                                                            | Custom |
-|-----------------------------------------------------------------|------------------------------------------------------------------|---|
-| ![CFG with dark colors](media/screenshots/color-scheme/dark.png) | ![CFG with light colors](media/screenshots/color-scheme/light.png) | ![CFG with custom colors](media/screenshots/color-scheme/custom.png)|
+| Dark                                                             | Light                                                              | Custom                                                               |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------- |
+| ![CFG with dark colors](media/screenshots/color-scheme/dark.png) | ![CFG with light colors](media/screenshots/color-scheme/light.png) | ![CFG with custom colors](media/screenshots/color-scheme/custom.png) |
 
 By default, the color scheme will match the VSCode theme (light or dark).
 
@@ -36,10 +36,10 @@ Custom color schems are created via the [interactive demo](https://tmr232.github
 
 1. Enable the `Color Picker` above the graph
 2. Select the colors you want for your color scheme<br/>
-  ![The interactive color picker](media/screenshots/color-scheme/color-picker.png)
+   ![The interactive color picker](media/screenshots/color-scheme/color-picker.png)
 3. Press the `Copy` button to copy the color scheme into the clipboard
 4. Paste the config into the `Custom Color Scheme` field in the VSCode extension settings.<br/>
-  ![The Custom Color Scheme field in the settings](media/screenshots/color-scheme/settings-custom.png)
+   ![The Custom Color Scheme field in the settings](media/screenshots/color-scheme/settings-custom.png)
 
 ## Supported Languages
 

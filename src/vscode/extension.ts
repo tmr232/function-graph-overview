@@ -225,11 +225,27 @@ function moveCursorAndReveal(offset: number) {
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
   graphviz = await Graphviz.load();
-  const helloWorldSvg = graphviz.dot("digraph G { Hello -> World }");
+
+  const helloWorldDark = `digraph G { 
+    bgcolor="#1e1e1e"
+    node [color="#e0e0e0", fontcolor="#e0e0e0"]
+    edge [color="#e0e0e0"]
+    Hello -> World 
+}`;
+  const helloWorldLight = `digraph G { Hello -> World }`;
+
+  // We use the color theme for the initial graph, as it's a good way to avoid
+  // shocking the user without being overly complicated with reading custom
+  // color schemes.
+  const helloWorldSvg = graphviz.dot(
+    isThemeDark() ? helloWorldDark : helloWorldLight,
+  );
+  const helloWorldBGColor = isThemeDark() ? "#1e1e1e" : "white";
 
   const provider = new OverviewViewProvider(
     context.extensionUri,
     helloWorldSvg,
+    helloWorldBGColor,
     onNodeClick,
   );
 
