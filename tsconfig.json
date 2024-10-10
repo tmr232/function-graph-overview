@@ -25,5 +25,5 @@
       "vscode": ["./mocks/vscode.ts"]
     }
   },
-  "exclude": ["./webview-content", "./dist"]
+  "exclude": ["./webview-content", "./dist", "./src/components/lightdark.ts"]
 }

@@ -5,21 +5,24 @@ import * as crypto from "crypto";
 export class OverviewViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "functionGraphOverview.overview";
   private readonly helloWorldSvg: string;
+  private readonly helloWorldBGColor: string;
   private readonly _nodeClickHandler: (node: string) => void;
   private _view?: vscode.WebviewView;
 
   constructor(
     private readonly _extensionUri: vscode.Uri,
     helloWorldSvg: string,
+    helloWorldBGColor: string,
     nodeClickHandler: (node: string) => void,
   ) {
     this.helloWorldSvg = helloWorldSvg;
+    this.helloWorldBGColor = helloWorldBGColor;
     this._nodeClickHandler = nodeClickHandler;
   }
 
-  public setSVG(svg: string) {
+  public setSVG(svg: string, bgColor: string) {
     if (this._view) {
-      this._view.webview.postMessage({ type: "svgImage", svg });
+      this._view.webview.postMessage({ type: "svgImage", svg, bgColor });
     }
   }
 
@@ -77,6 +80,7 @@ export class OverviewViewProvider implements vscode.WebviewViewProvider {
       [/#{styleMainUri}/g, styleMainUri.toString()],
       [/#{scriptUri}/g, scriptUri.toString()],
       [/#{helloWorldSvg}/g, this.helloWorldSvg],
+      [/#{helloWorldBGColor}/g, this.helloWorldBGColor],
     ];
 
     for (const [pattern, substitute] of replacements) {

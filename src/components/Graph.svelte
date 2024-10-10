@@ -1,5 +1,6 @@
 <script lang="ts">
   import Parser from "web-tree-sitter";
+  import ColorPicker from "svelte-awesome-color-picker";
   import { newCFGBuilder, type Language } from "../control-flow/cfg";
   import {
     mergeNodeAttrs,
@@ -16,12 +17,18 @@
   } from "./utils";
   import { getValue } from "../control-flow/ranges";
   import { createEventDispatcher } from "svelte";
+  import {
+    listToScheme,
+    getLightColorList,
+    type ColorList,
+  } from "../control-flow/colors";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
   let dot: string;
   let cfg: CFG;
   let tree: Parser.Tree;
+  export let colorList = getLightColorList();
   export let offsetToHighlight: number | undefined = undefined;
   export let code: string;
   export let language: Language;
@@ -52,6 +59,7 @@
     language: Language,
     highlightOffset: number | undefined,
     options: RenderOptions,
+    colorList: ColorList,
   ) {
     const { trim, simplify, verbose, flatSwitch, highlight } = options;
     tree = parsers[language].parse(code);
@@ -72,7 +80,7 @@
       highlightOffset && highlight
         ? getValue(cfg.offsetToNode, highlightOffset)
         : undefined;
-    dot = graphToDot(cfg, verbose, nodeToHighlight);
+    dot = graphToDot(cfg, verbose, nodeToHighlight, listToScheme(colorList));
 
     return graphviz.dot(dot);
   }
@@ -82,9 +90,10 @@
     language: Language,
     highlightOffset: number | undefined,
     options: RenderOptions,
+    colorList: ColorList,
   ) {
     try {
-      return renderCode(code, language, highlightOffset, options);
+      return renderCode(code, language, highlightOffset, options, colorList);
     } catch (error) {
       console.trace(error);
       return `<p style='border: 2px red solid;'>${error}</p>`;
@@ -116,6 +125,93 @@
       offset: cfg.graph.getNodeAttribute(target.id, "startOffset"),
     });
   }
+
+  function recolorNodes(cls: string, fill: string, stroke?: string): void {
+    const polygonsToRecolor = document.querySelectorAll(
+      `svg g.node.${cls} polygon`,
+    );
+
+    const recolor = (el: Element) => {
+      el.setAttribute("fill", fill);
+      if (stroke !== undefined) el.setAttribute("stroke", stroke);
+    };
+
+    polygonsToRecolor.forEach(recolor);
+  }
+
+  function recolorClusters(cls: string, fill: string, stroke?: string): void {
+    const polygonsToRecolor = document.querySelectorAll(
+      `svg g.cluster.${cls} polygon`,
+    );
+
+    const recolor = (el: Element) => {
+      el.setAttribute("fill", fill);
+      if (stroke !== undefined) el.setAttribute("stroke", stroke);
+    };
+
+    polygonsToRecolor.forEach(recolor);
+  }
+
+  function recolorEdges(cls: string, color: string): void {
+    const polygonsToRecolor = document.querySelectorAll(
+      `svg g.edge.${cls} polygon`,
+    );
+    const pathsToRecolor = document.querySelectorAll(`svg g.edge.${cls} path`);
+
+    const recolor = (el: Element) => {
+      for (const attr of ["fill", "stroke"]) {
+        if (el.getAttribute(attr) !== "none") {
+          el.setAttribute(attr, color);
+        }
+      }
+    };
+
+    polygonsToRecolor.forEach(recolor);
+    pathsToRecolor.forEach(recolor);
+  }
+
+  function recolorBackground(color: string): void {
+    const svg = document.querySelector("svg");
+    if (!svg) return;
+
+    svg.style.backgroundColor = color;
+    svg.parentElement.style.backgroundColor = color;
+    const backgroundRect = svg.querySelector("g.graph > polygon");
+    if (backgroundRect) {
+      backgroundRect.setAttribute("fill", color);
+    }
+  }
+
+  export function previewColors(colors: ColorList) {
+    const colorScheme = listToScheme(colors);
+    for (const { name, hex } of colors) {
+      const [type, cls] = name.split(".", 2);
+      switch (type) {
+        case "node":
+          recolorNodes(cls, hex, colorScheme["node.border"]);
+          break;
+        case "edge":
+          recolorEdges(cls, hex);
+          break;
+        case "cluster":
+          recolorClusters(cls, hex, colorScheme["cluster.border"]);
+          break;
+        case "graph":
+          recolorBackground(hex);
+          break;
+        default:
+          console.log(name);
+      }
+    }
+  }
+
+  export function resetPreview() {
+    previewColors(colorList);
+  }
+
+  export function applyColors(colors: ColorList) {
+    colorList = colors;
+  }
 </script>
 
 <div class="results">
@@ -124,13 +220,19 @@
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div class="graph" on:click={onClick}>
-      {@html renderWrapper(code, language, offsetToHighlight, {
-        simplify,
-        verbose,
-        trim,
-        flatSwitch,
-        highlight,
-      })}
+      {@html renderWrapper(
+        code,
+        language,
+        offsetToHighlight,
+        {
+          simplify,
+          verbose,
+          trim,
+          flatSwitch,
+          highlight,
+        },
+        colorList,
+      )}
     </div>
   {/await}
 </div>

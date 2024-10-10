@@ -10,7 +10,7 @@
     const message = event.data; // The json data that the extension sent
     switch (message.type) {
       case "svgImage": {
-        displaySVG(message.svg);
+        displaySVG(message.svg, message.bgColor);
         break;
       }
     }
@@ -22,9 +22,10 @@
    *
    * @param {string} svgMarkup
    */
-  function displaySVG(svgMarkup) {
+  function displaySVG(svgMarkup, bgColor) {
     const div = document.querySelector("#overview");
     if (div) div.innerHTML = svgMarkup;
+    document.body.style.backgroundColor = bgColor;
   }
 
   function onClick(event) {

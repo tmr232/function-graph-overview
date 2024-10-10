@@ -8,12 +8,14 @@
     "graphology": "^0.25.4",
     "graphology-operators": "^1.6.0",
     "graphology-traversal": "^0.3.1",
+    "svelte-awesome-color-picker": "^3.1.4",
     "web-tree-sitter": "^0.23.2"
   },
   "devDependencies": {
     "@codemirror/lang-cpp": "^6.0.2",
     "@codemirror/lang-go": "^6.0.1",
     "@codemirror/lang-python": "^6.1.6",
+    "@codemirror/theme-one-dark": "^6.1.2",
     "@eslint/js": "^9.12.0",
     "@rollup/plugin-wasm": "^6.2.2",
     "@sveltejs/vite-plugin-svelte": "^3.1.2",
@@ -59,7 +61,7 @@
   "//": "START EXTENSION ATTRIBUTES",
   "publisher": "tamir-bahar",
   "name": "function-graph-overview",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Function Graph Overview",
   "displayName": "Function Graph Overview",
   "icon": "./media/icon.png",
@@ -90,6 +92,28 @@
           "type": "boolean",
           "default": "true",
           "description": "Highlight the CFG node matching the current code cursor position."
+        },
+        "functionGraphOverview.colorScheme": {
+          "type": "string",
+          "enum": [
+            "System",
+            "Light",
+            "Dark",
+            "Custom"
+          ],
+          "markdownEnumDescriptions": [
+            "Based on the active color theme",
+            "Light color scheme",
+            "Dark-mode",
+            "Custom scheme via `#functionGraphOverview.customColorScheme#`"
+          ],
+          "default": "System",
+          "description": "Color scheme for rendering the CFG."
+        },
+        "functionGraphOverview.customColorScheme": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Custom color scheme can be generated using the color-picker's `Copy` button in the [interactive demo](https://tmr232.github.io/function-graph-overview/)"
         }
       }
     },

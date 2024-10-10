@@ -2,19 +2,23 @@ import { detectBacklinks } from "./graph-ops";
 import type { CFG, CFGGraph, Cluster, ClusterId } from "./cfg-defs";
 import { subgraph } from "graphology-operators";
 import { MultiDirectedGraph } from "graphology";
+import { getDefaultColorScheme, type ColorScheme } from "./colors";
 
 class RenderContext {
   public readonly verbose: boolean;
   private readonly backlinks: { from: string; to: string }[];
   private readonly highlightedNode: string | undefined;
+  public readonly colorScheme: ColorScheme;
   constructor(
     verbose: boolean,
     backlinks: { from: string; to: string }[],
+    colorScheme: ColorScheme,
     highlightedNode?: string,
   ) {
     this.verbose = verbose;
     this.backlinks = backlinks;
     this.highlightedNode = highlightedNode;
+    this.colorScheme = colorScheme;
   }
 
   public isBacklink(from: string, to: string): boolean {
@@ -147,7 +151,7 @@ function renderHierarchy(
   hierarchy: Hierarchy,
   context: RenderContext,
 ) {
-  let dotContent = `digraph "" {\n    node [shape=box];\n    edge [headport=n tailport=s]\n    bgcolor="transparent"\n`;
+  let dotContent = `digraph "" {\n    node [shape=box, color="${context.colorScheme["node.border"]}"];\n    edge [headport=n tailport=s]\n    bgcolor="${context.colorScheme["graph.background"]}"\n`;
 
   const topGraph = cfg.graph;
 
@@ -175,7 +179,7 @@ function renderSubgraphs(
 ) {
   let dotContent = "";
   dotContent += `subgraph cluster_${hierarchy.cluster?.id ?? "toplevel"} {\n`;
-  if (hierarchy.cluster) dotContent += clusterStyle(hierarchy.cluster);
+  if (hierarchy.cluster) dotContent += clusterStyle(hierarchy.cluster, context);
   hierarchy.graph.forEachNode((node) => {
     dotContent += renderNode(topGraph, node, context);
   });
@@ -193,13 +197,19 @@ export function graphToDot(
   cfg: CFG,
   verbose: boolean = false,
   nodeToHighlight?: string,
+  colorScheme?: ColorScheme,
 ): string {
   const hierarchy = buildHierarchy(cfg);
   const backlinks = detectBacklinks(cfg.graph, cfg.entry);
   return renderHierarchy(
     cfg,
     hierarchy,
-    new RenderContext(verbose, backlinks, nodeToHighlight),
+    new RenderContext(
+      verbose,
+      backlinks,
+      colorScheme ?? getDefaultColorScheme(),
+      nodeToHighlight,
+    ),
   );
 }
 
@@ -219,21 +229,46 @@ function formatStyle(style: DotAttributes): string {
     .join("");
 }
 
-function clusterStyle(cluster: Cluster): string {
+function clusterStyle(cluster: Cluster, context: RenderContext): string {
   const isSelfNested = cluster.type === cluster.parent?.type;
   const penwidth = isSelfNested ? 6 : 0;
-  const color = "white";
+  const color = context.colorScheme["cluster.border"];
   switch (cluster.type) {
     case "with":
-      return formatStyle({ penwidth, color, bgcolor: "#ffddff" });
+      return formatStyle({
+        penwidth,
+        color,
+        bgcolor: context.colorScheme["cluster.with"],
+        class: "with",
+      });
     case "try-complex":
-      return formatStyle({ penwidth, color, bgcolor: "#ddddff" });
+      return formatStyle({
+        penwidth,
+        color,
+        bgcolor: context.colorScheme["cluster.tryComplex"],
+        class: "tryComplex",
+      });
     case "try":
-      return formatStyle({ penwidth, color, bgcolor: "#ddffdd" });
+      return formatStyle({
+        penwidth,
+        color,
+        bgcolor: context.colorScheme["cluster.try"],
+        class: "try",
+      });
     case "finally":
-      return formatStyle({ penwidth, color, bgcolor: "#ffffdd" });
+      return formatStyle({
+        penwidth,
+        color,
+        bgcolor: context.colorScheme["cluster.finally"],
+        class: "finally",
+      });
     case "except":
-      return formatStyle({ penwidth, color, bgcolor: "#ffdddd" });
+      return formatStyle({
+        penwidth,
+        color,
+        bgcolor: context.colorScheme["cluster.except"],
+        class: "except",
+      });
     default:
       return "";
   }
@@ -250,16 +285,19 @@ function renderEdge(
   const dotAttrs: DotAttributes = {};
   const isBacklink = context.isBacklink(source, target);
   dotAttrs.penwidth = isBacklink ? 2 : 1;
-  dotAttrs.color = "blue";
+  dotAttrs.color = context.colorScheme["edge.regular"];
   switch (attributes.type) {
     case "consequence":
-      dotAttrs.color = "green";
+      dotAttrs.class = "consequence";
+      dotAttrs.color = context.colorScheme["edge.consequence"];
       break;
     case "alternative":
-      dotAttrs.color = "red";
+      dotAttrs.class = "alternative";
+      dotAttrs.color = context.colorScheme["edge.alternative"];
       break;
     case "regular":
-      dotAttrs.color = "blue";
+      dotAttrs.class = "regular";
+      dotAttrs.color = context.colorScheme["edge.regular"];
       break;
     case "exception":
       dotAttrs.style = "invis";
@@ -300,28 +338,33 @@ function renderNode(
     dotAttrs.label = `${clusterAttrs?.id} ${clusterAttrs?.type}\n${dotAttrs.label}`;
   }
   dotAttrs.shape = "box";
-  dotAttrs.fillcolor = "lightgray";
+  dotAttrs.class = "default";
+  dotAttrs.fillcolor = context.colorScheme["node.default"];
   let minHeight = 0.2;
   if (graph.degree(node) === 0) {
     dotAttrs.minHeight = 0.5;
   } else if (graph.inDegree(node) === 0) {
     dotAttrs.shape = "invhouse";
-    dotAttrs.fillcolor = "#48AB30";
+    dotAttrs.class = "entry";
+    dotAttrs.fillcolor = context.colorScheme["node.entry"];
     minHeight = 0.5;
   } else if (graph.outDegree(node) === 0) {
     dotAttrs.shape = "house";
-    dotAttrs.fillcolor = "#AB3030";
+    dotAttrs.class = "exit";
+    dotAttrs.fillcolor = context.colorScheme["node.exit"];
     minHeight = 0.5;
   }
   switch (nodeAttrs.type) {
     case "THROW":
       dotAttrs.shape = "triangle";
-      dotAttrs.fillcolor = "#fdd";
+      dotAttrs.class = "throw";
+      dotAttrs.fillcolor = context.colorScheme["node.throw"];
       break;
     case "YIELD":
       dotAttrs.shape = "hexagon";
       dotAttrs.orientation = 90;
-      dotAttrs.fillcolor = "deepskyblue";
+      dotAttrs.class = "yield";
+      dotAttrs.fillcolor = context.colorScheme["node.yield"];
       break;
   }
 
@@ -330,7 +373,8 @@ function renderNode(
     minHeight,
   );
   if (context.isHighlighted(node)) {
-    dotAttrs.fillcolor = "black";
+    dotAttrs.fillcolor = context.colorScheme["node.highlight"];
+    dotAttrs.class = "highlight";
   }
   return `    ${node} [${formatStyle(dotAttrs)}];\n`;
 }

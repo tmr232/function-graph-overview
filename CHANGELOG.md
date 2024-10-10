@@ -6,6 +6,15 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.8] - 2024-10-10
+
+### Added
+
+- Dark-mode and custom color schemes
+- Default light/dark mode based on VSCode theme
+- Color-scheme creation in the interactive demo
+- Documented the color-scheme options
+
 ### Fixed
 
 - Nodes for empty blocks now map correctly to the empty block, instead of doing nothing when clicked.
