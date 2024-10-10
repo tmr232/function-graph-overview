@@ -9,8 +9,8 @@ on:
     types:
       - created
 jobs:
-  test-and-package:
-    name: "Test & Package"
+  test:
+    name: "Test"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,6 +24,15 @@ jobs:
 
       - name: Test
         run: bun test
+
+  package:
+    name: "Package"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install --production
 
       - run: bun run package
 
