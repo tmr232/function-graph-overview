@@ -153,7 +153,11 @@
       >
     </div>
     <div class="themeToggleWrapper">
-      <div class="themeToggle" on:click={onToggleClick}></div>
+      <button
+        class="themeToggle"
+        on:click={onToggleClick}
+        title="Switch between the light and dark themes."
+      ></button>
     </div>
   </header>
   <div class="editor">
@@ -332,6 +336,10 @@
   .themeToggle::before {
     font-size: 2rem;
     content: var(--theme-toggle-emoji);
+  }
+  .themeToggle {
+    background: none;
+    border: none;
   }
   .picker {
     /* position: fixed;
