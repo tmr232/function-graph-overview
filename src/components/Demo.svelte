@@ -342,8 +342,8 @@
     border: none;
   }
   .themeToggle:hover {
-      filter: drop-shadow(0 0 0.5rem var(--theme-toggle-shadow-color));
-      cursor:pointer;
+    filter: drop-shadow(0 0 0.5rem var(--theme-toggle-shadow-color));
+    cursor: pointer;
   }
   .picker {
     /* position: fixed;
