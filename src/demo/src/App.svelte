@@ -3,9 +3,16 @@
   import demoCodeGo from "./assets/demo.go?raw";
   import demoCodeC from "./assets/demo.c?raw";
   import demoCodePython from "./assets/demo.py?raw";
-  import { isDarkTheme } from "../../components/lightdark";
+  import { isDark } from "../../components/lightdark";
+  import { onDestroy } from "svelte";
 
-  document.body.dataset.theme = isDarkTheme() ? "dark" : "light";
+  document.body.dataset.theme = isDark ? "dark" : "light";
+
+  const unsubscribe = isDark.subscribe((isDark) => {
+    document.body.dataset.theme = isDark ? "dark" : "light";
+  });
+
+  onDestroy(unsubscribe);
 </script>
 
 <main>

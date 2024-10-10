@@ -3,16 +3,19 @@ import {
   getDarkColorList,
   getLightColorList,
 } from "../control-flow/colors.ts";
+import { writable } from "svelte/store";
 
-export function toggleTheme():void {
+export function toggleTheme(): void {
   if (isDarkTheme()) {
     localStorage.setItem("theme", "light");
+    isDark.set(false);
   } else {
-    localStorage.setItem("theme","dark");
+    localStorage.setItem("theme", "dark");
+    isDark.set(true);
   }
 }
 
-export function isDarkTheme(): boolean {
+function isDarkTheme(): boolean {
   const selectedTheme = localStorage.getItem("theme");
   switch (selectedTheme) {
     case "light":
@@ -36,3 +39,5 @@ export function getSystemColorList(): ColorList {
     return getLightColorList();
   }
 }
+
+export const isDark = writable(isDarkTheme());

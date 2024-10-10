@@ -8,8 +8,7 @@
   import Editor from "./Editor.svelte";
   import CodeSegmentation from "./CodeSegmentation.svelte";
   import ColorScheme from "./ColorScheme.svelte";
-  import { getLightColorList, getDarkColorList } from "../control-flow/colors";
-  import { getSystemColorList, toggleTheme } from "./lightdark.ts";
+  import { getSystemColorList, toggleTheme, isDark } from "./lightdark.ts";
 
   export let codeGo = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
   export let codeC = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";
@@ -137,6 +136,10 @@
   function onToggleClick(e) {
     toggleTheme();
   }
+
+  isDark.subscribe(() => {
+    colorList = getSystemColorList();
+  });
 </script>
 
 <main>
@@ -150,8 +153,7 @@
       >
     </div>
     <div class="themeToggleWrapper">
-    <div class="themeToggle" on:click={onToggleClick}>
-    </div>
+      <div class="themeToggle" on:click={onToggleClick}></div>
     </div>
   </header>
   <div class="editor">
@@ -317,19 +319,19 @@
     height: 100%;
   }
   .themeToggleWrapper {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-      position:absolute;
-      top: 0;
-      left: 3rem;
-      height: 100%;
-      line-height: 3rem;
+    position: absolute;
+    top: 0;
+    left: 3rem;
+    height: 100%;
+    line-height: 3rem;
   }
   .themeToggle::before {
-      font-size: 2rem;
-      content: var(--theme-toggle-emoji);
+    font-size: 2rem;
+    content: var(--theme-toggle-emoji);
   }
   .picker {
     /* position: fixed;
