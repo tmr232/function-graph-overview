@@ -305,7 +305,7 @@
   }
 
   .links a:hover {
-    background-color: lightskyblue;
+    background-color: var(--link-hover-background);
     padding: 0.5rem;
   }
   .links {

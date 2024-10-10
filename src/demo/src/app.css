@@ -5,6 +5,7 @@
   --panel-shadow-color: gray;
   --text-color: black;
   --color-picker-border: black;
+  --link-hover-background: lightskyblue;
 
   --theme-toggle-emoji: "🌞";
 }
@@ -16,6 +17,7 @@
   --panel-shadow-color: #1e1e1e;
   --text-color: white;
   --color-picker-border: white;
+  --link-hover-background: #31607f;
 
   --theme-toggle-emoji: "🌚";
 
