@@ -8,7 +8,6 @@
     "graphology": "^0.25.4",
     "graphology-operators": "^1.6.0",
     "graphology-traversal": "^0.3.1",
-    "svelte-awesome-color-picker": "^3.1.4",
     "web-tree-sitter": "^0.23.2"
   },
   "devDependencies": {
@@ -30,6 +29,7 @@
     "prettier": "3.3.3",
     "prettier-plugin-svelte": "^3.2.7",
     "svelte": "^4.2.19",
+    "svelte-awesome-color-picker": "^3.1.4",
     "svelte-codemirror-editor": "^1.4.1",
     "tree-sitter-c": "^0.23.1",
     "tree-sitter-cli": "^0.23.2",
