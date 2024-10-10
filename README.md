@@ -16,6 +16,31 @@ You can try it out via an [interactive demo](https://tmr232.github.io/function-g
 
 Note that the demo only supports a single function and ignores the cursor location.
 
+## Dark Mode
+
+Both dark, light, and custom color schemes are supported.
+
+| Dark                                                            | Light                                                            | Custom |
+|-----------------------------------------------------------------|------------------------------------------------------------------|---|
+| ![CFG with dark colors](media/screenshots/color-scheme/dark.png) | ![CFG with light colors](media/screenshots/color-scheme/light.png) | ![CFG with custom colors](media/screenshots/color-scheme/custom.png)|
+
+By default, the color scheme will match the VSCode theme (light or dark).
+
+You can change to a different preset via the settings:
+
+![The "Color Scheme" menu in the VSCode settings](media/screenshots/color-scheme/settings.png)
+
+### Custom Color Schemes
+
+Custom color schems are created via the [interactive demo](https://tmr232.github.io/function-graph-overview/).
+
+1. Enable the `Color Picker` above the graph
+2. Select the colors you want for your color scheme<br/>
+  ![The interactive color picker](media/screenshots/color-scheme/color-picker.png)
+3. Press the `Copy` button to copy the color scheme into the clipboard
+4. Paste the config into the `Custom Color Scheme` field in the VSCode extension settings.<br/>
+  ![The Custom Color Scheme field in the settings](media/screenshots/color-scheme/settings-custom.png)
+
 ## Supported Languages
 
 - [Go](https://tmr232.github.io/function-graph-overview/?language=0)

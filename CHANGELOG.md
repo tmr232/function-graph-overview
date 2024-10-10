@@ -8,8 +8,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### Added
 
-- Dark-mode and custom color schemes for the extension
+- Dark-mode and custom color schemes
+- Default light/dark mode based on VSCode theme
 - Color-scheme creation in the interactive demo
+- Documented the color-scheme options
 
 ### Fixed
 
