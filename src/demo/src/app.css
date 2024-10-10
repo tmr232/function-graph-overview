@@ -8,6 +8,7 @@
   --link-hover-background: lightskyblue;
 
   --theme-toggle-emoji: "🌞";
+  --theme-toggle-shadow-color: skyblue;
 }
 
 [data-theme="dark"] {
@@ -20,6 +21,7 @@
   --link-hover-background: #31607f;
 
   --theme-toggle-emoji: "🌚";
+  --theme-toggle-shadow-color: white;
 
   /* Color Picker Dark Mode */
   --cp-bg-color: #333;
