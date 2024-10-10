@@ -8,13 +8,13 @@
   import Editor from "./Editor.svelte";
   import CodeSegmentation from "./CodeSegmentation.svelte";
   import ColorScheme from "./ColorScheme.svelte";
-  import { getDefaultColorList } from "../control-flow/colors";
+  import { getDefaultColorList, getDarkColorList } from "../control-flow/colors";
 
   export let codeGo = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
   export let codeC = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";
   export let codePython = "def example():\n    if x:\n        return";
   let offsetToHighlight: number | undefined = undefined;
-  let colorList = getDefaultColorList();
+  let colorList = getDarkColorList();
   let languages: {
     language: Language;
     text: string;
