@@ -8,7 +8,7 @@
   import Editor from "./Editor.svelte";
   import CodeSegmentation from "./CodeSegmentation.svelte";
   import ColorScheme from "./ColorScheme.svelte";
-  import { getDefaultColorList, getDarkColorList } from "../control-flow/colors";
+  import { getLightColorList, getDarkColorList } from "../control-flow/colors";
 
   export let codeGo = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
   export let codeC = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";

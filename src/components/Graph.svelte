@@ -19,7 +19,7 @@
   import { createEventDispatcher } from "svelte";
   import {
     listToScheme,
-    getDefaultColorList,
+    getLightColorList,
     type ColorList,
   } from "../control-flow/colors";
 
@@ -28,7 +28,7 @@
   let dot: string;
   let cfg: CFG;
   let tree: Parser.Tree;
-  export let colorList = getDefaultColorList();
+  export let colorList = getLightColorList();
   export let offsetToHighlight: number | undefined = undefined;
   export let code: string;
   export let language: Language;

@@ -1,4 +1,4 @@
-type ColorList = [
+export type ColorList = [
   // Node colors
   { name: "node.default"; hex: string },
   { name: "node.entry"; hex: string },
@@ -83,7 +83,7 @@ export function listToScheme(colors: ColorList): ColorScheme {
 
 const defaultColorScheme = listToScheme(defaultColorList);
 
-export function getDefaultColorList(): ColorList {
+export function getLightColorList(): ColorList {
   return structuredClone(defaultColorList);
 }
 

@@ -2,7 +2,7 @@
   import ColorPicker from "svelte-awesome-color-picker";
   import { createEventDispatcher } from "svelte";
   import {
-    getDefaultColorList,
+    getLightColorList,
     serializeColorList,
     deserializeColorList,
     type ColorList,
@@ -10,7 +10,7 @@
   } from "../control-flow/colors";
   const dispatch = createEventDispatcher();
 
-  export let colorList = getDefaultColorList();
+  export let colorList = getLightColorList();
 
   const colorLabels = new Map([
     ["node.default", "Default"],
@@ -55,7 +55,7 @@
     colorList = newColors;
   }
   function resetList() {
-    colorList = getDefaultColorList();
+    colorList = getLightColorList();
   }
 </script>
 

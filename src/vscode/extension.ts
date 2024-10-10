@@ -15,7 +15,7 @@ import { OverviewViewProvider } from "./overview-view";
 import { getValue } from "../control-flow/ranges";
 import {
   deserializeColorList,
-  getDefaultColorList,
+  getLightColorList,
   listToScheme,
   getDarkColorList,
   type ColorScheme,
@@ -145,10 +145,10 @@ function loadSettings(): Settings {
         if (isThemeDark()) {
           return getDarkColorList();
         } else {
-          return getDefaultColorList();
+          return getLightColorList();
         }
       case "Light":
-        return getDefaultColorList();
+        return getLightColorList();
       case "Dark":
         return getDarkColorList();
       case "Custom":
@@ -158,7 +158,7 @@ function loadSettings(): Settings {
           console.log(error);
           // TODO: Add a user-visible error here.
         }
-        return getDefaultColorList();
+        return getLightColorList();
     }
   })();
 
