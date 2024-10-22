@@ -2,6 +2,7 @@
   import { isDark } from "../../components/lightdark";
   import { onDestroy } from "svelte";
   import Jetbrains from "../../components/Jetbrains.svelte";
+  import { isValidLanguage, type Language } from "../../control-flow/cfg";
 
   document.body.dataset.theme = isDark ? "dark" : "light";
 
@@ -18,18 +19,28 @@ def f():
 `;
   let cursorOffset = 15;
 
-  let codeAndOffset = { code, offset: cursorOffset };
+  let codeAndOffset = {
+    code,
+    offset: cursorOffset,
+    language: "Python" as Language,
+  };
 
-  function setCode(newCode: string, offset: number) {
-    codeAndOffset = { code: newCode, offset };
-    console.log(newCode, offset);
+  function setCode(
+    newCode: string,
+    offset: number,
+    language: string = "Python",
+  ) {
+    if (isValidLanguage(language)) {
+      codeAndOffset = { code: newCode, offset, language };
+    }
+    console.log(newCode, offset, language);
   }
 
   window.setCode = setCode;
 </script>
 
 <main>
-  <Jetbrains {codeAndOffset} language="Python" />
+  <Jetbrains {codeAndOffset} />
 </main>
 
 <style>

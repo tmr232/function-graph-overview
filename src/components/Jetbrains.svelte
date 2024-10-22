@@ -18,7 +18,7 @@
     type ColorList,
   } from "../control-flow/colors";
 
-  type CodeAndOffset = { code: string; offset: number };
+  type CodeAndOffset = { code: string; offset: number; language: Language };
 
   let parsers: Parsers;
   let graphviz: Graphviz;
@@ -28,7 +28,6 @@
   let svg: string;
   export let colorList = getLightColorList();
   export let codeAndOffset: CodeAndOffset;
-  export let language: Language;
   export let verbose: boolean = false;
   export let simplify: boolean = true;
   export let trim: boolean = true;
@@ -105,14 +104,13 @@
 
   function renderWrapper(
     codeAndOffset: CodeAndOffset,
-    language: Language,
     options: RenderOptions,
     colorList: ColorList,
   ) {
     try {
       svg = renderCode(
         codeAndOffset.code,
-        language,
+        codeAndOffset.language,
         codeAndOffset.offset,
         options,
         colorList,
@@ -155,7 +153,6 @@
     <div class="graph" on:click={onClick}>
       {@html renderWrapper(
         codeAndOffset,
-        language,
         {
           simplify,
           verbose,
