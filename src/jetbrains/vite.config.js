@@ -6,7 +6,8 @@ export default defineConfig({
   plugins: [svelte()],
   build: {
     copyPublicDir: true,
-    outDir: "../../dist/jetbrains"
+    outDir: "../../dist/jetbrains",
+    emptyOutDir: true,
   },
   base: "",
 
