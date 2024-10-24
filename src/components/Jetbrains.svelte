@@ -145,26 +145,24 @@
   }
 </script>
 
-<div class="results">
-  {#await initialize() then}
-    <!-- I don't know how to make this part accessible. PRs welcome! -->
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div class="graph" on:click={onClick}>
-      {@html renderWrapper(
-        codeAndOffset,
-        {
-          simplify,
-          verbose,
-          trim,
-          flatSwitch,
-          highlight,
-        },
-        colorList,
-      )}
-    </div>
-  {/await}
-</div>
+{#await initialize() then}
+  <!-- I don't know how to make this part accessible. PRs welcome! -->
+  <!-- svelte-ignore a11y-click-events-have-key-events -->
+  <!-- svelte-ignore a11y-no-static-element-interactions -->
+  <div class="graph" on:click={onClick}>
+    {@html renderWrapper(
+      codeAndOffset,
+      {
+        simplify,
+        verbose,
+        trim,
+        flatSwitch,
+        highlight,
+      },
+      colorList,
+    )}
+  </div>
+{/await}
 
 <style>
   .graph {
@@ -172,5 +170,7 @@
     align-items: center;
     justify-content: center;
     padding: 1em;
+    width: 100%;
+    height: 100%;
   }
 </style>

@@ -3,6 +3,7 @@
   import { onDestroy } from "svelte";
   import Jetbrains from "../../components/Jetbrains.svelte";
   import { isValidLanguage, type Language } from "../../control-flow/cfg";
+  import { deserializeColorList } from "../../control-flow/colors";
 
   document.body.dataset.theme = isDark ? "dark" : "light";
 
@@ -11,6 +12,8 @@
   });
 
   onDestroy(unsubscribe);
+
+  let display: Jetbrains;
 
   let code = `
 def f():
@@ -37,15 +40,29 @@ def f():
   }
 
   window.setCode = setCode;
+  window.setColors = (colors: string) => {
+    if (!display) return;
+
+    try {
+      const colorList = deserializeColorList(colors);
+      display.applyColors(colorList);
+      document.body.style.backgroundColor = colorList.find(
+        ({ name }) => name === "graph.background",
+      ).hex;
+    } catch (error) {
+      console.trace(error);
+      return;
+    }
+  };
 </script>
 
 <main>
-  <Jetbrains {codeAndOffset} />
+  <Jetbrains {codeAndOffset} bind:this={display} />
 </main>
 
 <style>
   main {
-    width: 100dvw;
-    height: 100dvh;
+    width: 100%;
+    height: 100%;
   }
 </style>
