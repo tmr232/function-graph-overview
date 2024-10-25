@@ -1,0 +1,73 @@
+{
+    "version": 1,
+    "scheme": [
+        {
+            "name": "node.default",
+            "hex": "#707070"
+        },
+        {
+            "name": "node.entry",
+            "hex": "#48AB30"
+        },
+        {
+            "name": "node.exit",
+            "hex": "#AB3030"
+        },
+        {
+            "name": "node.throw",
+            "hex": "#590c0c"
+        },
+        {
+            "name": "node.yield",
+            "hex": "#0a9aca"
+        },
+        {
+            "name": "node.border",
+            "hex": "#000000"
+        },
+        {
+            "name": "node.highlight",
+            "hex": "#dddddd"
+        },
+        {
+            "name": "edge.regular",
+            "hex": "#2592a1"
+        },
+        {
+            "name": "edge.consequence",
+            "hex": "#4ce34c"
+        },
+        {
+            "name": "edge.alternative",
+            "hex": "#ff3e3e"
+        },
+        {
+            "name": "cluster.border",
+            "hex": "#302e2e"
+        },
+        {
+            "name": "cluster.with",
+            "hex": "#7d007d"
+        },
+        {
+            "name": "cluster.tryComplex",
+            "hex": "#344c74"
+        },
+        {
+            "name": "cluster.try",
+            "hex": "#1b5f1b"
+        },
+        {
+            "name": "cluster.finally",
+            "hex": "#999918"
+        },
+        {
+            "name": "cluster.except",
+            "hex": "#590c0c"
+        },
+        {
+            "name": "graph.background",
+            "hex": "#2B2D30"
+        }
+    ]
+}

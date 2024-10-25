@@ -3,9 +3,17 @@
   import { onDestroy } from "svelte";
   import Jetbrains from "../../components/Jetbrains.svelte";
   import { isValidLanguage, type Language } from "../../control-flow/cfg";
-  import { deserializeColorList } from "../../control-flow/colors";
-
+  import {
+    deserializeColorList,
+    type ColorList,
+  } from "../../control-flow/colors";
+  import * as defaultDark from "./defaultDark.json";
   document.body.dataset.theme = isDark ? "dark" : "light";
+
+  let colorList: ColorList = defaultDark.scheme as ColorList;
+  document.body.style.backgroundColor = colorList.find(
+    ({ name }) => name === "graph.background",
+  ).hex;
 
   const unsubscribe = isDark.subscribe((isDark) => {
     document.body.dataset.theme = isDark ? "dark" : "light";
@@ -15,18 +23,11 @@
 
   let display: Jetbrains;
 
-  let code = `
-def f():
-    if x:
-        pass
-`;
-  let cursorOffset = 15;
-
-  let codeAndOffset = {
-    code,
-    offset: cursorOffset,
-    language: "Python" as Language,
-  };
+  let codeAndOffset: {
+    code: string;
+    offset: number;
+    language: Language;
+  } | null = null;
 
   function setCode(
     newCode: string,
@@ -57,7 +58,7 @@ def f():
 </script>
 
 <main>
-  <Jetbrains {codeAndOffset} bind:this={display} />
+  <Jetbrains {codeAndOffset} bind:this={display} {colorList} />
 </main>
 
 <style>

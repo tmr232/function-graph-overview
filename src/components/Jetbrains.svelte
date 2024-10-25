@@ -27,7 +27,7 @@
   let tree: Parser.Tree;
   let svg: string;
   export let colorList = getLightColorList();
-  export let codeAndOffset: CodeAndOffset;
+  export let codeAndOffset: CodeAndOffset | null = null;
   export let verbose: boolean = false;
   export let simplify: boolean = true;
   export let trim: boolean = true;
@@ -103,18 +103,27 @@
   }
 
   function renderWrapper(
-    codeAndOffset: CodeAndOffset,
+    codeAndOffset: CodeAndOffset | null,
     options: RenderOptions,
     colorList: ColorList,
   ) {
     try {
-      svg = renderCode(
-        codeAndOffset.code,
-        codeAndOffset.language,
-        codeAndOffset.offset,
-        options,
-        colorList,
-      );
+      if (codeAndOffset === null) {
+        svg = graphviz.dot(`digraph G { 
+    bgcolor="#2B2D30"
+    node [color="#e0e0e0", fontcolor="#e0e0e0"]
+    edge [color="#e0e0e0"]
+    Hello -> World 
+}`);
+      } else {
+        svg = renderCode(
+          codeAndOffset.code,
+          codeAndOffset.language,
+          codeAndOffset.offset,
+          options,
+          colorList,
+        );
+      }
     } catch (error) {
       console.trace(error);
     }
