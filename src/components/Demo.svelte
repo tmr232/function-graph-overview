@@ -151,6 +151,10 @@
         href="https://marketplace.visualstudio.com/items?itemName=tamir-bahar.function-graph-overview"
         >VSCode Extension</a
       >
+      <a
+        href="https://plugins.jetbrains.com/plugin/25676-function-graph-overview"
+        >JetBrains Plugin</a
+      >
     </div>
     <div class="themeToggleWrapper">
       <button

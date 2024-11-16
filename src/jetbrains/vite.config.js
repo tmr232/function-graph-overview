@@ -6,6 +6,8 @@ export default defineConfig({
   plugins: [svelte()],
   build: {
     copyPublicDir: true,
+    outDir: "../../dist/jetbrains",
+    emptyOutDir: true,
   },
-  base: "/function-graph-overview/",
+  base: "",
 });
