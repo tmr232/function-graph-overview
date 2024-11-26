@@ -44,6 +44,13 @@
   let verbose = urlParams.has("verbose");
   let showSegmentation = urlParams.has("segmentation");
   let debugMode = urlParams.has("debug");
+  let fontSize = "1em";
+  const range = (start: number, end: number) =>
+    Array.from({ length: end - start }, (_v, k) => k + start);
+  const fontSizes: { label: string; value: string }[] = [
+    { label: "Default", value: "1em" },
+    ...range(8, 31).map((n) => ({ label: `${n}`, value: `${n}px` })),
+  ];
 
   let selection = languages[parseInt(urlParams.get("language")) || 0];
   let code = codeGo;
@@ -181,6 +188,13 @@
             </option>
           {/each}
         </select>
+        <select bind:value={fontSize}>
+          {#each fontSizes as { label, value }}
+            <option {value}>
+              {label}
+            </option>
+          {/each}
+        </select>
         <button on:click={share}>Share (experimental)</button>
       </div>
       <div class="codemirror">
@@ -190,6 +204,7 @@
             bind:code={codeGo}
             lang={go()}
             on:cursorMoved={cursorMoved}
+            {fontSize}
           />
         {:else if selection.language === "C"}
           <Editor
@@ -197,6 +212,7 @@
             bind:code={codeC}
             lang={cpp()}
             on:cursorMoved={cursorMoved}
+            {fontSize}
           />
         {:else if selection.language === "Python"}
           <Editor
@@ -204,6 +220,7 @@
             bind:code={codePython}
             lang={python()}
             on:cursorMoved={cursorMoved}
+            {fontSize}
           />
         {/if}
       </div>
