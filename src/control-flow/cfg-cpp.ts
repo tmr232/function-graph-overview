@@ -13,10 +13,11 @@ import {
 import { pairwise, zip } from "./zip.ts";
 import { buildSwitch, collectCases } from "./switch-utils.ts";
 
-function getChildFieldText(node: Parser.SyntaxNode, fieldName: string): string {
-  const child = node.childForFieldName(fieldName);
-  return child ? child.text : "";
+export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
+  return new GenericCFGBuilder(statementHandlers, options);
 }
+
+export const functionNodeNames = ["function_definition", "lambda_expression"];
 
 const statementHandlers: StatementHandlers = {
   named: {
@@ -39,8 +40,9 @@ const statementHandlers: StatementHandlers = {
   default: defaultProcessStatement,
 };
 
-export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
-  return new GenericCFGBuilder(statementHandlers, options);
+function getChildFieldText(node: Parser.SyntaxNode, fieldName: string): string {
+  const child = node.childForFieldName(fieldName);
+  return child ? child.text : "";
 }
 
 function processForStatement(

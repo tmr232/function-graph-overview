@@ -2,7 +2,10 @@ import { createCFGBuilder as createCCFGBuilder } from "./cfg-c";
 import type { BuilderOptions, CFGBuilder } from "./cfg-defs";
 import { createCFGBuilder as createGoCFGBuilder } from "./cfg-go";
 import { createCFGBuilder as createPythonCFGBuilder } from "./cfg-python";
-import { createCFGBuilder as createCppCFGBuilder } from "./cfg-cpp";
+import {
+  createCFGBuilder as createCppCFGBuilder,
+  functionNodeNames as cppFunctionNodeNames,
+} from "./cfg-cpp";
 
 export const supportedLanguages = ["C", "Go", "Python", "C++"] as const;
 export type Language = (typeof supportedLanguages)[number];
@@ -25,3 +28,10 @@ export function newCFGBuilder(
       return createCppCFGBuilder(options);
   }
 }
+
+export const functionNodeTypes: { [language in Language]: string[] } = {
+  Go: ["function_declaration", "method_declaration", "func_literal"],
+  C: ["function_definition"],
+  "C++": cppFunctionNodeNames,
+  Python: ["function_definition"],
+};

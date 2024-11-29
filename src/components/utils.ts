@@ -9,6 +9,7 @@ import {
   newCFGBuilder,
   type Language,
   supportedLanguages,
+  functionNodeTypes,
 } from "../control-flow/cfg";
 import type { TestFuncRecord } from "../test/commentTestUtils";
 import type { TestFunction } from "../test/commentTestTypes";
@@ -23,13 +24,6 @@ const wasmMapping: { [language in Language]: string } = {
   Go: treeSitterGo,
   Python: treeSitterPython,
   "C++": treeSitterCpp,
-};
-
-const functionNodeTypes: { [language in Language]: string[] } = {
-  Go: ["function_declaration", "method_declaration", "func_literal"],
-  C: ["function_definition"],
-  "C++": ["function_definition"],
-  Python: ["function_definition"],
 };
 
 async function initializeParser(language: Language) {

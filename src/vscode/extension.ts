@@ -5,7 +5,11 @@ import Parser, { type SyntaxNode } from "web-tree-sitter";
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import { graphToDot } from "../control-flow/render";
 import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
-import { newCFGBuilder, type Language } from "../control-flow/cfg";
+import {
+  newCFGBuilder,
+  type Language,
+  functionNodeTypes,
+} from "../control-flow/cfg";
 import {
   mergeNodeAttrs,
   remapNodeTargets,
@@ -34,6 +38,11 @@ const supportedLanguages: SupportedLanguage[] = [
     parserName: "tree-sitter-c.wasm",
   },
   {
+    languageId: "cpp",
+    language: "C++" as Language,
+    parserName: "tree-sitter-cpp.wasm",
+  },
+  {
     languageId: "go",
     language: "Go" as Language,
     parserName: "tree-sitter-go.wasm",
@@ -44,13 +53,6 @@ const supportedLanguages: SupportedLanguage[] = [
     parserName: "tree-sitter-python.wasm",
   },
 ];
-
-const functionNodeTypes: { [key in Language]: string[] } = {
-  Go: ["function_declaration", "method_declaration", "func_literal"],
-  C: ["function_definition"],
-  "C++": ["function_definition"],
-  Python: ["function_definition"],
-};
 
 const supportedLanguageIds = supportedLanguages.map((lang) => lang.languageId);
 const idToLanguage = (languageId: string): Language | null => {
