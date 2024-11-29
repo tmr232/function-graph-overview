@@ -33,7 +33,8 @@ const statementHandlers: StatementHandlers = {
     goto_statement: processGotoStatement,
     comment: processComment,
     try_statement: processTryStatement,
-		throw_statement: processThrowStatement,
+    throw_statement: processThrowStatement,
+    for_range_loop: processForRangeLoopStatement,
   },
   default: defaultProcessStatement,
 };
@@ -634,17 +635,68 @@ function processTryStatement(
   });
 }
 
-
 function processThrowStatement(
-	throwSyntax: Parser.SyntaxNode,
-	ctx: Context,
+  throwSyntax: Parser.SyntaxNode,
+  ctx: Context,
 ): BasicBlock {
-	const { builder } = ctx;
-	const throwNode = builder.addNode(
-		"THROW",
-		throwSyntax.text,
-		throwSyntax.startIndex,
-	);
-	ctx.link.syntaxToNode(throwSyntax, throwNode);
-	return { entry: throwNode, exit: null };
+  const { builder } = ctx;
+  const throwNode = builder.addNode(
+    "THROW",
+    throwSyntax.text,
+    throwSyntax.startIndex,
+  );
+  ctx.link.syntaxToNode(throwSyntax, throwNode);
+  return { entry: throwNode, exit: null };
+}
+
+function processForRangeLoopStatement(
+  forNode: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const { builder, matcher } = ctx;
+  const match = matcher.match(
+    forNode,
+    `
+			(for_range_loop
+					")" @close-paren
+					body: (_) @body
+			) @range-loop
+      `,
+  );
+
+  const bodySyntax = match.requireSyntax("body");
+
+  const bodyBlock = match.getBlock(bodySyntax);
+
+  const headNode = builder.addNode(
+    "LOOP_HEAD",
+    "loop head",
+    forNode.startIndex,
+  );
+  const exitNode = builder.addNode("FOR_EXIT", "loop exit", forNode.endIndex);
+  const headBlock = { entry: headNode, exit: headNode };
+
+  ctx.link.syntaxToNode(forNode, headNode);
+  ctx.link.offsetToSyntax(match.requireSyntax("close-paren"), bodySyntax);
+
+  /*
+  head +-> body -> head
+       --> else / exit
+  break -> exit
+  continue -> head
+  */
+  builder.addEdge(headBlock.exit, bodyBlock.entry, "consequence");
+  if (bodyBlock.exit) builder.addEdge(bodyBlock.exit, headBlock.entry);
+
+  builder.addEdge(headBlock.exit, exitNode, "alternative");
+
+  matcher.state.forEachContinue((continueNode) => {
+    builder.addEdge(continueNode, headNode);
+  });
+
+  matcher.state.forEachBreak((breakNode) => {
+    builder.addEdge(breakNode, exitNode);
+  });
+
+  return matcher.update({ entry: headNode, exit: exitNode });
 }

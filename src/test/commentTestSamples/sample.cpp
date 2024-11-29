@@ -203,3 +203,11 @@ void Throw() {
         throw exc;
     }
 }
+
+/*
+nodes: 0
+*/
+void ForRangeLoop() {
+    for (auto it : items) {
+    }
+}
