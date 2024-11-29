@@ -186,7 +186,7 @@ void MoreSwitch() {
 
 /*
 exits: 1,
-nodes: 0
+nodes: 4
 */
 void Exception() {
     try {
@@ -196,7 +196,7 @@ void Exception() {
 }
 
 /*
-nodes: 0
+nodes: 3
 */
 void Throw() {
     if (x) {
@@ -205,7 +205,7 @@ void Throw() {
 }
 
 /*
-nodes: 0
+nodes: 4
 */
 void ForRangeLoop() {
     for (auto it : items) {
