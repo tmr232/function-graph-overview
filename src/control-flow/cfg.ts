@@ -2,8 +2,9 @@ import { createCFGBuilder as createCCFGBuilder } from "./cfg-c";
 import type { BuilderOptions, CFGBuilder } from "./cfg-defs";
 import { createCFGBuilder as createGoCFGBuilder } from "./cfg-go";
 import { createCFGBuilder as createPythonCFGBuilder } from "./cfg-python";
+import { createCFGBuilder as createCppCFGBuilder } from "./cfg-cpp";
 
-const supportedLanguages = ["C", "Go", "Python"] as const;
+const supportedLanguages = ["C", "Go", "Python", "C++"] as const;
 export type Language = (typeof supportedLanguages)[number];
 export function isValidLanguage(language: string): language is Language {
   return (supportedLanguages as readonly string[]).includes(language);
@@ -20,5 +21,7 @@ export function newCFGBuilder(
       return createGoCFGBuilder(options);
     case "Python":
       return createPythonCFGBuilder(options);
+    case "C++":
+      return createCppCFGBuilder(options);
   }
 }

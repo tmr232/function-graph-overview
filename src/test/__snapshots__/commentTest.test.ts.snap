@@ -12036,3 +12036,817 @@ exports[`Python: try_with_finally: Segmentation 1`] = `
   },
 ]
 `;
+
+exports[`C++: trivial: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=0.8999999999999999;
+];
+}"
+`;
+
+exports[`C++: simpleIf: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=0.8999999999999999;
+];
+}"
+`;
+
+exports[`C++: ifElse: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=0.8999999999999999;
+];
+}"
+`;
+
+exports[`C++: forever: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=0.8999999999999999;
+];
+}"
+`;
+
+exports[`C++: forever2: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=0.8999999999999999;
+];
+}"
+`;
+
+exports[`C++: forLoop: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=0.8999999999999999;
+];
+}"
+`;
+
+exports[`C++: whileLoop: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=0.8999999999999999;
+];
+}"
+`;
+
+exports[`C++: doWhile: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=0.8999999999999999;
+];
+}"
+`;
+
+exports[`C++: gotoA: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=0.8999999999999999;
+];
+}"
+`;
+
+exports[`C++: switch_1: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=0.8999999999999999;
+];
+}"
+`;
+
+exports[`C++: switch_2: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=0.8999999999999999;
+];
+}"
+`;
+
+exports[`C++: ManyIfs: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=1.7999999999999998;
+];
+}"
+`;
+
+exports[`C++: IfWithoutBraces: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=1.2;
+];
+}"
+`;
+
+exports[`C++: ForLoops: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node9 [style="filled";
+label="";
+id="node9";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=3;
+];
+}"
+`;
+
+exports[`C++: MoreSwitch: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=0.8999999999999999;
+];
+}"
+`;
+
+exports[`C++: trivial: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 15,
+    "value": "node2",
+  },
+  {
+    "start": 32,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`C++: simpleIf: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 49,
+    "value": "node2",
+  },
+  {
+    "start": 71,
+    "value": "node2",
+  },
+  {
+    "start": 85,
+    "value": "node2",
+  },
+  {
+    "start": 87,
+    "value": "node2",
+  },
+  {
+    "start": 87,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`C++: ifElse: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 114,
+    "value": "node2",
+  },
+  {
+    "start": 134,
+    "value": "node2",
+  },
+  {
+    "start": 181,
+    "value": "node2",
+  },
+  {
+    "start": 183,
+    "value": "node2",
+  },
+  {
+    "start": 183,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`C++: forever: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 210,
+    "value": "node2",
+  },
+  {
+    "start": 231,
+    "value": "node2",
+  },
+  {
+    "start": 247,
+    "value": "node2",
+  },
+  {
+    "start": 249,
+    "value": "node2",
+  },
+  {
+    "start": 249,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`C++: forever2: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 276,
+    "value": "node2",
+  },
+  {
+    "start": 298,
+    "value": "node2",
+  },
+  {
+    "start": 327,
+    "value": "node2",
+  },
+  {
+    "start": 329,
+    "value": "node2",
+  },
+  {
+    "start": 329,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`C++: forLoop: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 388,
+    "value": "node2",
+  },
+  {
+    "start": 409,
+    "value": "node2",
+  },
+  {
+    "start": 481,
+    "value": "node2",
+  },
+  {
+    "start": 483,
+    "value": "node2",
+  },
+  {
+    "start": 483,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`C++: whileLoop: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 510,
+    "value": "node2",
+  },
+  {
+    "start": 533,
+    "value": "node2",
+  },
+  {
+    "start": 552,
+    "value": "node2",
+  },
+  {
+    "start": 554,
+    "value": "node2",
+  },
+  {
+    "start": 554,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`C++: doWhile: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 581,
+    "value": "node2",
+  },
+  {
+    "start": 602,
+    "value": "node2",
+  },
+  {
+    "start": 625,
+    "value": "node2",
+  },
+  {
+    "start": 627,
+    "value": "node2",
+  },
+  {
+    "start": 627,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`C++: gotoA: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 654,
+    "value": "node2",
+  },
+  {
+    "start": 669,
+    "value": "node2",
+  },
+  {
+    "start": 714,
+    "value": "node2",
+  },
+  {
+    "start": 716,
+    "value": "node2",
+  },
+  {
+    "start": 716,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`C++: switch_1: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 765,
+    "value": "node2",
+  },
+  {
+    "start": 787,
+    "value": "node2",
+  },
+  {
+    "start": 923,
+    "value": "node2",
+  },
+  {
+    "start": 925,
+    "value": "node2",
+  },
+  {
+    "start": 925,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`C++: switch_2: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 952,
+    "value": "node2",
+  },
+  {
+    "start": 974,
+    "value": "node2",
+  },
+  {
+    "start": 1043,
+    "value": "node2",
+  },
+  {
+    "start": 1045,
+    "value": "node2",
+  },
+  {
+    "start": 1045,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`C++: ManyIfs: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node5",
+  },
+  {
+    "start": 1073,
+    "value": "node5",
+  },
+  {
+    "start": 1094,
+    "value": "node5",
+  },
+  {
+    "start": 1108,
+    "value": "node5",
+  },
+  {
+    "start": 1114,
+    "value": "node5",
+  },
+  {
+    "start": 1114,
+    "value": "node5",
+  },
+  {
+    "start": 1141,
+    "value": "node5",
+  },
+  {
+    "start": 1147,
+    "value": "node5",
+  },
+  {
+    "start": 1147,
+    "value": "node5",
+  },
+  {
+    "start": 1181,
+    "value": "node5",
+  },
+  {
+    "start": 1187,
+    "value": "node5",
+  },
+  {
+    "start": 1187,
+    "value": "node5",
+  },
+  {
+    "start": 1235,
+    "value": "node5",
+  },
+  {
+    "start": 1237,
+    "value": "node5",
+  },
+  {
+    "start": 1237,
+    "value": "node5",
+  },
+]
+`;
+
+exports[`C++: IfWithoutBraces: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node3",
+  },
+  {
+    "start": 1254,
+    "value": "node3",
+  },
+  {
+    "start": 1428,
+    "value": "node3",
+  },
+  {
+    "start": 1478,
+    "value": "node3",
+  },
+  {
+    "start": 1484,
+    "value": "node3",
+  },
+  {
+    "start": 1484,
+    "value": "node3",
+  },
+  {
+    "start": 1546,
+    "value": "node3",
+  },
+  {
+    "start": 1548,
+    "value": "node3",
+  },
+  {
+    "start": 1548,
+    "value": "node3",
+  },
+]
+`;
+
+exports[`C++: ForLoops: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node9",
+  },
+  {
+    "start": 1566,
+    "value": "node9",
+  },
+  {
+    "start": 1612,
+    "value": "node9",
+  },
+  {
+    "start": 1642,
+    "value": "node9",
+  },
+  {
+    "start": 1647,
+    "value": "node9",
+  },
+  {
+    "start": 1647,
+    "value": "node9",
+  },
+  {
+    "start": 1677,
+    "value": "node9",
+  },
+  {
+    "start": 1682,
+    "value": "node9",
+  },
+  {
+    "start": 1682,
+    "value": "node9",
+  },
+  {
+    "start": 1712,
+    "value": "node9",
+  },
+  {
+    "start": 1717,
+    "value": "node9",
+  },
+  {
+    "start": 1717,
+    "value": "node9",
+  },
+  {
+    "start": 1747,
+    "value": "node9",
+  },
+  {
+    "start": 1752,
+    "value": "node9",
+  },
+  {
+    "start": 1752,
+    "value": "node9",
+  },
+  {
+    "start": 1782,
+    "value": "node9",
+  },
+  {
+    "start": 1787,
+    "value": "node9",
+  },
+  {
+    "start": 1787,
+    "value": "node9",
+  },
+  {
+    "start": 1817,
+    "value": "node9",
+  },
+  {
+    "start": 1822,
+    "value": "node9",
+  },
+  {
+    "start": 1822,
+    "value": "node9",
+  },
+  {
+    "start": 1852,
+    "value": "node9",
+  },
+  {
+    "start": 1857,
+    "value": "node9",
+  },
+  {
+    "start": 1857,
+    "value": "node9",
+  },
+  {
+    "start": 1887,
+    "value": "node9",
+  },
+  {
+    "start": 1909,
+    "value": "Not found",
+  },
+  {
+    "start": 1911,
+    "value": "node9",
+  },
+  {
+    "start": 1911,
+    "value": "node9",
+  },
+]
+`;
+
+exports[`C++: MoreSwitch: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 1928,
+    "value": "node2",
+  },
+  {
+    "start": 2030,
+    "value": "node2",
+  },
+  {
+    "start": 2160,
+    "value": "node2",
+  },
+  {
+    "start": 2162,
+    "value": "node2",
+  },
+  {
+    "start": 2162,
+    "value": "node2",
+  },
+]
+`;

@@ -4,6 +4,7 @@ import treeSitterGo from "../../parsers/tree-sitter-go.wasm?url";
 import treeSitterC from "../../parsers/tree-sitter-c.wasm?url";
 import treeSitterPython from "../../parsers/tree-sitter-python.wasm?url";
 import treeSitterCore from "../../parsers/tree-sitter.wasm?url";
+import treeSitterCpp from "../../parsers/tree-sitter-cpp.wasm?url";
 import { newCFGBuilder, type Language } from "../control-flow/cfg";
 import type { TestFuncRecord } from "../test/commentTestUtils";
 import type { TestFunction } from "../test/commentTestTypes";
@@ -27,6 +28,8 @@ async function initializeParser(language: Language) {
         return Parser.Language.load(treeSitterGo);
       case "Python":
         return Parser.Language.load(treeSitterPython);
+      case "C++":
+        return Parser.Language.load(treeSitterCpp)
     }
   })();
   parser.setLanguage(parserLanguage);
@@ -37,12 +40,14 @@ export interface Parsers {
   Go: Parser;
   C: Parser;
   Python: Parser;
+  "C++":Parser;
 }
 export async function initializeParsers(): Promise<Parsers> {
   return {
     Go: await initializeParser("Go"),
     C: await initializeParser("C"),
     Python: await initializeParser("Python"),
+    "C++": await initializeParser("C++")
   };
 }
 

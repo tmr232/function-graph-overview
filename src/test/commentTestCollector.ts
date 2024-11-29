@@ -2,6 +2,7 @@ import { Glob } from "bun";
 import { getTestFuncs as getTestFuncsForC } from "./collect-c";
 import { getTestFuncs as getTestFuncsForGo } from "./collect-go";
 import { getTestFuncs as getTestsForPython } from "./collect-python";
+import {getTestFuncs as getTestsForCpp} from "./collect-cpp.ts";
 import type { TestFunction } from "./commentTestTypes";
 
 export const testsDir = import.meta.dir + "/commentTestSamples";
@@ -12,6 +13,7 @@ const languages: {
   { ext: "c", getTestFuncs: getTestFuncsForC },
   { ext: "go", getTestFuncs: getTestFuncsForGo },
   { ext: "py", getTestFuncs: getTestsForPython },
+  { ext: "cpp", getTestFuncs:getTestsForCpp}
 ];
 
 const sampleGlob = new Glob(

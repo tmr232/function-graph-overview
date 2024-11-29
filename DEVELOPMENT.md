@@ -24,3 +24,16 @@ Once the command completes successfully, your new parser should be inside `./par
 [tree-sitter parsers]: https://github.com/tree-sitter/tree-sitter/wiki/List-of-parsers
 [tree-sitter]: https://tree-sitter.github.io/tree-sitter/
 [build-wasm]: https://github.com/tree-sitter/tree-sitter/blob/master/lib/binding_web/README.md#generate-wasm-language-files
+
+
+### Generating the CFG
+
+Each CFG-builder resides in its own file inside `./src/control-flow`.
+Name yours `cfg-<language>.ts`.
+
+Your builder is expected to expose a `createCFGBuilder(options: BuilderOptions): CFGBuilder` function.
+A naive implementation to get started with would look something like this:
+
+```typescript
+
+```
