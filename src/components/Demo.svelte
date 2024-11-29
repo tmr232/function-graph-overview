@@ -22,6 +22,7 @@
     { language: "Go" as Language, text: "Go" },
     { language: "C" as Language, text: "C" },
     { language: "Python" as Language, text: "Python (experimental)" },
+    { language: "C++" as Language, text: "C++ (experimental)" },
   ];
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -57,6 +58,9 @@
   $: {
     switch (selection.language) {
       case "C":
+        code = codeC;
+        break;
+      case "C++":
         code = codeC;
         break;
       case "Go":
@@ -207,6 +211,14 @@
             {fontSize}
           />
         {:else if selection.language === "C"}
+          <Editor
+            bind:this={editor}
+            bind:code={codeC}
+            lang={cpp()}
+            on:cursorMoved={cursorMoved}
+            {fontSize}
+          />
+        {:else if selection.language === "C++"}
           <Editor
             bind:this={editor}
             bind:code={codeC}

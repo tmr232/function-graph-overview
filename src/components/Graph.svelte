@@ -62,6 +62,7 @@
     colorList: ColorList,
   ) {
     const { trim, simplify, verbose, flatSwitch, highlight } = options;
+    console.log(code);
     tree = parsers[language].parse(code);
     const functionSyntax = getFirstFunction(tree, language);
     if (!functionSyntax) {

@@ -60,7 +60,7 @@ export function getFirstFunction(
 ): Parser.SyntaxNode | null {
   let functionNode: Parser.SyntaxNode | null = null;
   const cursor = tree.walk();
-
+  console.log(tree.rootNode.toString());
   const visitNode = () => {
     if (functionNodeTypes[language].includes(cursor.nodeType)) {
       functionNode = cursor.currentNode;
