@@ -183,3 +183,23 @@ void MoreSwitch() {
         default: f();
     }
 }
+
+/*
+exits: 1,
+nodes: 0
+*/
+void Exception() {
+    try {
+    }
+    catch (...) {
+    }
+}
+
+/*
+nodes: 0
+*/
+void Throw() {
+    if (x) {
+        throw exc;
+    }
+}

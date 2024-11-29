@@ -1561,6 +1561,1567 @@ class="alternative";
 }"
 `;
 
+exports[`C++: trivial: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=0.8999999999999999;
+];
+}"
+`;
+
+exports[`C++: simpleIf: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node2 -> node5 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`C++: ifElse: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node8 [style="filled";
+label="";
+id="node8";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node3 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node3 -> node4 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node3 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node2 -> node8 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node4 -> node8 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node5 -> node8 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`C++: forever: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node2 -> node4 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node4 -> node4 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+}"
+`;
+
+exports[`C++: forever2: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node1 -> node2 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node2 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+}"
+`;
+
+exports[`C++: forLoop: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node8 [style="filled";
+label="";
+id="node8";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node1 -> node2 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node3 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node2 -> node8 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node2 -> node3 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+}"
+`;
+
+exports[`C++: whileLoop: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node2 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node0 -> node1 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node4 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`C++: doWhile: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node1 [penwidth=2;
+color="#008000";
+class="consequence";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node0 -> node1 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node4 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`C++: gotoA: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node6 [style="filled";
+label="";
+id="node6";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 -> node3 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node2 -> node3 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node0 -> node2 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node6 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`C++: switch_1: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node6 [style="filled";
+label="";
+id="node6";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node9 [style="filled";
+label="";
+id="node9";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node2 -> node4 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node3 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node3 -> node4 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node4 -> node6 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node3 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node5 -> node6 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node5 -> node9 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node6 -> node9 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`C++: switch_2: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node9 [style="filled";
+label="";
+id="node9";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node6 [style="filled";
+label="";
+id="node6";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node3 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node3 -> node4 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node4 -> node6 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node3 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node5 -> node6 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node5 -> node9 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node6 -> node9 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node9 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`C++: ManyIfs: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node6 [style="filled";
+label="";
+id="node6";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node7 [style="filled";
+label="";
+id="node7";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node10 [style="filled";
+label="";
+id="node10";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node11 [style="filled";
+label="";
+id="node11";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node12 [style="filled";
+label="";
+id="node12";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node13 [style="filled";
+label="";
+id="node13";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node16 [style="filled";
+label="";
+id="node16";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node17 [style="filled";
+label="";
+id="node17";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node18 [style="filled";
+label="";
+id="node18";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node19 [style="filled";
+label="";
+id="node19";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node20 [style="filled";
+label="";
+id="node20";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node23 [style="filled";
+label="";
+id="node23";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node5 -> node6 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node5 -> node7 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node10 -> node11 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node10 -> node12 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node12 -> node13 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node16 -> node17 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node16 -> node18 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node18 -> node19 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node18 -> node20 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node2 -> node5 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node6 -> node10 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node7 -> node10 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node11 -> node16 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node13 -> node16 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node12 -> node16 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node17 -> node23 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node19 -> node23 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node20 -> node23 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`C++: IfWithoutBraces: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node5 [style="filled";
+label="";
+id="node5";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node7 [style="filled";
+label="";
+id="node7";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node12 [style="filled";
+label="";
+id="node12";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node8 [style="filled";
+label="";
+id="node8";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node14 [style="filled";
+label="";
+id="node14";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node15 [style="filled";
+label="";
+id="node15";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.8999999999999999;
+];
+    node5 -> node1 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node7 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node1 -> node7 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node1 -> node12 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node12 -> node8 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node8 -> node14 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node8 -> node14 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node8 -> node15 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+}"
+`;
+
+exports[`C++: ForLoops: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node7 [style="filled";
+label="";
+id="node7";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node15 [style="filled";
+label="";
+id="node15";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node10 [style="filled";
+label="";
+id="node10";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node11 [style="filled";
+label="";
+id="node11";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node23 [style="filled";
+label="";
+id="node23";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node12 [style="filled";
+label="";
+id="node12";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node17 [style="filled";
+label="";
+id="node17";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node19 [style="filled";
+label="";
+id="node19";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node30 [style="filled";
+label="";
+id="node30";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node18 [style="filled";
+label="";
+id="node18";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node26 [style="filled";
+label="";
+id="node26";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node32 [style="filled";
+label="";
+id="node32";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node39 [style="filled";
+label="";
+id="node39";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node33 [style="filled";
+label="";
+id="node33";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node35 [style="filled";
+label="";
+id="node35";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node47 [style="filled";
+label="";
+id="node47";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node36 [style="filled";
+label="";
+id="node36";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node42 [style="filled";
+label="";
+id="node42";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node34 [style="filled";
+label="";
+id="node34";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node43 [style="filled";
+label="";
+id="node43";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node55 [style="filled";
+label="";
+id="node55";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node44 [style="filled";
+label="";
+id="node44";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node49 [style="filled";
+label="";
+id="node49";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node51 [style="filled";
+label="";
+id="node51";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node62 [style="filled";
+label="";
+id="node62";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node50 [style="filled";
+label="";
+id="node50";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node58 [style="filled";
+label="";
+id="node58";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node64 [style="filled";
+label="";
+id="node64";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node65 [style="filled";
+label="";
+id="node65";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.8999999999999999;
+];
+    node3 -> node4 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node7 -> node1 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node2 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node11 -> node12 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node15 -> node10 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node10 -> node17 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node35 -> node36 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node39 -> node33 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node33 -> node34 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node43 -> node44 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node47 -> node42 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node42 -> node49 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node1 -> node3 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node15 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node4 -> node15 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node3 -> node2 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node10 -> node11 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node10 -> node23 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node12 -> node23 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node11 -> node17 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node23 -> node19 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node19 -> node18 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node19 -> node18 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node19 -> node30 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node30 -> node26 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node26 -> node32 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node26 -> node32 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node26 -> node39 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node33 -> node35 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node33 -> node47 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node36 -> node47 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node35 -> node34 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node42 -> node43 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node42 -> node55 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node44 -> node55 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node43 -> node49 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node55 -> node51 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node51 -> node50 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node51 -> node50 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node51 -> node62 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node62 -> node58 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node58 -> node64 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node58 -> node64 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node58 -> node65 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+}"
+`;
+
+exports[`C++: MoreSwitch: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node13 [style="filled";
+label="";
+id="node13";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node6 [style="filled";
+label="";
+id="node6";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node7 [style="filled";
+label="";
+id="node7";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node8 [style="filled";
+label="";
+id="node8";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node10 [style="filled";
+label="";
+id="node10";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node3 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node3 -> node4 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node3 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node5 -> node6 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node6 -> node8 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node5 -> node7 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node7 -> node8 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node10 -> node13 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node13 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node4 -> node13 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node8 -> node13 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node7 -> node10 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
 exports[`Go: trivial: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
@@ -7913,6 +9474,1865 @@ exports[`C: MoreSwitch: Segmentation 1`] = `
 ]
 `;
 
+exports[`C++: trivial: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 15,
+    "value": "node2",
+  },
+  {
+    "start": 32,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`C++: simpleIf: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 49,
+    "value": "node1",
+  },
+  {
+    "start": 71,
+    "value": "node1",
+  },
+  {
+    "start": 74,
+    "value": "node1",
+  },
+  {
+    "start": 77,
+    "value": "node2",
+  },
+  {
+    "start": 78,
+    "value": "node1",
+  },
+  {
+    "start": 78,
+    "value": "node2",
+  },
+  {
+    "start": 85,
+    "value": "node1",
+  },
+  {
+    "start": 85,
+    "value": "node1",
+  },
+  {
+    "start": 87,
+    "value": "node1",
+  },
+  {
+    "start": 87,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`C++: ifElse: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 114,
+    "value": "node1",
+  },
+  {
+    "start": 134,
+    "value": "node1",
+  },
+  {
+    "start": 137,
+    "value": "node1",
+  },
+  {
+    "start": 140,
+    "value": "node2",
+  },
+  {
+    "start": 141,
+    "value": "node1",
+  },
+  {
+    "start": 141,
+    "value": "node2",
+  },
+  {
+    "start": 148,
+    "value": "node3",
+  },
+  {
+    "start": 154,
+    "value": "node1",
+  },
+  {
+    "start": 154,
+    "value": "node3",
+  },
+  {
+    "start": 157,
+    "value": "node3",
+  },
+  {
+    "start": 160,
+    "value": "node4",
+  },
+  {
+    "start": 161,
+    "value": "node3",
+  },
+  {
+    "start": 161,
+    "value": "node4",
+  },
+  {
+    "start": 168,
+    "value": "node5",
+  },
+  {
+    "start": 169,
+    "value": "node3",
+  },
+  {
+    "start": 169,
+    "value": "node5",
+  },
+  {
+    "start": 174,
+    "value": "node5",
+  },
+  {
+    "start": 181,
+    "value": "node5",
+  },
+  {
+    "start": 181,
+    "value": "node3",
+  },
+  {
+    "start": 181,
+    "value": "node1",
+  },
+  {
+    "start": 181,
+    "value": "node1",
+  },
+  {
+    "start": 183,
+    "value": "node1",
+  },
+  {
+    "start": 183,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`C++: forever: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 210,
+    "value": "node2",
+  },
+  {
+    "start": 231,
+    "value": "node2",
+  },
+  {
+    "start": 239,
+    "value": "node4",
+  },
+  {
+    "start": 240,
+    "value": "node2",
+  },
+  {
+    "start": 240,
+    "value": "node4",
+  },
+  {
+    "start": 247,
+    "value": "node2",
+  },
+  {
+    "start": 247,
+    "value": "node2",
+  },
+  {
+    "start": 249,
+    "value": "node2",
+  },
+  {
+    "start": 249,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`C++: forever2: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 276,
+    "value": "node1",
+  },
+  {
+    "start": 298,
+    "value": "node1",
+  },
+  {
+    "start": 303,
+    "value": "node1",
+  },
+  {
+    "start": 313,
+    "value": "node1",
+  },
+  {
+    "start": 313,
+    "value": "node1",
+  },
+  {
+    "start": 314,
+    "value": "node1",
+  },
+  {
+    "start": 315,
+    "value": "node2",
+  },
+  {
+    "start": 318,
+    "value": "node2",
+  },
+  {
+    "start": 319,
+    "value": "node2",
+  },
+  {
+    "start": 320,
+    "value": "node1",
+  },
+  {
+    "start": 320,
+    "value": "node2",
+  },
+  {
+    "start": 327,
+    "value": "node1",
+  },
+  {
+    "start": 327,
+    "value": "node1",
+  },
+  {
+    "start": 329,
+    "value": "node1",
+  },
+  {
+    "start": 329,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`C++: forLoop: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 388,
+    "value": "node1",
+  },
+  {
+    "start": 409,
+    "value": "node1",
+  },
+  {
+    "start": 414,
+    "value": "node1",
+  },
+  {
+    "start": 424,
+    "value": "node1",
+  },
+  {
+    "start": 424,
+    "value": "node1",
+  },
+  {
+    "start": 425,
+    "value": "node2",
+  },
+  {
+    "start": 431,
+    "value": "node2",
+  },
+  {
+    "start": 432,
+    "value": "node2",
+  },
+  {
+    "start": 432,
+    "value": "node1",
+  },
+  {
+    "start": 433,
+    "value": "node3",
+  },
+  {
+    "start": 436,
+    "value": "node3",
+  },
+  {
+    "start": 437,
+    "value": "node3",
+  },
+  {
+    "start": 438,
+    "value": "node1",
+  },
+  {
+    "start": 438,
+    "value": "node3",
+  },
+  {
+    "start": 481,
+    "value": "node1",
+  },
+  {
+    "start": 481,
+    "value": "node1",
+  },
+  {
+    "start": 483,
+    "value": "node1",
+  },
+  {
+    "start": 483,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`C++: whileLoop: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 510,
+    "value": "node0",
+  },
+  {
+    "start": 533,
+    "value": "node1",
+  },
+  {
+    "start": 539,
+    "value": "node1",
+  },
+  {
+    "start": 544,
+    "value": "node1",
+  },
+  {
+    "start": 544,
+    "value": "node1",
+  },
+  {
+    "start": 545,
+    "value": "node2",
+  },
+  {
+    "start": 552,
+    "value": "node2",
+  },
+  {
+    "start": 552,
+    "value": "node1",
+  },
+  {
+    "start": 552,
+    "value": "node1",
+  },
+  {
+    "start": 554,
+    "value": "node0",
+  },
+  {
+    "start": 554,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`C++: doWhile: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 581,
+    "value": "node0",
+  },
+  {
+    "start": 602,
+    "value": "node1",
+  },
+  {
+    "start": 605,
+    "value": "node1",
+  },
+  {
+    "start": 612,
+    "value": "node1",
+  },
+  {
+    "start": 612,
+    "value": "node1",
+  },
+  {
+    "start": 619,
+    "value": "node1",
+  },
+  {
+    "start": 624,
+    "value": "node1",
+  },
+  {
+    "start": 624,
+    "value": "node1",
+  },
+  {
+    "start": 625,
+    "value": "node1",
+  },
+  {
+    "start": 627,
+    "value": "node0",
+  },
+  {
+    "start": 627,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`C++: gotoA: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 654,
+    "value": "node0",
+  },
+  {
+    "start": 669,
+    "value": "node2",
+  },
+  {
+    "start": 680,
+    "value": "node2",
+  },
+  {
+    "start": 683,
+    "value": "node2",
+  },
+  {
+    "start": 686,
+    "value": "node3",
+  },
+  {
+    "start": 687,
+    "value": "node2",
+  },
+  {
+    "start": 687,
+    "value": "node3",
+  },
+  {
+    "start": 697,
+    "value": "node3",
+  },
+  {
+    "start": 708,
+    "value": "node3",
+  },
+  {
+    "start": 714,
+    "value": "node2",
+  },
+  {
+    "start": 714,
+    "value": "node2",
+  },
+  {
+    "start": 714,
+    "value": "node2",
+  },
+  {
+    "start": 716,
+    "value": "node0",
+  },
+  {
+    "start": 716,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`C++: switch_1: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 765,
+    "value": "node1",
+  },
+  {
+    "start": 787,
+    "value": "node1",
+  },
+  {
+    "start": 799,
+    "value": "node1",
+  },
+  {
+    "start": 804,
+    "value": "node1",
+  },
+  {
+    "start": 804,
+    "value": "node1",
+  },
+  {
+    "start": 811,
+    "value": "Not found",
+  },
+  {
+    "start": 820,
+    "value": "node1",
+  },
+  {
+    "start": 838,
+    "value": "node2",
+  },
+  {
+    "start": 852,
+    "value": "node1",
+  },
+  {
+    "start": 852,
+    "value": "node3",
+  },
+  {
+    "start": 857,
+    "value": "node1",
+  },
+  {
+    "start": 857,
+    "value": "node3",
+  },
+  {
+    "start": 864,
+    "value": "node5",
+  },
+  {
+    "start": 869,
+    "value": "node1",
+  },
+  {
+    "start": 869,
+    "value": "node5",
+  },
+  {
+    "start": 876,
+    "value": "Not found",
+  },
+  {
+    "start": 885,
+    "value": "node5",
+  },
+  {
+    "start": 903,
+    "value": "node6",
+  },
+  {
+    "start": 917,
+    "value": "node5",
+  },
+  {
+    "start": 917,
+    "value": "node5",
+  },
+  {
+    "start": 923,
+    "value": "node1",
+  },
+  {
+    "start": 923,
+    "value": "node1",
+  },
+  {
+    "start": 925,
+    "value": "node1",
+  },
+  {
+    "start": 925,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`C++: switch_2: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 952,
+    "value": "node1",
+  },
+  {
+    "start": 974,
+    "value": "node1",
+  },
+  {
+    "start": 986,
+    "value": "node1",
+  },
+  {
+    "start": 991,
+    "value": "node1",
+  },
+  {
+    "start": 991,
+    "value": "node1",
+  },
+  {
+    "start": 998,
+    "value": "node2",
+  },
+  {
+    "start": 1007,
+    "value": "node2",
+  },
+  {
+    "start": 1013,
+    "value": "node1",
+  },
+  {
+    "start": 1013,
+    "value": "node3",
+  },
+  {
+    "start": 1018,
+    "value": "node1",
+  },
+  {
+    "start": 1018,
+    "value": "node3",
+  },
+  {
+    "start": 1025,
+    "value": "node5",
+  },
+  {
+    "start": 1030,
+    "value": "node1",
+  },
+  {
+    "start": 1030,
+    "value": "node5",
+  },
+  {
+    "start": 1037,
+    "value": "node5",
+  },
+  {
+    "start": 1043,
+    "value": "node1",
+  },
+  {
+    "start": 1043,
+    "value": "node1",
+  },
+  {
+    "start": 1045,
+    "value": "node1",
+  },
+  {
+    "start": 1045,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`C++: ManyIfs: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 1073,
+    "value": "node1",
+  },
+  {
+    "start": 1094,
+    "value": "node1",
+  },
+  {
+    "start": 1097,
+    "value": "node1",
+  },
+  {
+    "start": 1100,
+    "value": "node2",
+  },
+  {
+    "start": 1101,
+    "value": "node1",
+  },
+  {
+    "start": 1101,
+    "value": "node2",
+  },
+  {
+    "start": 1108,
+    "value": "node1",
+  },
+  {
+    "start": 1108,
+    "value": "node5",
+  },
+  {
+    "start": 1114,
+    "value": "node1",
+  },
+  {
+    "start": 1114,
+    "value": "node5",
+  },
+  {
+    "start": 1117,
+    "value": "node5",
+  },
+  {
+    "start": 1120,
+    "value": "node6",
+  },
+  {
+    "start": 1121,
+    "value": "node5",
+  },
+  {
+    "start": 1121,
+    "value": "node6",
+  },
+  {
+    "start": 1128,
+    "value": "node7",
+  },
+  {
+    "start": 1129,
+    "value": "node5",
+  },
+  {
+    "start": 1129,
+    "value": "node7",
+  },
+  {
+    "start": 1134,
+    "value": "node7",
+  },
+  {
+    "start": 1141,
+    "value": "node7",
+  },
+  {
+    "start": 1141,
+    "value": "node5",
+  },
+  {
+    "start": 1141,
+    "value": "node10",
+  },
+  {
+    "start": 1147,
+    "value": "node1",
+  },
+  {
+    "start": 1147,
+    "value": "node10",
+  },
+  {
+    "start": 1150,
+    "value": "node10",
+  },
+  {
+    "start": 1153,
+    "value": "node11",
+  },
+  {
+    "start": 1154,
+    "value": "node10",
+  },
+  {
+    "start": 1154,
+    "value": "node11",
+  },
+  {
+    "start": 1161,
+    "value": "node12",
+  },
+  {
+    "start": 1167,
+    "value": "node10",
+  },
+  {
+    "start": 1167,
+    "value": "node12",
+  },
+  {
+    "start": 1170,
+    "value": "node12",
+  },
+  {
+    "start": 1173,
+    "value": "node13",
+  },
+  {
+    "start": 1174,
+    "value": "node12",
+  },
+  {
+    "start": 1174,
+    "value": "node13",
+  },
+  {
+    "start": 1181,
+    "value": "node12",
+  },
+  {
+    "start": 1181,
+    "value": "node10",
+  },
+  {
+    "start": 1181,
+    "value": "node16",
+  },
+  {
+    "start": 1187,
+    "value": "node1",
+  },
+  {
+    "start": 1187,
+    "value": "node16",
+  },
+  {
+    "start": 1190,
+    "value": "node16",
+  },
+  {
+    "start": 1193,
+    "value": "node17",
+  },
+  {
+    "start": 1194,
+    "value": "node16",
+  },
+  {
+    "start": 1194,
+    "value": "node17",
+  },
+  {
+    "start": 1201,
+    "value": "node18",
+  },
+  {
+    "start": 1207,
+    "value": "node16",
+  },
+  {
+    "start": 1207,
+    "value": "node18",
+  },
+  {
+    "start": 1210,
+    "value": "node18",
+  },
+  {
+    "start": 1213,
+    "value": "node19",
+  },
+  {
+    "start": 1214,
+    "value": "node18",
+  },
+  {
+    "start": 1214,
+    "value": "node19",
+  },
+  {
+    "start": 1222,
+    "value": "node20",
+  },
+  {
+    "start": 1223,
+    "value": "node18",
+  },
+  {
+    "start": 1223,
+    "value": "node20",
+  },
+  {
+    "start": 1228,
+    "value": "node20",
+  },
+  {
+    "start": 1235,
+    "value": "node20",
+  },
+  {
+    "start": 1235,
+    "value": "node18",
+  },
+  {
+    "start": 1235,
+    "value": "node16",
+  },
+  {
+    "start": 1235,
+    "value": "node16",
+  },
+  {
+    "start": 1237,
+    "value": "node1",
+  },
+  {
+    "start": 1237,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`C++: IfWithoutBraces: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node5",
+  },
+  {
+    "start": 1254,
+    "value": "node5",
+  },
+  {
+    "start": 1428,
+    "value": "node5",
+  },
+  {
+    "start": 1436,
+    "value": "node1",
+  },
+  {
+    "start": 1437,
+    "value": "node5",
+  },
+  {
+    "start": 1437,
+    "value": "node1",
+  },
+  {
+    "start": 1447,
+    "value": "node1",
+  },
+  {
+    "start": 1450,
+    "value": "node1",
+  },
+  {
+    "start": 1453,
+    "value": "node1",
+  },
+  {
+    "start": 1453,
+    "value": "node12",
+  },
+  {
+    "start": 1466,
+    "value": "node12",
+  },
+  {
+    "start": 1472,
+    "value": "node1",
+  },
+  {
+    "start": 1472,
+    "value": "node1",
+  },
+  {
+    "start": 1478,
+    "value": "node5",
+  },
+  {
+    "start": 1478,
+    "value": "node12",
+  },
+  {
+    "start": 1484,
+    "value": "node5",
+  },
+  {
+    "start": 1484,
+    "value": "node12",
+  },
+  {
+    "start": 1492,
+    "value": "node8",
+  },
+  {
+    "start": 1493,
+    "value": "node12",
+  },
+  {
+    "start": 1493,
+    "value": "node8",
+  },
+  {
+    "start": 1503,
+    "value": "node8",
+  },
+  {
+    "start": 1506,
+    "value": "node8",
+  },
+  {
+    "start": 1509,
+    "value": "node15",
+  },
+  {
+    "start": 1510,
+    "value": "node8",
+  },
+  {
+    "start": 1510,
+    "value": "node15",
+  },
+  {
+    "start": 1524,
+    "value": "node15",
+  },
+  {
+    "start": 1530,
+    "value": "node15",
+  },
+  {
+    "start": 1540,
+    "value": "node8",
+  },
+  {
+    "start": 1540,
+    "value": "node8",
+  },
+  {
+    "start": 1546,
+    "value": "node12",
+  },
+  {
+    "start": 1546,
+    "value": "node12",
+  },
+  {
+    "start": 1548,
+    "value": "node5",
+  },
+  {
+    "start": 1548,
+    "value": "node5",
+  },
+]
+`;
+
+exports[`C++: ForLoops: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node7",
+  },
+  {
+    "start": 1566,
+    "value": "node7",
+  },
+  {
+    "start": 1612,
+    "value": "node7",
+  },
+  {
+    "start": 1620,
+    "value": "node1",
+  },
+  {
+    "start": 1621,
+    "value": "node1",
+  },
+  {
+    "start": 1622,
+    "value": "node1",
+  },
+  {
+    "start": 1622,
+    "value": "node7",
+  },
+  {
+    "start": 1623,
+    "value": "node2",
+  },
+  {
+    "start": 1624,
+    "value": "node2",
+  },
+  {
+    "start": 1625,
+    "value": "node3",
+  },
+  {
+    "start": 1626,
+    "value": "node7",
+  },
+  {
+    "start": 1626,
+    "value": "node3",
+  },
+  {
+    "start": 1628,
+    "value": "node3",
+  },
+  {
+    "start": 1631,
+    "value": "node3",
+  },
+  {
+    "start": 1634,
+    "value": "node4",
+  },
+  {
+    "start": 1635,
+    "value": "node3",
+  },
+  {
+    "start": 1635,
+    "value": "node4",
+  },
+  {
+    "start": 1641,
+    "value": "node3",
+  },
+  {
+    "start": 1641,
+    "value": "node3",
+  },
+  {
+    "start": 1642,
+    "value": "node7",
+  },
+  {
+    "start": 1642,
+    "value": "node15",
+  },
+  {
+    "start": 1647,
+    "value": "node7",
+  },
+  {
+    "start": 1647,
+    "value": "node15",
+  },
+  {
+    "start": 1655,
+    "value": "node10",
+  },
+  {
+    "start": 1656,
+    "value": "node15",
+  },
+  {
+    "start": 1656,
+    "value": "node10",
+  },
+  {
+    "start": 1657,
+    "value": "node10",
+  },
+  {
+    "start": 1657,
+    "value": "node10",
+  },
+  {
+    "start": 1660,
+    "value": "node11",
+  },
+  {
+    "start": 1661,
+    "value": "node15",
+  },
+  {
+    "start": 1661,
+    "value": "node11",
+  },
+  {
+    "start": 1663,
+    "value": "node11",
+  },
+  {
+    "start": 1666,
+    "value": "node11",
+  },
+  {
+    "start": 1669,
+    "value": "node12",
+  },
+  {
+    "start": 1670,
+    "value": "node11",
+  },
+  {
+    "start": 1670,
+    "value": "node12",
+  },
+  {
+    "start": 1676,
+    "value": "node11",
+  },
+  {
+    "start": 1676,
+    "value": "node11",
+  },
+  {
+    "start": 1677,
+    "value": "node15",
+  },
+  {
+    "start": 1677,
+    "value": "node23",
+  },
+  {
+    "start": 1682,
+    "value": "node7",
+  },
+  {
+    "start": 1682,
+    "value": "node23",
+  },
+  {
+    "start": 1693,
+    "value": "node18",
+  },
+  {
+    "start": 1694,
+    "value": "node18",
+  },
+  {
+    "start": 1695,
+    "value": "node19",
+  },
+  {
+    "start": 1696,
+    "value": "node23",
+  },
+  {
+    "start": 1696,
+    "value": "node19",
+  },
+  {
+    "start": 1698,
+    "value": "node19",
+  },
+  {
+    "start": 1701,
+    "value": "node19",
+  },
+  {
+    "start": 1704,
+    "value": "node30",
+  },
+  {
+    "start": 1705,
+    "value": "node19",
+  },
+  {
+    "start": 1705,
+    "value": "node30",
+  },
+  {
+    "start": 1711,
+    "value": "node19",
+  },
+  {
+    "start": 1711,
+    "value": "node19",
+  },
+  {
+    "start": 1712,
+    "value": "node23",
+  },
+  {
+    "start": 1712,
+    "value": "node30",
+  },
+  {
+    "start": 1717,
+    "value": "node7",
+  },
+  {
+    "start": 1717,
+    "value": "node30",
+  },
+  {
+    "start": 1730,
+    "value": "node26",
+  },
+  {
+    "start": 1731,
+    "value": "node30",
+  },
+  {
+    "start": 1731,
+    "value": "node26",
+  },
+  {
+    "start": 1733,
+    "value": "node26",
+  },
+  {
+    "start": 1736,
+    "value": "node26",
+  },
+  {
+    "start": 1739,
+    "value": "node39",
+  },
+  {
+    "start": 1740,
+    "value": "node26",
+  },
+  {
+    "start": 1740,
+    "value": "node39",
+  },
+  {
+    "start": 1746,
+    "value": "node26",
+  },
+  {
+    "start": 1746,
+    "value": "node26",
+  },
+  {
+    "start": 1747,
+    "value": "node30",
+  },
+  {
+    "start": 1747,
+    "value": "node39",
+  },
+  {
+    "start": 1752,
+    "value": "node7",
+  },
+  {
+    "start": 1752,
+    "value": "node39",
+  },
+  {
+    "start": 1760,
+    "value": "node33",
+  },
+  {
+    "start": 1761,
+    "value": "node33",
+  },
+  {
+    "start": 1762,
+    "value": "node33",
+  },
+  {
+    "start": 1762,
+    "value": "node39",
+  },
+  {
+    "start": 1763,
+    "value": "node34",
+  },
+  {
+    "start": 1764,
+    "value": "node34",
+  },
+  {
+    "start": 1765,
+    "value": "node35",
+  },
+  {
+    "start": 1766,
+    "value": "node39",
+  },
+  {
+    "start": 1766,
+    "value": "node35",
+  },
+  {
+    "start": 1768,
+    "value": "node35",
+  },
+  {
+    "start": 1771,
+    "value": "node35",
+  },
+  {
+    "start": 1774,
+    "value": "node36",
+  },
+  {
+    "start": 1775,
+    "value": "node35",
+  },
+  {
+    "start": 1775,
+    "value": "node36",
+  },
+  {
+    "start": 1781,
+    "value": "node35",
+  },
+  {
+    "start": 1781,
+    "value": "node35",
+  },
+  {
+    "start": 1782,
+    "value": "node39",
+  },
+  {
+    "start": 1782,
+    "value": "node47",
+  },
+  {
+    "start": 1787,
+    "value": "node7",
+  },
+  {
+    "start": 1787,
+    "value": "node47",
+  },
+  {
+    "start": 1795,
+    "value": "node42",
+  },
+  {
+    "start": 1796,
+    "value": "node47",
+  },
+  {
+    "start": 1796,
+    "value": "node42",
+  },
+  {
+    "start": 1797,
+    "value": "node42",
+  },
+  {
+    "start": 1797,
+    "value": "node42",
+  },
+  {
+    "start": 1800,
+    "value": "node43",
+  },
+  {
+    "start": 1801,
+    "value": "node47",
+  },
+  {
+    "start": 1801,
+    "value": "node43",
+  },
+  {
+    "start": 1803,
+    "value": "node43",
+  },
+  {
+    "start": 1806,
+    "value": "node43",
+  },
+  {
+    "start": 1809,
+    "value": "node44",
+  },
+  {
+    "start": 1810,
+    "value": "node43",
+  },
+  {
+    "start": 1810,
+    "value": "node44",
+  },
+  {
+    "start": 1816,
+    "value": "node43",
+  },
+  {
+    "start": 1816,
+    "value": "node43",
+  },
+  {
+    "start": 1817,
+    "value": "node47",
+  },
+  {
+    "start": 1817,
+    "value": "node55",
+  },
+  {
+    "start": 1822,
+    "value": "node7",
+  },
+  {
+    "start": 1822,
+    "value": "node55",
+  },
+  {
+    "start": 1833,
+    "value": "node50",
+  },
+  {
+    "start": 1834,
+    "value": "node50",
+  },
+  {
+    "start": 1835,
+    "value": "node51",
+  },
+  {
+    "start": 1836,
+    "value": "node55",
+  },
+  {
+    "start": 1836,
+    "value": "node51",
+  },
+  {
+    "start": 1838,
+    "value": "node51",
+  },
+  {
+    "start": 1841,
+    "value": "node51",
+  },
+  {
+    "start": 1844,
+    "value": "node62",
+  },
+  {
+    "start": 1845,
+    "value": "node51",
+  },
+  {
+    "start": 1845,
+    "value": "node62",
+  },
+  {
+    "start": 1851,
+    "value": "node51",
+  },
+  {
+    "start": 1851,
+    "value": "node51",
+  },
+  {
+    "start": 1852,
+    "value": "node55",
+  },
+  {
+    "start": 1852,
+    "value": "node62",
+  },
+  {
+    "start": 1857,
+    "value": "node7",
+  },
+  {
+    "start": 1857,
+    "value": "node62",
+  },
+  {
+    "start": 1870,
+    "value": "node58",
+  },
+  {
+    "start": 1871,
+    "value": "node62",
+  },
+  {
+    "start": 1871,
+    "value": "node58",
+  },
+  {
+    "start": 1873,
+    "value": "node58",
+  },
+  {
+    "start": 1876,
+    "value": "node58",
+  },
+  {
+    "start": 1879,
+    "value": "node65",
+  },
+  {
+    "start": 1880,
+    "value": "node58",
+  },
+  {
+    "start": 1880,
+    "value": "node65",
+  },
+  {
+    "start": 1886,
+    "value": "node58",
+  },
+  {
+    "start": 1886,
+    "value": "node58",
+  },
+  {
+    "start": 1887,
+    "value": "node62",
+  },
+  {
+    "start": 1887,
+    "value": "node7",
+  },
+  {
+    "start": 1909,
+    "value": "Not found",
+  },
+  {
+    "start": 1911,
+    "value": "node7",
+  },
+  {
+    "start": 1911,
+    "value": "node7",
+  },
+]
+`;
+
+exports[`C++: MoreSwitch: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 1928,
+    "value": "node1",
+  },
+  {
+    "start": 2030,
+    "value": "node1",
+  },
+  {
+    "start": 2042,
+    "value": "node1",
+  },
+  {
+    "start": 2051,
+    "value": "node1",
+  },
+  {
+    "start": 2051,
+    "value": "node1",
+  },
+  {
+    "start": 2058,
+    "value": "node2",
+  },
+  {
+    "start": 2059,
+    "value": "node1",
+  },
+  {
+    "start": 2059,
+    "value": "node2",
+  },
+  {
+    "start": 2065,
+    "value": "node1",
+  },
+  {
+    "start": 2065,
+    "value": "node3",
+  },
+  {
+    "start": 2074,
+    "value": "node1",
+  },
+  {
+    "start": 2074,
+    "value": "node3",
+  },
+  {
+    "start": 2081,
+    "value": "node4",
+  },
+  {
+    "start": 2082,
+    "value": "node3",
+  },
+  {
+    "start": 2082,
+    "value": "node4",
+  },
+  {
+    "start": 2088,
+    "value": "node3",
+  },
+  {
+    "start": 2088,
+    "value": "node5",
+  },
+  {
+    "start": 2097,
+    "value": "node1",
+  },
+  {
+    "start": 2097,
+    "value": "node5",
+  },
+  {
+    "start": 2104,
+    "value": "node6",
+  },
+  {
+    "start": 2105,
+    "value": "node5",
+  },
+  {
+    "start": 2105,
+    "value": "node6",
+  },
+  {
+    "start": 2109,
+    "value": "node5",
+  },
+  {
+    "start": 2109,
+    "value": "node7",
+  },
+  {
+    "start": 2118,
+    "value": "node1",
+  },
+  {
+    "start": 2118,
+    "value": "node7",
+  },
+  {
+    "start": 2125,
+    "value": "node8",
+  },
+  {
+    "start": 2126,
+    "value": "node7",
+  },
+  {
+    "start": 2126,
+    "value": "node8",
+  },
+  {
+    "start": 2132,
+    "value": "node7",
+  },
+  {
+    "start": 2132,
+    "value": "node10",
+  },
+  {
+    "start": 2141,
+    "value": "node1",
+  },
+  {
+    "start": 2141,
+    "value": "node10",
+  },
+  {
+    "start": 2149,
+    "value": "node10",
+  },
+  {
+    "start": 2150,
+    "value": "node10",
+  },
+  {
+    "start": 2150,
+    "value": "node10",
+  },
+  {
+    "start": 2154,
+    "value": "node10",
+  },
+  {
+    "start": 2154,
+    "value": "node10",
+  },
+  {
+    "start": 2160,
+    "value": "node1",
+  },
+  {
+    "start": 2160,
+    "value": "node1",
+  },
+  {
+    "start": 2162,
+    "value": "node1",
+  },
+  {
+    "start": 2162,
+    "value": "node1",
+  },
+]
+`;
+
 exports[`Go: trivial: Segmentation 1`] = `
 [
   {
@@ -12033,820 +15453,6 @@ exports[`Python: try_with_finally: Segmentation 1`] = `
   {
     "start": 3619,
     "value": "node0",
-  },
-]
-`;
-
-exports[`C++: trivial: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-minHeight=0.5;
-height=0.8999999999999999;
-];
-}"
-`;
-
-exports[`C++: simpleIf: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-minHeight=0.5;
-height=0.8999999999999999;
-];
-}"
-`;
-
-exports[`C++: ifElse: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-minHeight=0.5;
-height=0.8999999999999999;
-];
-}"
-`;
-
-exports[`C++: forever: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-minHeight=0.5;
-height=0.8999999999999999;
-];
-}"
-`;
-
-exports[`C++: forever2: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-minHeight=0.5;
-height=0.8999999999999999;
-];
-}"
-`;
-
-exports[`C++: forLoop: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-minHeight=0.5;
-height=0.8999999999999999;
-];
-}"
-`;
-
-exports[`C++: whileLoop: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-minHeight=0.5;
-height=0.8999999999999999;
-];
-}"
-`;
-
-exports[`C++: doWhile: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-minHeight=0.5;
-height=0.8999999999999999;
-];
-}"
-`;
-
-exports[`C++: gotoA: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-minHeight=0.5;
-height=0.8999999999999999;
-];
-}"
-`;
-
-exports[`C++: switch_1: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-minHeight=0.5;
-height=0.8999999999999999;
-];
-}"
-`;
-
-exports[`C++: switch_2: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-minHeight=0.5;
-height=0.8999999999999999;
-];
-}"
-`;
-
-exports[`C++: ManyIfs: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node5 [style="filled";
-label="";
-id="node5";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-minHeight=0.5;
-height=1.7999999999999998;
-];
-}"
-`;
-
-exports[`C++: IfWithoutBraces: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node3 [style="filled";
-label="";
-id="node3";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-minHeight=0.5;
-height=1.2;
-];
-}"
-`;
-
-exports[`C++: ForLoops: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node9 [style="filled";
-label="";
-id="node9";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-minHeight=0.5;
-height=3;
-];
-}"
-`;
-
-exports[`C++: MoreSwitch: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-minHeight=0.5;
-height=0.8999999999999999;
-];
-}"
-`;
-
-exports[`C++: trivial: Segmentation 1`] = `
-[
-  {
-    "start": 0,
-    "value": "node2",
-  },
-  {
-    "start": 15,
-    "value": "node2",
-  },
-  {
-    "start": 32,
-    "value": "node2",
-  },
-]
-`;
-
-exports[`C++: simpleIf: Segmentation 1`] = `
-[
-  {
-    "start": 0,
-    "value": "node2",
-  },
-  {
-    "start": 49,
-    "value": "node2",
-  },
-  {
-    "start": 71,
-    "value": "node2",
-  },
-  {
-    "start": 85,
-    "value": "node2",
-  },
-  {
-    "start": 87,
-    "value": "node2",
-  },
-  {
-    "start": 87,
-    "value": "node2",
-  },
-]
-`;
-
-exports[`C++: ifElse: Segmentation 1`] = `
-[
-  {
-    "start": 0,
-    "value": "node2",
-  },
-  {
-    "start": 114,
-    "value": "node2",
-  },
-  {
-    "start": 134,
-    "value": "node2",
-  },
-  {
-    "start": 181,
-    "value": "node2",
-  },
-  {
-    "start": 183,
-    "value": "node2",
-  },
-  {
-    "start": 183,
-    "value": "node2",
-  },
-]
-`;
-
-exports[`C++: forever: Segmentation 1`] = `
-[
-  {
-    "start": 0,
-    "value": "node2",
-  },
-  {
-    "start": 210,
-    "value": "node2",
-  },
-  {
-    "start": 231,
-    "value": "node2",
-  },
-  {
-    "start": 247,
-    "value": "node2",
-  },
-  {
-    "start": 249,
-    "value": "node2",
-  },
-  {
-    "start": 249,
-    "value": "node2",
-  },
-]
-`;
-
-exports[`C++: forever2: Segmentation 1`] = `
-[
-  {
-    "start": 0,
-    "value": "node2",
-  },
-  {
-    "start": 276,
-    "value": "node2",
-  },
-  {
-    "start": 298,
-    "value": "node2",
-  },
-  {
-    "start": 327,
-    "value": "node2",
-  },
-  {
-    "start": 329,
-    "value": "node2",
-  },
-  {
-    "start": 329,
-    "value": "node2",
-  },
-]
-`;
-
-exports[`C++: forLoop: Segmentation 1`] = `
-[
-  {
-    "start": 0,
-    "value": "node2",
-  },
-  {
-    "start": 388,
-    "value": "node2",
-  },
-  {
-    "start": 409,
-    "value": "node2",
-  },
-  {
-    "start": 481,
-    "value": "node2",
-  },
-  {
-    "start": 483,
-    "value": "node2",
-  },
-  {
-    "start": 483,
-    "value": "node2",
-  },
-]
-`;
-
-exports[`C++: whileLoop: Segmentation 1`] = `
-[
-  {
-    "start": 0,
-    "value": "node2",
-  },
-  {
-    "start": 510,
-    "value": "node2",
-  },
-  {
-    "start": 533,
-    "value": "node2",
-  },
-  {
-    "start": 552,
-    "value": "node2",
-  },
-  {
-    "start": 554,
-    "value": "node2",
-  },
-  {
-    "start": 554,
-    "value": "node2",
-  },
-]
-`;
-
-exports[`C++: doWhile: Segmentation 1`] = `
-[
-  {
-    "start": 0,
-    "value": "node2",
-  },
-  {
-    "start": 581,
-    "value": "node2",
-  },
-  {
-    "start": 602,
-    "value": "node2",
-  },
-  {
-    "start": 625,
-    "value": "node2",
-  },
-  {
-    "start": 627,
-    "value": "node2",
-  },
-  {
-    "start": 627,
-    "value": "node2",
-  },
-]
-`;
-
-exports[`C++: gotoA: Segmentation 1`] = `
-[
-  {
-    "start": 0,
-    "value": "node2",
-  },
-  {
-    "start": 654,
-    "value": "node2",
-  },
-  {
-    "start": 669,
-    "value": "node2",
-  },
-  {
-    "start": 714,
-    "value": "node2",
-  },
-  {
-    "start": 716,
-    "value": "node2",
-  },
-  {
-    "start": 716,
-    "value": "node2",
-  },
-]
-`;
-
-exports[`C++: switch_1: Segmentation 1`] = `
-[
-  {
-    "start": 0,
-    "value": "node2",
-  },
-  {
-    "start": 765,
-    "value": "node2",
-  },
-  {
-    "start": 787,
-    "value": "node2",
-  },
-  {
-    "start": 923,
-    "value": "node2",
-  },
-  {
-    "start": 925,
-    "value": "node2",
-  },
-  {
-    "start": 925,
-    "value": "node2",
-  },
-]
-`;
-
-exports[`C++: switch_2: Segmentation 1`] = `
-[
-  {
-    "start": 0,
-    "value": "node2",
-  },
-  {
-    "start": 952,
-    "value": "node2",
-  },
-  {
-    "start": 974,
-    "value": "node2",
-  },
-  {
-    "start": 1043,
-    "value": "node2",
-  },
-  {
-    "start": 1045,
-    "value": "node2",
-  },
-  {
-    "start": 1045,
-    "value": "node2",
-  },
-]
-`;
-
-exports[`C++: ManyIfs: Segmentation 1`] = `
-[
-  {
-    "start": 0,
-    "value": "node5",
-  },
-  {
-    "start": 1073,
-    "value": "node5",
-  },
-  {
-    "start": 1094,
-    "value": "node5",
-  },
-  {
-    "start": 1108,
-    "value": "node5",
-  },
-  {
-    "start": 1114,
-    "value": "node5",
-  },
-  {
-    "start": 1114,
-    "value": "node5",
-  },
-  {
-    "start": 1141,
-    "value": "node5",
-  },
-  {
-    "start": 1147,
-    "value": "node5",
-  },
-  {
-    "start": 1147,
-    "value": "node5",
-  },
-  {
-    "start": 1181,
-    "value": "node5",
-  },
-  {
-    "start": 1187,
-    "value": "node5",
-  },
-  {
-    "start": 1187,
-    "value": "node5",
-  },
-  {
-    "start": 1235,
-    "value": "node5",
-  },
-  {
-    "start": 1237,
-    "value": "node5",
-  },
-  {
-    "start": 1237,
-    "value": "node5",
-  },
-]
-`;
-
-exports[`C++: IfWithoutBraces: Segmentation 1`] = `
-[
-  {
-    "start": 0,
-    "value": "node3",
-  },
-  {
-    "start": 1254,
-    "value": "node3",
-  },
-  {
-    "start": 1428,
-    "value": "node3",
-  },
-  {
-    "start": 1478,
-    "value": "node3",
-  },
-  {
-    "start": 1484,
-    "value": "node3",
-  },
-  {
-    "start": 1484,
-    "value": "node3",
-  },
-  {
-    "start": 1546,
-    "value": "node3",
-  },
-  {
-    "start": 1548,
-    "value": "node3",
-  },
-  {
-    "start": 1548,
-    "value": "node3",
-  },
-]
-`;
-
-exports[`C++: ForLoops: Segmentation 1`] = `
-[
-  {
-    "start": 0,
-    "value": "node9",
-  },
-  {
-    "start": 1566,
-    "value": "node9",
-  },
-  {
-    "start": 1612,
-    "value": "node9",
-  },
-  {
-    "start": 1642,
-    "value": "node9",
-  },
-  {
-    "start": 1647,
-    "value": "node9",
-  },
-  {
-    "start": 1647,
-    "value": "node9",
-  },
-  {
-    "start": 1677,
-    "value": "node9",
-  },
-  {
-    "start": 1682,
-    "value": "node9",
-  },
-  {
-    "start": 1682,
-    "value": "node9",
-  },
-  {
-    "start": 1712,
-    "value": "node9",
-  },
-  {
-    "start": 1717,
-    "value": "node9",
-  },
-  {
-    "start": 1717,
-    "value": "node9",
-  },
-  {
-    "start": 1747,
-    "value": "node9",
-  },
-  {
-    "start": 1752,
-    "value": "node9",
-  },
-  {
-    "start": 1752,
-    "value": "node9",
-  },
-  {
-    "start": 1782,
-    "value": "node9",
-  },
-  {
-    "start": 1787,
-    "value": "node9",
-  },
-  {
-    "start": 1787,
-    "value": "node9",
-  },
-  {
-    "start": 1817,
-    "value": "node9",
-  },
-  {
-    "start": 1822,
-    "value": "node9",
-  },
-  {
-    "start": 1822,
-    "value": "node9",
-  },
-  {
-    "start": 1852,
-    "value": "node9",
-  },
-  {
-    "start": 1857,
-    "value": "node9",
-  },
-  {
-    "start": 1857,
-    "value": "node9",
-  },
-  {
-    "start": 1887,
-    "value": "node9",
-  },
-  {
-    "start": 1909,
-    "value": "Not found",
-  },
-  {
-    "start": 1911,
-    "value": "node9",
-  },
-  {
-    "start": 1911,
-    "value": "node9",
-  },
-]
-`;
-
-exports[`C++: MoreSwitch: Segmentation 1`] = `
-[
-  {
-    "start": 0,
-    "value": "node2",
-  },
-  {
-    "start": 1928,
-    "value": "node2",
-  },
-  {
-    "start": 2030,
-    "value": "node2",
-  },
-  {
-    "start": 2160,
-    "value": "node2",
-  },
-  {
-    "start": 2162,
-    "value": "node2",
-  },
-  {
-    "start": 2162,
-    "value": "node2",
   },
 ]
 `;
