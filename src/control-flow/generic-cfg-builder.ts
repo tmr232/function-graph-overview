@@ -49,7 +49,6 @@ export type StatementHandlers = {
   default: StatementHandler;
 };
 
-
 /**
  * This class is responsible for building a CFG from an AST.
  */

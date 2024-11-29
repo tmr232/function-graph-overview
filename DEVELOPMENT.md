@@ -25,7 +25,6 @@ Once the command completes successfully, your new parser should be inside `./par
 [tree-sitter]: https://tree-sitter.github.io/tree-sitter/
 [build-wasm]: https://github.com/tree-sitter/tree-sitter/blob/master/lib/binding_web/README.md#generate-wasm-language-files
 
-
 ### Generating the CFG
 
 Each CFG-builder resides in its own file inside `./src/control-flow`.

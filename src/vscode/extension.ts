@@ -48,6 +48,7 @@ const supportedLanguages: SupportedLanguage[] = [
 const functionNodeTypes: { [key in Language]: string[] } = {
   Go: ["function_declaration", "method_declaration", "func_literal"],
   C: ["function_definition"],
+  "C++": ["function_definition"],
   Python: ["function_definition"],
 };
 

@@ -10,7 +10,7 @@ import type { TestFuncRecord } from "../test/commentTestUtils";
 import type { TestFunction } from "../test/commentTestTypes";
 import { requirementTests } from "../test/commentTestHandlers";
 import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
-import { mergeNodeAttrs } from "../control-flow/cfg-defs";
+import { type CFG, mergeNodeAttrs } from "../control-flow/cfg-defs";
 import { graphToDot } from "../control-flow/render";
 import { Graphviz, type Format } from "@hpcc-js/wasm-graphviz";
 async function initializeParser(language: Language) {
@@ -29,25 +29,21 @@ async function initializeParser(language: Language) {
       case "Python":
         return Parser.Language.load(treeSitterPython);
       case "C++":
-        return Parser.Language.load(treeSitterCpp)
+        return Parser.Language.load(treeSitterCpp);
     }
   })();
   parser.setLanguage(parserLanguage);
   return parser;
 }
 
-export interface Parsers {
-  Go: Parser;
-  C: Parser;
-  Python: Parser;
-  "C++":Parser;
-}
+export type Parsers = { [language in Language]: Parser };
+
 export async function initializeParsers(): Promise<Parsers> {
   return {
     Go: await initializeParser("Go"),
     C: await initializeParser("C"),
     Python: await initializeParser("Python"),
-    "C++": await initializeParser("C++")
+    "C++": await initializeParser("C++"),
   };
 }
 
@@ -135,7 +131,7 @@ export function processRecord(
 
   const ast = functionSyntax.toString();
 
-  let cfg;
+  let cfg: CFG;
 
   try {
     cfg = builder.buildCFG(functionSyntax);
