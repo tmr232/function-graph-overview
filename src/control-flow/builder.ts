@@ -14,7 +14,7 @@ import { MultiDirectedGraph } from "graphology";
  */
 export class Builder {
   private graph: CFGGraph = new MultiDirectedGraph();
-  private nodeId: number = 0;
+  private nodeId = 0;
   private clusterId: ClusterId = 0;
   private activeClusters: Cluster[] = [];
 

@@ -1,5 +1,5 @@
 import type Parser from "web-tree-sitter";
-import { type Language as CFGLanguage } from "../control-flow/cfg";
+import type { Language as CFGLanguage } from "../control-flow/cfg";
 export interface Requirements {
   nodes?: number;
   exits?: number;

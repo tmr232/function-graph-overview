@@ -195,7 +195,7 @@ function renderSubgraphs(
 
 export function graphToDot(
   cfg: CFG,
-  verbose: boolean = false,
+  verbose = false,
   nodeToHighlight?: string,
   colorScheme?: ColorScheme,
 ): string {

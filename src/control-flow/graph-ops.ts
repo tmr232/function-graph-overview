@@ -1,4 +1,4 @@
-import { MultiDirectedGraph } from "graphology";
+import type { MultiDirectedGraph } from "graphology";
 import { subgraph } from "graphology-operators";
 import { bfsFromNode } from "graphology-traversal";
 import type { CFG, GraphNode } from "./cfg-defs";

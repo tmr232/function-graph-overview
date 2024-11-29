@@ -1,4 +1,4 @@
-import { MultiDirectedGraph } from "graphology";
+import type { MultiDirectedGraph } from "graphology";
 import type Parser from "web-tree-sitter";
 import type { SimpleRange } from "./ranges";
 import { evolve } from "./evolve";

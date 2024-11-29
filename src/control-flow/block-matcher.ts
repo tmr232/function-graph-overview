@@ -1,4 +1,4 @@
-import Parser from "web-tree-sitter";
+import type Parser from "web-tree-sitter";
 import { type BasicBlock, BlockHandler } from "./cfg-defs.ts";
 import { evolve } from "./evolve.ts";
 

@@ -1,10 +1,10 @@
-import Parser from "web-tree-sitter";
-import {
-  type BasicBlock,
-  type BuilderOptions,
-  type CFGBuilder,
+import type Parser from "web-tree-sitter";
+import type {
+  BasicBlock,
+  BuilderOptions,
+  CFGBuilder,
 } from "./cfg-defs";
-import { Match } from "./block-matcher.ts";
+import type { Match } from "./block-matcher.ts";
 import {
   GenericCFGBuilder,
   type Context,
