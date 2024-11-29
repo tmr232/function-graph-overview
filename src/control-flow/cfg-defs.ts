@@ -123,14 +123,14 @@ export class BlockHandler {
   }
 
   public processGotos(callback: (gotoNode: string, labelNode: string) => void) {
-    this.gotos.forEach((goto) => {
+    for (const goto of this.gotos) {
       const labelNode = this.labels.get(goto.label);
       if (labelNode) {
         callback(goto.node, labelNode);
       }
       // If we get here, then the goto didn't have a matching label.
       // This is a user problem, not graphing problem.
-    });
+    }
   }
 
   public update(block: BasicBlock): BasicBlock {
@@ -207,7 +207,9 @@ export interface CFGBuilder {
 export function remapNodeTargets(cfg: CFG): CFG {
   const remap = new Map<string, string>();
   cfg.graph.forEachNode((node, { targets }) => {
-    targets.forEach((target) => remap.set(target, node));
+    for (const target of targets) {
+      remap.set(target, node);
+    }
   });
   const offsetToNode = cfg.offsetToNode.map(({ start, value: node }) => ({
     start,
