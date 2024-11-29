@@ -131,7 +131,7 @@ function _showHierarchy(hierarchy: Hierarchy) {
     console.log(
       `${spaces.slice(0, depth * 4)}${current.cluster?.id ?? "toplevel"}-${current.cluster?.type ?? "X"}: ${current.graph.nodes()}`,
     );
-    const children = [...Object.values(current.children)];
+    const children = Object.values(current.children);
     const next: [Hierarchy, number][] = children.map((h) => [h, depth + 1]);
     stack.push(...next);
   }
@@ -215,7 +215,7 @@ export function graphToDot(
 
 type DotAttributes = { [attribute: string]: number | string | undefined };
 function formatStyle(style: DotAttributes): string {
-  return [...Object.entries(style)]
+  return Object.entries(style)
     .map(([name, value]) => {
       switch (typeof value) {
         case "number":
