@@ -33,6 +33,7 @@ const statementHandlers: StatementHandlers = {
     goto_statement: processGotoStatement,
     comment: processComment,
     try_statement: processTryStatement,
+		throw_statement: processThrowStatement,
   },
   default: defaultProcessStatement,
 };
@@ -631,4 +632,19 @@ function processTryStatement(
       exit: mergeNode,
     });
   });
+}
+
+
+function processThrowStatement(
+	throwSyntax: Parser.SyntaxNode,
+	ctx: Context,
+): BasicBlock {
+	const { builder } = ctx;
+	const throwNode = builder.addNode(
+		"THROW",
+		throwSyntax.text,
+		throwSyntax.startIndex,
+	);
+	ctx.link.syntaxToNode(throwSyntax, throwNode);
+	return { entry: throwNode, exit: null };
 }
