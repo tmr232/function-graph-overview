@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import * as fs from "fs";
-import * as crypto from "crypto";
+import * as fs from "node:fs";
+import * as crypto from "node:crypto";
 
 export class OverviewViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "functionGraphOverview.overview";

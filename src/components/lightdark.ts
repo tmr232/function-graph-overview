@@ -23,10 +23,7 @@ function isDarkTheme(): boolean {
     case "dark":
       return true;
   }
-  return (
-    window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches
-  );
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches;
 }
 
 /**
@@ -35,9 +32,8 @@ function isDarkTheme(): boolean {
 export function getSystemColorList(): ColorList {
   if (isDarkTheme()) {
     return getDarkColorList();
-  } else {
-    return getLightColorList();
   }
+  return getLightColorList();
 }
 
 export const isDark = writable(isDarkTheme());

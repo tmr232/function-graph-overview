@@ -1,9 +1,5 @@
 import type Parser from "web-tree-sitter";
-import type {
-  BasicBlock,
-  BuilderOptions,
-  CFGBuilder,
-} from "./cfg-defs";
+import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
   GenericCFGBuilder,
   type Context,
@@ -39,7 +35,7 @@ function defaultProcessStatement(
   ctx: Context,
 ): BasicBlock {
   const { builder } = ctx;
-  const hasYield = matchExistsIn(syntax, `(yield) @yield`);
+  const hasYield = matchExistsIn(syntax, "(yield) @yield");
   if (hasYield) {
     const yieldNode = builder.addNode("YIELD", syntax.text, syntax.startIndex);
     ctx.link.syntaxToNode(syntax, yieldNode);

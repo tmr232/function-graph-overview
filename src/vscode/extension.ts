@@ -147,9 +147,8 @@ function loadSettings(): Settings {
       case "System":
         if (isThemeDark()) {
           return getDarkColorList();
-        } else {
-          return getLightColorList();
         }
+        return getLightColorList();
       case "Light":
         return getLightColorList();
       case "Dark":
@@ -235,7 +234,7 @@ export async function activate(context: vscode.ExtensionContext) {
     edge [color="#e0e0e0"]
     Hello -> World 
 }`;
-  const helloWorldLight = `digraph G { Hello -> World }`;
+  const helloWorldLight = "digraph G { Hello -> World }";
 
   // We use the color theme for the initial graph, as it's a good way to avoid
   // shocking the user without being overly complicated with reading custom

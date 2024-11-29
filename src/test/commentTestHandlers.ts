@@ -46,7 +46,7 @@ function pathExists(
 ): boolean {
   let foundTarget = false;
   bfsFromNode(graph, source, (node) => {
-    foundTarget ||= node == target;
+    foundTarget ||= node === target;
     return foundTarget;
   });
   return foundTarget;
@@ -79,7 +79,7 @@ export const requirementTests: {
       const exitNodes = cfg.graph.filterNodes(
         (node) => cfg.graph.outDegree(node) === 0,
       );
-      if (exitNodes.length != testFunc.reqs.exits) {
+      if (exitNodes.length !== testFunc.reqs.exits) {
         return `expected ${testFunc.reqs.exits} exits but found ${exitNodes.length}`;
       }
     }

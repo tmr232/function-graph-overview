@@ -15,7 +15,7 @@ function matchQuery(
   const matches = query.matches(syntax, options);
 
   if (matches.length === 0) {
-    throw new Error(`No match found for query.`);
+    throw new Error("No match found for query.");
   }
   // @ts-expect-error: tsc can't deduce that an element must exist.
   return matches[0];

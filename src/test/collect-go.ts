@@ -27,7 +27,7 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
     }
     const functionName = functionNode.childForFieldName("name")?.text as string;
 
-    if (commentNode.type != "comment") {
+    if (commentNode.type !== "comment") {
       throw new Error(`function without comment: ${functionName}`);
     }
 
@@ -41,9 +41,8 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
     } catch (error) {
       if (error instanceof SyntaxError) {
         throw new Error(`invalid JSON comment on ${functionName}`);
-      } else {
-        throw error;
       }
+      throw error;
     }
   }
 }

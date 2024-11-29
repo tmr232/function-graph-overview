@@ -1,9 +1,9 @@
 import { intoRecords } from "../src/test/commentTestUtils";
-import { watch } from "fs";
-import { parseArgs } from "util";
+import { watch } from "node:fs";
+import { parseArgs } from "node:util";
 import { collectTests } from "../src/test/commentTestCollector";
 
-const watchDir = import.meta.dir + "/../src";
+const watchDir = `${import.meta.dir}/../src`;
 
 const { values } = parseArgs({
   args: Bun.argv,

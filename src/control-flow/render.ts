@@ -25,11 +25,11 @@ class RenderContext {
     return (
       this.backlinks.findIndex(
         (backlink) => from === backlink.from && to === backlink.to,
-      ) != -1
+      ) !== -1
     );
   }
   public isHighlighted(node: string): boolean {
-    return node == this.highlightedNode;
+    return node === this.highlightedNode;
   }
 }
 
