@@ -65,7 +65,6 @@ function defaultProcessStatement(
 }
 ```
 
-
 # TODO:
 
 - Register the new parser in a ton of places
@@ -73,3 +72,4 @@ function defaultProcessStatement(
 - write tests
 - Run tests
 - Add the new language to the demo, and all extensions
+- Mention the playground and AST queries

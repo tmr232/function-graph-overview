@@ -101,12 +101,15 @@ export class BlockMatcher {
 }
 
 /**
- * Maintains a single {Parser.QueryMatch} and allows accesing the captures within it.
+ * A utility class for matching against the AST using queries.
+ *
+ * [tree-sitter query reference](https://tree-sitter.github.io/tree-sitter/using-parsers#pattern-matching-with-queries
  */
 export class Match {
   private match: Parser.QueryMatch;
   private blockHandler: BlockHandler;
   private dispatchSingle: BlockMatcher["dispatchSingle"];
+
   constructor(
     match: Parser.QueryMatch,
     blockHandler: BlockHandler,
@@ -118,7 +121,7 @@ export class Match {
   }
 
   /**
-   * Get the first named syntax node from the query match.
+   * Returns the first named syntax node from the query match, if present.
    * @param name Name of the capture
    * @returns {Parser.SyntaxNode|undefined} The syntax matching the capture name, if captured.
    */
@@ -126,14 +129,26 @@ export class Match {
     return getSyntax(this.match, name);
   }
 
+  /**
+   * Returns the last named syntax node from the query match, if present.
+   * @param name Name of the capture
+   */
   public getLastSyntax(name: string): ReturnType<typeof getLastSyntax> {
     return getLastSyntax(this.match, name);
   }
 
+  /**
+   * Returns the first named syntax node from the query match.
+   * Throws an error if no matching node exists.
+   * @param name
+   */
   public requireSyntax(name: string): ReturnType<typeof requireSyntax> {
     return requireSyntax(this.match, name);
   }
-
+  /**
+   * Returns the all named syntax nodes from the query match.
+   * @param name Name of the capture
+   */
   public getSyntaxMany(name: string): ReturnType<typeof getSyntaxMany> {
     return getSyntaxMany(this.match, name);
   }

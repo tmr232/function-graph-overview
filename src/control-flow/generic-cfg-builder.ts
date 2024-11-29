@@ -11,7 +11,16 @@ import { NodeMapper } from "./node-mapper";
 import { pairwise } from "./zip";
 
 interface Dispatch {
+  /**
+   * Process a single AST node into a basic block
+   * @param syntax
+   */
   single(syntax: Parser.SyntaxNode | null): BasicBlock;
+
+  /**
+   * Process an array of AST nodes into a basic clock
+   * @param statements
+   */
   many(statements: Parser.SyntaxNode[]): BasicBlock;
 }
 interface Link {
