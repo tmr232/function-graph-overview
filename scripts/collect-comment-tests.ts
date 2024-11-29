@@ -20,13 +20,13 @@ const { values } = parseArgs({
 async function generateJson() {
   try {
     const records = intoRecords(await collectTests());
-    Bun.write("./dist/tests/commentTests.json", JSON.stringify(records));
+    await Bun.write("./dist/tests/commentTests.json", JSON.stringify(records));
   } catch (error) {
     console.log(error);
   }
 }
 
-generateJson();
+await generateJson();
 if (values.watch) {
   const watcher = watch(
     watchDir,
