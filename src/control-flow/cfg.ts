@@ -4,7 +4,7 @@ import { createCFGBuilder as createGoCFGBuilder } from "./cfg-go";
 import { createCFGBuilder as createPythonCFGBuilder } from "./cfg-python";
 import { createCFGBuilder as createCppCFGBuilder } from "./cfg-cpp";
 
-const supportedLanguages = ["C", "Go", "Python", "C++"] as const;
+export const supportedLanguages = ["C", "Go", "Python", "C++"] as const;
 export type Language = (typeof supportedLanguages)[number];
 export function isValidLanguage(language: string): language is Language {
   return (supportedLanguages as readonly string[]).includes(language);

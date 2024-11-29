@@ -5,7 +5,7 @@ import { getTestFuncs as getTestsForPython } from "./collect-python";
 import { getTestFuncs as getTestsForCpp } from "./collect-cpp.ts";
 import type { TestFunction } from "./commentTestTypes";
 
-export const testsDir = import.meta.dir + "/commentTestSamples";
+export const testsDir = `${import.meta.dir}/commentTestSamples`;
 const languages: {
   ext: string;
   getTestFuncs: (code: string) => Generator<TestFunction>;

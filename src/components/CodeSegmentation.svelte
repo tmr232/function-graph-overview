@@ -82,7 +82,7 @@
   ) {
     const { trim, simplify } = options;
     const tree = parsers[language].parse(code);
-    const functionSyntax = getFirstFunction(tree);
+    const functionSyntax = getFirstFunction(tree, language);
     const builder = newCFGBuilder(language, {});
 
     let cfg = builder.buildCFG(functionSyntax);

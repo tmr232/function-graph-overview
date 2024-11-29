@@ -5,7 +5,11 @@ import treeSitterC from "../../parsers/tree-sitter-c.wasm?url";
 import treeSitterPython from "../../parsers/tree-sitter-python.wasm?url";
 import treeSitterCore from "../../parsers/tree-sitter.wasm?url";
 import treeSitterCpp from "../../parsers/tree-sitter-cpp.wasm?url";
-import { newCFGBuilder, type Language } from "../control-flow/cfg";
+import {
+  newCFGBuilder,
+  type Language,
+  supportedLanguages,
+} from "../control-flow/cfg";
 import type { TestFuncRecord } from "../test/commentTestUtils";
 import type { TestFunction } from "../test/commentTestTypes";
 import { requirementTests } from "../test/commentTestHandlers";
@@ -13,25 +17,29 @@ import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
 import { type CFG, mergeNodeAttrs } from "../control-flow/cfg-defs";
 import { graphToDot } from "../control-flow/render";
 import { Graphviz, type Format } from "@hpcc-js/wasm-graphviz";
+
+const wasmMapping: { [language in Language]: string } = {
+  C: treeSitterC,
+  Go: treeSitterGo,
+  Python: treeSitterPython,
+  "C++": treeSitterCpp,
+};
+
+const functionNodeTypes: { [language in Language]: string[] } = {
+  Go: ["function_declaration", "method_declaration", "func_literal"],
+  C: ["function_definition"],
+  "C++": ["function_definition"],
+  Python: ["function_definition"],
+};
+
 async function initializeParser(language: Language) {
   await Parser.init({
     locateFile(_scriptName: string, _scriptDirectory: string) {
       return treeSitterCore;
     },
   });
+  const parserLanguage = await Parser.Language.load(wasmMapping[language]);
   const parser = new Parser();
-  const parserLanguage = await (() => {
-    switch (language) {
-      case "C":
-        return Parser.Language.load(treeSitterC);
-      case "Go":
-        return Parser.Language.load(treeSitterGo);
-      case "Python":
-        return Parser.Language.load(treeSitterPython);
-      case "C++":
-        return Parser.Language.load(treeSitterCpp);
-    }
-  })();
   parser.setLanguage(parserLanguage);
   return parser;
 }
@@ -39,29 +47,22 @@ async function initializeParser(language: Language) {
 export type Parsers = { [language in Language]: Parser };
 
 export async function initializeParsers(): Promise<Parsers> {
-  return {
-    Go: await initializeParser("Go"),
-    C: await initializeParser("C"),
-    Python: await initializeParser("Python"),
-    "C++": await initializeParser("C++"),
-  };
+  const parsers = [];
+  for (const language of supportedLanguages) {
+    parsers.push([language, await initializeParser(language)]);
+  }
+  return Object.fromEntries(parsers);
 }
 
-export function getFirstFunction(tree: Parser.Tree): Parser.SyntaxNode | null {
+export function getFirstFunction(
+  tree: Parser.Tree,
+  language: Language,
+): Parser.SyntaxNode | null {
   let functionNode: Parser.SyntaxNode | null = null;
   const cursor = tree.walk();
 
-  const funcTypes = [
-    // Go
-    "function_declaration",
-    "method_declaration",
-    "func_literal",
-    // C, Python
-    "function_definition",
-  ];
-
   const visitNode = () => {
-    if (funcTypes.includes(cursor.nodeType)) {
+    if (functionNodeTypes[language].includes(cursor.nodeType)) {
       functionNode = cursor.currentNode;
       return;
     }
@@ -94,7 +95,7 @@ export interface TestResults {
 export function runTest(record: TestFuncRecord): TestResults[] {
   const tree = parsers[record.language].parse(record.code);
   const testFunc: TestFunction = {
-    function: getFirstFunction(tree) as Parser.SyntaxNode,
+    function: getFirstFunction(tree, record.language) as Parser.SyntaxNode,
     language: record.language,
     name: record.name,
     reqs: record.reqs,
@@ -127,7 +128,10 @@ export function processRecord(
   const { trim, simplify, verbose, flatSwitch } = options;
   const tree = parsers[record.language].parse(record.code);
   const builder = newCFGBuilder(record.language, { flatSwitch });
-  const functionSyntax = getFirstFunction(tree) as Parser.SyntaxNode;
+  const functionSyntax = getFirstFunction(
+    tree,
+    record.language,
+  ) as Parser.SyntaxNode;
 
   const ast = functionSyntax.toString();
 
