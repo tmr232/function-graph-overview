@@ -34,7 +34,14 @@ const statementHandlers: StatementHandlers = {
     comment: processComment,
   },
   default: defaultProcessStatement,
-};
+} as const;
+
+export function getStatementHandlers(): StatementHandlers {
+  return {
+    named: Object.fromEntries(Object.entries(statementHandlers.named)),
+    default: statementHandlers.default,
+  };
+}
 
 export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
   return new GenericCFGBuilder(statementHandlers, options);
