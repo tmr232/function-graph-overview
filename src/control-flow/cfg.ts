@@ -2,13 +2,26 @@ import { createCFGBuilder as createCCFGBuilder } from "./cfg-c";
 import type { BuilderOptions, CFGBuilder } from "./cfg-defs";
 import { createCFGBuilder as createGoCFGBuilder } from "./cfg-go";
 import { createCFGBuilder as createPythonCFGBuilder } from "./cfg-python";
+import {
+  createCFGBuilder as createCppCFGBuilder,
+  functionNodeNames as cppFunctionNodeNames,
+} from "./cfg-cpp";
 
-const supportedLanguages = ["C", "Go", "Python"] as const;
+// ADD-LANGUAGES-HERE
+/**
+ * The languages we support
+ */
+export const supportedLanguages = ["C", "Go", "Python", "C++"] as const;
 export type Language = (typeof supportedLanguages)[number];
 export function isValidLanguage(language: string): language is Language {
   return (supportedLanguages as readonly string[]).includes(language);
 }
 
+/**
+ * Returns a CFG builder for the given language
+ * @param language The language to build for
+ * @param options Builder options
+ */
 export function newCFGBuilder(
   language: Language,
   options: BuilderOptions,
@@ -20,5 +33,17 @@ export function newCFGBuilder(
       return createGoCFGBuilder(options);
     case "Python":
       return createPythonCFGBuilder(options);
+    case "C++":
+      return createCppCFGBuilder(options);
   }
 }
+
+/**
+ * The names of the AST nodes representing functions in each language
+ */
+export const functionNodeTypes: { [language in Language]: string[] } = {
+  Go: ["function_declaration", "method_declaration", "func_literal"],
+  C: ["function_definition"],
+  "C++": cppFunctionNodeNames,
+  Python: ["function_definition"],
+};

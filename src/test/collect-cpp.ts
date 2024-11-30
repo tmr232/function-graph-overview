@@ -1,10 +1,10 @@
 import type Parser from "web-tree-sitter";
-import treeSitterC from "../../parsers/tree-sitter-c.wasm?url";
+import treeSitterCpp from "../../parsers/tree-sitter-cpp.wasm?url";
 import { parseComment } from "./commentTestUtils";
 import type { TestFunction } from "./commentTestTypes";
 import { initializeParser } from "./parser-init";
 
-const { parser, language } = await initializeParser(treeSitterC);
+const { parser, language } = await initializeParser(treeSitterCpp);
 
 export function getTestFuncs(code: string): Generator<TestFunction> {
   const tree = parser.parse(code);
@@ -33,7 +33,7 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
         reqs: parseComment(captures[0].node.text.slice(2, -2)),
         // @ts-expect-error: We know that the captures are OK
         name: captures[2].node.text,
-        language: "C",
+        language: "C++",
       };
     }
   }

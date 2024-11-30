@@ -1,4 +1,4 @@
-import { MultiDirectedGraph } from "graphology";
+import type { MultiDirectedGraph } from "graphology";
 import type Parser from "web-tree-sitter";
 import type { SimpleRange } from "./ranges";
 import { evolve } from "./evolve";
@@ -123,14 +123,14 @@ export class BlockHandler {
   }
 
   public processGotos(callback: (gotoNode: string, labelNode: string) => void) {
-    this.gotos.forEach((goto) => {
+    for (const goto of this.gotos) {
       const labelNode = this.labels.get(goto.label);
       if (labelNode) {
         callback(goto.node, labelNode);
       }
       // If we get here, then the goto didn't have a matching label.
       // This is a user problem, not graphing problem.
-    });
+    }
   }
 
   public update(block: BasicBlock): BasicBlock {
@@ -192,7 +192,14 @@ export interface Case {
 }
 
 export interface BuilderOptions {
+  /**
+   * Render switches as flat, vs. an if-else chain
+   */
   flatSwitch?: boolean;
+  /**
+   * The comment pattern to use for markers.
+   * The first capture group will be used as the marker text.
+   */
   markerPattern?: RegExp;
 }
 
@@ -207,7 +214,9 @@ export interface CFGBuilder {
 export function remapNodeTargets(cfg: CFG): CFG {
   const remap = new Map<string, string>();
   cfg.graph.forEachNode((node, { targets }) => {
-    targets.forEach((target) => remap.set(target, node));
+    for (const target of targets) {
+      remap.set(target, node);
+    }
   });
   const offsetToNode = cfg.offsetToNode.map(({ start, value: node }) => ({
     start,

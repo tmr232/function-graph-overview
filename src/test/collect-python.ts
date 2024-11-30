@@ -1,4 +1,4 @@
-import Parser from "web-tree-sitter";
+import type Parser from "web-tree-sitter";
 import treeSitterPython from "../../parsers/tree-sitter-python.wasm?url";
 import { parseComment } from "./commentTestUtils";
 import type { TestFunction } from "./commentTestTypes";

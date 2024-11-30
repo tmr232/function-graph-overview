@@ -9,9 +9,12 @@ import type {
 } from "./cfg-defs.ts";
 import { MultiDirectedGraph } from "graphology";
 
+/**
+ * Constructs the CFG
+ */
 export class Builder {
   private graph: CFGGraph = new MultiDirectedGraph();
-  private nodeId: number = 0;
+  private nodeId = 0;
   private clusterId: ClusterId = 0;
   private activeClusters: Cluster[] = [];
 
@@ -35,6 +38,15 @@ export class Builder {
     this.activeClusters.pop();
   }
 
+  /**
+   * Calls the function within the context of a cluster.
+   * Clusters are used for representing context managers and exceptions.
+   *
+   * Clustered can be nested.
+   *
+   * @param type The type of the cluster.
+   * @param fn The function to run in the context of the cluster.
+   */
   public withCluster<T>(type: ClusterType, fn: (cluster: Cluster) => T): T {
     const cluster = this.startCluster(type);
     try {
@@ -44,6 +56,12 @@ export class Builder {
     }
   }
 
+  /**
+   * Add a node to the CFG
+   * @param type
+   * @param code
+   * @param startOffset The offset in the code for which the node is generated
+   */
   public addNode(
     type: NodeType,
     code: string,
@@ -63,6 +81,14 @@ export class Builder {
     return id;
   }
 
+  /**
+   * Clones a node.
+   *
+   * Useful for `finally` blocks, where the "same" node exists in multiple paths.
+   *
+   * @param node The node to clone
+   * @param overrides Node attributes to override
+   */
   public cloneNode(node: string, overrides?: { cluster: Cluster }): string {
     const id = `node${this.nodeId++}`;
     const originalAttrs = this.graph.getNodeAttributes(node);
@@ -73,10 +99,25 @@ export class Builder {
     return id;
   }
 
+  /**
+   * Marks a given node.
+   *
+   * This is currently only used for testing, to denote nodes of interest for
+   * reachability tests.
+   *
+   * @param node The node to mark
+   * @param marker The desired marker
+   */
   public addMarker(node: string, marker: string) {
     this.graph.getNodeAttributes(node).markers.push(marker);
   }
 
+  /**
+   * Adds an edge to the CFG
+   * @param source Source node
+   * @param target Target node
+   * @param type Edge type
+   */
   public addEdge(
     source: string,
     target: string,
@@ -87,10 +128,18 @@ export class Builder {
     }
   }
 
+  /**
+   * Returns the current CFG
+   */
   public getGraph(): CFGGraph {
     return this.graph;
   }
 
+  /**
+   * Sets node attributes if they are not yet set (make them default to a value).
+   * @param node The node to modify
+   * @param defaults Attributes to set
+   */
   public setDefault(node: string, defaults: Partial<GraphNode>): void {
     this.graph.updateNodeAttributes(node, (existing: GraphNode) => {
       const result = { ...existing };

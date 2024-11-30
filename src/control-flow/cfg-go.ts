@@ -1,9 +1,5 @@
-import Parser from "web-tree-sitter";
-import {
-  type BasicBlock,
-  type BuilderOptions,
-  type CFGBuilder,
-} from "./cfg-defs";
+import type Parser from "web-tree-sitter";
+import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
   GenericCFGBuilder,
   type Context,
@@ -118,14 +114,13 @@ function processLabeledStatement(
       exit: labeledExit,
       labels: new Map([[name, labelNode]]),
     });
-  } else {
-    // Go allows for empty labels.
-    return ctx.state.update({
-      entry: labelNode,
-      exit: labelNode,
-      labels: new Map([[name, labelNode]]),
-    });
   }
+  // Go allows for empty labels.
+  return ctx.state.update({
+    entry: labelNode,
+    exit: labelNode,
+    labels: new Map([[name, labelNode]]),
+  });
 }
 
 function processContinueStatement(
@@ -257,9 +252,8 @@ function processIfStatement(
         return ctx.state.update(
           processIfStatement(alternativeChild, ctx, mergeNode),
         );
-      } else {
-        return ctx.state.update(ctx.dispatch.single(alternativeChild));
       }
+      return ctx.state.update(ctx.dispatch.single(alternativeChild));
     })();
 
     if (elseEntry) {

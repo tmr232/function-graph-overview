@@ -5,7 +5,11 @@ import Parser, { type SyntaxNode } from "web-tree-sitter";
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import { graphToDot } from "../control-flow/render";
 import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
-import { newCFGBuilder, type Language } from "../control-flow/cfg";
+import {
+  newCFGBuilder,
+  type Language,
+  functionNodeTypes,
+} from "../control-flow/cfg";
 import {
   mergeNodeAttrs,
   remapNodeTargets,
@@ -23,15 +27,30 @@ import {
 
 let graphviz: Graphviz;
 interface SupportedLanguage {
+  /**
+   * The VSCode languageId to match on
+   */
   languageId: string;
+  /**
+   * The CFG language
+   */
   language: Language;
+  /**
+   * Name of the parser to use
+   */
   parserName: string;
 }
+// ADD-LANGUAGES-HERE
 const supportedLanguages: SupportedLanguage[] = [
   {
     languageId: "c",
     language: "C" as Language,
     parserName: "tree-sitter-c.wasm",
+  },
+  {
+    languageId: "cpp",
+    language: "C++" as Language,
+    parserName: "tree-sitter-cpp.wasm",
   },
   {
     languageId: "go",
@@ -44,12 +63,6 @@ const supportedLanguages: SupportedLanguage[] = [
     parserName: "tree-sitter-python.wasm",
   },
 ];
-
-const functionNodeTypes: { [key in Language]: string[] } = {
-  Go: ["function_declaration", "method_declaration", "func_literal"],
-  C: ["function_definition"],
-  Python: ["function_definition"],
-};
 
 const supportedLanguageIds = supportedLanguages.map((lang) => lang.languageId);
 const idToLanguage = (languageId: string): Language | null => {
@@ -144,9 +157,8 @@ function loadSettings(): Settings {
       case "System":
         if (isThemeDark()) {
           return getDarkColorList();
-        } else {
-          return getLightColorList();
         }
+        return getLightColorList();
       case "Light":
         return getLightColorList();
       case "Dark":
@@ -232,7 +244,7 @@ export async function activate(context: vscode.ExtensionContext) {
     edge [color="#e0e0e0"]
     Hello -> World 
 }`;
-  const helloWorldLight = `digraph G { Hello -> World }`;
+  const helloWorldLight = "digraph G { Hello -> World }";
 
   // We use the color theme for the initial graph, as it's a good way to avoid
   // shocking the user without being overly complicated with reading custom

@@ -1,10 +1,6 @@
-import Parser from "web-tree-sitter";
-import {
-  type BasicBlock,
-  type BuilderOptions,
-  type CFGBuilder,
-} from "./cfg-defs";
-import { Match } from "./block-matcher.ts";
+import type Parser from "web-tree-sitter";
+import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
+import type { Match } from "./block-matcher.ts";
 import {
   GenericCFGBuilder,
   type Context,
@@ -34,7 +30,14 @@ const statementHandlers: StatementHandlers = {
     comment: processComment,
   },
   default: defaultProcessStatement,
-};
+} as const;
+
+export function getStatementHandlers(): StatementHandlers {
+  return {
+    named: Object.fromEntries(Object.entries(statementHandlers.named)),
+    default: statementHandlers.default,
+  };
+}
 
 export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
   return new GenericCFGBuilder(statementHandlers, options);
@@ -397,14 +400,13 @@ function processLabeledStatement(
       exit: labeledExit,
       labels: new Map([[name, labelNode]]),
     });
-  } else {
-    // C allows for empty labels.
-    return ctx.state.update({
-      entry: labelNode,
-      exit: labelNode,
-      labels: new Map([[name, labelNode]]),
-    });
   }
+  // C allows for empty labels.
+  return ctx.state.update({
+    entry: labelNode,
+    exit: labelNode,
+    labels: new Map([[name, labelNode]]),
+  });
 }
 
 function processContinueStatement(

@@ -46,7 +46,7 @@ function pathExists(
 ): boolean {
   let foundTarget = false;
   bfsFromNode(graph, source, (node) => {
-    foundTarget ||= node == target;
+    foundTarget ||= node === target;
     return foundTarget;
   });
   return foundTarget;
@@ -55,7 +55,9 @@ function pathExists(
 function getMarkerMap(cfg: CFG): Map<string, string> {
   const markerMap: Map<string, string> = new Map();
   cfg.graph.forEachNode((node, { markers }) => {
-    markers.forEach((marker) => markerMap.set(marker, node));
+    for (const marker of markers) {
+      markerMap.set(marker, node);
+    }
   });
   return markerMap;
 }
@@ -79,7 +81,7 @@ export const requirementTests: {
       const exitNodes = cfg.graph.filterNodes(
         (node) => cfg.graph.outDegree(node) === 0,
       );
-      if (exitNodes.length != testFunc.reqs.exits) {
+      if (exitNodes.length !== testFunc.reqs.exits) {
         return `expected ${testFunc.reqs.exits} exits but found ${exitNodes.length}`;
       }
     }

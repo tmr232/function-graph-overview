@@ -1,4 +1,4 @@
-import { MultiDirectedGraph } from "graphology";
+import type { MultiDirectedGraph } from "graphology";
 import { subgraph } from "graphology-operators";
 import { bfsFromNode } from "graphology-traversal";
 import type { CFG, GraphNode } from "./cfg-defs";
@@ -77,13 +77,13 @@ export function simplifyCFG(cfg: CFG, mergeAttrs?: AttrMerger): CFG {
   let entry = cfg.entry;
 
   try {
-    toCollapse.forEach(([source, target]) => {
+    for (const [source, target] of toCollapse) {
       collapseNode(graph, source, target, mergeAttrs);
       if (entry === source) {
         // Keep track of the entry node!
         entry = target;
       }
-    });
+    }
   } catch (error) {
     console.log(error);
   }
@@ -107,8 +107,8 @@ export function detectBacklinks(
 ): { from: string; to: string }[] {
   const backlinks: { from: string; to: string }[] = [];
   const stack: { node: string; path: string[] }[] = [{ node: entry, path: [] }];
-  let current;
-  while ((current = stack.pop()) !== undefined) {
+  let current = stack.pop();
+  for (; current !== undefined; current = stack.pop()) {
     const { node, path } = current;
     for (const child of graph.outNeighbors(node)) {
       if (path.includes(child)) {

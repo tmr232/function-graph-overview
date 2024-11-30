@@ -18,7 +18,7 @@ export function buildSwitch(
 ) {
   let fallthrough: string | null = null;
   let previous: string | null = switchHeadNode;
-  cases.forEach((thisCase) => {
+  for (const thisCase of cases) {
     if (ctx.options.flatSwitch) {
       ctx.builder.addEdge(switchHeadNode, thisCase.conditionEntry);
       ctx.builder.addEdge(thisCase.conditionExit, thisCase.consequenceEntry);
@@ -58,7 +58,7 @@ export function buildSwitch(
     }
     // Update for next case
     fallthrough = thisCase.hasFallthrough ? thisCase.consequenceExit : null;
-  });
+  }
   // Connect the last node to the merge node.
   // No need to handle `fallthrough` here as it is not allowed for the last case.
   if (previous && !options.noImplicitDefault) {

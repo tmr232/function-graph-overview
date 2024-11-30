@@ -1,6 +1,10 @@
 <script lang="ts">
   import Parser, { type SyntaxNode } from "web-tree-sitter";
-  import { newCFGBuilder, type Language } from "../control-flow/cfg";
+  import {
+    newCFGBuilder,
+    type Language,
+    functionNodeTypes,
+  } from "../control-flow/cfg";
   import {
     mergeNodeAttrs,
     remapNodeTargets,
@@ -49,12 +53,6 @@
     readonly flatSwitch: boolean;
     readonly highlight: boolean;
   }
-
-  const functionNodeTypes: { [key in Language]: string[] } = {
-    Go: ["function_declaration", "method_declaration", "func_literal"],
-    C: ["function_definition"],
-    Python: ["function_definition"],
-  };
 
   function getFunctionAtOffset(
     tree: Parser.Tree,

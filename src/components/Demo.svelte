@@ -9,30 +9,59 @@
   import CodeSegmentation from "./CodeSegmentation.svelte";
   import ColorScheme from "./ColorSchemeEditor.svelte";
   import { getSystemColorList, toggleTheme, isDark } from "./lightdark.ts";
+  import type { LanguageSupport } from "@codemirror/language";
 
   export let codeGo = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
   export let codeC = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";
+  export let codeCpp = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";
   export let codePython = "def example():\n    if x:\n        return";
   let offsetToHighlight: number | undefined = undefined;
   let colorList = getSystemColorList();
+  // ADD-LANGUAGES-HERE
   let languages: {
     language: Language;
     text: string;
+    codeMirror: () => LanguageSupport;
   }[] = [
-    { language: "Go" as Language, text: "Go" },
-    { language: "C" as Language, text: "C" },
-    { language: "Python" as Language, text: "Python (experimental)" },
-  ];
+    { language: "Go" as Language, text: "Go", codeMirror: go },
+    { language: "C" as Language, text: "C", codeMirror: cpp },
+    {
+      language: "Python" as Language,
+      text: "Python (experimental)",
+      codeMirror: python,
+    },
+    {
+      language: "C++" as Language,
+      text: "C++ (experimental)",
+      codeMirror: cpp,
+    },
+  ] as const;
+
+  const languageCode: { [language in Language]: string } = {
+    Go: codeGo,
+    C: codeC,
+    Python: codePython,
+    "C++": codeCpp,
+  };
 
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has("go")) {
-    codeGo = LZString.decompressFromEncodedURIComponent(urlParams.get("go"));
+    languageCode.Go = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("go"),
+    );
   }
   if (urlParams.has("c")) {
-    codeC = LZString.decompressFromEncodedURIComponent(urlParams.get("c"));
+    languageCode.C = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("c"),
+    );
+  }
+  if (urlParams.has("c++")) {
+    languageCode["C++"] = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("c++"),
+    );
   }
   if (urlParams.has("python")) {
-    codePython = LZString.decompressFromEncodedURIComponent(
+    languageCode.Python = LZString.decompressFromEncodedURIComponent(
       urlParams.get("python"),
     );
   }
@@ -52,24 +81,13 @@
     ...range(8, 31).map((n) => ({ label: `${n}`, value: `${n}px` })),
   ];
 
-  let selection = languages[parseInt(urlParams.get("language")) || 0];
-  let code = codeGo;
-  $: {
-    switch (selection.language) {
-      case "C":
-        code = codeC;
-        break;
-      case "Go":
-        code = codeGo;
-        break;
-      case "Python":
-        code = codePython;
-        break;
-    }
-  }
+  let selection =
+    languages[parseInt(urlParams.get("language"))] ?? languages[0];
 
   function share() {
-    const compressedCode = LZString.compressToEncodedURIComponent(code);
+    const compressedCode = LZString.compressToEncodedURIComponent(
+      languageCode[selection.language],
+    );
     const codeName = selection.language.toLowerCase();
     const language = languages.findIndex((lang) => lang == selection);
     const query = `?language=${language}&${codeName}=${compressedCode}`;
@@ -198,35 +216,21 @@
         <button on:click={share}>Share (experimental)</button>
       </div>
       <div class="codemirror">
-        {#if selection.language === "Go"}
-          <Editor
-            bind:this={editor}
-            bind:code={codeGo}
-            lang={go()}
-            on:cursorMoved={cursorMoved}
-            {fontSize}
-          />
-        {:else if selection.language === "C"}
-          <Editor
-            bind:this={editor}
-            bind:code={codeC}
-            lang={cpp()}
-            on:cursorMoved={cursorMoved}
-            {fontSize}
-          />
-        {:else if selection.language === "Python"}
-          <Editor
-            bind:this={editor}
-            bind:code={codePython}
-            lang={python()}
-            on:cursorMoved={cursorMoved}
-            {fontSize}
-          />
-        {/if}
+        <Editor
+          bind:this={editor}
+          bind:code={languageCode[selection.language]}
+          lang={selection.codeMirror()}
+          on:cursorMoved={cursorMoved}
+          {fontSize}
+        />
       </div>
       {#if showSegmentation}
         <div class="segmentation">
-          <CodeSegmentation {code} language={selection.language} {simplify} />
+          <CodeSegmentation
+            languageCode={languageCode[selection.language]}
+            language={selection.language}
+            {simplify}
+          />
         </div>
       {/if}
     {/if}
@@ -267,7 +271,7 @@
       </div>
     </div>
     <Graph
-      {code}
+      code={languageCode[selection.language]}
       {offsetToHighlight}
       language={selection.language}
       {simplify}

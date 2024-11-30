@@ -4,6 +4,6 @@ import config from "./esbuild.config";
 try {
   const context = await esbuild.context(config);
   await context.watch();
-} catch (_e) {
+} catch {
   process.exit(1);
 }

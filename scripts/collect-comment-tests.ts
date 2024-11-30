@@ -1,9 +1,9 @@
 import { intoRecords } from "../src/test/commentTestUtils";
-import { watch } from "fs";
-import { parseArgs } from "util";
+import { watch } from "node:fs";
+import { parseArgs } from "node:util";
 import { collectTests } from "../src/test/commentTestCollector";
 
-const watchDir = import.meta.dir + "/../src";
+const watchDir = `${import.meta.dir}/../src`;
 
 const { values } = parseArgs({
   args: Bun.argv,
@@ -20,13 +20,13 @@ const { values } = parseArgs({
 async function generateJson() {
   try {
     const records = intoRecords(await collectTests());
-    Bun.write("./dist/tests/commentTests.json", JSON.stringify(records));
+    await Bun.write("./dist/tests/commentTests.json", JSON.stringify(records));
   } catch (error) {
     console.log(error);
   }
 }
 
-generateJson();
+await generateJson();
 if (values.watch) {
   const watcher = watch(
     watchDir,

@@ -1,9 +1,5 @@
-import Parser from "web-tree-sitter";
-import {
-  type BasicBlock,
-  type BuilderOptions,
-  type CFGBuilder,
-} from "./cfg-defs";
+import type Parser from "web-tree-sitter";
+import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
   GenericCFGBuilder,
   type Context,
@@ -39,7 +35,7 @@ function defaultProcessStatement(
   ctx: Context,
 ): BasicBlock {
   const { builder } = ctx;
-  const hasYield = matchExistsIn(syntax, `(yield) @yield`);
+  const hasYield = matchExistsIn(syntax, "(yield) @yield");
   if (hasYield) {
     const yieldNode = builder.addNode("YIELD", syntax.text, syntax.startIndex);
     ctx.link.syntaxToNode(syntax, yieldNode);
@@ -132,10 +128,10 @@ function processTryStatement(
     // In the rendering, we will connect them to the side of the node, and use invisible lines for it.
     if (bodyBlock.entry) {
       const headNode = bodyBlock.entry;
-      exceptBlocks.forEach((exceptBlock) => {
+      for (const exceptBlock of exceptBlocks) {
         // Yes, this is effectively a head-to-head link. But that's ok.
         builder.addEdge(headNode, exceptBlock.entry, "exception");
-      });
+      }
     }
 
     // Create the `else` block before `finally` to handle returns correctly.
@@ -194,15 +190,15 @@ function processTryStatement(
       if (toFinally) builder.addEdge(toFinally, finallyBlock.entry);
       happyExit = finallyBlock.exit;
       // Connect `except` to `finally`
-      exceptBlocks.forEach((exceptBlock) => {
+      for (const exceptBlock of exceptBlocks) {
         if (exceptBlock.exit)
           builder.addEdge(exceptBlock.exit, finallyBlock.entry as string);
-      });
+      }
     } else {
       // We need to connect the `except` blocks to the merge node
-      exceptBlocks.forEach((exceptBlock) => {
+      for (const exceptBlock of exceptBlocks) {
         if (exceptBlock.exit) builder.addEdge(exceptBlock.exit, mergeNode);
-      });
+      }
     }
 
     if (happyExit) builder.addEdge(happyExit, mergeNode);
@@ -320,9 +316,9 @@ function processMatchStatement(
       `case ${patternSyntaxMany.map((pat) => pat.text).join(", ")}:`,
       caseSyntax.startIndex,
     );
-    patternSyntaxMany.forEach((syntax) =>
-      ctx.link.syntaxToNode(syntax, patternNode),
-    );
+    for (const syntax of patternSyntaxMany) {
+      ctx.link.syntaxToNode(syntax, patternNode);
+    }
     ctx.link.offsetToSyntax(caseColon, consequenceSyntax);
     ctx.link.syntaxToNode(caseSyntax, patternNode);
 

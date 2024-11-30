@@ -11,7 +11,16 @@ import { NodeMapper } from "./node-mapper";
 import { pairwise } from "./zip";
 
 interface Dispatch {
+  /**
+   * Process a single AST node into a basic block
+   * @param syntax
+   */
   single(syntax: Parser.SyntaxNode | null): BasicBlock;
+
+  /**
+   * Process an array of AST nodes into a basic clock
+   * @param statements
+   */
   many(statements: Parser.SyntaxNode[]): BasicBlock;
 }
 interface Link {
@@ -27,12 +36,31 @@ export interface Context {
   link: Link;
 }
 
+/**
+ * A function that converts an AST node to a CFG basic-block.
+ *
+ * @param {Parser.SyntaxNode} syntax - The AST node to be processed
+ * @param {Context} ctx - The context in which the statement is being handled
+ * @returns {BasicBlock} A basic block representation of the AST node
+ */
 type StatementHandler = (syntax: Parser.SyntaxNode, ctx: Context) => BasicBlock;
+/**
+ * Maps AST nodes to their matching `StatementHandler` functions.
+ */
 export type StatementHandlers = {
+  /**
+   * Named entries map use the AST node names to map
+   */
   named: { [key: string]: StatementHandler };
+  /**
+   * The default entry handles all the other AST nodes
+   */
   default: StatementHandler;
 };
 
+/**
+ * This class is responsible for building a CFG from an AST.
+ */
 export class GenericCFGBuilder {
   private builder: Builder = new Builder();
   private readonly options: BuilderOptions;

@@ -30,7 +30,8 @@ function numberedTests<T>(prefix: string, testCases: T[]): [string, T][] {
 function compare<T>(a: T, b: T): number {
   if (a < b) {
     return -1;
-  } else if (a > b) {
+  }
+  if (a > b) {
     return 1;
   }
   return 0;
