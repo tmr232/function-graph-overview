@@ -1,14 +1,9 @@
-# Function-Graph-Overview Demo
+# JetBrains Frontend
 
-This is the interactive web demo.
+This is the code rendering the graphs in the JetBrains plugin.
 
-To run it, run `bun demo`.
+To build it, run:
 
-To build it, `bun build-demo`.
-
-## Debug Features
-
-The demo now has a few debug features that you can enable via URL query params.
-
-- `segmentation` adds a view showing the mapping of source-code to CFG nodes
-- `verbose` shows node content in the graph
+```shell
+bun build-jetbrains
+```

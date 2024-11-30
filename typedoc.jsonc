@@ -1,4 +1,6 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "out": "dist/docs",
+  "projectDocuments": ["docs/*"],
+  "categoryOrder": ["Guides", "Testing", "*"],
 }

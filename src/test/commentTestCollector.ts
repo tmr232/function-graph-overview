@@ -1,3 +1,9 @@
+/**
+ * Responsible for collecting all the comment-tests.
+ *
+ * @category Testing
+ * @module
+ */
 import { Glob } from "bun";
 import { getTestFuncs as getTestFuncsForC } from "./collect-c";
 import { getTestFuncs as getTestFuncsForGo } from "./collect-go";

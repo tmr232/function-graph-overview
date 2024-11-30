@@ -1,6 +1,12 @@
-## Adding a New Language
+---
+title: Adding a New Language
+group: Documents
+category: Guides
+---
 
-### Add the Relevant Parser
+# Adding a New Language
+
+## Add the Relevant Parser
 
 We're using [tree-sitter] to parse code into ASTs.
 Each language requires its own parser.
@@ -21,11 +27,7 @@ and run `bun generate-parsers` again.
 
 Once the command completes successfully, your new parser should be inside `./parsers`.
 
-[tree-sitter parsers]: https://github.com/tree-sitter/tree-sitter/wiki/List-of-parsers
-[tree-sitter]: https://tree-sitter.github.io/tree-sitter/
-[build-wasm]: https://github.com/tree-sitter/tree-sitter/blob/master/lib/binding_web/README.md#generate-wasm-language-files
-
-### Generating the CFG
+## Generating the CFG
 
 Each CFG-builder resides in its own file inside `./src/control-flow`.
 Name yours `cfg-<language>.ts`.
@@ -76,10 +78,15 @@ Those will include:
 - Adding test-collectors and tests in `src/test/commentTestCollector.ts`
 - Adding the language in the demo's UI in `src/components/Demo.svelte`
 
-# TODO:
+### Implementing the Builder
 
-- Create a test collector
-- write tests
-- Run tests
-- Add the new language to the demo, and all extensions
-- Mention the playground and AST queries
+Once all the wiring is in place, it's time to actually generate the CFG.
+It is highly recommended that you read the other CFG implementation for reference.
+
+While you're working, the [tree-sitter playground] will prove highly valuable in understanding the AST
+and creating queries.
+
+[tree-sitter]: https://tree-sitter.github.io/tree-sitter/
+[tree-sitter parsers]: https://github.com/tree-sitter/tree-sitter/wiki/List-of-parsers
+[tree-sitter playground]: https://tree-sitter.github.io/tree-sitter/playground
+[build-wasm]: https://github.com/tree-sitter/tree-sitter/blob/master/lib/binding_web/README.md#generate-wasm-language-files
