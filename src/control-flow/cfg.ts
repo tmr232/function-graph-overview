@@ -7,12 +7,21 @@ import {
   functionNodeNames as cppFunctionNodeNames,
 } from "./cfg-cpp";
 
+// ADD-LANGUAGES-HERE
+/**
+ * The languages we support
+ */
 export const supportedLanguages = ["C", "Go", "Python", "C++"] as const;
 export type Language = (typeof supportedLanguages)[number];
 export function isValidLanguage(language: string): language is Language {
   return (supportedLanguages as readonly string[]).includes(language);
 }
 
+/**
+ * Returns a CFG builder for the given language
+ * @param language The language to build for
+ * @param options Builder options
+ */
 export function newCFGBuilder(
   language: Language,
   options: BuilderOptions,
@@ -29,6 +38,9 @@ export function newCFGBuilder(
   }
 }
 
+/**
+ * The names of the AST nodes representing functions in each language
+ */
 export const functionNodeTypes: { [language in Language]: string[] } = {
   Go: ["function_declaration", "method_declaration", "func_literal"],
   C: ["function_definition"],

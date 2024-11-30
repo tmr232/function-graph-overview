@@ -27,10 +27,20 @@ import {
 
 let graphviz: Graphviz;
 interface SupportedLanguage {
+  /**
+   * The VSCode languageId to match on
+   */
   languageId: string;
+  /**
+   * The CFG language
+   */
   language: Language;
+  /**
+   * Name of the parser to use
+   */
   parserName: string;
 }
+// ADD-LANGUAGES-HERE
 const supportedLanguages: SupportedLanguage[] = [
   {
     languageId: "c",

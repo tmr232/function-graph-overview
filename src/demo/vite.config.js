@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [svelte()],
   build: {
     copyPublicDir: true,
+    emptyOutDir: true,
   },
   base: "/function-graph-overview/",
 });

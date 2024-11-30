@@ -65,9 +65,19 @@ function defaultProcessStatement(
 }
 ```
 
+Once you have your initial builder file, there's quite a lot of wiring to do,
+to register the language in all the relevant places.
+Search for `ADD-LANGUAGES-HERE` in the code, and add the language in all the relevant places.
+Those will include:
+
+- Language & builder definitions in `src/control-flow/cfg.ts`
+- Mapping languages to `.wasm` files in `src/components/utils.ts`
+- Mapping VSCode's `languageId` to our language definitions in `src/vscode/extension.ts`
+- Adding test-collectors and tests in `src/test/commentTestCollector.ts`
+- Adding the language in the demo's UI in `src/components/Demo.svelte`
+
 # TODO:
 
-- Register the new parser in a ton of places
 - Create a test collector
 - write tests
 - Run tests

@@ -19,6 +19,7 @@ import { type CFG, mergeNodeAttrs } from "../control-flow/cfg-defs";
 import { graphToDot } from "../control-flow/render";
 import { Graphviz, type Format } from "@hpcc-js/wasm-graphviz";
 
+// ADD-LANGUAGES-HERE
 const wasmMapping: { [language in Language]: string } = {
   C: treeSitterC,
   Go: treeSitterGo,

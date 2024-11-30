@@ -192,7 +192,14 @@ export interface Case {
 }
 
 export interface BuilderOptions {
+  /**
+   * Render switches as flat, vs. an if-else chain
+   */
   flatSwitch?: boolean;
+  /**
+   * The comment pattern to use for markers.
+   * The first capture group will be used as the marker text.
+   */
   markerPattern?: RegExp;
 }
 

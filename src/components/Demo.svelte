@@ -15,6 +15,7 @@
   export let codePython = "def example():\n    if x:\n        return";
   let offsetToHighlight: number | undefined = undefined;
   let colorList = getSystemColorList();
+  // ADD-LANGUAGES-HERE
   let languages: {
     language: Language;
     text: string;
