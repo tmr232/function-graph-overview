@@ -16,11 +16,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - [Oxlint](https://oxc.rs/docs/guide/usage/linter) has been added to auto-fix some common issues
 - The `generate-parsers.ts` script has been updated to support copying existing `.wasm` files from tree-sitter grammar packages
 - Initial support for C++
-- A basic [typedoc](https://typedoc.org/) configuration was added, to help in rendering docs  
+- A basic [typedoc](https://typedoc.org/) configuration was added, to help in rendering docs
 
 ### Changed
 
-- Adding a new language now requires less wiring code, as many language declarations were merged. 
+- Adding a new language now requires less wiring code, as many language declarations were merged.
 
 ## [0.0.8] - 2024-10-10
 
