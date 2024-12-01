@@ -10,11 +10,20 @@
   import ColorScheme from "./ColorSchemeEditor.svelte";
   import { getSystemColorList, toggleTheme, isDark } from "./lightdark.ts";
   import type { LanguageSupport } from "@codemirror/language";
+  import { evolve } from "../control-flow/evolve.ts";
 
-  export let codeGo = "func Example() {\n\tif x {\n\t\treturn\n\t}\n}";
-  export let codeC = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";
-  export let codeCpp = "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}";
-  export let codePython = "def example():\n    if x:\n        return";
+  // ADD-LANGUAGES-HERE
+  const defaultCodeSamples: { [language in Language]?: string } = {
+    Go: "func Example() {\n\tif x {\n\t\treturn\n\t}\n}",
+    C: "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
+    "C++": "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
+    Python: "def example():\n    if x:\n        return",
+  };
+
+  export let code: { [language in Language]?: string } = {};
+
+  const languageCode = evolve(defaultCodeSamples, code);
+
   let offsetToHighlight: number | undefined = undefined;
   let colorList = getSystemColorList();
   // ADD-LANGUAGES-HERE
@@ -36,13 +45,6 @@
       codeMirror: cpp,
     },
   ] as const;
-
-  const languageCode: { [language in Language]: string } = {
-    Go: codeGo,
-    C: codeC,
-    Python: codePython,
-    "C++": codeCpp,
-  };
 
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has("go")) {
