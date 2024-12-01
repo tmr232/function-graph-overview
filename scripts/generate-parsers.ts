@@ -3,6 +3,7 @@
  * parsers in to the `./parsers` directory.
  *
  * To add a new parsers, add it's package name to the `parsersToBuild` array.
+ * @module
  */
 import { $ } from "bun";
 import * as fs from "node:fs";

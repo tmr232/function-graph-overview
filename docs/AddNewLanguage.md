@@ -73,7 +73,7 @@ Search for `ADD-LANGUAGES-HERE` in the code, and add the language in all the rel
 Those will include:
 
 - Language & builder definitions in `src/control-flow/cfg.ts`
-- Mapping languages to `.wasm` files in `src/components/utils.ts`
+- Mapping languages to `.wasm` files in `src/components/parser-loader/wasmMappings.ts`
 - Mapping VSCode's `languageId` to our language definitions in `src/vscode/extension.ts`
 - Adding test-collectors and tests in `src/test/commentTestCollector.ts`
 - Adding the language in the demo's UI in `src/components/Demo.svelte`

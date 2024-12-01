@@ -1,10 +1,10 @@
 import type Parser from "web-tree-sitter";
-import treeSitterGo from "../../parsers/tree-sitter-go.wasm?url";
 import { parseComment } from "./commentTestUtils";
 import type { TestFunction } from "./commentTestTypes";
-import { initializeParser } from "./parser-init";
 
-const { parser } = await initializeParser(treeSitterGo);
+import { initializeParser } from "../parser-loader/bun.ts";
+
+const { parser } = await initializeParser("Go");
 
 export function getTestFuncs(code: string): Generator<TestFunction> {
   const tree = parser.parse(code);

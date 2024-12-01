@@ -17,6 +17,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - The `generate-parsers.ts` script has been updated to support copying existing `.wasm` files from tree-sitter grammar packages
 - Initial support for C++
 - A basic [typedoc](https://typedoc.org/) configuration was added, to help in rendering docs
+- A utility script for running CFG builders on a complete codebase (`scan-codebase.ts`)
 
 ### Changed
 
