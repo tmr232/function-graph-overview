@@ -6,6 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.10]
+
 ### Added
 
 - Added JetBrains frontend for use in JetBrains IDE plugin
