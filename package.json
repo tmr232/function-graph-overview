@@ -125,14 +125,14 @@
     "viewsContainers": {
       "panel": [
         {
-          "id": "functionGraphOverview-overview",
+          "id": "explorer",
           "title": "Graph Overview",
           "icon": "./media/svg/view-icon.svg"
         }
       ],
       "activitybar": [
         {
-          "id": "functionGraphOverview-overview",
+          "id": "explorer",
           "title": "Graph Overview",
           "icon": "./media/svg/view-icon.svg"
         }
@@ -142,7 +142,7 @@
       "explorer": [
         {
           "type": "webview",
-          "id": "functionGraphOverview-overview",
+          "id": "functionGraphOverview.overview",
           "name": "Graph Overview",
           "icon": "./media/svg/view-icon.svg",
           "contextualTitle": "Graph Overview",
