@@ -10,7 +10,7 @@ This extension adds a Graph Overview to VS Code, showing the CFG (control-flow g
 
 1. Install via the [extension page](https://marketplace.visualstudio.com/items?itemName=tamir-bahar.function-graph-overview) at the VSCode Marketplace.
 
-2. Open the command-pallete (<kbd>Ctrl+Shift+P</kbd> or <kbd>⇧⌘P</kbd>) and run the `Function Graph Overview: Show Graph Overview` command.
+2. Open the command-palette (<kbd>Ctrl+Shift+P</kbd> or <kbd>⇧⌘P</kbd>) and run the `Function Graph Overview: Show Graph Overview` command.
 
 3. Open your code and place your cursor inside a function to see the graph.
 
