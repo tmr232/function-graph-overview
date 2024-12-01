@@ -39,6 +39,22 @@ const extToFuncs = new Map(
   languages.map(({ ext, getTestFuncs: iterTestFuncs }) => [ext, iterTestFuncs]),
 );
 
+function prefixFuncNames(
+  testFuncs: TestFunction[],
+  prefix: string,
+): TestFunction[] {
+  const newTestFuncs: TestFunction[] = [];
+  for (const testFunc of testFuncs) {
+    newTestFuncs.push({
+      name: `${prefix}${testFunc.name}`,
+      function: testFunc.function,
+      reqs: testFunc.reqs,
+      language: testFunc.language,
+    });
+  }
+  return newTestFuncs;
+}
+
 export async function collectTests(): Promise<TestFunction[]> {
   const allTestFuncs = [];
   for await (const file of sampleGlob.scan(testsDir)) {
@@ -49,7 +65,7 @@ export async function collectTests(): Promise<TestFunction[]> {
     // Make sure line-endings are consistent!
     code = code.replaceAll("\r", "");
     const testFuncs = getTestFuncs(code);
-    allTestFuncs.push(...testFuncs);
+    allTestFuncs.push(...prefixFuncNames(Array.from(testFuncs), `${file}!`));
   }
   return allTestFuncs;
 }

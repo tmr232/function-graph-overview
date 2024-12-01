@@ -22,6 +22,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Adding a new language now requires less wiring code, as many language declarations were merged.
 
+### Fixed
+
+- In C and C++, `if-else` statements without curly braces no longer break the CFG builder (#32)
+
 ## [0.0.8] - 2024-10-10
 
 ### Added

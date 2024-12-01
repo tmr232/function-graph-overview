@@ -180,7 +180,7 @@ function processIfStatement(
   const queryString = `
       (if_statement
         condition: (_ ")" @closing-paren) @cond
-        consequence: (_ "}"? @closing-brace) @then
+        consequence: (_) @then
         alternative: (
             else_clause ([
                 (if_statement) @else-if
@@ -213,7 +213,7 @@ function processIfStatement(
   }
   for (const [prevIf, thisIf] of pairwise(allIfs)) {
     ctx.link.offsetToSyntax(
-      prevIf.requireSyntax("closing-brace"),
+      prevIf.requireSyntax("then"),
       thisIf.requireSyntax("if"),
     );
   }
@@ -258,10 +258,7 @@ function processIfStatement(
     const lastMatch = last(allIfs) as Match;
     const elseSyntax = lastMatch.requireSyntax("else");
     ctx.link.syntaxToNode(elseSyntax, elseBlock.entry);
-    ctx.link.offsetToSyntax(
-      lastMatch.requireSyntax("closing-brace"),
-      elseSyntax,
-    );
+    ctx.link.offsetToSyntax(lastMatch.requireSyntax("then"), elseSyntax);
 
     if (previous && elseBlock.entry) {
       ctx.builder.addEdge(previous, elseBlock.entry, "alternative");

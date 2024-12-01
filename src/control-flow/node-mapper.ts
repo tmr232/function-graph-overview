@@ -39,7 +39,7 @@ export class NodeMapper {
   private ranges: { start: number; stop: number; value: Parser.SyntaxNode }[] =
     [];
 
-  public linkSytaxToNode(syntax: Parser.SyntaxNode, node: string) {
+  public linkSyntaxToNode(syntax: Parser.SyntaxNode, node: string) {
     this.syntaxToNode.set(syntax, node);
 
     this.ranges.push({

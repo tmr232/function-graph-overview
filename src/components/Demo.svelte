@@ -227,7 +227,7 @@
       {#if showSegmentation}
         <div class="segmentation">
           <CodeSegmentation
-            languageCode={languageCode[selection.language]}
+            code={languageCode[selection.language]}
             language={selection.language}
             {simplify}
           />
