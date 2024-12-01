@@ -24,7 +24,7 @@ interface Dispatch {
   many(statements: Parser.SyntaxNode[]): BasicBlock;
 }
 interface Link {
-  syntaxToNode: InstanceType<typeof NodeMapper>["linkSytaxToNode"];
+  syntaxToNode: InstanceType<typeof NodeMapper>["linkSyntaxToNode"];
   offsetToSyntax: InstanceType<typeof NodeMapper>["linkOffsetToSyntax"];
 }
 export interface Context {
@@ -78,7 +78,7 @@ export class GenericCFGBuilder {
       "START",
       functionNode.startIndex,
     );
-    this.nodeMapper.linkSytaxToNode(functionNode, startNode);
+    this.nodeMapper.linkSyntaxToNode(functionNode, startNode);
     const bodySyntax = functionNode.childForFieldName("body");
     if (bodySyntax) {
       const blockHandler = new BlockHandler();
@@ -135,7 +135,7 @@ export class GenericCFGBuilder {
         many: this.dispatchMany.bind(this),
       },
       link: {
-        syntaxToNode: this.nodeMapper.linkSytaxToNode.bind(this.nodeMapper),
+        syntaxToNode: this.nodeMapper.linkSyntaxToNode.bind(this.nodeMapper),
         offsetToSyntax: this.nodeMapper.linkOffsetToSyntax.bind(
           this.nodeMapper,
         ),
