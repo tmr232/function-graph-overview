@@ -14,6 +14,8 @@ This extension adds a Graph Overview to VS Code, showing the CFG (control-flow g
 
 3. Open your code and place your cursor inside a function to see the graph.
 
+4. You can drag the graph view to the other sidebar or to the bottom panel
+
 ### JetBrains IDEs
 
 If you're using a JetBrains IDE, see [the JetBrains plugin](https://github.com/tmr232/jb-function-graph-overview)
