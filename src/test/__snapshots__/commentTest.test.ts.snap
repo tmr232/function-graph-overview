@@ -1,6 +1,46 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`C: trivial: DOT Snapshot 1`] = `
+exports[`C++: issue32-unbraced-if-else-if.cpp!f: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node6 [style="filled";
+label="";
+id="node6";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.8999999999999999;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node6 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`C: sample.c!trivial: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -17,7 +57,7 @@ height=0.8999999999999999;
 }"
 `;
 
-exports[`C: simpleIf: DOT Snapshot 1`] = `
+exports[`C: sample.c!simpleIf: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -61,7 +101,7 @@ class="alternative";
 }"
 `;
 
-exports[`C: ifElse: DOT Snapshot 1`] = `
+exports[`C: sample.c!ifElse: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -145,7 +185,7 @@ class="regular";
 }"
 `;
 
-exports[`C: forever: DOT Snapshot 1`] = `
+exports[`C: sample.c!forever: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -180,7 +220,7 @@ tailport="n";
 }"
 `;
 
-exports[`C: forever2: DOT Snapshot 1`] = `
+exports[`C: sample.c!forever2: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -215,7 +255,7 @@ tailport="n";
 }"
 `;
 
-exports[`C: forLoop: DOT Snapshot 1`] = `
+exports[`C: sample.c!forLoop: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -274,7 +314,7 @@ class="consequence";
 }"
 `;
 
-exports[`C: whileLoop: DOT Snapshot 1`] = `
+exports[`C: sample.c!whileLoop: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -333,7 +373,7 @@ class="alternative";
 }"
 `;
 
-exports[`C: doWhile: DOT Snapshot 1`] = `
+exports[`C: sample.c!doWhile: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -380,7 +420,7 @@ class="alternative";
 }"
 `;
 
-exports[`C: gotoA: DOT Snapshot 1`] = `
+exports[`C: sample.c!gotoA: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -439,7 +479,7 @@ class="alternative";
 }"
 `;
 
-exports[`C: switch_1: DOT Snapshot 1`] = `
+exports[`C: sample.c!switch_1: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -539,7 +579,7 @@ class="regular";
 }"
 `;
 
-exports[`C: switch_2: DOT Snapshot 1`] = `
+exports[`C: sample.c!switch_2: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -639,7 +679,7 @@ class="regular";
 }"
 `;
 
-exports[`C: ManyIfs: DOT Snapshot 1`] = `
+exports[`C: sample.c!ManyIfs: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -847,7 +887,7 @@ class="regular";
 }"
 `;
 
-exports[`C: IfWithoutBraces: DOT Snapshot 1`] = `
+exports[`C: sample.c!IfWithoutBraces: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -949,7 +989,7 @@ class="consequence";
 }"
 `;
 
-exports[`C: ForLoops: DOT Snapshot 1`] = `
+exports[`C: sample.c!ForLoops: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -1421,7 +1461,7 @@ class="consequence";
 }"
 `;
 
-exports[`C: MoreSwitch: DOT Snapshot 1`] = `
+exports[`C: sample.c!MoreSwitch: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -1561,7 +1601,7 @@ class="alternative";
 }"
 `;
 
-exports[`C++: trivial: DOT Snapshot 1`] = `
+exports[`C++: sample.cpp!trivial: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -1578,7 +1618,7 @@ height=0.8999999999999999;
 }"
 `;
 
-exports[`C++: simpleIf: DOT Snapshot 1`] = `
+exports[`C++: sample.cpp!simpleIf: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -1622,7 +1662,7 @@ class="alternative";
 }"
 `;
 
-exports[`C++: ifElse: DOT Snapshot 1`] = `
+exports[`C++: sample.cpp!ifElse: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -1706,7 +1746,7 @@ class="regular";
 }"
 `;
 
-exports[`C++: forever: DOT Snapshot 1`] = `
+exports[`C++: sample.cpp!forever: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -1741,7 +1781,7 @@ tailport="n";
 }"
 `;
 
-exports[`C++: forever2: DOT Snapshot 1`] = `
+exports[`C++: sample.cpp!forever2: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -1776,7 +1816,7 @@ tailport="n";
 }"
 `;
 
-exports[`C++: forLoop: DOT Snapshot 1`] = `
+exports[`C++: sample.cpp!forLoop: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -1835,7 +1875,7 @@ class="consequence";
 }"
 `;
 
-exports[`C++: whileLoop: DOT Snapshot 1`] = `
+exports[`C++: sample.cpp!whileLoop: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -1894,7 +1934,7 @@ class="alternative";
 }"
 `;
 
-exports[`C++: doWhile: DOT Snapshot 1`] = `
+exports[`C++: sample.cpp!doWhile: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -1941,7 +1981,7 @@ class="alternative";
 }"
 `;
 
-exports[`C++: gotoA: DOT Snapshot 1`] = `
+exports[`C++: sample.cpp!gotoA: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -2000,7 +2040,7 @@ class="alternative";
 }"
 `;
 
-exports[`C++: switch_1: DOT Snapshot 1`] = `
+exports[`C++: sample.cpp!switch_1: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -2100,7 +2140,7 @@ class="regular";
 }"
 `;
 
-exports[`C++: switch_2: DOT Snapshot 1`] = `
+exports[`C++: sample.cpp!switch_2: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -2200,7 +2240,7 @@ class="regular";
 }"
 `;
 
-exports[`C++: ManyIfs: DOT Snapshot 1`] = `
+exports[`C++: sample.cpp!ManyIfs: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -2408,7 +2448,7 @@ class="regular";
 }"
 `;
 
-exports[`C++: IfWithoutBraces: DOT Snapshot 1`] = `
+exports[`C++: sample.cpp!IfWithoutBraces: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -2510,7 +2550,7 @@ class="consequence";
 }"
 `;
 
-exports[`C++: ForLoops: DOT Snapshot 1`] = `
+exports[`C++: sample.cpp!ForLoops: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -2982,7 +3022,7 @@ class="consequence";
 }"
 `;
 
-exports[`C++: MoreSwitch: DOT Snapshot 1`] = `
+exports[`C++: sample.cpp!MoreSwitch: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -3122,7 +3162,202 @@ class="alternative";
 }"
 `;
 
-exports[`Go: trivial: DOT Snapshot 1`] = `
+exports[`C++: sample.cpp!Exception: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+subgraph cluster_0 {
+penwidth=0;
+color="#ffffff";
+bgcolor="#ddddff";
+class="tryComplex";
+
+subgraph cluster_1 {
+penwidth=0;
+color="#ffffff";
+bgcolor="#ddffdd";
+class="try";
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+
+}
+
+subgraph cluster_2 {
+penwidth=0;
+color="#ffffff";
+bgcolor="#ffdddd";
+class="except";
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+
+}
+
+}    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 -> node3 [penwidth=1;
+color="#0000ff";
+style="invis";
+headport="e";
+tailport="w";
+];
+    node0 -> node2 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node3 -> node4 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node4 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`C++: sample.cpp!Throw: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="triangle";
+class="throw";
+fillcolor="#ffdddd";
+height=0.5;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`C++: sample.cpp!ForRangeLoop: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 -> node1 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node2 -> node1 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node0 -> node2 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node4 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`Go: sample.go!trivial: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -3139,7 +3374,7 @@ height=0.8999999999999999;
 }"
 `;
 
-exports[`Go: ifThen: DOT Snapshot 1`] = `
+exports[`Go: sample.go!ifThen: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -3183,7 +3418,7 @@ class="alternative";
 }"
 `;
 
-exports[`Go: ManyIfStatements: DOT Snapshot 1`] = `
+exports[`Go: sample.go!ManyIfStatements: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -3363,7 +3598,7 @@ class="regular";
 }"
 `;
 
-exports[`Go: Switch: DOT Snapshot 1`] = `
+exports[`Go: sample.go!Switch: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -3491,7 +3726,7 @@ class="alternative";
 }"
 `;
 
-exports[`Go: switchAndLabelsAndGoto: DOT Snapshot 1`] = `
+exports[`Go: sample.go!switchAndLabelsAndGoto: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -3655,7 +3890,7 @@ class="regular";
 }"
 `;
 
-exports[`Go: trivialReachability: DOT Snapshot 1`] = `
+exports[`Go: sample.go!trivialReachability: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -3672,7 +3907,7 @@ height=0.8999999999999999;
 }"
 `;
 
-exports[`Go: hasFallthrough: DOT Snapshot 1`] = `
+exports[`Go: sample.go!hasFallthrough: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -3744,7 +3979,7 @@ class="alternative";
 }"
 `;
 
-exports[`Go: forever: DOT Snapshot 1`] = `
+exports[`Go: sample.go!forever: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -3779,7 +4014,7 @@ class="regular";
 }"
 `;
 
-exports[`Go: forCond: DOT Snapshot 1`] = `
+exports[`Go: sample.go!forCond: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -3838,7 +4073,7 @@ class="alternative";
 }"
 `;
 
-exports[`Go: forCStyle: DOT Snapshot 1`] = `
+exports[`Go: sample.go!forCStyle: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -3897,7 +4132,7 @@ class="alternative";
 }"
 `;
 
-exports[`Go: forRange: DOT Snapshot 1`] = `
+exports[`Go: sample.go!forRange: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -3956,7 +4191,7 @@ class="alternative";
 }"
 `;
 
-exports[`Go: typeSwitch: DOT Snapshot 1`] = `
+exports[`Go: sample.go!typeSwitch: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -4028,7 +4263,7 @@ class="alternative";
 }"
 `;
 
-exports[`Go: Select: DOT Snapshot 1`] = `
+exports[`Go: sample.go!Select: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -4068,7 +4303,7 @@ class="consequence";
 }"
 `;
 
-exports[`Go: Select2: DOT Snapshot 1`] = `
+exports[`Go: sample.go!Select2: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -4148,7 +4383,7 @@ class="regular";
 }"
 `;
 
-exports[`Python: trivial: DOT Snapshot 1`] = `
+exports[`Python: sample.py!trivial: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -4165,7 +4400,7 @@ height=0.8999999999999999;
 }"
 `;
 
-exports[`Python: If: DOT Snapshot 1`] = `
+exports[`Python: sample.py!If: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -4209,7 +4444,7 @@ class="alternative";
 }"
 `;
 
-exports[`Python: IfElse: DOT Snapshot 1`] = `
+exports[`Python: sample.py!IfElse: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -4265,7 +4500,7 @@ class="regular";
 }"
 `;
 
-exports[`Python: IfElifElse: DOT Snapshot 1`] = `
+exports[`Python: sample.py!IfElifElse: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -4349,7 +4584,7 @@ class="regular";
 }"
 `;
 
-exports[`Python: For: DOT Snapshot 1`] = `
+exports[`Python: sample.py!For: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -4408,7 +4643,7 @@ class="alternative";
 }"
 `;
 
-exports[`Python: ForContinue: DOT Snapshot 1`] = `
+exports[`Python: sample.py!ForContinue: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -4498,7 +4733,7 @@ class="alternative";
 }"
 `;
 
-exports[`Python: ForBreak: DOT Snapshot 1`] = `
+exports[`Python: sample.py!ForBreak: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -4585,7 +4820,7 @@ class="regular";
 }"
 `;
 
-exports[`Python: ForElse: DOT Snapshot 1`] = `
+exports[`Python: sample.py!ForElse: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -4644,7 +4879,7 @@ class="regular";
 }"
 `;
 
-exports[`Python: ForElseBreak: DOT Snapshot 1`] = `
+exports[`Python: sample.py!ForElseBreak: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -4743,7 +4978,7 @@ class="regular";
 }"
 `;
 
-exports[`Python: ForElseBreakReturn: DOT Snapshot 1`] = `
+exports[`Python: sample.py!ForElseBreakReturn: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -4826,7 +5061,7 @@ class="consequence";
 }"
 `;
 
-exports[`Python: While: DOT Snapshot 1`] = `
+exports[`Python: sample.py!While: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -4885,7 +5120,7 @@ class="alternative";
 }"
 `;
 
-exports[`Python: WhileContinue: DOT Snapshot 1`] = `
+exports[`Python: sample.py!WhileContinue: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -4975,7 +5210,7 @@ class="alternative";
 }"
 `;
 
-exports[`Python: WhileBreak: DOT Snapshot 1`] = `
+exports[`Python: sample.py!WhileBreak: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -5062,7 +5297,7 @@ class="regular";
 }"
 `;
 
-exports[`Python: WhileElse: DOT Snapshot 1`] = `
+exports[`Python: sample.py!WhileElse: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -5121,7 +5356,7 @@ class="alternative";
 }"
 `;
 
-exports[`Python: WhileElseBreak: DOT Snapshot 1`] = `
+exports[`Python: sample.py!WhileElseBreak: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -5220,7 +5455,7 @@ class="alternative";
 }"
 `;
 
-exports[`Python: Match: DOT Snapshot 1`] = `
+exports[`Python: sample.py!Match: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -5308,7 +5543,7 @@ class="alternative";
 }"
 `;
 
-exports[`Python: MatchMultiPattern: DOT Snapshot 1`] = `
+exports[`Python: sample.py!MatchMultiPattern: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -5388,7 +5623,7 @@ class="alternative";
 }"
 `;
 
-exports[`Python: Return: DOT Snapshot 1`] = `
+exports[`Python: sample.py!Return: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -5428,7 +5663,7 @@ class="alternative";
 }"
 `;
 
-exports[`Python: WithCluster: DOT Snapshot 1`] = `
+exports[`Python: sample.py!WithCluster: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -5564,7 +5799,7 @@ class="regular";
 }"
 `;
 
-exports[`Python: WithNestedCluster: DOT Snapshot 1`] = `
+exports[`Python: sample.py!WithNestedCluster: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -5900,7 +6135,7 @@ class="regular";
 }"
 `;
 
-exports[`Python: raise_exception: DOT Snapshot 1`] = `
+exports[`Python: sample.py!raise_exception: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -5928,7 +6163,7 @@ class="regular";
 }"
 `;
 
-exports[`Python: raise_again: DOT Snapshot 1`] = `
+exports[`Python: sample.py!raise_again: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -6064,7 +6299,7 @@ class="regular";
 }"
 `;
 
-exports[`Python: yield_value: DOT Snapshot 1`] = `
+exports[`Python: sample.py!yield_value: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -6124,7 +6359,7 @@ class="alternative";
 }"
 `;
 
-exports[`Python: try_except: DOT Snapshot 1`] = `
+exports[`Python: sample.py!try_except: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -6220,7 +6455,7 @@ class="regular";
 }"
 `;
 
-exports[`Python: try_except_finally: DOT Snapshot 1`] = `
+exports[`Python: sample.py!try_except_finally: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -6344,7 +6579,7 @@ class="regular";
 }"
 `;
 
-exports[`Python: try_many_except_finally: DOT Snapshot 1`] = `
+exports[`Python: sample.py!try_many_except_finally: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -6572,7 +6807,7 @@ class="regular";
 }"
 `;
 
-exports[`Python: try_except_else_finally: DOT Snapshot 1`] = `
+exports[`Python: sample.py!try_except_else_finally: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -6716,7 +6951,7 @@ class="regular";
 }"
 `;
 
-exports[`Python: massive_try_except_else_finally: DOT Snapshot 1`] = `
+exports[`Python: sample.py!massive_try_except_else_finally: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -7319,7 +7554,7 @@ class="regular";
 }"
 `;
 
-exports[`Python: try_finally: DOT Snapshot 1`] = `
+exports[`Python: sample.py!try_finally: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -7489,7 +7724,7 @@ class="regular";
 }"
 `;
 
-exports[`Python: try_with_finally: DOT Snapshot 1`] = `
+exports[`Python: sample.py!try_with_finally: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
     edge [headport=n tailport=s]
@@ -7615,7 +7850,76 @@ class="regular";
 }"
 `;
 
-exports[`C: trivial: Segmentation 1`] = `
+exports[`C++: issue32-unbraced-if-else-if.cpp!f: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 19,
+    "value": "node1",
+  },
+  {
+    "start": 34,
+    "value": "node1",
+  },
+  {
+    "start": 37,
+    "value": "node1",
+  },
+  {
+    "start": 40,
+    "value": "node1",
+  },
+  {
+    "start": 40,
+    "value": "node2",
+  },
+  {
+    "start": 49,
+    "value": "node2",
+  },
+  {
+    "start": 56,
+    "value": "node6",
+  },
+  {
+    "start": 61,
+    "value": "node1",
+  },
+  {
+    "start": 61,
+    "value": "node6",
+  },
+  {
+    "start": 66,
+    "value": "node6",
+  },
+  {
+    "start": 68,
+    "value": "node6",
+  },
+  {
+    "start": 68,
+    "value": "node1",
+  },
+  {
+    "start": 68,
+    "value": "node1",
+  },
+  {
+    "start": 70,
+    "value": "node1",
+  },
+  {
+    "start": 70,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`C: sample.c!trivial: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -7632,7 +7936,7 @@ exports[`C: trivial: Segmentation 1`] = `
 ]
 `;
 
-exports[`C: simpleIf: Segmentation 1`] = `
+exports[`C: sample.c!simpleIf: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -7681,7 +7985,7 @@ exports[`C: simpleIf: Segmentation 1`] = `
 ]
 `;
 
-exports[`C: ifElse: Segmentation 1`] = `
+exports[`C: sample.c!ifElse: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -7782,7 +8086,7 @@ exports[`C: ifElse: Segmentation 1`] = `
 ]
 `;
 
-exports[`C: forever: Segmentation 1`] = `
+exports[`C: sample.c!forever: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -7827,7 +8131,7 @@ exports[`C: forever: Segmentation 1`] = `
 ]
 `;
 
-exports[`C: forever2: Segmentation 1`] = `
+exports[`C: sample.c!forever2: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -7896,7 +8200,7 @@ exports[`C: forever2: Segmentation 1`] = `
 ]
 `;
 
-exports[`C: forLoop: Segmentation 1`] = `
+exports[`C: sample.c!forLoop: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -7977,7 +8281,7 @@ exports[`C: forLoop: Segmentation 1`] = `
 ]
 `;
 
-exports[`C: whileLoop: Segmentation 1`] = `
+exports[`C: sample.c!whileLoop: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -8030,7 +8334,7 @@ exports[`C: whileLoop: Segmentation 1`] = `
 ]
 `;
 
-exports[`C: doWhile: Segmentation 1`] = `
+exports[`C: sample.c!doWhile: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -8083,7 +8387,7 @@ exports[`C: doWhile: Segmentation 1`] = `
 ]
 `;
 
-exports[`C: gotoA: Segmentation 1`] = `
+exports[`C: sample.c!gotoA: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -8148,7 +8452,7 @@ exports[`C: gotoA: Segmentation 1`] = `
 ]
 `;
 
-exports[`C: switch_1: Segmentation 1`] = `
+exports[`C: sample.c!switch_1: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -8253,7 +8557,7 @@ exports[`C: switch_1: Segmentation 1`] = `
 ]
 `;
 
-exports[`C: switch_2: Segmentation 1`] = `
+exports[`C: sample.c!switch_2: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -8338,7 +8642,7 @@ exports[`C: switch_2: Segmentation 1`] = `
 ]
 `;
 
-exports[`C: ManyIfs: Segmentation 1`] = `
+exports[`C: sample.c!ManyIfs: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -8587,7 +8891,7 @@ exports[`C: ManyIfs: Segmentation 1`] = `
 ]
 `;
 
-exports[`C: IfWithoutBraces: Segmentation 1`] = `
+exports[`C: sample.c!IfWithoutBraces: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -8724,7 +9028,7 @@ exports[`C: IfWithoutBraces: Segmentation 1`] = `
 ]
 `;
 
-exports[`C: ForLoops: Segmentation 1`] = `
+exports[`C: sample.c!ForLoops: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -9297,7 +9601,7 @@ exports[`C: ForLoops: Segmentation 1`] = `
 ]
 `;
 
-exports[`C: MoreSwitch: Segmentation 1`] = `
+exports[`C: sample.c!MoreSwitch: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -9474,7 +9778,7 @@ exports[`C: MoreSwitch: Segmentation 1`] = `
 ]
 `;
 
-exports[`C++: trivial: Segmentation 1`] = `
+exports[`C++: sample.cpp!trivial: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -9491,7 +9795,7 @@ exports[`C++: trivial: Segmentation 1`] = `
 ]
 `;
 
-exports[`C++: simpleIf: Segmentation 1`] = `
+exports[`C++: sample.cpp!simpleIf: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -9540,7 +9844,7 @@ exports[`C++: simpleIf: Segmentation 1`] = `
 ]
 `;
 
-exports[`C++: ifElse: Segmentation 1`] = `
+exports[`C++: sample.cpp!ifElse: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -9641,7 +9945,7 @@ exports[`C++: ifElse: Segmentation 1`] = `
 ]
 `;
 
-exports[`C++: forever: Segmentation 1`] = `
+exports[`C++: sample.cpp!forever: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -9686,7 +9990,7 @@ exports[`C++: forever: Segmentation 1`] = `
 ]
 `;
 
-exports[`C++: forever2: Segmentation 1`] = `
+exports[`C++: sample.cpp!forever2: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -9755,7 +10059,7 @@ exports[`C++: forever2: Segmentation 1`] = `
 ]
 `;
 
-exports[`C++: forLoop: Segmentation 1`] = `
+exports[`C++: sample.cpp!forLoop: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -9836,7 +10140,7 @@ exports[`C++: forLoop: Segmentation 1`] = `
 ]
 `;
 
-exports[`C++: whileLoop: Segmentation 1`] = `
+exports[`C++: sample.cpp!whileLoop: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -9889,7 +10193,7 @@ exports[`C++: whileLoop: Segmentation 1`] = `
 ]
 `;
 
-exports[`C++: doWhile: Segmentation 1`] = `
+exports[`C++: sample.cpp!doWhile: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -9942,7 +10246,7 @@ exports[`C++: doWhile: Segmentation 1`] = `
 ]
 `;
 
-exports[`C++: gotoA: Segmentation 1`] = `
+exports[`C++: sample.cpp!gotoA: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -10007,7 +10311,7 @@ exports[`C++: gotoA: Segmentation 1`] = `
 ]
 `;
 
-exports[`C++: switch_1: Segmentation 1`] = `
+exports[`C++: sample.cpp!switch_1: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -10112,7 +10416,7 @@ exports[`C++: switch_1: Segmentation 1`] = `
 ]
 `;
 
-exports[`C++: switch_2: Segmentation 1`] = `
+exports[`C++: sample.cpp!switch_2: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -10197,7 +10501,7 @@ exports[`C++: switch_2: Segmentation 1`] = `
 ]
 `;
 
-exports[`C++: ManyIfs: Segmentation 1`] = `
+exports[`C++: sample.cpp!ManyIfs: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -10446,7 +10750,7 @@ exports[`C++: ManyIfs: Segmentation 1`] = `
 ]
 `;
 
-exports[`C++: IfWithoutBraces: Segmentation 1`] = `
+exports[`C++: sample.cpp!IfWithoutBraces: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -10583,7 +10887,7 @@ exports[`C++: IfWithoutBraces: Segmentation 1`] = `
 ]
 `;
 
-exports[`C++: ForLoops: Segmentation 1`] = `
+exports[`C++: sample.cpp!ForLoops: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -11156,7 +11460,7 @@ exports[`C++: ForLoops: Segmentation 1`] = `
 ]
 `;
 
-exports[`C++: MoreSwitch: Segmentation 1`] = `
+exports[`C++: sample.cpp!MoreSwitch: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -11333,7 +11637,154 @@ exports[`C++: MoreSwitch: Segmentation 1`] = `
 ]
 `;
 
-exports[`Go: trivial: Segmentation 1`] = `
+exports[`C++: sample.cpp!Exception: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 2189,
+    "value": "node0",
+  },
+  {
+    "start": 2212,
+    "value": "node2",
+  },
+  {
+    "start": 2216,
+    "value": "node2",
+  },
+  {
+    "start": 2223,
+    "value": "node2",
+  },
+  {
+    "start": 2240,
+    "value": "node3",
+  },
+  {
+    "start": 2247,
+    "value": "node2",
+  },
+  {
+    "start": 2247,
+    "value": "node2",
+  },
+  {
+    "start": 2249,
+    "value": "node0",
+  },
+  {
+    "start": 2249,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`C++: sample.cpp!Throw: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 2266,
+    "value": "node1",
+  },
+  {
+    "start": 2285,
+    "value": "node1",
+  },
+  {
+    "start": 2288,
+    "value": "node1",
+  },
+  {
+    "start": 2291,
+    "value": "node2",
+  },
+  {
+    "start": 2292,
+    "value": "node1",
+  },
+  {
+    "start": 2292,
+    "value": "node2",
+  },
+  {
+    "start": 2302,
+    "value": "node2",
+  },
+  {
+    "start": 2312,
+    "value": "node2",
+  },
+  {
+    "start": 2318,
+    "value": "node1",
+  },
+  {
+    "start": 2318,
+    "value": "node1",
+  },
+  {
+    "start": 2320,
+    "value": "node1",
+  },
+  {
+    "start": 2320,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`C++: sample.cpp!ForRangeLoop: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 2337,
+    "value": "node0",
+  },
+  {
+    "start": 2363,
+    "value": "node2",
+  },
+  {
+    "start": 2384,
+    "value": "node1",
+  },
+  {
+    "start": 2385,
+    "value": "node2",
+  },
+  {
+    "start": 2385,
+    "value": "node1",
+  },
+  {
+    "start": 2392,
+    "value": "node2",
+  },
+  {
+    "start": 2392,
+    "value": "node2",
+  },
+  {
+    "start": 2394,
+    "value": "node0",
+  },
+  {
+    "start": 2394,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`Go: sample.go!trivial: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -11350,7 +11801,7 @@ exports[`Go: trivial: Segmentation 1`] = `
 ]
 `;
 
-exports[`Go: ifThen: Segmentation 1`] = `
+exports[`Go: sample.go!ifThen: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -11391,7 +11842,7 @@ exports[`Go: ifThen: Segmentation 1`] = `
 ]
 `;
 
-exports[`Go: ManyIfStatements: Segmentation 1`] = `
+exports[`Go: sample.go!ManyIfStatements: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -11560,7 +12011,7 @@ exports[`Go: ManyIfStatements: Segmentation 1`] = `
 ]
 `;
 
-exports[`Go: Switch: Segmentation 1`] = `
+exports[`Go: sample.go!Switch: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -11645,7 +12096,7 @@ exports[`Go: Switch: Segmentation 1`] = `
 ]
 `;
 
-exports[`Go: switchAndLabelsAndGoto: Segmentation 1`] = `
+exports[`Go: sample.go!switchAndLabelsAndGoto: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -11818,7 +12269,7 @@ exports[`Go: switchAndLabelsAndGoto: Segmentation 1`] = `
 ]
 `;
 
-exports[`Go: trivialReachability: Segmentation 1`] = `
+exports[`Go: sample.go!trivialReachability: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -11843,7 +12294,7 @@ exports[`Go: trivialReachability: Segmentation 1`] = `
 ]
 `;
 
-exports[`Go: hasFallthrough: Segmentation 1`] = `
+exports[`Go: sample.go!hasFallthrough: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -11936,7 +12387,7 @@ exports[`Go: hasFallthrough: Segmentation 1`] = `
 ]
 `;
 
-exports[`Go: forever: Segmentation 1`] = `
+exports[`Go: sample.go!forever: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -11973,7 +12424,7 @@ exports[`Go: forever: Segmentation 1`] = `
 ]
 `;
 
-exports[`Go: forCond: Segmentation 1`] = `
+exports[`Go: sample.go!forCond: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -12010,7 +12461,7 @@ exports[`Go: forCond: Segmentation 1`] = `
 ]
 `;
 
-exports[`Go: forCStyle: Segmentation 1`] = `
+exports[`Go: sample.go!forCStyle: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -12047,7 +12498,7 @@ exports[`Go: forCStyle: Segmentation 1`] = `
 ]
 `;
 
-exports[`Go: forRange: Segmentation 1`] = `
+exports[`Go: sample.go!forRange: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -12084,7 +12535,7 @@ exports[`Go: forRange: Segmentation 1`] = `
 ]
 `;
 
-exports[`Go: typeSwitch: Segmentation 1`] = `
+exports[`Go: sample.go!typeSwitch: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -12145,7 +12596,7 @@ exports[`Go: typeSwitch: Segmentation 1`] = `
 ]
 `;
 
-exports[`Go: Select: Segmentation 1`] = `
+exports[`Go: sample.go!Select: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -12262,7 +12713,7 @@ exports[`Go: Select: Segmentation 1`] = `
 ]
 `;
 
-exports[`Go: Select2: Segmentation 1`] = `
+exports[`Go: sample.go!Select2: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -12407,7 +12858,7 @@ exports[`Go: Select2: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: trivial: Segmentation 1`] = `
+exports[`Python: sample.py!trivial: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -12436,7 +12887,7 @@ exports[`Python: trivial: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: If: Segmentation 1`] = `
+exports[`Python: sample.py!If: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -12501,7 +12952,7 @@ exports[`Python: If: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: IfElse: Segmentation 1`] = `
+exports[`Python: sample.py!IfElse: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -12598,7 +13049,7 @@ exports[`Python: IfElse: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: IfElifElse: Segmentation 1`] = `
+exports[`Python: sample.py!IfElifElse: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -12731,7 +13182,7 @@ exports[`Python: IfElifElse: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: For: Segmentation 1`] = `
+exports[`Python: sample.py!For: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -12776,7 +13227,7 @@ exports[`Python: For: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: ForContinue: Segmentation 1`] = `
+exports[`Python: sample.py!ForContinue: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -12861,7 +13312,7 @@ exports[`Python: ForContinue: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: ForBreak: Segmentation 1`] = `
+exports[`Python: sample.py!ForBreak: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -12938,7 +13389,7 @@ exports[`Python: ForBreak: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: ForElse: Segmentation 1`] = `
+exports[`Python: sample.py!ForElse: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -12995,7 +13446,7 @@ exports[`Python: ForElse: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: ForElseBreak: Segmentation 1`] = `
+exports[`Python: sample.py!ForElseBreak: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -13084,7 +13535,7 @@ exports[`Python: ForElseBreak: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: ForElseBreakReturn: Segmentation 1`] = `
+exports[`Python: sample.py!ForElseBreakReturn: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -13173,7 +13624,7 @@ exports[`Python: ForElseBreakReturn: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: While: Segmentation 1`] = `
+exports[`Python: sample.py!While: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -13218,7 +13669,7 @@ exports[`Python: While: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: WhileContinue: Segmentation 1`] = `
+exports[`Python: sample.py!WhileContinue: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -13303,7 +13754,7 @@ exports[`Python: WhileContinue: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: WhileBreak: Segmentation 1`] = `
+exports[`Python: sample.py!WhileBreak: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -13380,7 +13831,7 @@ exports[`Python: WhileBreak: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: WhileElse: Segmentation 1`] = `
+exports[`Python: sample.py!WhileElse: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -13437,7 +13888,7 @@ exports[`Python: WhileElse: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: WhileElseBreak: Segmentation 1`] = `
+exports[`Python: sample.py!WhileElseBreak: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -13534,7 +13985,7 @@ exports[`Python: WhileElseBreak: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: Match: Segmentation 1`] = `
+exports[`Python: sample.py!Match: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -13635,7 +14086,7 @@ exports[`Python: Match: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: MatchMultiPattern: Segmentation 1`] = `
+exports[`Python: sample.py!MatchMultiPattern: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -13760,7 +14211,7 @@ exports[`Python: MatchMultiPattern: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: Return: Segmentation 1`] = `
+exports[`Python: sample.py!Return: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -13829,7 +14280,7 @@ exports[`Python: Return: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: WithCluster: Segmentation 1`] = `
+exports[`Python: sample.py!WithCluster: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -13970,7 +14421,7 @@ exports[`Python: WithCluster: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: WithNestedCluster: Segmentation 1`] = `
+exports[`Python: sample.py!WithNestedCluster: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -14243,7 +14694,7 @@ exports[`Python: WithNestedCluster: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: raise_exception: Segmentation 1`] = `
+exports[`Python: sample.py!raise_exception: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -14272,7 +14723,7 @@ exports[`Python: raise_exception: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: raise_again: Segmentation 1`] = `
+exports[`Python: sample.py!raise_again: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -14409,7 +14860,7 @@ exports[`Python: raise_again: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: yield_value: Segmentation 1`] = `
+exports[`Python: sample.py!yield_value: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -14454,7 +14905,7 @@ exports[`Python: yield_value: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: try_except: Segmentation 1`] = `
+exports[`Python: sample.py!try_except: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -14527,7 +14978,7 @@ exports[`Python: try_except: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: try_except_finally: Segmentation 1`] = `
+exports[`Python: sample.py!try_except_finally: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -14620,7 +15071,7 @@ exports[`Python: try_except_finally: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: try_many_except_finally: Segmentation 1`] = `
+exports[`Python: sample.py!try_many_except_finally: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -14761,7 +15212,7 @@ exports[`Python: try_many_except_finally: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: try_except_else_finally: Segmentation 1`] = `
+exports[`Python: sample.py!try_except_else_finally: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -14862,7 +15313,7 @@ exports[`Python: try_except_else_finally: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: massive_try_except_else_finally: Segmentation 1`] = `
+exports[`Python: sample.py!massive_try_except_else_finally: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -15251,7 +15702,7 @@ exports[`Python: massive_try_except_else_finally: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: try_finally: Segmentation 1`] = `
+exports[`Python: sample.py!try_finally: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -15356,7 +15807,7 @@ exports[`Python: try_finally: Segmentation 1`] = `
 ]
 `;
 
-exports[`Python: try_with_finally: Segmentation 1`] = `
+exports[`Python: sample.py!try_with_finally: Segmentation 1`] = `
 [
   {
     "start": 0,
@@ -15452,348 +15903,6 @@ exports[`Python: try_with_finally: Segmentation 1`] = `
   },
   {
     "start": 3619,
-    "value": "node0",
-  },
-]
-`;
-
-exports[`C++: Exception: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-subgraph cluster_0 {
-penwidth=0;
-color="#ffffff";
-bgcolor="#ddddff";
-class="tryComplex";
-
-subgraph cluster_1 {
-penwidth=0;
-color="#ffffff";
-bgcolor="#ddffdd";
-class="try";
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-
-}
-
-subgraph cluster_2 {
-penwidth=0;
-color="#ffffff";
-bgcolor="#ffdddd";
-class="except";
-    node3 [style="filled";
-label="";
-id="node3";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-
-}
-
-}    node0 [style="filled";
-label="";
-id="node0";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.5;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node3 [style="filled";
-label="";
-id="node3";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node4 [style="filled";
-label="";
-id="node4";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node2 -> node3 [penwidth=1;
-color="#0000ff";
-style="invis";
-headport="e";
-tailport="w";
-];
-    node0 -> node2 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node3 -> node4 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node2 -> node4 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-}"
-`;
-
-exports[`C++: Throw: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node1 [style="filled";
-label="";
-id="node1";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.8999999999999999;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="triangle";
-class="throw";
-fillcolor="#ffdddd";
-height=0.5;
-];
-    node5 [style="filled";
-label="";
-id="node5";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node1 -> node2 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node1 -> node5 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-}"
-`;
-
-exports[`C++: ForRangeLoop: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node0 [style="filled";
-label="";
-id="node0";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.5;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node1 [style="filled";
-label="";
-id="node1";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node4 [style="filled";
-label="";
-id="node4";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node2 -> node1 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node2 -> node1 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node0 -> node2 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node2 -> node4 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-}"
-`;
-
-exports[`C++: Exception: Segmentation 1`] = `
-[
-  {
-    "start": 0,
-    "value": "node0",
-  },
-  {
-    "start": 2189,
-    "value": "node0",
-  },
-  {
-    "start": 2212,
-    "value": "node2",
-  },
-  {
-    "start": 2216,
-    "value": "node2",
-  },
-  {
-    "start": 2223,
-    "value": "node2",
-  },
-  {
-    "start": 2240,
-    "value": "node3",
-  },
-  {
-    "start": 2247,
-    "value": "node2",
-  },
-  {
-    "start": 2247,
-    "value": "node2",
-  },
-  {
-    "start": 2249,
-    "value": "node0",
-  },
-  {
-    "start": 2249,
-    "value": "node0",
-  },
-]
-`;
-
-exports[`C++: Throw: Segmentation 1`] = `
-[
-  {
-    "start": 0,
-    "value": "node1",
-  },
-  {
-    "start": 2266,
-    "value": "node1",
-  },
-  {
-    "start": 2285,
-    "value": "node1",
-  },
-  {
-    "start": 2288,
-    "value": "node1",
-  },
-  {
-    "start": 2291,
-    "value": "node2",
-  },
-  {
-    "start": 2292,
-    "value": "node1",
-  },
-  {
-    "start": 2292,
-    "value": "node2",
-  },
-  {
-    "start": 2302,
-    "value": "node2",
-  },
-  {
-    "start": 2312,
-    "value": "node2",
-  },
-  {
-    "start": 2318,
-    "value": "node1",
-  },
-  {
-    "start": 2318,
-    "value": "node1",
-  },
-  {
-    "start": 2320,
-    "value": "node1",
-  },
-  {
-    "start": 2320,
-    "value": "node1",
-  },
-]
-`;
-
-exports[`C++: ForRangeLoop: Segmentation 1`] = `
-[
-  {
-    "start": 0,
-    "value": "node0",
-  },
-  {
-    "start": 2337,
-    "value": "node0",
-  },
-  {
-    "start": 2363,
-    "value": "node2",
-  },
-  {
-    "start": 2384,
-    "value": "node1",
-  },
-  {
-    "start": 2385,
-    "value": "node2",
-  },
-  {
-    "start": 2385,
-    "value": "node1",
-  },
-  {
-    "start": 2392,
-    "value": "node2",
-  },
-  {
-    "start": 2392,
-    "value": "node2",
-  },
-  {
-    "start": 2394,
-    "value": "node0",
-  },
-  {
-    "start": 2394,
     "value": "node0",
   },
 ]
