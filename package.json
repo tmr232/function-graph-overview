@@ -123,33 +123,33 @@
       }
     },
     "viewsContainers": {
-      "panel": [
-        {
-          "id": "function-graph-overview-panel",
-          "title": "Graph Overview",
-          "icon": "./media/svg/view-icon.svg"
-        }
-      ],
       "activitybar": [
         {
-          "id": "function-graph-overview-activitybar",
-          "title": "Graph Overview",
+          "id": "function-graph-overview",
+          "title": "Function Graph Overview",
           "icon": "./media/svg/view-icon.svg"
         }
       ]
     },
     "views": {
-      "function-graph-overview-activitybar": [
+      "function-graph-overview": [
         {
           "type": "webview",
           "id": "functionGraphOverview.overview",
-          "name": "Graph Overview",
+          "name": "Function Graph Overview",
           "icon": "./media/svg/view-icon.svg",
           "contextualTitle": "Graph Overview",
           "visibility": "visible"
         }
       ]
-    }
+    },
+    "commands": [
+      {
+        "command": "functionGraphOverview.focus",
+        "title": "Show Graph Overview",
+        "category": "Function Graph Overview"
+      }
+    ]
   },
   "engines": {
     "vscode": "^1.86.0"
