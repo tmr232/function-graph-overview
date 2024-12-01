@@ -6,6 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.11]
+
 ### Added
 
 - Added the `Function Graph Overview: Show Graph Overview` command to VSCode to show the graph
