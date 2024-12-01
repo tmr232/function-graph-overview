@@ -122,6 +122,22 @@
         }
       }
     },
+    "viewsContainers": {
+      "panel": [
+        {
+          "id": "functionGraphOverview.overview",
+          "title": "Graph Overview",
+          "icon": "./media/svg/view-icon.svg"
+        }
+      ],
+      "activitybar": [
+        {
+          "id": "functionGraphOverview.overview",
+          "title": "Graph Overview",
+          "icon": "./media/svg/view-icon.svg"
+        }
+      ]
+    },
     "views": {
       "explorer": [
         {
