@@ -3,8 +3,10 @@
   import demoCodeGo from "./assets/demo.go?raw";
   import demoCodeC from "./assets/demo.c?raw";
   import demoCodePython from "./assets/demo.py?raw";
+  import demoCodeCpp from "./assets/demo.cpp?raw";
   import { isDark } from "../../components/lightdark";
   import { onDestroy } from "svelte";
+  import type { Language } from "../../control-flow/cfg.ts";
 
   document.body.dataset.theme = isDark ? "dark" : "light";
 
@@ -12,11 +14,19 @@
     document.body.dataset.theme = isDark ? "dark" : "light";
   });
 
+  // ADD-LANGUAGES-HERE
+  const code: { [language in Language]?: string } = {
+    C: demoCodeC,
+    Python: demoCodePython,
+    Go: demoCodeGo,
+    "C++": demoCodeCpp,
+  };
+
   onDestroy(unsubscribe);
 </script>
 
 <main>
-  <Demo codeGo={demoCodeGo} codeC={demoCodeC} codePython={demoCodePython} />
+  <Demo {code} />
 </main>
 
 <style>

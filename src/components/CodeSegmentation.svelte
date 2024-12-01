@@ -116,7 +116,7 @@
   }
 </script>
 
-{#await initialize() then}
+{#await initialize() then _}
   <pre>{@html renderWrapper(code, language, { simplify, trim })}</pre>
   <button on:click={recolorNodes}>Recolor Nodes</button>
 {/await}
