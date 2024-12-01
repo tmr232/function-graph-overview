@@ -387,6 +387,16 @@ export async function activate(context: vscode.ExtensionContext) {
       },
     ),
   );
+
+  const command = "functionGraphOverview.focus";
+
+  const commandHandler = () => {
+    vscode.commands.executeCommand("functionGraphOverview.overview.focus");
+  };
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(command, commandHandler),
+  );
 }
 
 // This method is called when your extension is deactivated

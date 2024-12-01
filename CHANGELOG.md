@@ -6,6 +6,17 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.11]
+
+### Added
+
+- Added the `Function Graph Overview: Show Graph Overview` command to VSCode to show the graph
+
+### Changed
+
+- In VSCode, the extension will now show in the activity bar by default
+- All development-related docs moved to the `docs` directory to avoid confusing users
+
 ## [0.0.10]
 
 ### Added

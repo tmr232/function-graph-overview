@@ -66,7 +66,7 @@
   "//": "START EXTENSION ATTRIBUTES",
   "publisher": "tamir-bahar",
   "name": "function-graph-overview",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Function Graph Overview",
   "displayName": "Function Graph Overview",
   "icon": "./media/icon.png",
@@ -122,18 +122,34 @@
         }
       }
     },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "function-graph-overview",
+          "title": "Function Graph Overview",
+          "icon": "./media/svg/view-icon.svg"
+        }
+      ]
+    },
     "views": {
-      "explorer": [
+      "function-graph-overview": [
         {
           "type": "webview",
           "id": "functionGraphOverview.overview",
-          "name": "Graph Overview",
+          "name": "Function Graph Overview",
           "icon": "./media/svg/view-icon.svg",
           "contextualTitle": "Graph Overview",
           "visibility": "visible"
         }
       ]
-    }
+    },
+    "commands": [
+      {
+        "command": "functionGraphOverview.focus",
+        "title": "Show Graph Overview",
+        "category": "Function Graph Overview"
+      }
+    ]
   },
   "engines": {
     "vscode": "^1.86.0"
