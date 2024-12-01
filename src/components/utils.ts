@@ -1,15 +1,9 @@
-import Parser from "web-tree-sitter";
-
-import treeSitterGo from "../../parsers/tree-sitter-go.wasm?url";
-import treeSitterC from "../../parsers/tree-sitter-c.wasm?url";
-import treeSitterPython from "../../parsers/tree-sitter-python.wasm?url";
-import treeSitterCore from "../../parsers/tree-sitter.wasm?url";
-import treeSitterCpp from "../../parsers/tree-sitter-cpp.wasm?url";
+import type Parser from "web-tree-sitter";
 import {
-  newCFGBuilder,
-  type Language,
-  supportedLanguages,
   functionNodeTypes,
+  type Language,
+  newCFGBuilder,
+  supportedLanguages,
 } from "../control-flow/cfg";
 import type { TestFuncRecord } from "../test/commentTestUtils";
 import type { TestFunction } from "../test/commentTestTypes";
@@ -17,27 +11,8 @@ import { requirementTests } from "../test/commentTestHandlers";
 import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
 import { type CFG, mergeNodeAttrs } from "../control-flow/cfg-defs";
 import { graphToDot } from "../control-flow/render";
-import { Graphviz, type Format } from "@hpcc-js/wasm-graphviz";
-
-// ADD-LANGUAGES-HERE
-const wasmMapping: { [language in Language]: string } = {
-  C: treeSitterC,
-  Go: treeSitterGo,
-  Python: treeSitterPython,
-  "C++": treeSitterCpp,
-};
-
-async function initializeParser(language: Language) {
-  await Parser.init({
-    locateFile(_scriptName: string, _scriptDirectory: string) {
-      return treeSitterCore;
-    },
-  });
-  const parserLanguage = await Parser.Language.load(wasmMapping[language]);
-  const parser = new Parser();
-  parser.setLanguage(parserLanguage);
-  return parser;
-}
+import { type Format, Graphviz } from "@hpcc-js/wasm-graphviz";
+import { initializeParser } from "../parser-loader/vite.ts";
 
 export type Parsers = { [language in Language]: Parser };
 
