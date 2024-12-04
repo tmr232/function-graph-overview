@@ -33,6 +33,7 @@ export type NodeType =
   | "SWITCH_CONDITION"
   | "SWITCH_MERGE"
   | "CASE_CONDITION";
+
 export type EdgeType = "regular" | "consequence" | "alternative" | "exception";
 
 export type ClusterType =
@@ -64,28 +65,94 @@ export interface GraphEdge {
   type: EdgeType;
 }
 
+/**
+ * Represents a `goto` statement.
+ */
 export interface Goto {
+  /**
+   * The name of the label to jump to
+   */
   label: string;
+  /**
+   * The node containing the `goto` statement
+   */
   node: string;
 }
 
+/**
+ * The `BasicBlock` is used in the process of building a CFG.
+ * It is meant to represent a "statement" or "block" of source-code.
+ *
+ * It allows us to abstract over individual CFG nodes and work with something
+ * that's closer to the source code.
+ *
+ * `BasicBlocks`s can be nested, just like code structures.
+ * If we have a `BasicBlock` representing an `if` statement, it will have
+ * `BasicBlock`s for the individual statements nested within it.
+ *
+ * Each `BasicBlock` can span many CFG nodes.
+ */
 export interface BasicBlock {
+  /**
+   * The ID of the entry node.
+   */
   entry: string;
+  /**
+   * Normal exit node, if exists.
+   *
+   * This would be the next statement after the current one in the source code.
+   * For control-flow statements (like `return`, `break`, etc.) we won't have
+   * an `exit`, as the control-flow doesn't reach it.
+   * Similarly, blocks ending with a flow-altering statement won't have an exit.
+   */
   exit: string | null;
+  /**
+   * The active `continue` nodes within this block.
+   *
+   * A `continue` is active if it's target is outside the current block.
+   */
   continues?: string[];
+  /**
+   * The active `break` nodes within this block.
+   */
   breaks?: string[];
-  // From label name to node
+  /**
+   * All the labels within this block.
+   *
+   * The mapping is from the label's name to the labeled node.
+   */
   labels?: Map<string, string>;
-  // Target label
+  /**
+   * All the active `goto`s within this block.
+   *
+   * Active `goto`s are one that were not yet resolved.
+   */
   gotos?: Goto[];
-  // Return statements in the block. Needed for exception handling.
+  /**
+   * All the `return` statements within the block.
+   * As the CFG is a single-function graph, `return` statements are never
+   * resolved within it.
+   */
   returns?: string[];
 }
 
 export type CFGGraph = MultiDirectedGraph<GraphNode, GraphEdge>;
+
+/**
+ * The full CFG structure.
+ */
 export interface CFG {
+  /**
+   * The graph itself
+   */
   graph: CFGGraph;
+  /**
+   * The function's entry node
+   */
   entry: string;
+  /**
+   * A mapping between source-code offsets and their matching CFG nodes
+   */
   offsetToNode: SimpleRange<string>[];
 }
 
@@ -93,12 +160,12 @@ export class BlockHandler {
   private breaks: string[] = [];
   private continues: string[] = [];
   private labels: Map<string, string> = new Map();
-  private gotos: Array<{ label: string; node: string }> = [];
+  private gotos: Array<Goto> = [];
   /**
    * All the returns encountered so far.
    *
    * This is needed for `finally` clauses in exception handling,
-   * as the return is moved/duplicated to the end of the finally clause.
+   * as the return is moved/duplicated to the end of the finally-clause.
    * This means that when processing returns, we expect to get a new set
    * of returns.
    */

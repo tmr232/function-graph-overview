@@ -309,7 +309,7 @@ function renderEdge(
     // For backlinks, we use `dir=back` to improve the layout.
     // This tells DOT that this is a backlink, and changes the ranking of nodes.
     dotAttrs.dir = "back";
-    // To accomodate that, we also flip the node order and the ports.
+    // To accommodate that, we also flip the node order and the ports.
     [source, target] = [target, source];
     dotAttrs.headport = "s";
     dotAttrs.tailport = "n";
