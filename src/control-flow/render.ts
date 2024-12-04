@@ -22,10 +22,8 @@ class RenderContext {
   }
 
   public isBacklink(from: string, to: string): boolean {
-    return (
-      this.backlinks.findIndex(
-        (backlink) => from === backlink.from && to === backlink.to,
-      ) !== -1
+    return this.backlinks.some(
+      (backlink) => from === backlink.from && to === backlink.to,
     );
   }
   public isHighlighted(node: string): boolean {
@@ -222,7 +220,7 @@ function formatStyle(style: DotAttributes): string {
           return `${name}=${value};\n`;
         case "string":
           return `${name}="${value}";\n`;
-        case "undefined":
+        default: // case "undefined":
           return "";
       }
     })

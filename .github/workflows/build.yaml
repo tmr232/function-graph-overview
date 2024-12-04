@@ -18,9 +18,10 @@ jobs:
 
       - run: bun install
 
-      - run: bun prettier . --check
-      - run: bun eslint
-      - run: bun run tsc --noEmit
+      - run: bun biome ci
+      - run: bun oxlint-ci
+      - run: bunx eslint
+      - run: bunx tsc --noEmit
 
       - name: Test
         run: bun test

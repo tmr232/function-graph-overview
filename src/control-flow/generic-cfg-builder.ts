@@ -151,10 +151,7 @@ export class GenericCFGBuilder {
         return true;
       }
 
-      return (
-        this.options.markerPattern &&
-        Boolean(syntax.text.match(this.options.markerPattern))
-      );
+      return Boolean(this.options.markerPattern?.test(syntax.text));
     });
 
     if (codeStatements.length === 0) {

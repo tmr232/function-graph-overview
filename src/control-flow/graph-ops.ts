@@ -68,7 +68,7 @@ export function simplifyCFG(cfg: CFG, mergeAttrs?: AttrMerger): CFG {
       }
       return null;
     })
-    .filter((x) => x) as [string, string][];
+    .filter(Boolean) as [string, string][];
 
   // Sort merges based on topological order
   const levels = distanceFromEntry(cfg);

@@ -102,7 +102,7 @@ export function deserializeColorList(data: string): ColorList {
     throw new Error(`Invalid scheme version: ${version}`);
   }
   for (const { hex } of scheme) {
-    if (!hex.match(/^#[0-9a-fA-F]+$/)) {
+    if (!/^#[0-9a-fA-F]+$/.test(hex)) {
       throw new Error(`Invalid color: ${hex}`);
     }
   }

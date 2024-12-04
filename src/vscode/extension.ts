@@ -64,7 +64,9 @@ const supportedLanguages: SupportedLanguage[] = [
   },
 ];
 
-const supportedLanguageIds = supportedLanguages.map((lang) => lang.languageId);
+const supportedLanguageIds = new Set(
+  supportedLanguages.map((lang) => lang.languageId),
+);
 const idToLanguage = (languageId: string): Language | null => {
   for (const lang of supportedLanguages) {
     if (lang.languageId === languageId) {
@@ -123,7 +125,7 @@ function getCurrentCode(): {
 
   const document = editor.document;
   const languageId = document.languageId;
-  if (!supportedLanguageIds.includes(languageId)) {
+  if (!supportedLanguageIds.has(languageId)) {
     return null;
   }
 

@@ -64,7 +64,7 @@ export function buildSwitch(
   if (previous && !options.noImplicitDefault) {
     ctx.builder.addEdge(previous, mergeNode, "alternative");
   }
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
   if (fallthrough) {
     ctx.builder.addEdge(fallthrough, mergeNode, "regular");
   }

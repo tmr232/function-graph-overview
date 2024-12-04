@@ -59,9 +59,10 @@
     "demo": "bun run --cwd ./src/demo/ vite",
     "build-demo": "bun run --cwd ./src/demo/ vite build --outDir ../../dist/demo --base '/function-graph-overview/'",
     "build-jetbrains": "bun run --cwd ./src/jetbrains/ vite build",
-    "check": "bun run biome check --fix",
-    "lint": "bun format && bun run biome lint --fix || bun run oxlint --ignore-pattern=\"*.svelte\" --fix || bun run eslint || bun run tsc --noEmit",
-    "ci": "bun run biome ci",
+    "oxlint-fix": "bunx oxlint --ignore-pattern=\"*.svelte\" --fix -D correctness -D perf -D suspicious -A no-await-in-loop",
+    "oxlint-ci": "bunx oxlint --ignore-pattern=\"*.svelte\" -D correctness -D perf -D suspicious -A no-await-in-loop",
+    "lint": "bunx biome check --fix && bun oxlint-fix && bunx eslint --fix && bunx tsc --noEmit",
+    "ci": "bunx biome ci && bun oxlint-ci && bunx eslint && bunx tsc --noEmit",
     "generate-parsers": "bun run ./scripts/generate-parsers.ts"
   },
   "//": "START EXTENSION ATTRIBUTES",

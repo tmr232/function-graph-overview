@@ -13,7 +13,7 @@ export function parseComment(text: string): Requirements {
   const jsonContent = text
     .trim()
     .replaceAll(/^(?=\w)/gm, '"')
-    .replaceAll(/:/gm, '":');
+    .replaceAll(":", '":');
   return JSON.parse(`{${jsonContent}}`);
 }
 

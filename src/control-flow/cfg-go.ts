@@ -286,16 +286,16 @@ function processComment(
   return { entry: commentNode, exit: commentNode };
 }
 
-const caseTypes = [
+const caseTypes = new Set([
   "default_case",
   "communication_case",
   "type_case",
   "expression_case",
-];
+]);
 
 function getCases(switchSyntax: Parser.SyntaxNode): Parser.SyntaxNode[] {
   return switchSyntax.namedChildren.filter((child) =>
-    caseTypes.includes(child.type),
+    caseTypes.has(child.type),
   );
 }
 
