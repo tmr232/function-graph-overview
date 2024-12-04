@@ -43,7 +43,10 @@ export interface Context {
  * @param {Context} ctx - The context in which the statement is being handled
  * @returns {BasicBlock} A basic block representation of the AST node
  */
-export type StatementHandler = (syntax: Parser.SyntaxNode, ctx: Context) => BasicBlock;
+export type StatementHandler = (
+  syntax: Parser.SyntaxNode,
+  ctx: Context,
+) => BasicBlock;
 /**
  * Maps AST nodes to their matching `StatementHandler` functions.
  */
