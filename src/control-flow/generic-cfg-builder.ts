@@ -1,16 +1,16 @@
 import type Parser from "web-tree-sitter";
+import { BlockMatcher } from "./block-matcher";
 import { Builder } from "./builder";
 import {
-  BlockHandler,
   type BasicBlock,
+  BlockHandler,
   type BuilderOptions,
   type CFG,
 } from "./cfg-defs";
-import { BlockMatcher } from "./block-matcher";
 import { NodeMapper } from "./node-mapper";
 import { pairwise } from "./zip";
 
-interface Dispatch {
+export interface Dispatch {
   /**
    * Process a single AST node into a basic block
    * @param syntax
@@ -23,7 +23,7 @@ interface Dispatch {
    */
   many(statements: Parser.SyntaxNode[]): BasicBlock;
 }
-interface Link {
+export interface Link {
   syntaxToNode: InstanceType<typeof NodeMapper>["linkSyntaxToNode"];
   offsetToSyntax: InstanceType<typeof NodeMapper>["linkOffsetToSyntax"];
 }
@@ -43,7 +43,10 @@ export interface Context {
  * @param {Context} ctx - The context in which the statement is being handled
  * @returns {BasicBlock} A basic block representation of the AST node
  */
-type StatementHandler = (syntax: Parser.SyntaxNode, ctx: Context) => BasicBlock;
+export type StatementHandler = (
+  syntax: Parser.SyntaxNode,
+  ctx: Context,
+) => BasicBlock;
 /**
  * Maps AST nodes to their matching `StatementHandler` functions.
  */
@@ -151,10 +154,7 @@ export class GenericCFGBuilder {
         return true;
       }
 
-      return (
-        this.options.markerPattern &&
-        Boolean(syntax.text.match(this.options.markerPattern))
-      );
+      return Boolean(this.options.markerPattern?.test(syntax.text));
     });
 
     if (codeStatements.length === 0) {

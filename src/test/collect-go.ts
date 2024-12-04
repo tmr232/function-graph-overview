@@ -1,6 +1,6 @@
 import type Parser from "web-tree-sitter";
-import { parseComment } from "./commentTestUtils";
 import type { TestFunction } from "./commentTestTypes";
+import { parseComment } from "./commentTestUtils";
 
 import { initializeParser } from "../parser-loader/bun.ts";
 
@@ -12,17 +12,17 @@ export function getTestFuncs(code: string): Generator<TestFunction> {
 }
 
 function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
-  const funcTypes = [
+  const funcTypes = new Set([
     "function_declaration",
     "method_declaration",
     "func_literal",
-  ];
+  ]);
 
   for (let i = 0; i < tree.rootNode.childCount - 1; i++) {
     const commentNode = tree.rootNode.children[i] as Parser.SyntaxNode;
     const functionNode = tree.rootNode.children[i + 1] as Parser.SyntaxNode;
 
-    if (!funcTypes.includes(functionNode.type)) {
+    if (!funcTypes.has(functionNode.type)) {
       continue;
     }
     const functionName = functionNode.childForFieldName("name")?.text as string;

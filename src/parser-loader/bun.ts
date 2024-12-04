@@ -1,5 +1,5 @@
-import type { Language } from "../control-flow/cfg.ts";
 import Parser from "web-tree-sitter";
+import type { Language } from "../control-flow/cfg.ts";
 import { wasmMapping } from "./wasmMapping.ts";
 
 export async function initializeParser(

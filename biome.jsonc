@@ -3,31 +3,31 @@
   "vcs": {
     "enabled": false,
     "clientKind": "git",
-    "useIgnoreFile": false,
+    "useIgnoreFile": false
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["./dist", "*.svelte"],
+    "ignore": ["./dist", "*.svelte"]
   },
   "formatter": {
     "enabled": true,
-    "indentStyle": "space",
+    "indentStyle": "space"
   },
   "organizeImports": {
-    "enabled": true,
+    "enabled": true
   },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
       "style": {
-        "noParameterAssign": "off",
-      },
-    },
+        "noParameterAssign": "off"
+      }
+    }
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "double",
-    },
-  },
+      "quoteStyle": "double"
+    }
+  }
 }

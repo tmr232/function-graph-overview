@@ -1,9 +1,9 @@
+import { writable } from "svelte/store";
 import {
   type ColorList,
   getDarkColorList,
   getLightColorList,
 } from "../control-flow/colors.ts";
-import { writable } from "svelte/store";
 
 export function toggleTheme(): void {
   if (isDarkTheme()) {

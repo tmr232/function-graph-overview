@@ -1,7 +1,7 @@
 import type { MultiDirectedGraph } from "graphology";
 import type Parser from "web-tree-sitter";
-import type { SimpleRange } from "./ranges";
 import { evolve } from "./evolve";
+import type { SimpleRange } from "./ranges";
 
 export type NodeType =
   | "YIELD"
@@ -159,8 +159,8 @@ export function mergeNodeAttrs(
   if (from.cluster !== into.cluster) {
     return null;
   }
-  const noMergeTypes: NodeType[] = ["YIELD", "THROW"];
-  if (noMergeTypes.includes(from.type) || noMergeTypes.includes(into.type)) {
+  const noMergeTypes: Set<NodeType> = new Set(["YIELD", "THROW"]);
+  if (noMergeTypes.has(from.type) || noMergeTypes.has(into.type)) {
     return null;
   }
 

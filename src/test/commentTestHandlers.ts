@@ -1,14 +1,14 @@
-import { mergeNodeAttrs, type CFG } from "../control-flow/cfg-defs";
-import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
 import type { MultiDirectedGraph } from "graphology";
 import { bfsFromNode } from "graphology-traversal";
-import {
-  newCFGBuilder,
-  type Language as CFGLanguage,
-} from "../control-flow/cfg";
 import type Parser from "web-tree-sitter";
-import type { TestFunction } from "./commentTestTypes";
+import {
+  type Language as CFGLanguage,
+  newCFGBuilder,
+} from "../control-flow/cfg";
+import { type CFG, mergeNodeAttrs } from "../control-flow/cfg-defs";
+import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
 import { graphToDot } from "../control-flow/render";
+import type { TestFunction } from "./commentTestTypes";
 
 const markerPattern: RegExp = /CFG: (\w+)/;
 

@@ -59,9 +59,12 @@
     "demo": "bun run --cwd ./src/demo/ vite",
     "build-demo": "bun run --cwd ./src/demo/ vite build --outDir ../../dist/demo --base '/function-graph-overview/'",
     "build-jetbrains": "bun run --cwd ./src/jetbrains/ vite build",
-    "format": "bun prettier . --write --log-level silent",
-    "lint": "bun format && bun run biome lint --fix || bun run oxlint --ignore-pattern=\"*.svelte\" --fix || bun run eslint || bun run tsc --noEmit",
-    "generate-parsers": "bun run ./scripts/generate-parsers.ts"
+    "oxlint-fix": "bunx oxlint --ignore-pattern=\"*.svelte\" --fix -D correctness -D perf -D suspicious -A no-await-in-loop",
+    "oxlint-ci": "bunx oxlint --ignore-pattern=\"*.svelte\" -D correctness -D perf -D suspicious -A no-await-in-loop",
+    "lint": "bunx biome check --fix && bun oxlint-fix && bunx eslint --fix && bunx tsc --noEmit",
+    "ci": "bunx biome ci && bun oxlint-ci && bunx eslint && bunx tsc --noEmit",
+    "generate-parsers": "bun run ./scripts/generate-parsers.ts",
+    "typedoc": "bunx typedoc --treatWarningsAsErrors"
   },
   "//": "START EXTENSION ATTRIBUTES",
   "publisher": "tamir-bahar",
@@ -70,9 +73,7 @@
   "description": "Function Graph Overview",
   "displayName": "Function Graph Overview",
   "icon": "./media/icon.png",
-  "categories": [
-    "Visualization"
-  ],
+  "categories": ["Visualization"],
   "repository": {
     "type": "git",
     "url": "https://github.com/tmr232/function-graph-overview.git"
@@ -100,12 +101,7 @@
         },
         "functionGraphOverview.colorScheme": {
           "type": "string",
-          "enum": [
-            "System",
-            "Light",
-            "Dark",
-            "Custom"
-          ],
+          "enum": ["System", "Light", "Dark", "Custom"],
           "markdownEnumDescriptions": [
             "Based on the active color theme",
             "Light color scheme",

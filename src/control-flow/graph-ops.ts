@@ -56,7 +56,7 @@ function collapseNode(
 }
 /**
  *
- * @param graph The graph to simplify
+ * @param cfg The graph to simplify
  */
 export function simplifyCFG(cfg: CFG, mergeAttrs?: AttrMerger): CFG {
   const graph = cfg.graph.copy();
@@ -68,7 +68,7 @@ export function simplifyCFG(cfg: CFG, mergeAttrs?: AttrMerger): CFG {
       }
       return null;
     })
-    .filter((x) => x) as [string, string][];
+    .filter(Boolean) as [string, string][];
 
   // Sort merges based on topological order
   const levels = distanceFromEntry(cfg);

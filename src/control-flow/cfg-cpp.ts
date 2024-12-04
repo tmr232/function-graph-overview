@@ -1,4 +1,5 @@
 import type Parser from "web-tree-sitter";
+import { getStatementHandlers } from "./cfg-c.ts";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
   type Context,
@@ -6,7 +7,6 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
 import { zip } from "./zip.ts";
-import { getStatementHandlers } from "./cfg-c.ts";
 
 export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
   return new GenericCFGBuilder(statementHandlers, options);

@@ -1,13 +1,13 @@
 import type Parser from "web-tree-sitter";
-import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import type { Match } from "./block-matcher.ts";
+import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
-  GenericCFGBuilder,
   type Context,
+  GenericCFGBuilder,
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
-import { pairwise, zip } from "./zip.ts";
 import { buildSwitch, collectCases } from "./switch-utils.ts";
+import { pairwise, zip } from "./zip.ts";
 
 function getChildFieldText(node: Parser.SyntaxNode, fieldName: string): string {
   const child = node.childForFieldName(fieldName);
@@ -173,6 +173,10 @@ function processForStatement(
   return ctx.matcher.update({ entry: entryNode, exit: exitNode });
 }
 
+function last<T>(items: T[]): T | undefined {
+  return items[items.length - 1];
+}
+
 function processIfStatement(
   ifSyntax: Parser.SyntaxNode,
   ctx: Context,
@@ -247,10 +251,6 @@ function processIfStatement(
     }
 
     previous = condBlock.exit;
-  }
-
-  function last<T>(items: T[]): T | undefined {
-    return items[items.length - 1];
   }
 
   const elseBlock = last(blocks)?.elseBlock;
@@ -488,13 +488,11 @@ function defaultProcessStatement(
   return { entry: newNode, exit: newNode };
 }
 
-const caseTypes = ["case_statement"];
+const caseTypes = new Set(["case_statement"]);
 
 function getCases(switchSyntax: Parser.SyntaxNode): Parser.SyntaxNode[] {
   const switchBody = switchSyntax.namedChildren[1] as Parser.SyntaxNode;
-  return switchBody.namedChildren.filter((child) =>
-    caseTypes.includes(child.type),
-  );
+  return switchBody.namedChildren.filter((child) => caseTypes.has(child.type));
 }
 
 function parseCase(caseSyntax: Parser.SyntaxNode): {

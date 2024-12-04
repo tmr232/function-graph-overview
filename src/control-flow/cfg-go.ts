@@ -1,11 +1,11 @@
 import type Parser from "web-tree-sitter";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
-  GenericCFGBuilder,
   type Context,
+  GenericCFGBuilder,
   type StatementHandlers,
 } from "./generic-cfg-builder";
-import { buildSwitch, collectCases, type SwitchOptions } from "./switch-utils";
+import { type SwitchOptions, buildSwitch, collectCases } from "./switch-utils";
 
 function getChildFieldText(node: Parser.SyntaxNode, fieldName: string): string {
   const child = node.childForFieldName(fieldName);
@@ -286,16 +286,16 @@ function processComment(
   return { entry: commentNode, exit: commentNode };
 }
 
-const caseTypes = [
+const caseTypes = new Set([
   "default_case",
   "communication_case",
   "type_case",
   "expression_case",
-];
+]);
 
 function getCases(switchSyntax: Parser.SyntaxNode): Parser.SyntaxNode[] {
   return switchSyntax.namedChildren.filter((child) =>
-    caseTypes.includes(child.type),
+    caseTypes.has(child.type),
   );
 }
 

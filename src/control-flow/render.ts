@@ -1,8 +1,8 @@
-import { detectBacklinks } from "./graph-ops";
-import type { CFG, CFGGraph, Cluster, ClusterId } from "./cfg-defs";
-import { subgraph } from "graphology-operators";
 import { MultiDirectedGraph } from "graphology";
-import { getDefaultColorScheme, type ColorScheme } from "./colors";
+import { subgraph } from "graphology-operators";
+import type { CFG, CFGGraph, Cluster, ClusterId } from "./cfg-defs";
+import { type ColorScheme, getDefaultColorScheme } from "./colors";
+import { detectBacklinks } from "./graph-ops";
 
 class RenderContext {
   public readonly verbose: boolean;
@@ -22,10 +22,8 @@ class RenderContext {
   }
 
   public isBacklink(from: string, to: string): boolean {
-    return (
-      this.backlinks.findIndex(
-        (backlink) => from === backlink.from && to === backlink.to,
-      ) !== -1
+    return this.backlinks.some(
+      (backlink) => from === backlink.from && to === backlink.to,
     );
   }
   public isHighlighted(node: string): boolean {
@@ -222,7 +220,7 @@ function formatStyle(style: DotAttributes): string {
           return `${name}=${value};\n`;
         case "string":
           return `${name}="${value}";\n`;
-        case "undefined":
+        default: // case "undefined":
           return "";
       }
     })

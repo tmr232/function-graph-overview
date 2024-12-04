@@ -1,7 +1,7 @@
 import type Parser from "web-tree-sitter";
 import type { Case, EdgeType } from "./cfg-defs";
-import { pairwise } from "./zip";
 import type { Context } from "./generic-cfg-builder";
+import { pairwise } from "./zip";
 export interface SwitchOptions {
   /// A Go `select` blocks until one of the branches matches.
   /// This means that we never add an alternative edge from the
@@ -64,7 +64,7 @@ export function buildSwitch(
   if (previous && !options.noImplicitDefault) {
     ctx.builder.addEdge(previous, mergeNode, "alternative");
   }
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+
   if (fallthrough) {
     ctx.builder.addEdge(fallthrough, mergeNode, "regular");
   }

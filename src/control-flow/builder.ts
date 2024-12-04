@@ -1,3 +1,4 @@
+import { MultiDirectedGraph } from "graphology";
 import type {
   CFGGraph,
   Cluster,
@@ -7,7 +8,6 @@ import type {
   GraphNode,
   NodeType,
 } from "./cfg-defs.ts";
-import { MultiDirectedGraph } from "graphology";
 
 /**
  * Constructs the CFG

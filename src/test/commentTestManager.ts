@@ -1,9 +1,9 @@
 import { remapNodeTargets } from "../control-flow/cfg-defs";
 import { graphToDot } from "../control-flow/render";
 import {
+  type RequirementHandler,
   buildSimpleCFG,
   requirementTests,
-  type RequirementHandler,
 } from "./commentTestHandlers";
 import type { TestFunction } from "./commentTestTypes";
 
