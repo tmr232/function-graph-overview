@@ -18,7 +18,7 @@ jobs:
         run: bun build-demo
 
       - name: "Build docs"
-        run: bun typedocs --out ./dist/demo/devdocs
+        run: bun typedocs --out ./dist/demo/docs
 
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -9,6 +9,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Added
 
 - A simple CLI script to render a single function from a file (`scripts/render-function.ts`)
+- [Developer docs](https://tmr232.github.io/function-graph-overview/docs)
 
 ## [0.0.11]
 
