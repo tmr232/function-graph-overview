@@ -63,7 +63,8 @@
     "oxlint-ci": "bunx oxlint --ignore-pattern=\"*.svelte\" -D correctness -D perf -D suspicious -A no-await-in-loop",
     "lint": "bunx biome check --fix && bun oxlint-fix && bunx eslint --fix && bunx tsc --noEmit",
     "ci": "bunx biome ci && bun oxlint-ci && bunx eslint && bunx tsc --noEmit",
-    "generate-parsers": "bun run ./scripts/generate-parsers.ts"
+    "generate-parsers": "bun run ./scripts/generate-parsers.ts",
+    "typedoc": "bunx typedoc --treatWarningsAsErrors"
   },
   "//": "START EXTENSION ATTRIBUTES",
   "publisher": "tamir-bahar",

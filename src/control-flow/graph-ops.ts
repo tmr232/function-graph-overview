@@ -56,7 +56,7 @@ function collapseNode(
 }
 /**
  *
- * @param graph The graph to simplify
+ * @param cfg The graph to simplify
  */
 export function simplifyCFG(cfg: CFG, mergeAttrs?: AttrMerger): CFG {
   const graph = cfg.graph.copy();

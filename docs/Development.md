@@ -1,3 +1,10 @@
+---
+title: Development
+group: Documents
+category: Guides
+---
+
+
 # Development
 
 These are instructions for developing this project.
