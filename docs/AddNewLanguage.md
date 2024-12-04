@@ -6,6 +6,13 @@ category: Guides
 
 # Adding a New Language
 
+## Creating an Issue
+
+Before you start your work, we recommend you [create a GitHub Issue](https://github.com/tmr232/function-graph-overview/issues)
+to let us know.
+This is not a commitment of any sort,
+it just allows other contributors to be aware of your work and avoid duplicate efforts.
+
 ## Add the Relevant Parser
 
 We're using [tree-sitter] to parse code into ASTs.

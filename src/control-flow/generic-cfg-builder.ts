@@ -39,9 +39,9 @@ export interface Context {
 /**
  * A function that converts an AST node to a CFG basic-block.
  *
- * @param {Parser.SyntaxNode} syntax - The AST node to be processed
- * @param {Context} ctx - The context in which the statement is being handled
- * @returns {BasicBlock} A basic block representation of the AST node
+ * @param syntax The AST node to be processed
+ * @param ctx The context in which the statement is being handled
+ * @returns A basic block representation of the AST node
  */
 export type StatementHandler = (
   syntax: Parser.SyntaxNode,

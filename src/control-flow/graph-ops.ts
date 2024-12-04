@@ -15,18 +15,35 @@ export function distanceFromEntry(cfg: CFG): Map<string, number> {
   return levels;
 }
 
-/// Can return null to indicate that the merge is not allowed.
-/// The function MUST NOT modify the input arguments.
+/**
+ * Merges the attributes of two nodes, or aborts the merge.
+ *
+ * The function MUST NOT modify the input arguments.
+ *
+ * @param nodeAttrs the node to disappear
+ * @param intoAttrs the node accepting the new attributes
+ * @returns the new node attribute if the merge is successful, or `null` to abort it.
+ */
 export type AttrMerger = (
   nodeAttrs: GraphNode,
   intoAttrs: GraphNode,
 ) => GraphNode | null;
+
+/**
+ * Collapses one node into another, migrating all relevant edges and merging
+ * the node attributes.
+ *
+ * @param graph The graph to collapse in
+ * @param node Node to collapse
+ * @param into Collapse target
+ * @param mergeAttrs Controls the merger of attributes. Can prevent collapsing.
+ */
 function collapseNode(
   graph: MultiDirectedGraph<GraphNode>,
   node: string,
   into: string,
   mergeAttrs?: AttrMerger,
-) {
+): void {
   if (mergeAttrs) {
     const attrs = mergeAttrs(
       graph.getNodeAttributes(node),
@@ -55,8 +72,10 @@ function collapseNode(
   graph.dropNode(node);
 }
 /**
+ * Simplify the CFG by removing "trivial" nodes.
  *
- * @param cfg The graph to simplify
+ * Trivial nodes are nodes that do not contribute to the branching structure of
+ * the CFG.
  */
 export function simplifyCFG(cfg: CFG, mergeAttrs?: AttrMerger): CFG {
   const graph = cfg.graph.copy();
@@ -90,6 +109,12 @@ export function simplifyCFG(cfg: CFG, mergeAttrs?: AttrMerger): CFG {
   return evolve(cfg, { graph, entry });
 }
 
+/**
+ * Remove all nodes not reachable from the CFG's entry
+ *
+ * @param cfg The CFG to trim
+ * @returns a copy of the CFG, with the unreachable nodes removed
+ */
 export function trimFor(cfg: CFG): CFG {
   const { graph, entry } = cfg;
   const reachable: string[] = [];
