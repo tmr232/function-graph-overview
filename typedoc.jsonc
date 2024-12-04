@@ -5,7 +5,7 @@
   "categoryOrder": ["Guides", "Testing", "*"],
   "hostedBaseUrl": "https://tmr232.github.io/function-graph-overview/docs",
   "entryPoints": ["src/control-flow/*"],
-  "readme": "docs/Development.md",
+  "readme": "CONTRIBUTING.md",
   "name": "Function Graph Overview",
   "sort": ["source-order"]
 }
