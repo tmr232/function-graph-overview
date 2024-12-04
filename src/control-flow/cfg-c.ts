@@ -1,13 +1,13 @@
 import type Parser from "web-tree-sitter";
-import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import type { Match } from "./block-matcher.ts";
+import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
-  GenericCFGBuilder,
   type Context,
+  GenericCFGBuilder,
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
-import { pairwise, zip } from "./zip.ts";
 import { buildSwitch, collectCases } from "./switch-utils.ts";
+import { pairwise, zip } from "./zip.ts";
 
 function getChildFieldText(node: Parser.SyntaxNode, fieldName: string): string {
   const child = node.childForFieldName(fieldName);

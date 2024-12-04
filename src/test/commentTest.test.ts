@@ -1,6 +1,6 @@
-import { test, expect } from "bun:test";
-import { TestManager } from "./commentTestManager";
+import { expect, test } from "bun:test";
 import { collectTests } from "./commentTestCollector";
+import { TestManager } from "./commentTestManager";
 
 const testManager = new TestManager({
   testFunctions: await collectTests(),

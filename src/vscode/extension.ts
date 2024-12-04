@@ -1,29 +1,29 @@
+import { Graphviz } from "@hpcc-js/wasm-graphviz";
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import Parser, { type SyntaxNode } from "web-tree-sitter";
-import { Graphviz } from "@hpcc-js/wasm-graphviz";
-import { graphToDot } from "../control-flow/render";
-import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
 import {
-  newCFGBuilder,
   type Language,
   functionNodeTypes,
+  newCFGBuilder,
 } from "../control-flow/cfg";
 import {
+  type CFG,
   mergeNodeAttrs,
   remapNodeTargets,
-  type CFG,
 } from "../control-flow/cfg-defs";
-import { OverviewViewProvider } from "./overview-view";
-import { getValue } from "../control-flow/ranges";
 import {
+  type ColorScheme,
   deserializeColorList,
+  getDarkColorList,
   getLightColorList,
   listToScheme,
-  getDarkColorList,
-  type ColorScheme,
 } from "../control-flow/colors";
+import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
+import { getValue } from "../control-flow/ranges";
+import { graphToDot } from "../control-flow/render";
+import { OverviewViewProvider } from "./overview-view";
 
 let graphviz: Graphviz;
 interface SupportedLanguage {

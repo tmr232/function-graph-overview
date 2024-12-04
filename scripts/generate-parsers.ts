@@ -1,3 +1,5 @@
+import * as fs from "node:fs";
+import { fileURLToPath } from "node:url";
 /**
  * The `generate-parsers` script copies or builds the relevant tree-sitter
  * parsers in to the `./parsers` directory.
@@ -6,8 +8,6 @@
  * @module
  */
 import { $ } from "bun";
-import * as fs from "node:fs";
-import { fileURLToPath } from "node:url";
 
 /**
  * The parsers to include

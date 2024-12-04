@@ -1,11 +1,11 @@
 import type Parser from "web-tree-sitter";
+import { matchExistsIn } from "./block-matcher.ts";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
-  GenericCFGBuilder,
   type Context,
+  GenericCFGBuilder,
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
-import { matchExistsIn } from "./block-matcher.ts";
 import { maybe, zip } from "./zip.ts";
 
 const statementHandlers: StatementHandlers = {

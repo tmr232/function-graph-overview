@@ -3,4 +3,8 @@
   "out": "dist/docs",
   "projectDocuments": ["docs/*"],
   "categoryOrder": ["Guides", "Testing", "*"],
+  "hostedBaseUrl": "https://tmr232.github.io/function-graph-overview/devdocs",
+  "entryPoints": ["src/control-flow/*"],
+  "readme": "docs/Development.md",
+  "name": "Function Graph Overview"
 }

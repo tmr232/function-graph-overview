@@ -1,7 +1,7 @@
-import { intoRecords } from "../src/test/commentTestUtils";
 import { watch } from "node:fs";
 import { parseArgs } from "node:util";
 import { collectTests } from "../src/test/commentTestCollector";
+import { intoRecords } from "../src/test/commentTestUtils";
 
 const watchDir = `${import.meta.dir}/../src`;
 

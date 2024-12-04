@@ -7,12 +7,10 @@ export type ColorList = [
   { name: "node.yield"; hex: string },
   { name: "node.border"; hex: string },
   { name: "node.highlight"; hex: string },
-
   // Edge Colors
   { name: "edge.regular"; hex: string },
   { name: "edge.consequence"; hex: string },
   { name: "edge.alternative"; hex: string },
-
   // Cluster Colors
   { name: "cluster.border"; hex: string },
   { name: "cluster.with"; hex: string },
@@ -20,7 +18,6 @@ export type ColorList = [
   { name: "cluster.try"; hex: string },
   { name: "cluster.finally"; hex: string },
   { name: "cluster.except"; hex: string },
-
   // Graph Colors
   { name: "graph.background"; hex: string },
 ];

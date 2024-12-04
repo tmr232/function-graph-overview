@@ -1,4 +1,4 @@
-import { test, expect } from "bun:test";
+import { expect, test } from "bun:test";
 import { MultiDirectedGraph } from "graphology";
 import { mergePath } from "graphology-utils";
 import { detectBacklinks } from "../control-flow/graph-ops";

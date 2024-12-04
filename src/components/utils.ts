@@ -1,18 +1,18 @@
+import { type Format, Graphviz } from "@hpcc-js/wasm-graphviz";
 import type Parser from "web-tree-sitter";
 import {
-  functionNodeTypes,
   type Language,
+  functionNodeTypes,
   newCFGBuilder,
   supportedLanguages,
 } from "../control-flow/cfg";
-import type { TestFuncRecord } from "../test/commentTestUtils";
-import type { TestFunction } from "../test/commentTestTypes";
-import { requirementTests } from "../test/commentTestHandlers";
-import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
 import { type CFG, mergeNodeAttrs } from "../control-flow/cfg-defs";
+import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
 import { graphToDot } from "../control-flow/render";
-import { type Format, Graphviz } from "@hpcc-js/wasm-graphviz";
 import { initializeParser } from "../parser-loader/vite.ts";
+import { requirementTests } from "../test/commentTestHandlers";
+import type { TestFunction } from "../test/commentTestTypes";
+import type { TestFuncRecord } from "../test/commentTestUtils";
 
 export type Parsers = { [language in Language]: Parser };
 

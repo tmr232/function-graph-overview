@@ -1,8 +1,8 @@
-import { detectBacklinks } from "./graph-ops";
-import type { CFG, CFGGraph, Cluster, ClusterId } from "./cfg-defs";
-import { subgraph } from "graphology-operators";
 import { MultiDirectedGraph } from "graphology";
-import { getDefaultColorScheme, type ColorScheme } from "./colors";
+import { subgraph } from "graphology-operators";
+import type { CFG, CFGGraph, Cluster, ClusterId } from "./cfg-defs";
+import { type ColorScheme, getDefaultColorScheme } from "./colors";
+import { detectBacklinks } from "./graph-ops";
 
 class RenderContext {
   public readonly verbose: boolean;

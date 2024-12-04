@@ -1,6 +1,6 @@
 import type Parser from "web-tree-sitter";
-import { parseComment } from "./commentTestUtils";
 import type { TestFunction } from "./commentTestTypes";
+import { parseComment } from "./commentTestUtils";
 
 import { initializeParser } from "../parser-loader/bun.ts";
 

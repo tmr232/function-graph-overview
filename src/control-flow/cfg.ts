@@ -1,11 +1,11 @@
 import { createCFGBuilder as createCCFGBuilder } from "./cfg-c";
+import {
+  functionNodeNames as cppFunctionNodeNames,
+  createCFGBuilder as createCppCFGBuilder,
+} from "./cfg-cpp";
 import type { BuilderOptions, CFGBuilder } from "./cfg-defs";
 import { createCFGBuilder as createGoCFGBuilder } from "./cfg-go";
 import { createCFGBuilder as createPythonCFGBuilder } from "./cfg-python";
-import {
-  createCFGBuilder as createCppCFGBuilder,
-  functionNodeNames as cppFunctionNodeNames,
-} from "./cfg-cpp";
 
 // ADD-LANGUAGES-HERE
 /**

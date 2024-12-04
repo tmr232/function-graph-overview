@@ -1,11 +1,11 @@
+import path from "node:path";
+import type Parser from "web-tree-sitter";
 import {
-  functionNodeTypes,
   type Language,
+  functionNodeTypes,
   supportedLanguages,
 } from "../src/control-flow/cfg.ts";
-import type Parser from "web-tree-sitter";
 import { initializeParser } from "../src/parser-loader/bun.ts";
-import path from "node:path";
 
 type FileType = { ext: string; language: Language };
 

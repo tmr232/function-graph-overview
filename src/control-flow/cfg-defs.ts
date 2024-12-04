@@ -1,7 +1,7 @@
 import type { MultiDirectedGraph } from "graphology";
 import type Parser from "web-tree-sitter";
-import type { SimpleRange } from "./ranges";
 import { evolve } from "./evolve";
+import type { SimpleRange } from "./ranges";
 
 export type NodeType =
   | "YIELD"

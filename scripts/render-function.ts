@@ -1,16 +1,16 @@
-import { parseArgs } from "node:util";
 import * as path from "node:path";
-import { getLanguage, iterFunctions } from "./file-parsing.ts";
+import { parseArgs } from "node:util";
+import { Graphviz } from "@hpcc-js/wasm-graphviz";
+import type Parser from "web-tree-sitter";
+import { type CFG, mergeNodeAttrs } from "../src/control-flow/cfg-defs.ts";
 import {
   type Language,
   newCFGBuilder,
   supportedLanguages,
 } from "../src/control-flow/cfg.ts";
-import type Parser from "web-tree-sitter";
-import { type CFG, mergeNodeAttrs } from "../src/control-flow/cfg-defs.ts";
 import { simplifyCFG, trimFor } from "../src/control-flow/graph-ops.ts";
 import { graphToDot } from "../src/control-flow/render.ts";
-import { Graphviz } from "@hpcc-js/wasm-graphviz";
+import { getLanguage, iterFunctions } from "./file-parsing.ts";
 
 function isLanguage(language: string): language is Language {
   return supportedLanguages.includes(language as Language);

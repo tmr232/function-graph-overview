@@ -1,3 +1,4 @@
+import * as path from "node:path";
 /**
  * This script allows running the CFG builders on all the functions of a given
  * code base.
@@ -6,9 +7,8 @@
  * @module
  */
 import { parseArgs } from "node:util";
-import { newCFGBuilder } from "../src/control-flow/cfg";
 import { Glob } from "bun";
-import * as path from "node:path";
+import { newCFGBuilder } from "../src/control-flow/cfg";
 import { fileTypes, getLanguage, iterFunctions } from "./file-parsing.ts";
 
 function iterSourceFiles(root: string): IterableIterator<string> {

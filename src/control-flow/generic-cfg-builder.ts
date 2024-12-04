@@ -1,12 +1,12 @@
 import type Parser from "web-tree-sitter";
+import { BlockMatcher } from "./block-matcher";
 import { Builder } from "./builder";
 import {
-  BlockHandler,
   type BasicBlock,
+  BlockHandler,
   type BuilderOptions,
   type CFG,
 } from "./cfg-defs";
-import { BlockMatcher } from "./block-matcher";
 import { NodeMapper } from "./node-mapper";
 import { pairwise } from "./zip";
 
