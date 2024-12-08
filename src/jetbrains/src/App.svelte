@@ -40,6 +40,14 @@
     console.log(newCode, offset, language);
   }
 
+  function navigateTo(
+    e: CustomEvent<{ node: string; offset: number | null }>,
+  ): void {
+    console.log("navigateTo", e);
+    if (e.detail.offset !== null && window.navigateTo)
+      window.navigateTo(e.detail.offset.toString());
+  }
+
   window.setCode = setCode;
   window.setColors = (colors: string) => {
     if (!display) return;
@@ -58,7 +66,12 @@
 </script>
 
 <main>
-  <Jetbrains {codeAndOffset} bind:this={display} {colorList} />
+  <Jetbrains
+    {codeAndOffset}
+    bind:this={display}
+    {colorList}
+    on:node-clicked={navigateTo}
+  />
 </main>
 
 <style>
