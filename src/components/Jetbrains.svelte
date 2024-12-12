@@ -129,6 +129,7 @@
   }
 
   function onClick(event: MouseEvent) {
+    console.log("onClick triggered!");
     let target: Element = event.target as Element;
     while (
       target.tagName !== "div" &&

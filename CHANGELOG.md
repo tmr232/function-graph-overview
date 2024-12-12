@@ -10,6 +10,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - A simple CLI script to render a single function from a file (`scripts/render-function.ts`)
 - [Developer docs](https://tmr232.github.io/function-graph-overview/docs)
+- Support for click-to-navigate in the [JetBrains plugin](https://github.com/tmr232/jb-function-graph-overview).
 
 ## [0.0.11]
 
