@@ -1,6 +1,6 @@
 import type Parser from "web-tree-sitter";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
-import { cStyleIfProcessor, rangeForLoopProcessor } from "./common-patterns.ts";
+import { cStyleIfProcessor, forEachLoopProcessor } from "./common-patterns.ts";
 import {
   type Context,
   GenericCFGBuilder,
@@ -36,7 +36,7 @@ const ifStatementQuery = `
       )@if
   `;
 
-const processForStatement = rangeForLoopProcessor({
+const processForStatement = forEachLoopProcessor({
   query: `
     (for_in_statement
       (")") @closingParen

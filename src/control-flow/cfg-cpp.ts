@@ -1,6 +1,7 @@
 import type Parser from "web-tree-sitter";
 import { getStatementHandlers } from "./cfg-c.ts";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
+import { forEachLoopProcessor } from "./common-patterns.ts";
 import {
   type Context,
   GenericCFGBuilder,
@@ -14,11 +15,22 @@ export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
 
 export const functionNodeNames = ["function_definition", "lambda_expression"];
 
+const processForRangeStatement = forEachLoopProcessor({
+  query: `
+			(for_range_loop
+					")" @close-paren
+					body: (_) @body
+			) @range-loop
+      `,
+  body: "body",
+  headerEnd: "close-paren",
+});
+
 const statementHandlers: StatementHandlers = getStatementHandlers();
 const cppSpecificHandlers = {
   try_statement: processTryStatement,
   throw_statement: processThrowStatement,
-  for_range_loop: processForRangeLoopStatement,
+  for_range_loop: processForRangeStatement,
 };
 Object.assign(statementHandlers.named, cppSpecificHandlers);
 
@@ -107,56 +119,4 @@ function processThrowStatement(
   );
   ctx.link.syntaxToNode(throwSyntax, throwNode);
   return { entry: throwNode, exit: null };
-}
-
-function processForRangeLoopStatement(
-  forNode: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  const { builder, matcher } = ctx;
-  const match = matcher.match(
-    forNode,
-    `
-			(for_range_loop
-					")" @close-paren
-					body: (_) @body
-			) @range-loop
-      `,
-  );
-
-  const bodySyntax = match.requireSyntax("body");
-
-  const bodyBlock = match.getBlock(bodySyntax);
-
-  const headNode = builder.addNode(
-    "LOOP_HEAD",
-    "loop head",
-    forNode.startIndex,
-  );
-  const exitNode = builder.addNode("FOR_EXIT", "loop exit", forNode.endIndex);
-  const headBlock = { entry: headNode, exit: headNode };
-
-  ctx.link.syntaxToNode(forNode, headNode);
-  ctx.link.offsetToSyntax(match.requireSyntax("close-paren"), bodySyntax);
-
-  /*
-  head +-> body -> head
-       --> else / exit
-  break -> exit
-  continue -> head
-  */
-  builder.addEdge(headBlock.exit, bodyBlock.entry, "consequence");
-  if (bodyBlock.exit) builder.addEdge(bodyBlock.exit, headBlock.entry);
-
-  builder.addEdge(headBlock.exit, exitNode, "alternative");
-
-  matcher.state.forEachContinue((continueNode) => {
-    builder.addEdge(continueNode, headNode);
-  });
-
-  matcher.state.forEachBreak((breakNode) => {
-    builder.addEdge(breakNode, exitNode);
-  });
-
-  return matcher.update({ entry: headNode, exit: exitNode });
 }

@@ -1,12 +1,30 @@
 import type Parser from "web-tree-sitter";
 import { matchExistsIn } from "./block-matcher.ts";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
+import { forEachLoopProcessor } from "./common-patterns.ts";
 import {
   type Context,
   GenericCFGBuilder,
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
 import { maybe, zip } from "./itertools.ts";
+
+const processForStatement = forEachLoopProcessor({
+  query: `
+      [(for_statement
+          (":") @colon
+          body: (_) @body
+          alternative: (else_clause (block) @else)
+      )
+      (for_statement
+          (":") @colon
+          body: (_) @body
+      )] @for
+      `,
+  body: "body",
+  else: "else",
+  headerEnd: "colon",
+});
 
 const statementHandlers: StatementHandlers = {
   named: {
@@ -465,69 +483,6 @@ function processIfStatement(
   }
 
   return matcher.update({ entry: headNode, exit: mergeNode });
-}
-
-function processForStatement(
-  forNode: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  const { builder, matcher } = ctx;
-  const match = matcher.match(
-    forNode,
-    `
-      [(for_statement
-          (":") @colon
-          body: (_) @body
-          alternative: (else_clause (block) @else)
-      )
-      (for_statement
-          (":") @colon
-          body: (_) @body
-      )] @for
-      `,
-  );
-
-  const bodySyntax = match.requireSyntax("body");
-  const elseSyntax = match.getSyntax("else");
-
-  const bodyBlock = match.getBlock(bodySyntax);
-  const elseBlock = match.getBlock(elseSyntax);
-
-  const headNode = builder.addNode(
-    "LOOP_HEAD",
-    "loop head",
-    forNode.startIndex,
-  );
-  const exitNode = builder.addNode("FOR_EXIT", "loop exit", forNode.endIndex);
-  const headBlock = { entry: headNode, exit: headNode };
-
-  ctx.link.syntaxToNode(forNode, headNode);
-  ctx.link.offsetToSyntax(match.requireSyntax("colon"), bodySyntax);
-
-  /*
-  head +-> body -> head
-       --> else / exit
-  break -> exit
-  continue -> head
-  */
-  builder.addEdge(headBlock.exit, bodyBlock.entry, "consequence");
-  if (bodyBlock.exit) builder.addEdge(bodyBlock.exit, headBlock.entry);
-  if (elseBlock) {
-    builder.addEdge(headBlock.exit, elseBlock.entry, "alternative");
-    if (elseBlock.exit) builder.addEdge(elseBlock.exit, exitNode);
-  } else {
-    builder.addEdge(headBlock.exit, exitNode, "alternative");
-  }
-
-  matcher.state.forEachContinue((continueNode) => {
-    builder.addEdge(continueNode, headNode);
-  });
-
-  matcher.state.forEachBreak((breakNode) => {
-    builder.addEdge(breakNode, exitNode);
-  });
-
-  return matcher.update({ entry: headNode, exit: exitNode });
 }
 
 function processWhileStatement(

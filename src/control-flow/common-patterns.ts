@@ -86,12 +86,32 @@ export function cStyleIfProcessor(
 }
 
 type rangeForDefinition = {
+  /**
+   * The query string to use
+   */
   query: string;
+  /**
+   * The name of the loop-body capture
+   */
   body: string;
+  /**
+   * Name of the else-body capture, if exists
+   */
   else?: string;
+  /**
+   * Name of the capture of the last character in the loop header.
+   * This is `:` in Python, and `)` in C++ and TypeScript.
+   */
   headerEnd: string;
 };
-export function rangeForLoopProcessor(definition: rangeForDefinition) {
+
+/**
+ * Processor template for for-each loops.
+ * This differs from classic C-style loops, especially in that we can't
+ * trivialize the loop.
+ * @param definition
+ */
+export function forEachLoopProcessor(definition: rangeForDefinition) {
   return (forNode: Parser.SyntaxNode, ctx: Context): BasicBlock => {
     const { builder, matcher } = ctx;
     const match = matcher.match(forNode, definition.query);
