@@ -7,8 +7,8 @@ import {
   type BuilderOptions,
   type CFG,
 } from "./cfg-defs";
+import { pairwise } from "./itertools.ts";
 import { NodeMapper } from "./node-mapper";
-import { pairwise } from "./zip";
 
 export interface Dispatch {
   /**

@@ -6,7 +6,7 @@ import {
   GenericCFGBuilder,
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
-import { zip } from "./zip.ts";
+import { zip } from "./itertools.ts";
 
 export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
   return new GenericCFGBuilder(statementHandlers, options);

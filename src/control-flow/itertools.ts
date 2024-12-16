@@ -114,3 +114,7 @@ export function* chain<T>(...arrays: ReadonlyArray<T[]>): IterableIterator<T> {
     yield* array;
   }
 }
+
+export function last<T>(items: T[]): T | undefined {
+  return items[items.length - 1];
+}

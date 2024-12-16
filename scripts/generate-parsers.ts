@@ -17,6 +17,7 @@ const parsersToBuild = [
   "tree-sitter-c",
   "tree-sitter-python",
   "tree-sitter-cpp",
+  "tree-sitter-typescript",
 ];
 
 function locatePrebuiltWasm(packageName: string): string {

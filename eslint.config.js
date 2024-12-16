@@ -15,6 +15,7 @@ export default tseslint.config(
       "src/demo",
       "src/components",
       ".vscode-test.mjs",
+      "src/test/commentTestSamples",
     ],
   },
   {

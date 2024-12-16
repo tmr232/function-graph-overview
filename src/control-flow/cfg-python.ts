@@ -6,7 +6,7 @@ import {
   GenericCFGBuilder,
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
-import { maybe, zip } from "./zip.ts";
+import { maybe, zip } from "./itertools.ts";
 
 const statementHandlers: StatementHandlers = {
   named: {
