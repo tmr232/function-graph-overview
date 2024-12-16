@@ -84,3 +84,63 @@ export function cStyleIfProcessor(
     return ctx.state.update({ entry: headNode, exit: mergeNode });
   };
 }
+
+type rangeForDefinition = {
+  query: string;
+  body: string;
+  else?: string;
+  headerEnd: string;
+};
+export function rangeForLoopProcessor(definition: rangeForDefinition) {
+  return (forNode: Parser.SyntaxNode, ctx: Context): BasicBlock => {
+    const { builder, matcher } = ctx;
+    const match = matcher.match(forNode, definition.query);
+
+    const bodySyntax = match.requireSyntax(definition.body);
+    const elseSyntax = definition.else
+      ? match.getSyntax(definition.else)
+      : undefined;
+
+    const bodyBlock = match.getBlock(bodySyntax);
+    const elseBlock = match.getBlock(elseSyntax);
+
+    const headNode = builder.addNode(
+      "LOOP_HEAD",
+      "loop head",
+      forNode.startIndex,
+    );
+    const exitNode = builder.addNode("FOR_EXIT", "loop exit", forNode.endIndex);
+    const headBlock = { entry: headNode, exit: headNode };
+
+    ctx.link.syntaxToNode(forNode, headNode);
+    ctx.link.offsetToSyntax(
+      match.requireSyntax(definition.headerEnd),
+      bodySyntax,
+    );
+
+    /*
+      head +-> body -> head
+           --> else / exit
+      break -> exit
+      continue -> head
+      */
+    builder.addEdge(headBlock.exit, bodyBlock.entry, "consequence");
+    if (bodyBlock.exit) builder.addEdge(bodyBlock.exit, headBlock.entry);
+    if (elseBlock) {
+      builder.addEdge(headBlock.exit, elseBlock.entry, "alternative");
+      if (elseBlock.exit) builder.addEdge(elseBlock.exit, exitNode);
+    } else {
+      builder.addEdge(headBlock.exit, exitNode, "alternative");
+    }
+
+    matcher.state.forEachContinue((continueNode) => {
+      builder.addEdge(continueNode, headNode);
+    });
+
+    matcher.state.forEachBreak((breakNode) => {
+      builder.addEdge(breakNode, exitNode);
+    });
+
+    return matcher.update({ entry: headNode, exit: exitNode });
+  };
+}

@@ -1,6 +1,6 @@
 import type Parser from "web-tree-sitter";
-import { cStyleIfProcessor } from "./c-style.ts";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
+import { cStyleIfProcessor, rangeForLoopProcessor } from "./common-patterns.ts";
 import {
   type Context,
   GenericCFGBuilder,
@@ -36,9 +36,21 @@ const ifStatementQuery = `
       )@if
   `;
 
+const processForStatement = rangeForLoopProcessor({
+  query: `
+    (for_in_statement
+      (")") @closingParen
+      body: (_) @body
+    ) @for
+      `,
+  body: "body",
+  headerEnd: "closingParen",
+});
+
 const statementHandlers: StatementHandlers = {
   named: {
     if_statement: cStyleIfProcessor(ifStatementQuery),
+    for_in_statement: processForStatement,
   },
   default: defaultProcessStatement,
 };

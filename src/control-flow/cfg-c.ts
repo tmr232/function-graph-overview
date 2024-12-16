@@ -1,6 +1,6 @@
 import type Parser from "web-tree-sitter";
-import { cStyleIfProcessor } from "./c-style.ts";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
+import { cStyleIfProcessor } from "./common-patterns.ts";
 import {
   type Context,
   GenericCFGBuilder,
