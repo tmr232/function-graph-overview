@@ -11,18 +11,6 @@ export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
   return new GenericCFGBuilder(statementHandlers, options);
 }
 
-/*
-I want to improve the dev experience as I am writing this, so here's the game-plan:
-
-- As we draw the graph, any non-handled (or default-handled) node will have
-  its entire AST content pretty-printed inside it, in the web demo.
-- This means that the playground is less necessary, as I can see the interesting
-  and handle them directly.
-- There should be helper functions for this, so that it is easy to for new
-  languages
-- This should be documented and added to the guide on writing a new language
- */
-
 const ifStatementQuery = `
       (if_statement
         condition: (_ ")" @closing-paren) @cond

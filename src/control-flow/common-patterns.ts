@@ -85,7 +85,7 @@ export function cStyleIfProcessor(
   };
 }
 
-type rangeForDefinition = {
+export type rangeForDefinition = {
   /**
    * The query string to use
    */
