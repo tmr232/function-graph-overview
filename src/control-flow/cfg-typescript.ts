@@ -1,6 +1,7 @@
 import type Parser from "web-tree-sitter";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
+  cStyleDoWhileProcessor,
   cStyleForStatementProcessor,
   cStyleIfProcessor,
   cStyleWhileProcessor,
@@ -69,6 +70,7 @@ const statementHandlers: StatementHandlers = {
     for_in_statement: processForStatement,
     for_statement: cStyleForStatementProcessor(cStyleForStatementQuery),
     while_statement: cStyleWhileProcessor(),
+    do_statement: cStyleDoWhileProcessor(),
   },
   default: defaultProcessStatement,
 };

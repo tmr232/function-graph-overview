@@ -340,3 +340,53 @@ export function cStyleWhileProcessor(): (
     return ctx.matcher.update({ entry: condBlock.entry, exit: exitNode });
   };
 }
+
+export function cStyleDoWhileProcessor(): (
+  doSyntax: Parser.SyntaxNode,
+  ctx: Context,
+) => BasicBlock {
+  return (doSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock => {
+    const queryString = `
+  (do_statement
+      body: (_) @body
+      condition: (_) @cond
+      ) @do
+  `;
+
+    const match = ctx.matcher.match(doSyntax, queryString);
+
+    const condSyntax = match.requireSyntax("cond");
+    const bodySyntax = match.requireSyntax("body");
+
+    const condBlock = match.getBlock(condSyntax);
+    const bodyBlock = match.getBlock(bodySyntax);
+
+    const exitNode = ctx.builder.addNode(
+      "FOR_EXIT",
+      "loop exit",
+      doSyntax.endIndex,
+    );
+
+    if (condBlock.exit) {
+      if (bodyBlock.entry)
+        ctx.builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
+      ctx.builder.addEdge(condBlock.exit, exitNode, "alternative");
+    }
+    if (condBlock.entry && bodyBlock.exit)
+      ctx.builder.addEdge(bodyBlock.exit, condBlock.entry);
+
+    ctx.matcher.state.forEachContinue((continueNode) => {
+      if (condBlock.entry) ctx.builder.addEdge(continueNode, condBlock.entry);
+    });
+
+    ctx.matcher.state.forEachBreak((breakNode) => {
+      ctx.builder.addEdge(breakNode, exitNode);
+    });
+
+    ctx.link.syntaxToNode(bodySyntax, bodyBlock.entry);
+    ctx.link.syntaxToNode(condSyntax, condBlock.entry);
+    ctx.link.syntaxToNode(doSyntax, bodyBlock.entry);
+
+    return ctx.matcher.update({ entry: bodyBlock.entry, exit: exitNode });
+  };
+}
