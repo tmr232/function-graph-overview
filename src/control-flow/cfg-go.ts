@@ -6,6 +6,7 @@ import {
   processContinueStatement,
   processGotoStatement,
   processLabeledStatement,
+  processReturnStatement,
   processStatementSequence,
 } from "./common-patterns.ts";
 import {
@@ -51,18 +52,6 @@ function processSelectStatement(
   return processSwitchlike(syntax, { noImplicitDefault: true }, ctx);
 }
 
-function processReturnStatement(
-  syntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  const returnNode = ctx.builder.addNode(
-    "RETURN",
-    syntax.text,
-    syntax.startIndex,
-  );
-  ctx.link.syntaxToNode(syntax, returnNode);
-  return { entry: returnNode, exit: null };
-}
 function defaultProcessStatement(
   syntax: Parser.SyntaxNode,
   ctx: Context,

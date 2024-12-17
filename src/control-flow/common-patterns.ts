@@ -475,3 +475,16 @@ export function processStatementSequence(
   ctx.link.syntaxToNode(syntax, blockBlock.entry);
   return blockBlock;
 }
+
+export function processReturnStatement(
+  syntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const returnNode = ctx.builder.addNode(
+    "RETURN",
+    syntax.text,
+    syntax.startIndex,
+  );
+  ctx.link.syntaxToNode(syntax, returnNode);
+  return { entry: returnNode, exit: null };
+}
