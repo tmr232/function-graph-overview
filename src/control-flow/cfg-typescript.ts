@@ -6,9 +6,9 @@ import {
   cStyleIfProcessor,
   cStyleWhileProcessor,
   forEachLoopProcessor,
-  processBreakStatement,
+  processBreakStatement, processComment,
   processReturnStatement,
-  processStatementSequence,
+  processStatementSequence
 } from "./common-patterns.ts";
 import {
   type Context,
@@ -79,6 +79,7 @@ const statementHandlers: StatementHandlers = {
     switch_statement: processSwitchlike,
     break_statement: processBreakStatement,
     return_statement: processReturnStatement,
+    comment: processComment,
   },
   default: defaultProcessStatement,
 };
