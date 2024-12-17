@@ -6,6 +6,7 @@ import {
   processContinueStatement,
   processGotoStatement,
   processLabeledStatement,
+  processStatementSequence,
 } from "./common-patterns.ts";
 import {
   type Context,
@@ -16,7 +17,7 @@ import { type SwitchOptions, buildSwitch, collectCases } from "./switch-utils";
 
 const statementHandlers: StatementHandlers = {
   named: {
-    block: processBlockStatement,
+    block: processStatementSequence,
     if_statement: processIfStatement,
     for_statement: processForStatement,
     expression_switch_statement: processSwitchStatement,
@@ -48,16 +49,6 @@ function processSelectStatement(
   ctx: Context,
 ): BasicBlock {
   return processSwitchlike(syntax, { noImplicitDefault: true }, ctx);
-}
-
-function processBlockStatement(
-  syntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  const blockBlock = ctx.dispatch.many(syntax.namedChildren);
-  ctx.builder.setDefault(blockBlock.entry, { startOffset: syntax.startIndex });
-  ctx.link.syntaxToNode(syntax, blockBlock.entry);
-  return blockBlock;
 }
 
 function processReturnStatement(

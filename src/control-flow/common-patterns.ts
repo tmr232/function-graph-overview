@@ -465,3 +465,13 @@ export function processBreakStatement(
   ctx.link.syntaxToNode(breakSyntax, breakNode);
   return { entry: breakNode, exit: null, breaks: [breakNode] };
 }
+
+export function processStatementSequence(
+  syntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const blockBlock = ctx.dispatch.many(syntax.namedChildren);
+  ctx.builder.setDefault(blockBlock.entry, { startOffset: syntax.startIndex });
+  ctx.link.syntaxToNode(syntax, blockBlock.entry);
+  return blockBlock;
+}

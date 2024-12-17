@@ -1,7 +1,10 @@
 import type Parser from "web-tree-sitter";
 import { matchExistsIn } from "./block-matcher.ts";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
-import { forEachLoopProcessor } from "./common-patterns.ts";
+import {
+  forEachLoopProcessor,
+  processStatementSequence,
+} from "./common-patterns.ts";
 import {
   type Context,
   GenericCFGBuilder,
@@ -39,7 +42,7 @@ const statementHandlers: StatementHandlers = {
     with_statement: processWithStatement,
     try_statement: processTryStatement,
     raise_statement: processRaiseStatement,
-    block: processBlockStatement,
+    block: processStatementSequence,
   },
   default: defaultProcessStatement,
 };
@@ -539,16 +542,4 @@ function processWhileStatement(
   });
 
   return matcher.update({ entry: condBlock.entry, exit: exitNode });
-}
-
-function processBlockStatement(
-  blockSyntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  const blockBlock = ctx.dispatch.many(blockSyntax.namedChildren);
-  ctx.builder.setDefault(blockBlock.entry, {
-    startOffset: blockSyntax.startIndex,
-  });
-  ctx.link.syntaxToNode(blockSyntax, blockBlock.entry);
-  return blockBlock;
 }

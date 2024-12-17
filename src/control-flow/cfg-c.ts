@@ -9,6 +9,7 @@ import {
   processContinueStatement,
   processGotoStatement,
   processLabeledStatement,
+  processStatementSequence,
 } from "./common-patterns.ts";
 import {
   type Context,
@@ -50,7 +51,7 @@ const processForStatement = cStyleForStatementProcessor(`
 
 const statementHandlers: StatementHandlers = {
   named: {
-    compound_statement: processCompoundStatement,
+    compound_statement: processStatementSequence,
     if_statement: processIfStatement,
     for_statement: processForStatement,
     while_statement: cStyleWhileProcessor(),
@@ -95,16 +96,6 @@ function processComment(
     if (marker) ctx.builder.addMarker(commentNode, marker);
   }
   return { entry: commentNode, exit: commentNode };
-}
-
-function processCompoundStatement(
-  syntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  const blockBlock = ctx.dispatch.many(syntax.namedChildren);
-  ctx.builder.setDefault(blockBlock.entry, { startOffset: syntax.startIndex });
-  ctx.link.syntaxToNode(syntax, blockBlock.entry);
-  return blockBlock;
 }
 
 function processReturnStatement(
