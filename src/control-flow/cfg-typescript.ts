@@ -7,6 +7,7 @@ import {
   cStyleWhileProcessor,
   forEachLoopProcessor,
   processBreakStatement,
+  processReturnStatement,
   processStatementSequence,
 } from "./common-patterns.ts";
 import {
@@ -77,6 +78,7 @@ const statementHandlers: StatementHandlers = {
     do_statement: cStyleDoWhileProcessor(),
     switch_statement: processSwitchlike,
     break_statement: processBreakStatement,
+    return_statement: processReturnStatement,
   },
   default: defaultProcessStatement,
 };
