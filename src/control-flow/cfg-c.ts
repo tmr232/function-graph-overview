@@ -6,6 +6,7 @@ import {
   cStyleIfProcessor,
   cStyleWhileProcessor,
   processBreakStatement,
+  processComment,
   processContinueStatement,
   processGotoStatement,
   processLabeledStatement,
@@ -77,26 +78,6 @@ export function getStatementHandlers(): StatementHandlers {
 
 export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
   return new GenericCFGBuilder(statementHandlers, options);
-}
-
-function processComment(
-  commentSyntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  // We only ever ger here when marker comments are enabled,
-  // and only for marker comments as the rest are filtered out.
-  const commentNode = ctx.builder.addNode(
-    "MARKER_COMMENT",
-    commentSyntax.text,
-    commentSyntax.startIndex,
-  );
-  ctx.link.syntaxToNode(commentSyntax, commentNode);
-
-  if (ctx.options.markerPattern) {
-    const marker = commentSyntax.text.match(ctx.options.markerPattern)?.[1];
-    if (marker) ctx.builder.addMarker(commentNode, marker);
-  }
-  return { entry: commentNode, exit: commentNode };
 }
 
 function defaultProcessStatement(

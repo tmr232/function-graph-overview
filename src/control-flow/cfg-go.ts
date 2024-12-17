@@ -2,12 +2,12 @@ import type Parser from "web-tree-sitter";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
   getChildFieldText,
-  processBreakStatement,
+  processBreakStatement, processComment,
   processContinueStatement,
   processGotoStatement,
   processLabeledStatement,
   processReturnStatement,
-  processStatementSequence,
+  processStatementSequence
 } from "./common-patterns.ts";
 import {
   type Context,
@@ -184,24 +184,6 @@ function processIfStatement(
   return ctx.state.update({ entry: conditionNode, exit: mergeNode });
 }
 
-function processComment(
-  commentSyntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  // We only ever ger here when marker comments are enabled,
-  // and only for marker comments as the rest are filtered out.
-  const commentNode = ctx.builder.addNode(
-    "MARKER_COMMENT",
-    commentSyntax.text,
-    commentSyntax.startIndex,
-  );
-  ctx.link.syntaxToNode(commentSyntax, commentNode);
-  if (ctx.options.markerPattern) {
-    const marker = commentSyntax.text.match(ctx.options.markerPattern)?.[1];
-    if (marker) ctx.builder.addMarker(commentNode, marker);
-  }
-  return { entry: commentNode, exit: commentNode };
-}
 
 const caseTypes = new Set([
   "default_case",
