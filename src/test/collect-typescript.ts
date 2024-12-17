@@ -22,7 +22,7 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
   `);
   const matches = testFuncQuery.matches(tree.rootNode, { maxStartDepth: 1 });
   for (const match of matches) {
-    for (let i = 0; i < match.captures.length; i += 4) {
+    for (let i = 0; i < match.captures.length; i += 3) {
       const captures = match.captures.slice(i);
       yield {
         // @ts-expect-error: We know that the captures are OK
