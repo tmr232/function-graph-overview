@@ -5,6 +5,10 @@ import {
   cStyleForStatementProcessor,
   cStyleIfProcessor,
   cStyleWhileProcessor,
+  processBreakStatement,
+  processContinueStatement,
+  processGotoStatement,
+  processLabeledStatement,
 } from "./common-patterns.ts";
 import {
   type Context,
@@ -71,73 +75,6 @@ export function getStatementHandlers(): StatementHandlers {
 
 export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
   return new GenericCFGBuilder(statementHandlers, options);
-}
-
-function processGotoStatement(
-  gotoSyntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  const name = gotoSyntax.firstNamedChild?.text as string;
-  const gotoNode = ctx.builder.addNode("GOTO", name, gotoSyntax.startIndex);
-  ctx.link.syntaxToNode(gotoSyntax, gotoNode);
-  return {
-    entry: gotoNode,
-    exit: null,
-    gotos: [{ node: gotoNode, label: name }],
-  };
-}
-
-function processLabeledStatement(
-  labelSyntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  const name = getChildFieldText(labelSyntax, "label");
-  const labelNode = ctx.builder.addNode("LABEL", name, labelSyntax.startIndex);
-  ctx.link.syntaxToNode(labelSyntax, labelNode);
-  const labelContentSyntax = labelSyntax.namedChildren[1];
-  if (labelContentSyntax) {
-    const { entry: labeledEntry, exit: labeledExit } = ctx.state.update(
-      ctx.dispatch.single(labelContentSyntax),
-    );
-    if (labeledEntry) ctx.builder.addEdge(labelNode, labeledEntry);
-    return ctx.state.update({
-      entry: labelNode,
-      exit: labeledExit,
-      labels: new Map([[name, labelNode]]),
-    });
-  }
-  // C allows for empty labels.
-  return ctx.state.update({
-    entry: labelNode,
-    exit: labelNode,
-    labels: new Map([[name, labelNode]]),
-  });
-}
-
-function processContinueStatement(
-  continueSyntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  const continueNode = ctx.builder.addNode(
-    "CONTINUE",
-    "CONTINUE",
-    continueSyntax.startIndex,
-  );
-  ctx.link.syntaxToNode(continueSyntax, continueNode);
-  return { entry: continueNode, exit: null, continues: [continueNode] };
-}
-
-function processBreakStatement(
-  breakSyntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  const breakNode = ctx.builder.addNode(
-    "BREAK",
-    "BREAK",
-    breakSyntax.startIndex,
-  );
-  ctx.link.syntaxToNode(breakSyntax, breakNode);
-  return { entry: breakNode, exit: null, breaks: [breakNode] };
 }
 
 function processComment(
