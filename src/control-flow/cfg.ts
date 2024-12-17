@@ -60,5 +60,6 @@ export const functionNodeTypes: { [language in Language]: string[] } = {
     "arrow_function",
     "function_expression",
     "generator_function",
+    "generator_function_declaration",
   ],
 };

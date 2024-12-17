@@ -7934,6 +7934,3823 @@ class="regular";
 }"
 `;
 
+exports[`TypeScript: sample.ts!ForOfLoop: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 -> node1 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node2 -> node1 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node0 -> node2 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node4 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!ForOfLoopBreak: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 -> node1 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node2 -> node4 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node1 -> node4 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!ForOfLoopReturn: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 -> node1 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node2 -> node4 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!ForInLoop: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 -> node1 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node2 -> node1 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node0 -> node2 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node4 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!ForLoops: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node7 [style="filled";
+label="";
+id="node7";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node15 [style="filled";
+label="";
+id="node15";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node10 [style="filled";
+label="";
+id="node10";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node11 [style="filled";
+label="";
+id="node11";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node23 [style="filled";
+label="";
+id="node23";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node12 [style="filled";
+label="";
+id="node12";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node17 [style="filled";
+label="";
+id="node17";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node19 [style="filled";
+label="";
+id="node19";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node30 [style="filled";
+label="";
+id="node30";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node18 [style="filled";
+label="";
+id="node18";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node26 [style="filled";
+label="";
+id="node26";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node32 [style="filled";
+label="";
+id="node32";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node33 [style="filled";
+label="";
+id="node33";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=1.2;
+];
+    node34 [style="filled";
+label="";
+id="node34";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node36 [style="filled";
+label="";
+id="node36";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node37 [style="filled";
+label="";
+id="node37";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node43 [style="filled";
+label="";
+id="node43";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node44 [style="filled";
+label="";
+id="node44";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node35 [style="filled";
+label="";
+id="node35";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node45 [style="filled";
+label="";
+id="node45";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node46 [style="filled";
+label="";
+id="node46";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node52 [style="filled";
+label="";
+id="node52";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node51 [style="filled";
+label="";
+id="node51";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node54 [style="filled";
+label="";
+id="node54";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node53 [style="filled";
+label="";
+id="node53";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node61 [style="filled";
+label="";
+id="node61";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=1.2;
+];
+    node62 [style="filled";
+label="";
+id="node62";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node68 [style="filled";
+label="";
+id="node68";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node69 [style="filled";
+label="";
+id="node69";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.8999999999999999;
+];
+    node3 -> node4 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node7 -> node1 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node2 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node11 -> node12 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node15 -> node10 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node10 -> node17 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node36 -> node37 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node33 -> node34 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node34 -> node35 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node45 -> node46 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node43 -> node44 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node44 -> node51 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node1 -> node3 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node15 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node4 -> node15 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node3 -> node2 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node10 -> node11 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node10 -> node23 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node12 -> node23 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node11 -> node17 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node23 -> node19 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node19 -> node18 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node19 -> node18 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node19 -> node30 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node30 -> node26 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node26 -> node32 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node26 -> node32 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node26 -> node33 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node34 -> node36 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node34 -> node43 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node37 -> node43 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node36 -> node35 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node44 -> node45 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node44 -> node52 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node46 -> node52 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node45 -> node51 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node52 -> node54 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node54 -> node53 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node54 -> node53 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node54 -> node61 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node61 -> node62 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node62 -> node68 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node62 -> node68 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node62 -> node69 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!ForLoopConditionalBreak: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node7 [style="filled";
+label="";
+id="node7";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node4 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node5 -> node4 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node0 -> node5 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node5 -> node1 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node5 -> node7 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node2 -> node7 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!ForLoopConditionalContinue: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node9 [style="filled";
+label="";
+id="node9";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node11 [style="filled";
+label="";
+id="node11";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node6 [style="filled";
+label="";
+id="node6";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node8 [style="filled";
+label="";
+id="node8";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node5 -> node6 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node6 -> node8 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node5 -> node8 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node9 -> node8 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node9 -> node2 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node0 -> node9 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node9 -> node1 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node9 -> node11 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node1 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!MoreSwitch: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node13 [style="filled";
+label="";
+id="node13";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node6 [style="filled";
+label="";
+id="node6";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node7 [style="filled";
+label="";
+id="node7";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node8 [style="filled";
+label="";
+id="node8";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node10 [style="filled";
+label="";
+id="node10";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node3 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node3 -> node4 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node3 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node5 -> node6 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node6 -> node8 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node5 -> node7 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node7 -> node8 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node10 -> node13 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node13 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node4 -> node13 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node8 -> node13 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node7 -> node10 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!trivial: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=0.8999999999999999;
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!simpleIf: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node2 -> node5 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!ifElse: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node8 [style="filled";
+label="";
+id="node8";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node3 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node3 -> node4 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node3 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node2 -> node8 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node4 -> node8 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node5 -> node8 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!forever: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node1 -> node5 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node5 -> node5 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!forever2: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node1 -> node2 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node2 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!forLoop: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node8 [style="filled";
+label="";
+id="node8";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node1 -> node2 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node3 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node2 -> node8 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node2 -> node3 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!whileLoop: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node2 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node0 -> node1 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node4 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!doWhile: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node1 [penwidth=2;
+color="#008000";
+class="consequence";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node0 -> node1 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node4 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!switch_1: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node6 [style="filled";
+label="";
+id="node6";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node9 [style="filled";
+label="";
+id="node9";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node2 -> node4 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node3 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node3 -> node4 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node4 -> node6 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node3 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node5 -> node6 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node5 -> node9 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node6 -> node9 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!switch_2: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node9 [style="filled";
+label="";
+id="node9";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node6 [style="filled";
+label="";
+id="node6";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node3 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node3 -> node4 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node4 -> node6 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node3 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node5 -> node6 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node5 -> node9 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node6 -> node9 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node9 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!ManyIfs: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node6 [style="filled";
+label="";
+id="node6";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node7 [style="filled";
+label="";
+id="node7";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node10 [style="filled";
+label="";
+id="node10";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node11 [style="filled";
+label="";
+id="node11";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node12 [style="filled";
+label="";
+id="node12";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node13 [style="filled";
+label="";
+id="node13";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node16 [style="filled";
+label="";
+id="node16";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node17 [style="filled";
+label="";
+id="node17";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node18 [style="filled";
+label="";
+id="node18";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node19 [style="filled";
+label="";
+id="node19";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node20 [style="filled";
+label="";
+id="node20";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node23 [style="filled";
+label="";
+id="node23";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node5 -> node6 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node5 -> node7 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node10 -> node11 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node10 -> node12 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node12 -> node13 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node16 -> node17 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node16 -> node18 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node18 -> node19 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node18 -> node20 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node2 -> node5 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node6 -> node10 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node7 -> node10 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node11 -> node16 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node13 -> node16 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node12 -> node16 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node17 -> node23 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node19 -> node23 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node20 -> node23 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!IfWithoutBraces: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node8 [style="filled";
+label="";
+id="node8";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node9 [style="filled";
+label="";
+id="node9";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=1.2;
+];
+    node10 [style="filled";
+label="";
+id="node10";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node16 [style="filled";
+label="";
+id="node16";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node17 [style="filled";
+label="";
+id="node17";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.8999999999999999;
+];
+    node1 -> node2 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node8 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node2 -> node8 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node2 -> node9 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node9 -> node10 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node10 -> node16 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node10 -> node16 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node10 -> node17 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!IfStatement: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node8 [style="filled";
+label="";
+id="node8";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node3 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node3 -> node4 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node3 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node2 -> node8 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node4 -> node8 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node5 -> node8 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!ForOfLoop: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 -> node1 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node2 -> node1 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node0 -> node2 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node4 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!ForOfLoopBreak: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 -> node1 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node2 -> node4 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node1 -> node4 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!ForOfLoopReturn: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.5;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 -> node1 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node2 -> node4 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!ForInLoop: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 -> node1 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node2 -> node1 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node0 -> node2 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node4 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!ForLoops: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node7 [style="filled";
+label="";
+id="node7";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.6;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node15 [style="filled";
+label="";
+id="node15";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node10 [style="filled";
+label="";
+id="node10";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node11 [style="filled";
+label="";
+id="node11";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node23 [style="filled";
+label="";
+id="node23";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node12 [style="filled";
+label="";
+id="node12";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node17 [style="filled";
+label="";
+id="node17";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node19 [style="filled";
+label="";
+id="node19";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node30 [style="filled";
+label="";
+id="node30";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node18 [style="filled";
+label="";
+id="node18";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node26 [style="filled";
+label="";
+id="node26";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node32 [style="filled";
+label="";
+id="node32";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node33 [style="filled";
+label="";
+id="node33";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=1.2;
+];
+    node34 [style="filled";
+label="";
+id="node34";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node36 [style="filled";
+label="";
+id="node36";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node37 [style="filled";
+label="";
+id="node37";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node43 [style="filled";
+label="";
+id="node43";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node44 [style="filled";
+label="";
+id="node44";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node35 [style="filled";
+label="";
+id="node35";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node45 [style="filled";
+label="";
+id="node45";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node46 [style="filled";
+label="";
+id="node46";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node52 [style="filled";
+label="";
+id="node52";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node51 [style="filled";
+label="";
+id="node51";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node54 [style="filled";
+label="";
+id="node54";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node53 [style="filled";
+label="";
+id="node53";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node61 [style="filled";
+label="";
+id="node61";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=1.2;
+];
+    node62 [style="filled";
+label="";
+id="node62";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node68 [style="filled";
+label="";
+id="node68";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node69 [style="filled";
+label="";
+id="node69";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.8999999999999999;
+];
+    node3 -> node4 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node7 -> node1 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node2 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node11 -> node12 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node15 -> node10 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node10 -> node17 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node36 -> node37 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node33 -> node34 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node34 -> node35 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node45 -> node46 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node43 -> node44 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node44 -> node51 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node1 -> node3 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node15 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node4 -> node15 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node3 -> node2 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node10 -> node11 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node10 -> node23 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node12 -> node23 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node11 -> node17 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node23 -> node19 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node19 -> node18 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node19 -> node18 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node19 -> node30 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node30 -> node26 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node26 -> node32 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node26 -> node32 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node26 -> node33 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node34 -> node36 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node34 -> node43 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node37 -> node43 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node36 -> node35 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node44 -> node45 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node44 -> node52 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node46 -> node52 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node45 -> node51 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node52 -> node54 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node54 -> node53 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node54 -> node53 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node54 -> node61 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node61 -> node62 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node62 -> node68 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node62 -> node68 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node62 -> node69 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!ForLoopConditionalBreak: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node7 [style="filled";
+label="";
+id="node7";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node4 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node5 -> node4 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node0 -> node5 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node5 -> node1 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node5 -> node7 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node2 -> node7 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!ForLoopConditionalContinue: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node9 [style="filled";
+label="";
+id="node9";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node11 [style="filled";
+label="";
+id="node11";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node6 [style="filled";
+label="";
+id="node6";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node8 [style="filled";
+label="";
+id="node8";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node5 -> node6 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node6 -> node8 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node5 -> node8 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node9 -> node8 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node9 -> node2 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node0 -> node9 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node9 -> node1 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node9 -> node11 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node1 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!MoreSwitch: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node13 [style="filled";
+label="";
+id="node13";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node6 [style="filled";
+label="";
+id="node6";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node7 [style="filled";
+label="";
+id="node7";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node8 [style="filled";
+label="";
+id="node8";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node10 [style="filled";
+label="";
+id="node10";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node3 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node3 -> node4 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node3 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node5 -> node6 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node6 -> node8 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node5 -> node7 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node7 -> node8 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node10 -> node13 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node13 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node4 -> node13 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node8 -> node13 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node7 -> node10 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!trivial: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=0.8999999999999999;
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!simpleIf: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node2 -> node5 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!ifElse: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node8 [style="filled";
+label="";
+id="node8";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node3 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node3 -> node4 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node3 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node2 -> node8 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node4 -> node8 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node5 -> node8 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!forever: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node1 -> node5 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node5 -> node5 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!forever2: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node1 -> node2 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node2 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!forLoop: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node8 [style="filled";
+label="";
+id="node8";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node1 -> node2 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node3 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node2 -> node8 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node2 -> node3 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!whileLoop: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node2 [penwidth=2;
+color="#0000ff";
+class="regular";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node0 -> node1 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node4 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!doWhile: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node1 [style="filled";
+label="";
+id="node1";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.6;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node1 [penwidth=2;
+color="#008000";
+class="consequence";
+dir="back";
+headport="s";
+tailport="n";
+];
+    node0 -> node1 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node4 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!switch_1: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node6 [style="filled";
+label="";
+id="node6";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node9 [style="filled";
+label="";
+id="node9";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node2 -> node4 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node3 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node3 -> node4 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node4 -> node6 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node3 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node5 -> node6 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node5 -> node9 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node6 -> node9 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!switch_2: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node9 [style="filled";
+label="";
+id="node9";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node6 [style="filled";
+label="";
+id="node6";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node1 -> node3 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node3 -> node4 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node4 -> node6 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node3 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node5 -> node6 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node5 -> node9 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node6 -> node9 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node9 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!ManyIfs: DOT Snapshot 2`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled";
+label="";
+id="node1";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.8999999999999999;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node6 [style="filled";
+label="";
+id="node6";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node7 [style="filled";
+label="";
+id="node7";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node10 [style="filled";
+label="";
+id="node10";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node11 [style="filled";
+label="";
+id="node11";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node12 [style="filled";
+label="";
+id="node12";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node13 [style="filled";
+label="";
+id="node13";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node16 [style="filled";
+label="";
+id="node16";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.8999999999999999;
+];
+    node17 [style="filled";
+label="";
+id="node17";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node18 [style="filled";
+label="";
+id="node18";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node19 [style="filled";
+label="";
+id="node19";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node20 [style="filled";
+label="";
+id="node20";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node23 [style="filled";
+label="";
+id="node23";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node1 -> node2 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node5 -> node6 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node5 -> node7 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node10 -> node11 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node10 -> node12 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node12 -> node13 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node16 -> node17 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node16 -> node18 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node18 -> node19 [penwidth=1;
+color="#008000";
+class="consequence";
+];
+    node18 -> node20 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node2 -> node5 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node1 -> node5 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node6 -> node10 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node7 -> node10 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node11 -> node16 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node13 -> node16 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node12 -> node16 [penwidth=1;
+color="#ff0000";
+class="alternative";
+];
+    node17 -> node23 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node19 -> node23 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node20 -> node23 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!LabeledStatement: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=1.2;
+];
+}"
+`;
+
 exports[`C++: issue32-unbraced-if-else-if.cpp!f: Segmentation 1`] = `
 [
   {
@@ -16097,1912 +19914,6 @@ exports[`TypeScript: sample.ts!IfStatement: Segmentation 1`] = `
 ]
 `;
 
-exports[`TypeScript: sample.ts!ForOfLoop: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node0 [style="filled";
-label="";
-id="node0";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.5;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node1 [style="filled";
-label="";
-id="node1";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node4 [style="filled";
-label="";
-id="node4";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node2 -> node1 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node2 -> node1 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node0 -> node2 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node2 -> node4 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!ForOfLoopBreak: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node2 [style="filled";
-label="";
-id="node2";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.6;
-];
-    node1 [style="filled";
-label="";
-id="node1";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node4 [style="filled";
-label="";
-id="node4";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node2 -> node1 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node2 -> node4 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node1 -> node4 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!ForOfLoopReturn: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node2 [style="filled";
-label="";
-id="node2";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.6;
-];
-    node1 [style="filled";
-label="";
-id="node1";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.5;
-];
-    node4 [style="filled";
-label="";
-id="node4";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node2 -> node1 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node2 -> node4 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!ForInLoop: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node0 [style="filled";
-label="";
-id="node0";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.5;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node1 [style="filled";
-label="";
-id="node1";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node4 [style="filled";
-label="";
-id="node4";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node2 -> node1 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node2 -> node1 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node0 -> node2 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node2 -> node4 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!ForLoops: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node7 [style="filled";
-label="";
-id="node7";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.6;
-];
-    node1 [style="filled";
-label="";
-id="node1";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node3 [style="filled";
-label="";
-id="node3";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node15 [style="filled";
-label="";
-id="node15";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node4 [style="filled";
-label="";
-id="node4";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node10 [style="filled";
-label="";
-id="node10";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.8999999999999999;
-];
-    node11 [style="filled";
-label="";
-id="node11";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node23 [style="filled";
-label="";
-id="node23";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node12 [style="filled";
-label="";
-id="node12";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node17 [style="filled";
-label="";
-id="node17";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node19 [style="filled";
-label="";
-id="node19";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node30 [style="filled";
-label="";
-id="node30";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.8999999999999999;
-];
-    node18 [style="filled";
-label="";
-id="node18";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.8999999999999999;
-];
-    node26 [style="filled";
-label="";
-id="node26";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node32 [style="filled";
-label="";
-id="node32";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node33 [style="filled";
-label="";
-id="node33";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=1.2;
-];
-    node34 [style="filled";
-label="";
-id="node34";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node36 [style="filled";
-label="";
-id="node36";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node37 [style="filled";
-label="";
-id="node37";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node43 [style="filled";
-label="";
-id="node43";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.8999999999999999;
-];
-    node44 [style="filled";
-label="";
-id="node44";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node35 [style="filled";
-label="";
-id="node35";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.8999999999999999;
-];
-    node45 [style="filled";
-label="";
-id="node45";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node46 [style="filled";
-label="";
-id="node46";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node52 [style="filled";
-label="";
-id="node52";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.8999999999999999;
-];
-    node51 [style="filled";
-label="";
-id="node51";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node54 [style="filled";
-label="";
-id="node54";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node53 [style="filled";
-label="";
-id="node53";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.8999999999999999;
-];
-    node61 [style="filled";
-label="";
-id="node61";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=1.2;
-];
-    node62 [style="filled";
-label="";
-id="node62";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node68 [style="filled";
-label="";
-id="node68";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node69 [style="filled";
-label="";
-id="node69";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.8999999999999999;
-];
-    node3 -> node4 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node7 -> node1 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node1 -> node2 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node11 -> node12 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node15 -> node10 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node10 -> node17 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node36 -> node37 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node33 -> node34 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node34 -> node35 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node45 -> node46 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node43 -> node44 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node44 -> node51 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node1 -> node3 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node1 -> node15 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node4 -> node15 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node3 -> node2 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node10 -> node11 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node10 -> node23 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node12 -> node23 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node11 -> node17 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node23 -> node19 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node19 -> node18 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node19 -> node18 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node19 -> node30 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node30 -> node26 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node26 -> node32 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node26 -> node32 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node26 -> node33 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node34 -> node36 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node34 -> node43 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node37 -> node43 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node36 -> node35 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node44 -> node45 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node44 -> node52 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node46 -> node52 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node45 -> node51 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node52 -> node54 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node54 -> node53 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node54 -> node53 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node54 -> node61 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node61 -> node62 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node62 -> node68 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node62 -> node68 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node62 -> node69 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!ForLoopConditionalBreak: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node0 [style="filled";
-label="";
-id="node0";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.5;
-];
-    node5 [style="filled";
-label="";
-id="node5";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node1 [style="filled";
-label="";
-id="node1";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node7 [style="filled";
-label="";
-id="node7";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node4 [style="filled";
-label="";
-id="node4";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node1 -> node2 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node1 -> node4 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node5 -> node4 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node0 -> node5 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node5 -> node1 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node5 -> node7 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node2 -> node7 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!ForLoopConditionalContinue: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node0 [style="filled";
-label="";
-id="node0";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.5;
-];
-    node9 [style="filled";
-label="";
-id="node9";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node1 [style="filled";
-label="";
-id="node1";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node11 [style="filled";
-label="";
-id="node11";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node5 [style="filled";
-label="";
-id="node5";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.8999999999999999;
-];
-    node6 [style="filled";
-label="";
-id="node6";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node8 [style="filled";
-label="";
-id="node8";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node1 -> node2 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node5 -> node6 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node6 -> node8 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node5 -> node8 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node9 -> node8 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node0 -> node9 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node9 -> node1 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node9 -> node11 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node2 -> node5 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node1 -> node5 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!MoreSwitch: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node1 [style="filled";
-label="";
-id="node1";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.8999999999999999;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node3 [style="filled";
-label="";
-id="node3";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node4 [style="filled";
-label="";
-id="node4";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node5 [style="filled";
-label="";
-id="node5";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node13 [style="filled";
-label="";
-id="node13";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node6 [style="filled";
-label="";
-id="node6";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node7 [style="filled";
-label="";
-id="node7";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node8 [style="filled";
-label="";
-id="node8";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node10 [style="filled";
-label="";
-id="node10";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node1 -> node2 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node1 -> node3 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node3 -> node4 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node3 -> node5 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node5 -> node6 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node6 -> node8 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node5 -> node7 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node7 -> node8 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node10 -> node13 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node2 -> node13 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node4 -> node13 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node8 -> node13 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node7 -> node10 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!trivial: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-minHeight=0.5;
-height=0.8999999999999999;
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!simpleIf: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node1 [style="filled";
-label="";
-id="node1";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.8999999999999999;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node5 [style="filled";
-label="";
-id="node5";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node1 -> node2 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node2 -> node5 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node1 -> node5 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!ifElse: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node1 [style="filled";
-label="";
-id="node1";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.8999999999999999;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node3 [style="filled";
-label="";
-id="node3";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node4 [style="filled";
-label="";
-id="node4";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node5 [style="filled";
-label="";
-id="node5";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node8 [style="filled";
-label="";
-id="node8";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node1 -> node2 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node1 -> node3 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node3 -> node4 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node3 -> node5 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node2 -> node8 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node4 -> node8 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node5 -> node8 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!forever: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node1 [style="filled";
-label="";
-id="node1";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.8999999999999999;
-];
-    node5 [style="filled";
-label="";
-id="node5";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node1 -> node5 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node5 -> node5 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!forever2: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node1 [style="filled";
-label="";
-id="node1";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.8999999999999999;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.8999999999999999;
-];
-    node1 -> node2 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node2 -> node2 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!forLoop: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node1 [style="filled";
-label="";
-id="node1";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.8999999999999999;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node8 [style="filled";
-label="";
-id="node8";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node3 [style="filled";
-label="";
-id="node3";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.8999999999999999;
-];
-    node1 -> node2 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node2 -> node3 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node2 -> node8 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node2 -> node3 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!whileLoop: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node0 [style="filled";
-label="";
-id="node0";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.5;
-];
-    node1 [style="filled";
-label="";
-id="node1";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node4 [style="filled";
-label="";
-id="node4";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node1 -> node2 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node1 -> node2 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node0 -> node1 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node1 -> node4 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!doWhile: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node0 [style="filled";
-label="";
-id="node0";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.5;
-];
-    node1 [style="filled";
-label="";
-id="node1";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node4 [style="filled";
-label="";
-id="node4";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node1 -> node1 [penwidth=2;
-color="#008000";
-class="consequence";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node0 -> node1 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node1 -> node4 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!switch_1: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node1 [style="filled";
-label="";
-id="node1";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.8999999999999999;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node3 [style="filled";
-label="";
-id="node3";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node4 [style="filled";
-label="";
-id="node4";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node5 [style="filled";
-label="";
-id="node5";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node6 [style="filled";
-label="";
-id="node6";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node9 [style="filled";
-label="";
-id="node9";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node1 -> node2 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node2 -> node4 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node1 -> node3 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node3 -> node4 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node4 -> node6 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node3 -> node5 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node5 -> node6 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node5 -> node9 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node6 -> node9 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!switch_2: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node1 [style="filled";
-label="";
-id="node1";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.8999999999999999;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node3 [style="filled";
-label="";
-id="node3";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node4 [style="filled";
-label="";
-id="node4";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node5 [style="filled";
-label="";
-id="node5";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node9 [style="filled";
-label="";
-id="node9";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node6 [style="filled";
-label="";
-id="node6";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node1 -> node2 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node1 -> node3 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node3 -> node4 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node4 -> node6 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node3 -> node5 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node5 -> node6 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node5 -> node9 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node6 -> node9 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node2 -> node9 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!ManyIfs: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node1 [style="filled";
-label="";
-id="node1";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.8999999999999999;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node5 [style="filled";
-label="";
-id="node5";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.8999999999999999;
-];
-    node6 [style="filled";
-label="";
-id="node6";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node7 [style="filled";
-label="";
-id="node7";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node10 [style="filled";
-label="";
-id="node10";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.8999999999999999;
-];
-    node11 [style="filled";
-label="";
-id="node11";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node12 [style="filled";
-label="";
-id="node12";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node13 [style="filled";
-label="";
-id="node13";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node16 [style="filled";
-label="";
-id="node16";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.8999999999999999;
-];
-    node17 [style="filled";
-label="";
-id="node17";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node18 [style="filled";
-label="";
-id="node18";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node19 [style="filled";
-label="";
-id="node19";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node20 [style="filled";
-label="";
-id="node20";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.3;
-];
-    node23 [style="filled";
-label="";
-id="node23";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.6;
-];
-    node1 -> node2 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node5 -> node6 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node5 -> node7 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node10 -> node11 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node10 -> node12 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node12 -> node13 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node16 -> node17 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node16 -> node18 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node18 -> node19 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node18 -> node20 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node2 -> node5 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node1 -> node5 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node6 -> node10 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node7 -> node10 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node11 -> node16 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node13 -> node16 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node12 -> node16 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node17 -> node23 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node19 -> node23 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node20 -> node23 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-}"
-`;
-
-exports[`TypeScript: sample.ts!IfWithoutBraces: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node1 [style="filled";
-label="";
-id="node1";
-shape="invhouse";
-class="entry";
-fillcolor="#48AB30";
-height=0.8999999999999999;
-];
-    node2 [style="filled";
-label="";
-id="node2";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node8 [style="filled";
-label="";
-id="node8";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node9 [style="filled";
-label="";
-id="node9";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=1.2;
-];
-    node10 [style="filled";
-label="";
-id="node10";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node16 [style="filled";
-label="";
-id="node16";
-shape="box";
-class="default";
-fillcolor="#d3d3d3";
-height=0.6;
-];
-    node17 [style="filled";
-label="";
-id="node17";
-shape="house";
-class="exit";
-fillcolor="#AB3030";
-height=0.8999999999999999;
-];
-    node1 -> node2 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node2 -> node8 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node2 -> node8 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node2 -> node9 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-    node9 -> node10 [penwidth=1;
-color="#0000ff";
-class="regular";
-];
-    node10 -> node16 [penwidth=2;
-color="#0000ff";
-class="regular";
-dir="back";
-headport="s";
-tailport="n";
-];
-    node10 -> node16 [penwidth=1;
-color="#ff0000";
-class="alternative";
-];
-    node10 -> node17 [penwidth=1;
-color="#008000";
-class="consequence";
-];
-}"
-`;
-
 exports[`TypeScript: sample.ts!ForOfLoop: Segmentation 1`] = `
 [
   {
@@ -20283,6 +22194,2267 @@ exports[`TypeScript: sample.ts!IfWithoutBraces: Segmentation 1`] = `
   {
     "start": 2613,
     "value": "node1",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!IfStatement: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 26,
+    "value": "node1",
+  },
+  {
+    "start": 53,
+    "value": "node1",
+  },
+  {
+    "start": 56,
+    "value": "node1",
+  },
+  {
+    "start": 59,
+    "value": "node2",
+  },
+  {
+    "start": 60,
+    "value": "node1",
+  },
+  {
+    "start": 60,
+    "value": "node2",
+  },
+  {
+    "start": 65,
+    "value": "node1",
+  },
+  {
+    "start": 65,
+    "value": "node3",
+  },
+  {
+    "start": 71,
+    "value": "node1",
+  },
+  {
+    "start": 71,
+    "value": "node3",
+  },
+  {
+    "start": 74,
+    "value": "node3",
+  },
+  {
+    "start": 77,
+    "value": "node4",
+  },
+  {
+    "start": 78,
+    "value": "node3",
+  },
+  {
+    "start": 78,
+    "value": "node4",
+  },
+  {
+    "start": 83,
+    "value": "node5",
+  },
+  {
+    "start": 84,
+    "value": "node3",
+  },
+  {
+    "start": 84,
+    "value": "node5",
+  },
+  {
+    "start": 89,
+    "value": "node5",
+  },
+  {
+    "start": 94,
+    "value": "node5",
+  },
+  {
+    "start": 94,
+    "value": "node3",
+  },
+  {
+    "start": 94,
+    "value": "node1",
+  },
+  {
+    "start": 94,
+    "value": "node1",
+  },
+  {
+    "start": 96,
+    "value": "node1",
+  },
+  {
+    "start": 96,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!ForOfLoop: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 113,
+    "value": "node0",
+  },
+  {
+    "start": 138,
+    "value": "node2",
+  },
+  {
+    "start": 157,
+    "value": "node1",
+  },
+  {
+    "start": 158,
+    "value": "node2",
+  },
+  {
+    "start": 158,
+    "value": "node1",
+  },
+  {
+    "start": 163,
+    "value": "node2",
+  },
+  {
+    "start": 163,
+    "value": "node2",
+  },
+  {
+    "start": 165,
+    "value": "node0",
+  },
+  {
+    "start": 165,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!ForOfLoopBreak: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 183,
+    "value": "node2",
+  },
+  {
+    "start": 213,
+    "value": "node2",
+  },
+  {
+    "start": 232,
+    "value": "node1",
+  },
+  {
+    "start": 233,
+    "value": "node2",
+  },
+  {
+    "start": 233,
+    "value": "node1",
+  },
+  {
+    "start": 239,
+    "value": "node1",
+  },
+  {
+    "start": 245,
+    "value": "node1",
+  },
+  {
+    "start": 249,
+    "value": "node2",
+  },
+  {
+    "start": 249,
+    "value": "node2",
+  },
+  {
+    "start": 251,
+    "value": "node2",
+  },
+  {
+    "start": 251,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!ForOfLoopReturn: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 269,
+    "value": "node2",
+  },
+  {
+    "start": 300,
+    "value": "node2",
+  },
+  {
+    "start": 319,
+    "value": "node1",
+  },
+  {
+    "start": 320,
+    "value": "node2",
+  },
+  {
+    "start": 320,
+    "value": "node1",
+  },
+  {
+    "start": 326,
+    "value": "node1",
+  },
+  {
+    "start": 333,
+    "value": "node1",
+  },
+  {
+    "start": 337,
+    "value": "node2",
+  },
+  {
+    "start": 337,
+    "value": "node2",
+  },
+  {
+    "start": 339,
+    "value": "node2",
+  },
+  {
+    "start": 339,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!ForInLoop: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 357,
+    "value": "node0",
+  },
+  {
+    "start": 382,
+    "value": "node2",
+  },
+  {
+    "start": 401,
+    "value": "node1",
+  },
+  {
+    "start": 402,
+    "value": "node2",
+  },
+  {
+    "start": 402,
+    "value": "node1",
+  },
+  {
+    "start": 407,
+    "value": "node2",
+  },
+  {
+    "start": 407,
+    "value": "node2",
+  },
+  {
+    "start": 409,
+    "value": "node0",
+  },
+  {
+    "start": 409,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!ForLoops: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node7",
+  },
+  {
+    "start": 427,
+    "value": "node7",
+  },
+  {
+    "start": 451,
+    "value": "node7",
+  },
+  {
+    "start": 459,
+    "value": "node1",
+  },
+  {
+    "start": 460,
+    "value": "node1",
+  },
+  {
+    "start": 461,
+    "value": "node1",
+  },
+  {
+    "start": 461,
+    "value": "node7",
+  },
+  {
+    "start": 462,
+    "value": "node2",
+  },
+  {
+    "start": 463,
+    "value": "node2",
+  },
+  {
+    "start": 464,
+    "value": "node3",
+  },
+  {
+    "start": 465,
+    "value": "node7",
+  },
+  {
+    "start": 465,
+    "value": "node3",
+  },
+  {
+    "start": 467,
+    "value": "node3",
+  },
+  {
+    "start": 470,
+    "value": "node3",
+  },
+  {
+    "start": 473,
+    "value": "node4",
+  },
+  {
+    "start": 474,
+    "value": "node3",
+  },
+  {
+    "start": 474,
+    "value": "node4",
+  },
+  {
+    "start": 480,
+    "value": "node3",
+  },
+  {
+    "start": 480,
+    "value": "node3",
+  },
+  {
+    "start": 481,
+    "value": "node7",
+  },
+  {
+    "start": 481,
+    "value": "node15",
+  },
+  {
+    "start": 484,
+    "value": "node7",
+  },
+  {
+    "start": 484,
+    "value": "node15",
+  },
+  {
+    "start": 492,
+    "value": "node10",
+  },
+  {
+    "start": 493,
+    "value": "node15",
+  },
+  {
+    "start": 493,
+    "value": "node10",
+  },
+  {
+    "start": 494,
+    "value": "node10",
+  },
+  {
+    "start": 494,
+    "value": "node10",
+  },
+  {
+    "start": 497,
+    "value": "node11",
+  },
+  {
+    "start": 498,
+    "value": "node15",
+  },
+  {
+    "start": 498,
+    "value": "node11",
+  },
+  {
+    "start": 500,
+    "value": "node11",
+  },
+  {
+    "start": 503,
+    "value": "node11",
+  },
+  {
+    "start": 506,
+    "value": "node12",
+  },
+  {
+    "start": 507,
+    "value": "node11",
+  },
+  {
+    "start": 507,
+    "value": "node12",
+  },
+  {
+    "start": 513,
+    "value": "node11",
+  },
+  {
+    "start": 513,
+    "value": "node11",
+  },
+  {
+    "start": 514,
+    "value": "node15",
+  },
+  {
+    "start": 514,
+    "value": "node23",
+  },
+  {
+    "start": 517,
+    "value": "node7",
+  },
+  {
+    "start": 517,
+    "value": "node23",
+  },
+  {
+    "start": 528,
+    "value": "node18",
+  },
+  {
+    "start": 529,
+    "value": "node18",
+  },
+  {
+    "start": 530,
+    "value": "node19",
+  },
+  {
+    "start": 531,
+    "value": "node23",
+  },
+  {
+    "start": 531,
+    "value": "node19",
+  },
+  {
+    "start": 533,
+    "value": "node19",
+  },
+  {
+    "start": 536,
+    "value": "node19",
+  },
+  {
+    "start": 539,
+    "value": "node30",
+  },
+  {
+    "start": 540,
+    "value": "node19",
+  },
+  {
+    "start": 540,
+    "value": "node30",
+  },
+  {
+    "start": 546,
+    "value": "node19",
+  },
+  {
+    "start": 546,
+    "value": "node19",
+  },
+  {
+    "start": 547,
+    "value": "node23",
+  },
+  {
+    "start": 547,
+    "value": "node30",
+  },
+  {
+    "start": 550,
+    "value": "node7",
+  },
+  {
+    "start": 550,
+    "value": "node30",
+  },
+  {
+    "start": 563,
+    "value": "node26",
+  },
+  {
+    "start": 564,
+    "value": "node30",
+  },
+  {
+    "start": 564,
+    "value": "node26",
+  },
+  {
+    "start": 566,
+    "value": "node26",
+  },
+  {
+    "start": 569,
+    "value": "node26",
+  },
+  {
+    "start": 572,
+    "value": "node33",
+  },
+  {
+    "start": 573,
+    "value": "node26",
+  },
+  {
+    "start": 573,
+    "value": "node33",
+  },
+  {
+    "start": 579,
+    "value": "node26",
+  },
+  {
+    "start": 579,
+    "value": "node26",
+  },
+  {
+    "start": 580,
+    "value": "node30",
+  },
+  {
+    "start": 580,
+    "value": "node33",
+  },
+  {
+    "start": 583,
+    "value": "node7",
+  },
+  {
+    "start": 583,
+    "value": "node33",
+  },
+  {
+    "start": 589,
+    "value": "node33",
+  },
+  {
+    "start": 590,
+    "value": "node33",
+  },
+  {
+    "start": 590,
+    "value": "node33",
+  },
+  {
+    "start": 591,
+    "value": "node34",
+  },
+  {
+    "start": 592,
+    "value": "node34",
+  },
+  {
+    "start": 593,
+    "value": "node34",
+  },
+  {
+    "start": 593,
+    "value": "node33",
+  },
+  {
+    "start": 594,
+    "value": "node35",
+  },
+  {
+    "start": 595,
+    "value": "node35",
+  },
+  {
+    "start": 596,
+    "value": "node36",
+  },
+  {
+    "start": 597,
+    "value": "node33",
+  },
+  {
+    "start": 597,
+    "value": "node36",
+  },
+  {
+    "start": 599,
+    "value": "node36",
+  },
+  {
+    "start": 602,
+    "value": "node36",
+  },
+  {
+    "start": 605,
+    "value": "node37",
+  },
+  {
+    "start": 606,
+    "value": "node36",
+  },
+  {
+    "start": 606,
+    "value": "node37",
+  },
+  {
+    "start": 612,
+    "value": "node36",
+  },
+  {
+    "start": 612,
+    "value": "node36",
+  },
+  {
+    "start": 613,
+    "value": "node33",
+  },
+  {
+    "start": 613,
+    "value": "node43",
+  },
+  {
+    "start": 616,
+    "value": "node7",
+  },
+  {
+    "start": 616,
+    "value": "node43",
+  },
+  {
+    "start": 622,
+    "value": "node43",
+  },
+  {
+    "start": 623,
+    "value": "node43",
+  },
+  {
+    "start": 623,
+    "value": "node43",
+  },
+  {
+    "start": 624,
+    "value": "node44",
+  },
+  {
+    "start": 625,
+    "value": "node43",
+  },
+  {
+    "start": 625,
+    "value": "node44",
+  },
+  {
+    "start": 626,
+    "value": "node44",
+  },
+  {
+    "start": 626,
+    "value": "node44",
+  },
+  {
+    "start": 629,
+    "value": "node45",
+  },
+  {
+    "start": 630,
+    "value": "node43",
+  },
+  {
+    "start": 630,
+    "value": "node45",
+  },
+  {
+    "start": 632,
+    "value": "node45",
+  },
+  {
+    "start": 635,
+    "value": "node45",
+  },
+  {
+    "start": 638,
+    "value": "node46",
+  },
+  {
+    "start": 639,
+    "value": "node45",
+  },
+  {
+    "start": 639,
+    "value": "node46",
+  },
+  {
+    "start": 645,
+    "value": "node45",
+  },
+  {
+    "start": 645,
+    "value": "node45",
+  },
+  {
+    "start": 646,
+    "value": "node43",
+  },
+  {
+    "start": 646,
+    "value": "node52",
+  },
+  {
+    "start": 649,
+    "value": "node7",
+  },
+  {
+    "start": 649,
+    "value": "node52",
+  },
+  {
+    "start": 655,
+    "value": "node52",
+  },
+  {
+    "start": 656,
+    "value": "node52",
+  },
+  {
+    "start": 656,
+    "value": "node52",
+  },
+  {
+    "start": 656,
+    "value": "node52",
+  },
+  {
+    "start": 659,
+    "value": "node52",
+  },
+  {
+    "start": 660,
+    "value": "node53",
+  },
+  {
+    "start": 661,
+    "value": "node53",
+  },
+  {
+    "start": 662,
+    "value": "node54",
+  },
+  {
+    "start": 663,
+    "value": "node52",
+  },
+  {
+    "start": 663,
+    "value": "node54",
+  },
+  {
+    "start": 665,
+    "value": "node54",
+  },
+  {
+    "start": 668,
+    "value": "node54",
+  },
+  {
+    "start": 671,
+    "value": "node61",
+  },
+  {
+    "start": 672,
+    "value": "node54",
+  },
+  {
+    "start": 672,
+    "value": "node61",
+  },
+  {
+    "start": 678,
+    "value": "node54",
+  },
+  {
+    "start": 678,
+    "value": "node54",
+  },
+  {
+    "start": 679,
+    "value": "node52",
+  },
+  {
+    "start": 679,
+    "value": "node61",
+  },
+  {
+    "start": 682,
+    "value": "node7",
+  },
+  {
+    "start": 682,
+    "value": "node61",
+  },
+  {
+    "start": 688,
+    "value": "node61",
+  },
+  {
+    "start": 689,
+    "value": "node61",
+  },
+  {
+    "start": 689,
+    "value": "node61",
+  },
+  {
+    "start": 689,
+    "value": "node61",
+  },
+  {
+    "start": 692,
+    "value": "node61",
+  },
+  {
+    "start": 695,
+    "value": "node62",
+  },
+  {
+    "start": 696,
+    "value": "node61",
+  },
+  {
+    "start": 696,
+    "value": "node62",
+  },
+  {
+    "start": 698,
+    "value": "node62",
+  },
+  {
+    "start": 701,
+    "value": "node62",
+  },
+  {
+    "start": 704,
+    "value": "node69",
+  },
+  {
+    "start": 705,
+    "value": "node62",
+  },
+  {
+    "start": 705,
+    "value": "node69",
+  },
+  {
+    "start": 711,
+    "value": "node62",
+  },
+  {
+    "start": 711,
+    "value": "node62",
+  },
+  {
+    "start": 712,
+    "value": "node61",
+  },
+  {
+    "start": 712,
+    "value": "node61",
+  },
+  {
+    "start": 714,
+    "value": "node7",
+  },
+  {
+    "start": 714,
+    "value": "node7",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!ForLoopConditionalBreak: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 732,
+    "value": "node0",
+  },
+  {
+    "start": 771,
+    "value": "node5",
+  },
+  {
+    "start": 789,
+    "value": "node1",
+  },
+  {
+    "start": 790,
+    "value": "node5",
+  },
+  {
+    "start": 790,
+    "value": "node1",
+  },
+  {
+    "start": 796,
+    "value": "node1",
+  },
+  {
+    "start": 799,
+    "value": "node1",
+  },
+  {
+    "start": 808,
+    "value": "node2",
+  },
+  {
+    "start": 809,
+    "value": "node1",
+  },
+  {
+    "start": 809,
+    "value": "node2",
+  },
+  {
+    "start": 817,
+    "value": "node2",
+  },
+  {
+    "start": 823,
+    "value": "node2",
+  },
+  {
+    "start": 829,
+    "value": "node1",
+  },
+  {
+    "start": 829,
+    "value": "node1",
+  },
+  {
+    "start": 833,
+    "value": "node5",
+  },
+  {
+    "start": 833,
+    "value": "node5",
+  },
+  {
+    "start": 835,
+    "value": "node0",
+  },
+  {
+    "start": 835,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!ForLoopConditionalContinue: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 853,
+    "value": "node0",
+  },
+  {
+    "start": 895,
+    "value": "node9",
+  },
+  {
+    "start": 913,
+    "value": "node1",
+  },
+  {
+    "start": 914,
+    "value": "node9",
+  },
+  {
+    "start": 914,
+    "value": "node1",
+  },
+  {
+    "start": 920,
+    "value": "node1",
+  },
+  {
+    "start": 923,
+    "value": "node1",
+  },
+  {
+    "start": 932,
+    "value": "node2",
+  },
+  {
+    "start": 933,
+    "value": "node1",
+  },
+  {
+    "start": 933,
+    "value": "node2",
+  },
+  {
+    "start": 941,
+    "value": "node2",
+  },
+  {
+    "start": 950,
+    "value": "node2",
+  },
+  {
+    "start": 956,
+    "value": "node1",
+  },
+  {
+    "start": 956,
+    "value": "node5",
+  },
+  {
+    "start": 961,
+    "value": "node1",
+  },
+  {
+    "start": 961,
+    "value": "node5",
+  },
+  {
+    "start": 964,
+    "value": "node5",
+  },
+  {
+    "start": 967,
+    "value": "node6",
+  },
+  {
+    "start": 968,
+    "value": "node5",
+  },
+  {
+    "start": 968,
+    "value": "node6",
+  },
+  {
+    "start": 975,
+    "value": "node5",
+  },
+  {
+    "start": 975,
+    "value": "node1",
+  },
+  {
+    "start": 979,
+    "value": "node9",
+  },
+  {
+    "start": 979,
+    "value": "node9",
+  },
+  {
+    "start": 981,
+    "value": "node0",
+  },
+  {
+    "start": 981,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!MoreSwitch: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 998,
+    "value": "node1",
+  },
+  {
+    "start": 1100,
+    "value": "node1",
+  },
+  {
+    "start": 1112,
+    "value": "node1",
+  },
+  {
+    "start": 1117,
+    "value": "node1",
+  },
+  {
+    "start": 1117,
+    "value": "node1",
+  },
+  {
+    "start": 1124,
+    "value": "node2",
+  },
+  {
+    "start": 1131,
+    "value": "node2",
+  },
+  {
+    "start": 1137,
+    "value": "node1",
+  },
+  {
+    "start": 1137,
+    "value": "node3",
+  },
+  {
+    "start": 1142,
+    "value": "node1",
+  },
+  {
+    "start": 1142,
+    "value": "node3",
+  },
+  {
+    "start": 1149,
+    "value": "node4",
+  },
+  {
+    "start": 1156,
+    "value": "node4",
+  },
+  {
+    "start": 1162,
+    "value": "node3",
+  },
+  {
+    "start": 1162,
+    "value": "node5",
+  },
+  {
+    "start": 1167,
+    "value": "node1",
+  },
+  {
+    "start": 1167,
+    "value": "node5",
+  },
+  {
+    "start": 1174,
+    "value": "node6",
+  },
+  {
+    "start": 1181,
+    "value": "node6",
+  },
+  {
+    "start": 1185,
+    "value": "node5",
+  },
+  {
+    "start": 1185,
+    "value": "node7",
+  },
+  {
+    "start": 1190,
+    "value": "node1",
+  },
+  {
+    "start": 1190,
+    "value": "node7",
+  },
+  {
+    "start": 1197,
+    "value": "node8",
+  },
+  {
+    "start": 1204,
+    "value": "node8",
+  },
+  {
+    "start": 1210,
+    "value": "node7",
+  },
+  {
+    "start": 1210,
+    "value": "node10",
+  },
+  {
+    "start": 1215,
+    "value": "node1",
+  },
+  {
+    "start": 1215,
+    "value": "node10",
+  },
+  {
+    "start": 1223,
+    "value": "node10",
+  },
+  {
+    "start": 1230,
+    "value": "node10",
+  },
+  {
+    "start": 1234,
+    "value": "node10",
+  },
+  {
+    "start": 1234,
+    "value": "node10",
+  },
+  {
+    "start": 1238,
+    "value": "node1",
+  },
+  {
+    "start": 1238,
+    "value": "node1",
+  },
+  {
+    "start": 1240,
+    "value": "node1",
+  },
+  {
+    "start": 1240,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!trivial: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 1257,
+    "value": "node2",
+  },
+  {
+    "start": 1278,
+    "value": "node2",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!simpleIf: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 1295,
+    "value": "node1",
+  },
+  {
+    "start": 1319,
+    "value": "node1",
+  },
+  {
+    "start": 1322,
+    "value": "node1",
+  },
+  {
+    "start": 1325,
+    "value": "node2",
+  },
+  {
+    "start": 1326,
+    "value": "node1",
+  },
+  {
+    "start": 1326,
+    "value": "node2",
+  },
+  {
+    "start": 1331,
+    "value": "node1",
+  },
+  {
+    "start": 1331,
+    "value": "node1",
+  },
+  {
+    "start": 1333,
+    "value": "node1",
+  },
+  {
+    "start": 1333,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!ifElse: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 1360,
+    "value": "node1",
+  },
+  {
+    "start": 1382,
+    "value": "node1",
+  },
+  {
+    "start": 1385,
+    "value": "node1",
+  },
+  {
+    "start": 1388,
+    "value": "node2",
+  },
+  {
+    "start": 1389,
+    "value": "node1",
+  },
+  {
+    "start": 1389,
+    "value": "node2",
+  },
+  {
+    "start": 1394,
+    "value": "node1",
+  },
+  {
+    "start": 1394,
+    "value": "node3",
+  },
+  {
+    "start": 1400,
+    "value": "node1",
+  },
+  {
+    "start": 1400,
+    "value": "node3",
+  },
+  {
+    "start": 1403,
+    "value": "node3",
+  },
+  {
+    "start": 1406,
+    "value": "node4",
+  },
+  {
+    "start": 1407,
+    "value": "node3",
+  },
+  {
+    "start": 1407,
+    "value": "node4",
+  },
+  {
+    "start": 1412,
+    "value": "node5",
+  },
+  {
+    "start": 1413,
+    "value": "node3",
+  },
+  {
+    "start": 1413,
+    "value": "node5",
+  },
+  {
+    "start": 1418,
+    "value": "node5",
+  },
+  {
+    "start": 1423,
+    "value": "node5",
+  },
+  {
+    "start": 1423,
+    "value": "node3",
+  },
+  {
+    "start": 1423,
+    "value": "node1",
+  },
+  {
+    "start": 1423,
+    "value": "node1",
+  },
+  {
+    "start": 1425,
+    "value": "node1",
+  },
+  {
+    "start": 1425,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!forever: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 1452,
+    "value": "node1",
+  },
+  {
+    "start": 1475,
+    "value": "node1",
+  },
+  {
+    "start": 1480,
+    "value": "node1",
+  },
+  {
+    "start": 1481,
+    "value": "node1",
+  },
+  {
+    "start": 1481,
+    "value": "node1",
+  },
+  {
+    "start": 1482,
+    "value": "node1",
+  },
+  {
+    "start": 1483,
+    "value": "node5",
+  },
+  {
+    "start": 1484,
+    "value": "node1",
+  },
+  {
+    "start": 1484,
+    "value": "node5",
+  },
+  {
+    "start": 1486,
+    "value": "node1",
+  },
+  {
+    "start": 1486,
+    "value": "node1",
+  },
+  {
+    "start": 1488,
+    "value": "node1",
+  },
+  {
+    "start": 1488,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!forever2: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 1515,
+    "value": "node1",
+  },
+  {
+    "start": 1539,
+    "value": "node1",
+  },
+  {
+    "start": 1544,
+    "value": "node1",
+  },
+  {
+    "start": 1554,
+    "value": "node1",
+  },
+  {
+    "start": 1554,
+    "value": "node1",
+  },
+  {
+    "start": 1556,
+    "value": "node1",
+  },
+  {
+    "start": 1557,
+    "value": "node2",
+  },
+  {
+    "start": 1560,
+    "value": "node2",
+  },
+  {
+    "start": 1561,
+    "value": "node2",
+  },
+  {
+    "start": 1562,
+    "value": "node1",
+  },
+  {
+    "start": 1562,
+    "value": "node2",
+  },
+  {
+    "start": 1564,
+    "value": "node1",
+  },
+  {
+    "start": 1564,
+    "value": "node1",
+  },
+  {
+    "start": 1566,
+    "value": "node1",
+  },
+  {
+    "start": 1566,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!forLoop: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 1625,
+    "value": "node1",
+  },
+  {
+    "start": 1648,
+    "value": "node1",
+  },
+  {
+    "start": 1653,
+    "value": "node1",
+  },
+  {
+    "start": 1663,
+    "value": "node1",
+  },
+  {
+    "start": 1663,
+    "value": "node1",
+  },
+  {
+    "start": 1664,
+    "value": "node2",
+  },
+  {
+    "start": 1670,
+    "value": "node2",
+  },
+  {
+    "start": 1671,
+    "value": "node2",
+  },
+  {
+    "start": 1671,
+    "value": "node1",
+  },
+  {
+    "start": 1672,
+    "value": "node3",
+  },
+  {
+    "start": 1675,
+    "value": "node3",
+  },
+  {
+    "start": 1676,
+    "value": "node3",
+  },
+  {
+    "start": 1677,
+    "value": "node1",
+  },
+  {
+    "start": 1677,
+    "value": "node3",
+  },
+  {
+    "start": 1710,
+    "value": "node1",
+  },
+  {
+    "start": 1710,
+    "value": "node1",
+  },
+  {
+    "start": 1712,
+    "value": "node1",
+  },
+  {
+    "start": 1712,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!whileLoop: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 1739,
+    "value": "node0",
+  },
+  {
+    "start": 1764,
+    "value": "node1",
+  },
+  {
+    "start": 1770,
+    "value": "node1",
+  },
+  {
+    "start": 1775,
+    "value": "node1",
+  },
+  {
+    "start": 1775,
+    "value": "node1",
+  },
+  {
+    "start": 1776,
+    "value": "node2",
+  },
+  {
+    "start": 1778,
+    "value": "node2",
+  },
+  {
+    "start": 1778,
+    "value": "node1",
+  },
+  {
+    "start": 1778,
+    "value": "node1",
+  },
+  {
+    "start": 1780,
+    "value": "node0",
+  },
+  {
+    "start": 1780,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!doWhile: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 1807,
+    "value": "node0",
+  },
+  {
+    "start": 1830,
+    "value": "node1",
+  },
+  {
+    "start": 1833,
+    "value": "node1",
+  },
+  {
+    "start": 1835,
+    "value": "node1",
+  },
+  {
+    "start": 1835,
+    "value": "node1",
+  },
+  {
+    "start": 1842,
+    "value": "node1",
+  },
+  {
+    "start": 1847,
+    "value": "node1",
+  },
+  {
+    "start": 1847,
+    "value": "node1",
+  },
+  {
+    "start": 1848,
+    "value": "node1",
+  },
+  {
+    "start": 1850,
+    "value": "node0",
+  },
+  {
+    "start": 1850,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!switch_1: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 1899,
+    "value": "node1",
+  },
+  {
+    "start": 1923,
+    "value": "node1",
+  },
+  {
+    "start": 1935,
+    "value": "node1",
+  },
+  {
+    "start": 1940,
+    "value": "node1",
+  },
+  {
+    "start": 1940,
+    "value": "node1",
+  },
+  {
+    "start": 1947,
+    "value": "Not found",
+  },
+  {
+    "start": 1954,
+    "value": "node1",
+  },
+  {
+    "start": 1970,
+    "value": "node2",
+  },
+  {
+    "start": 1986,
+    "value": "node1",
+  },
+  {
+    "start": 1986,
+    "value": "node3",
+  },
+  {
+    "start": 1991,
+    "value": "node1",
+  },
+  {
+    "start": 1991,
+    "value": "node3",
+  },
+  {
+    "start": 1998,
+    "value": "node5",
+  },
+  {
+    "start": 2003,
+    "value": "node1",
+  },
+  {
+    "start": 2003,
+    "value": "node5",
+  },
+  {
+    "start": 2010,
+    "value": "Not found",
+  },
+  {
+    "start": 2017,
+    "value": "node5",
+  },
+  {
+    "start": 2033,
+    "value": "node6",
+  },
+  {
+    "start": 2049,
+    "value": "node5",
+  },
+  {
+    "start": 2049,
+    "value": "node5",
+  },
+  {
+    "start": 2053,
+    "value": "node1",
+  },
+  {
+    "start": 2053,
+    "value": "node1",
+  },
+  {
+    "start": 2055,
+    "value": "node1",
+  },
+  {
+    "start": 2055,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!switch_2: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 2082,
+    "value": "node1",
+  },
+  {
+    "start": 2106,
+    "value": "node1",
+  },
+  {
+    "start": 2118,
+    "value": "node1",
+  },
+  {
+    "start": 2123,
+    "value": "node1",
+  },
+  {
+    "start": 2123,
+    "value": "node1",
+  },
+  {
+    "start": 2130,
+    "value": "node2",
+  },
+  {
+    "start": 2137,
+    "value": "node2",
+  },
+  {
+    "start": 2143,
+    "value": "node1",
+  },
+  {
+    "start": 2143,
+    "value": "node3",
+  },
+  {
+    "start": 2148,
+    "value": "node1",
+  },
+  {
+    "start": 2148,
+    "value": "node3",
+  },
+  {
+    "start": 2155,
+    "value": "node5",
+  },
+  {
+    "start": 2160,
+    "value": "node1",
+  },
+  {
+    "start": 2160,
+    "value": "node5",
+  },
+  {
+    "start": 2167,
+    "value": "node5",
+  },
+  {
+    "start": 2171,
+    "value": "node1",
+  },
+  {
+    "start": 2171,
+    "value": "node1",
+  },
+  {
+    "start": 2173,
+    "value": "node1",
+  },
+  {
+    "start": 2173,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!ManyIfs: Segmentation 2`] = `
+[
+  {
+    "start": 0,
+    "value": "node1",
+  },
+  {
+    "start": 2201,
+    "value": "node1",
+  },
+  {
+    "start": 2224,
+    "value": "node1",
+  },
+  {
+    "start": 2227,
+    "value": "node1",
+  },
+  {
+    "start": 2230,
+    "value": "node2",
+  },
+  {
+    "start": 2231,
+    "value": "node1",
+  },
+  {
+    "start": 2231,
+    "value": "node2",
+  },
+  {
+    "start": 2236,
+    "value": "node1",
+  },
+  {
+    "start": 2236,
+    "value": "node5",
+  },
+  {
+    "start": 2240,
+    "value": "node1",
+  },
+  {
+    "start": 2240,
+    "value": "node5",
+  },
+  {
+    "start": 2243,
+    "value": "node5",
+  },
+  {
+    "start": 2246,
+    "value": "node6",
+  },
+  {
+    "start": 2247,
+    "value": "node5",
+  },
+  {
+    "start": 2247,
+    "value": "node6",
+  },
+  {
+    "start": 2252,
+    "value": "node7",
+  },
+  {
+    "start": 2253,
+    "value": "node5",
+  },
+  {
+    "start": 2253,
+    "value": "node7",
+  },
+  {
+    "start": 2258,
+    "value": "node7",
+  },
+  {
+    "start": 2263,
+    "value": "node7",
+  },
+  {
+    "start": 2263,
+    "value": "node5",
+  },
+  {
+    "start": 2263,
+    "value": "node10",
+  },
+  {
+    "start": 2267,
+    "value": "node1",
+  },
+  {
+    "start": 2267,
+    "value": "node10",
+  },
+  {
+    "start": 2270,
+    "value": "node10",
+  },
+  {
+    "start": 2273,
+    "value": "node11",
+  },
+  {
+    "start": 2274,
+    "value": "node10",
+  },
+  {
+    "start": 2274,
+    "value": "node11",
+  },
+  {
+    "start": 2279,
+    "value": "node10",
+  },
+  {
+    "start": 2279,
+    "value": "node12",
+  },
+  {
+    "start": 2285,
+    "value": "node10",
+  },
+  {
+    "start": 2285,
+    "value": "node12",
+  },
+  {
+    "start": 2288,
+    "value": "node12",
+  },
+  {
+    "start": 2291,
+    "value": "node13",
+  },
+  {
+    "start": 2292,
+    "value": "node12",
+  },
+  {
+    "start": 2292,
+    "value": "node13",
+  },
+  {
+    "start": 2297,
+    "value": "node12",
+  },
+  {
+    "start": 2297,
+    "value": "node10",
+  },
+  {
+    "start": 2297,
+    "value": "node16",
+  },
+  {
+    "start": 2301,
+    "value": "node1",
+  },
+  {
+    "start": 2301,
+    "value": "node16",
+  },
+  {
+    "start": 2304,
+    "value": "node16",
+  },
+  {
+    "start": 2307,
+    "value": "node17",
+  },
+  {
+    "start": 2308,
+    "value": "node16",
+  },
+  {
+    "start": 2308,
+    "value": "node17",
+  },
+  {
+    "start": 2313,
+    "value": "node16",
+  },
+  {
+    "start": 2313,
+    "value": "node18",
+  },
+  {
+    "start": 2319,
+    "value": "node16",
+  },
+  {
+    "start": 2319,
+    "value": "node18",
+  },
+  {
+    "start": 2322,
+    "value": "node18",
+  },
+  {
+    "start": 2325,
+    "value": "node19",
+  },
+  {
+    "start": 2326,
+    "value": "node18",
+  },
+  {
+    "start": 2326,
+    "value": "node19",
+  },
+  {
+    "start": 2331,
+    "value": "node20",
+  },
+  {
+    "start": 2332,
+    "value": "node18",
+  },
+  {
+    "start": 2332,
+    "value": "node20",
+  },
+  {
+    "start": 2337,
+    "value": "node20",
+  },
+  {
+    "start": 2342,
+    "value": "node20",
+  },
+  {
+    "start": 2342,
+    "value": "node18",
+  },
+  {
+    "start": 2342,
+    "value": "node16",
+  },
+  {
+    "start": 2342,
+    "value": "node16",
+  },
+  {
+    "start": 2344,
+    "value": "node1",
+  },
+  {
+    "start": 2344,
+    "value": "node1",
+  },
+]
+`;
+
+exports[`TypeScript: sample.ts!LabeledStatement: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node3",
+  },
+  {
+    "start": 2617,
+    "value": "node3",
+  },
+  {
+    "start": 2649,
+    "value": "node3",
+  },
+  {
+    "start": 2662,
+    "value": "node3",
+  },
+  {
+    "start": 2666,
+    "value": "node3",
+  },
+  {
+    "start": 2666,
+    "value": "node3",
+  },
+  {
+    "start": 2772,
+    "value": "node3",
+  },
+  {
+    "start": 2775,
+    "value": "node3",
+  },
+  {
+    "start": 2775,
+    "value": "node3",
   },
 ]
 `;

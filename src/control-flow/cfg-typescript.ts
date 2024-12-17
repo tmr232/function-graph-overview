@@ -1,4 +1,5 @@
 import type Parser from "web-tree-sitter";
+import { matchExistsIn } from "./block-matcher.ts";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
   cStyleDoWhileProcessor,
@@ -8,6 +9,7 @@ import {
   forEachLoopProcessor,
   processBreakStatement,
   processComment,
+  processContinueStatement,
   processReturnStatement,
   processStatementSequence,
 } from "./common-patterns.ts";
@@ -78,6 +80,7 @@ const statementHandlers: StatementHandlers = {
     while_statement: cStyleWhileProcessor(),
     do_statement: cStyleDoWhileProcessor(),
     switch_statement: processSwitchlike,
+    continue_statement: processContinueStatement,
     break_statement: processBreakStatement,
     return_statement: processReturnStatement,
     comment: processComment,
@@ -89,12 +92,14 @@ function defaultProcessStatement(
   syntax: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  const newNode = ctx.builder.addNode(
-    "STATEMENT",
-    syntax.text,
-    syntax.startIndex,
-  );
-
+  const { builder } = ctx;
+  const hasYield = matchExistsIn(syntax, "(yield_expression) @yield");
+  if (hasYield) {
+    const yieldNode = builder.addNode("YIELD", syntax.text, syntax.startIndex);
+    ctx.link.syntaxToNode(syntax, yieldNode);
+    return { entry: yieldNode, exit: yieldNode };
+  }
+  const newNode = builder.addNode("STATEMENT", syntax.text, syntax.startIndex);
   ctx.link.syntaxToNode(syntax, newNode);
   return { entry: newNode, exit: newNode };
 }
