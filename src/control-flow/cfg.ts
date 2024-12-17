@@ -55,5 +55,10 @@ export const functionNodeTypes: { [language in Language]: string[] } = {
   C: ["function_definition"],
   "C++": cppFunctionNodeNames,
   Python: ["function_definition"],
-  TypeScript: ["function_declaration", "arrow_function"],
+  TypeScript: [
+    "function_declaration",
+    "arrow_function",
+    "function_expression",
+    "generator_function",
+  ],
 };
