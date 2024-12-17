@@ -3,6 +3,7 @@ import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
   cStyleForStatementProcessor,
   cStyleIfProcessor,
+  cStyleWhileProcessor,
   forEachLoopProcessor,
 } from "./common-patterns.ts";
 import {
@@ -67,6 +68,7 @@ const statementHandlers: StatementHandlers = {
     if_statement: cStyleIfProcessor(ifStatementQuery),
     for_in_statement: processForStatement,
     for_statement: cStyleForStatementProcessor(cStyleForStatementQuery),
+    while_statement: cStyleWhileProcessor(),
   },
   default: defaultProcessStatement,
 };

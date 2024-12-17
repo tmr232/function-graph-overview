@@ -3,6 +3,7 @@ import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
   cStyleForStatementProcessor,
   cStyleIfProcessor,
+  cStyleWhileProcessor,
 } from "./common-patterns.ts";
 import {
   type Context,
@@ -47,7 +48,7 @@ const statementHandlers: StatementHandlers = {
     compound_statement: processCompoundStatement,
     if_statement: processIfStatement,
     for_statement: processForStatement,
-    while_statement: processWhileStatement,
+    while_statement: cStyleWhileProcessor(),
     do_statement: processDoStatement,
     switch_statement: processSwitchlike,
     return_statement: processReturnStatement,
@@ -69,53 +70,6 @@ export function getStatementHandlers(): StatementHandlers {
 
 export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
   return new GenericCFGBuilder(statementHandlers, options);
-}
-
-function processWhileStatement(
-  whileSyntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  const queryString = `
-  (while_statement
-      condition: (_) @cond
-      body: (_) @body
-      ) @while
-  `;
-  const match = ctx.matcher.match(whileSyntax, queryString);
-
-  const condSyntax = match.requireSyntax("cond");
-  const bodySyntax = match.requireSyntax("body");
-
-  const condBlock = match.getBlock(condSyntax);
-  const bodyBlock = match.getBlock(bodySyntax);
-
-  const exitNode = ctx.builder.addNode(
-    "FOR_EXIT",
-    "loop exit",
-    whileSyntax.endIndex,
-  );
-
-  if (condBlock.exit) {
-    if (bodyBlock.entry)
-      ctx.builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
-    ctx.builder.addEdge(condBlock.exit, exitNode, "alternative");
-  }
-  if (condBlock.entry && bodyBlock.exit)
-    ctx.builder.addEdge(bodyBlock.exit, condBlock.entry);
-
-  ctx.matcher.state.forEachContinue((continueNode) => {
-    if (condBlock.entry) ctx.builder.addEdge(continueNode, condBlock.entry);
-  });
-
-  ctx.matcher.state.forEachBreak((breakNode) => {
-    ctx.builder.addEdge(breakNode, exitNode);
-  });
-
-  ctx.link.syntaxToNode(bodySyntax, bodyBlock.entry);
-  ctx.link.syntaxToNode(condSyntax, condBlock.entry);
-  ctx.link.syntaxToNode(whileSyntax, condBlock.entry);
-
-  return ctx.matcher.update({ entry: condBlock.entry, exit: exitNode });
 }
 
 function processDoStatement(

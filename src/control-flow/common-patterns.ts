@@ -291,3 +291,52 @@ export function cStyleForStatementProcessor(
     return ctx.matcher.update({ entry: entryNode, exit: exitNode });
   };
 }
+
+export function cStyleWhileProcessor(): (
+  whileSyntax: Parser.SyntaxNode,
+  ctx: Context,
+) => BasicBlock {
+  return (whileSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock => {
+    const queryString = `
+  (while_statement
+      condition: (_) @cond
+      body: (_) @body
+      ) @while
+  `;
+    const match = ctx.matcher.match(whileSyntax, queryString);
+
+    const condSyntax = match.requireSyntax("cond");
+    const bodySyntax = match.requireSyntax("body");
+
+    const condBlock = match.getBlock(condSyntax);
+    const bodyBlock = match.getBlock(bodySyntax);
+
+    const exitNode = ctx.builder.addNode(
+      "FOR_EXIT",
+      "loop exit",
+      whileSyntax.endIndex,
+    );
+
+    if (condBlock.exit) {
+      if (bodyBlock.entry)
+        ctx.builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
+      ctx.builder.addEdge(condBlock.exit, exitNode, "alternative");
+    }
+    if (condBlock.entry && bodyBlock.exit)
+      ctx.builder.addEdge(bodyBlock.exit, condBlock.entry);
+
+    ctx.matcher.state.forEachContinue((continueNode) => {
+      if (condBlock.entry) ctx.builder.addEdge(continueNode, condBlock.entry);
+    });
+
+    ctx.matcher.state.forEachBreak((breakNode) => {
+      ctx.builder.addEdge(breakNode, exitNode);
+    });
+
+    ctx.link.syntaxToNode(bodySyntax, bodyBlock.entry);
+    ctx.link.syntaxToNode(condSyntax, condBlock.entry);
+    ctx.link.syntaxToNode(whileSyntax, condBlock.entry);
+
+    return ctx.matcher.update({ entry: condBlock.entry, exit: exitNode });
+  };
+}
