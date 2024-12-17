@@ -2,12 +2,13 @@ import type Parser from "web-tree-sitter";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
   getChildFieldText,
-  processBreakStatement, processComment,
+  processBreakStatement,
+  processComment,
   processContinueStatement,
   processGotoStatement,
   processLabeledStatement,
   processReturnStatement,
-  processStatementSequence
+  processStatementSequence,
 } from "./common-patterns.ts";
 import {
   type Context,
@@ -183,7 +184,6 @@ function processIfStatement(
 
   return ctx.state.update({ entry: conditionNode, exit: mergeNode });
 }
-
 
 const caseTypes = new Set([
   "default_case",

@@ -6,9 +6,10 @@ import {
   cStyleIfProcessor,
   cStyleWhileProcessor,
   forEachLoopProcessor,
-  processBreakStatement, processComment,
+  processBreakStatement,
+  processComment,
   processReturnStatement,
-  processStatementSequence
+  processStatementSequence,
 } from "./common-patterns.ts";
 import {
   type Context,
