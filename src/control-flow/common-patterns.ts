@@ -177,7 +177,6 @@ export function cStyleForStatementProcessor(
     const condSyntax = match.getSyntax("cond");
     const updateSyntax = match.getSyntax("update");
     const bodySyntax = match.requireSyntax("body");
-    console.log(initSyntax, condSyntax, updateSyntax, bodySyntax, match);
 
     const initBlock = match.getBlock(initSyntax);
     const condBlock = match.getBlock(condSyntax);
