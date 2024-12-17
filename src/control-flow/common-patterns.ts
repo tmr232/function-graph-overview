@@ -111,7 +111,9 @@ export type rangeForDefinition = {
  * trivialize the loop.
  * @param definition
  */
-export function forEachLoopProcessor(definition: rangeForDefinition) {
+export function forEachLoopProcessor(
+  definition: rangeForDefinition,
+): (forNode: Parser.SyntaxNode, ctx: Context) => BasicBlock {
   return (forNode: Parser.SyntaxNode, ctx: Context): BasicBlock => {
     const { builder, matcher } = ctx;
     const match = matcher.match(forNode, definition.query);
@@ -162,5 +164,131 @@ export function forEachLoopProcessor(definition: rangeForDefinition) {
     });
 
     return matcher.update({ entry: headNode, exit: exitNode });
+  };
+}
+
+export function cStyleForStatementProcessor(
+  queryString: string,
+): (forNode: Parser.SyntaxNode, ctx: Context) => BasicBlock {
+  return (forNode: Parser.SyntaxNode, ctx: Context): BasicBlock => {
+    const match = ctx.matcher.match(forNode, queryString);
+
+    const initSyntax = match.getSyntax("init");
+    const condSyntax = match.getSyntax("cond");
+    const updateSyntax = match.getSyntax("update");
+    const bodySyntax = match.requireSyntax("body");
+    console.log(initSyntax, condSyntax, updateSyntax, bodySyntax, match);
+
+    const initBlock = match.getBlock(initSyntax);
+    const condBlock = match.getBlock(condSyntax);
+    const updateBlock = match.getBlock(updateSyntax);
+    const bodyBlock = match.getBlock(bodySyntax);
+
+    const entryNode = ctx.builder.addNode(
+      "EMPTY",
+      "loop head",
+      forNode.startIndex,
+    );
+    const exitNode = ctx.builder.addNode(
+      "FOR_EXIT",
+      "loop exit",
+      forNode.endIndex,
+    );
+    const headNode = ctx.builder.addNode(
+      "LOOP_HEAD",
+      "loop head",
+      forNode.startIndex,
+    );
+    const headBlock = { entry: headNode, exit: headNode };
+
+    ctx.link.syntaxToNode(forNode, entryNode);
+    if (condBlock) {
+      ctx.link.syntaxToNode(match.requireSyntax("cond-semi"), condBlock.entry);
+    }
+
+    const closeParens = match.requireSyntax("close-parens");
+
+    if (initSyntax)
+      ctx.link.offsetToSyntax(initSyntax, match.requireSyntax("init-semi"), {
+        reverse: true,
+        includeTo: true,
+      });
+    if (condSyntax)
+      ctx.link.offsetToSyntax(condSyntax, match.requireSyntax("cond-semi"), {
+        reverse: true,
+        includeTo: true,
+      });
+    if (!condSyntax && initSyntax)
+      ctx.link.offsetToSyntax(initSyntax, match.requireSyntax("cond-semi"), {
+        includeTo: true,
+        reverse: true,
+      });
+    if (updateSyntax)
+      ctx.link.offsetToSyntax(updateSyntax, closeParens, {
+        reverse: true,
+        includeTo: true,
+      });
+    if (condSyntax && !updateSyntax)
+      ctx.link.offsetToSyntax(condSyntax, closeParens, {
+        reverse: true,
+        includeTo: true,
+      });
+    ctx.link.offsetToSyntax(closeParens, bodySyntax);
+
+    const chainBlocks = (
+      entry: string | null,
+      blocks: (BasicBlock | null)[],
+    ) => {
+      let prevExit: string | null = entry;
+      for (const block of blocks) {
+        if (!block) continue;
+        if (prevExit && block.entry) ctx.builder.addEdge(prevExit, block.entry);
+        prevExit = block.exit;
+      }
+      return prevExit;
+    };
+
+    /*
+    entry -> init -> cond +-> body -> head -> update -> cond
+                          --> exit
+
+    top = chain(entry, init,)
+
+    if cond:
+        chain(top, cond)
+        cond +-> body
+        cond --> exit
+        chain(body, head, update, cond)
+    else:
+        chain(top, body, head, update, body)
+
+    chain(continue, head)
+    chain(break, exit)
+    */
+    const topExit = chainBlocks(entryNode, [initBlock]);
+    if (condBlock) {
+      chainBlocks(topExit, [condBlock]);
+      if (condBlock.exit) {
+        ctx.builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
+        ctx.builder.addEdge(condBlock.exit, exitNode, "alternative");
+        chainBlocks(bodyBlock.exit ?? null, [
+          headBlock,
+          updateBlock,
+          condBlock,
+        ]);
+      }
+    } else {
+      chainBlocks(topExit, [bodyBlock, headBlock, updateBlock, bodyBlock]);
+    }
+
+    ctx.matcher.state.forEachContinue((continueNode) => {
+      ctx.builder.addEdge(continueNode, headNode);
+    });
+
+    ctx.matcher.state.forEachBreak((breakNode) => {
+      ctx.builder.addEdge(breakNode, exitNode);
+    });
+
+    return ctx.matcher.update({ entry: entryNode, exit: exitNode });
   };
 }

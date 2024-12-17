@@ -1,6 +1,10 @@
 import type Parser from "web-tree-sitter";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
-import { cStyleIfProcessor, forEachLoopProcessor } from "./common-patterns.ts";
+import {
+  cStyleForStatementProcessor,
+  cStyleIfProcessor,
+  forEachLoopProcessor,
+} from "./common-patterns.ts";
 import {
   type Context,
   GenericCFGBuilder,
@@ -35,10 +39,34 @@ const processForStatement = forEachLoopProcessor({
   headerEnd: "closingParen",
 });
 
+const cStyleForStatementQuery = `
+(for_statement
+    "(" @open-parens
+    [
+        initializer: (_ ";" @init-semi)? @init
+        ";" @init-semi
+    ]
+    
+    condition: [
+        (empty_statement (";") @cond-semi)
+        (
+            (_) @cond
+            (#not-eq? @cond ";")
+            ";" @cond-semi
+        )
+    ]
+    
+    increment: (_)? @update
+    ")" @close-parens
+    body: (_) @body
+) @for
+`;
+
 const statementHandlers: StatementHandlers = {
   named: {
     if_statement: cStyleIfProcessor(ifStatementQuery),
     for_in_statement: processForStatement,
+    for_statement: cStyleForStatementProcessor(cStyleForStatementQuery),
   },
   default: defaultProcessStatement,
 };
