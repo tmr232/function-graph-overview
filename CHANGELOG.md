@@ -20,6 +20,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Fixed
 
 - `continue label` and `break label` now work properly in Go
+- Infinite C-style loops in Go are now recognized correctly.
 
 ## [0.0.11]
 
