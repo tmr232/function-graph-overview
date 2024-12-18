@@ -18,6 +18,7 @@ export const supportedLanguages = [
   "Python",
   "C++",
   "TypeScript",
+  "TSX",
 ] as const;
 export type Language = (typeof supportedLanguages)[number];
 export function isValidLanguage(language: string): language is Language {
@@ -44,6 +45,8 @@ export function newCFGBuilder(
       return createCppCFGBuilder(options);
     case "TypeScript":
       return createTypeScriptCFGBuilder(options);
+    case "TSX":
+      return createTypeScriptCFGBuilder(options);
   }
 }
 
@@ -56,6 +59,13 @@ export const functionNodeTypes: { [language in Language]: string[] } = {
   "C++": cppFunctionNodeNames,
   Python: ["function_definition"],
   TypeScript: [
+    "function_declaration",
+    "arrow_function",
+    "function_expression",
+    "generator_function",
+    "generator_function_declaration",
+  ],
+  TSX: [
     "function_declaration",
     "arrow_function",
     "function_expression",

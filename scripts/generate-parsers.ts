@@ -9,42 +9,55 @@ import { fileURLToPath } from "node:url";
  */
 import { $ } from "bun";
 
+function isString(value: unknown): value is string {
+  return typeof value === "string" || value instanceof String;
+}
+
+type Location = { package: string; name: string };
+function asLocation(entry: string | Location): Location {
+  if (isString(entry)) {
+    return { package: entry, name: entry };
+  }
+  return entry;
+}
+
 /**
  * The parsers to include
  */
-const parsersToBuild = [
+const parsersToBuild: (Location | string)[] = [
   "tree-sitter-go",
   "tree-sitter-c",
   "tree-sitter-python",
   "tree-sitter-cpp",
   "tree-sitter-typescript",
+  { package: "tree-sitter-typescript", name: "tree-sitter-tsx" },
 ];
 
-function locatePrebuiltWasm(packageName: string): string {
+function locatePrebuiltWasm(location: Location): string {
   return fileURLToPath(
-    import.meta.resolve(`${packageName}/${packageName}.wasm`),
+    import.meta.resolve(`${location.package}/${location.name}.wasm`),
   );
 }
 
-function hasPrebuiltWasm(packageName: string): boolean {
+function hasPrebuiltWasm(location: Location): boolean {
   try {
-    locatePrebuiltWasm(packageName);
+    locatePrebuiltWasm(location);
   } catch {
     return false;
   }
   return true;
 }
 
-for (const name of parsersToBuild) {
-  const targetWasmPath = `./parsers/${name}.wasm`;
+for (const location of parsersToBuild.map(asLocation)) {
+  const targetWasmPath = `./parsers/${location.name}.wasm`;
   if (await Bun.file(targetWasmPath).exists()) {
-    console.log(`${name}: .wasm found, skipping copy.`);
-  } else if (hasPrebuiltWasm(name)) {
-    console.log(`${name}: copying .wasm`);
-    fs.copyFileSync(locatePrebuiltWasm(name), targetWasmPath);
+    console.log(`${location.name}: .wasm found, skipping copy.`);
+  } else if (hasPrebuiltWasm(location)) {
+    console.log(`${location.name}: copying .wasm`);
+    fs.copyFileSync(locatePrebuiltWasm(location), targetWasmPath);
   } else {
-    console.log(`${name}: building .wasm`);
-    await $`bun x --bun tree-sitter build --wasm -o ${targetWasmPath} ./node_modules/${name}/`;
+    console.log(`${location.name}: building .wasm`);
+    await $`bun x --bun tree-sitter build --wasm -o ${targetWasmPath} ./node_modules/${location.package}/`;
   }
 
   await $`git add ${targetWasmPath}`;

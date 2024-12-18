@@ -9,6 +9,7 @@ import { getTestFuncs as getTestFuncsForC } from "./collect-c";
 import { getTestFuncs as getTestsForCpp } from "./collect-cpp.ts";
 import { getTestFuncs as getTestFuncsForGo } from "./collect-go";
 import { getTestFuncs as getTestsForPython } from "./collect-python";
+import { getTestFuncs as getTestsForTSX } from "./collect-tsx";
 import { getTestFuncs as getTestsForTypeScript } from "./collect-typescript";
 import type { TestFunction } from "./commentTestTypes";
 
@@ -31,6 +32,7 @@ const languages: {
   { ext: "py", getTestFuncs: getTestsForPython },
   { ext: "cpp", getTestFuncs: getTestsForCpp },
   { ext: "ts", getTestFuncs: getTestsForTypeScript },
+  { ext: "tsx", getTestFuncs: getTestsForTSX },
 ];
 
 const sampleGlob = new Glob(
