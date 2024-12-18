@@ -533,3 +533,17 @@ export function processComment(
   }
   return { entry: commentNode, exit: commentNode };
 }
+
+export function processThrowStatement(
+  throwSyntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const { builder } = ctx;
+  const throwNode = builder.addNode(
+    "THROW",
+    throwSyntax.text,
+    throwSyntax.startIndex,
+  );
+  ctx.link.syntaxToNode(throwSyntax, throwNode);
+  return { entry: throwNode, exit: null };
+}

@@ -13,6 +13,7 @@ import {
   processLabeledStatement,
   processReturnStatement,
   processStatementSequence,
+  processThrowStatement,
 } from "./common-patterns.ts";
 import {
   type Context,
@@ -91,6 +92,8 @@ const statementHandlers: StatementHandlers = {
     return_statement: processReturnStatement,
     comment: processComment,
     labeled_statement: processLabeledStatement,
+    try_statement: processTryStatement,
+    throw_statement: processThrowStatement,
   },
   default: defaultProcessStatement,
 };
@@ -182,4 +185,122 @@ function processSwitchlike(
 function getChildFieldText(node: Parser.SyntaxNode, fieldName: string): string {
   const child = node.childForFieldName(fieldName);
   return child ? child.text : "";
+}
+
+function processTryStatement(
+  trySyntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const { builder, matcher } = ctx;
+  /*
+  Here's an idea - I can duplicate the finally blocks!
+  Then if there's a return, I stick the finally before it.
+  In other cases, the finally is after the end of the try-body.
+  This is probably the best course of action.
+  */
+  const match = matcher.match(
+    trySyntax,
+    `
+    (try_statement
+        body: (_) @try-body
+        handler: (catch_clause
+            body: (_) @except-body
+        )? @except
+        finalizer: (finally_clause
+            body: (_) @finally-body
+        )?
+    ) @try
+      `,
+  );
+
+  const bodySyntax = match.requireSyntax("try-body");
+  const exceptSyntax = match.getSyntax("except-body");
+  const finallySyntax = match.getSyntax("finally-body");
+
+  const mergeNode = builder.addNode(
+    "MERGE",
+    "merge try-complex",
+    trySyntax.endIndex,
+  );
+
+  return builder.withCluster("try-complex", (tryComplexCluster) => {
+    const bodyBlock = builder.withCluster("try", () =>
+      match.getBlock(bodySyntax),
+    );
+    ctx.link.syntaxToNode(trySyntax, bodyBlock.entry);
+
+    // We handle `except` blocks before the `finally` block to support `return` handling.
+    const exceptBlock = builder.withCluster("except", () =>
+      match.getBlock(exceptSyntax),
+    );
+    if (exceptBlock) {
+      ctx.link.syntaxToNode(match.requireSyntax("except"), exceptBlock.entry);
+    }
+
+    // We attach the except-blocks to the top of the `try` body.
+    // In the rendering, we will connect them to the side of the node, and use invisible lines for it.
+    const headNode = bodyBlock.entry;
+    if (exceptBlock) {
+      // Yes, this is effectively a head-to-head link. But that's ok.
+      builder.addEdge(headNode, exceptBlock.entry, "exception");
+    }
+
+    const finallyBlock = builder.withCluster("finally", () => {
+      // Handle all the return statements from the try block
+      if (finallySyntax) {
+        // This is only relevant if there's a finally block.
+        matcher.state.forEachReturn((returnNode) => {
+          // We create a new finally block for each return node,
+          // so that we can link them.
+          const duplicateFinallyBlock = match.getBlock(finallySyntax);
+          // We also clone the return node, to place it _after_ the finally block
+          // We also override the cluster node, pulling it up to the `try-complex`,
+          // as the return is neither in a `try`, `except`, or `finally` context.
+          const returnNodeClone = builder.cloneNode(returnNode, {
+            cluster: tryComplexCluster,
+          });
+
+          builder.addEdge(returnNode, duplicateFinallyBlock.entry);
+          if (duplicateFinallyBlock.exit)
+            builder.addEdge(duplicateFinallyBlock.exit, returnNodeClone);
+
+          // We return the cloned return node as the new return node, in case we're nested
+          // in a scope that will process it.
+          return returnNodeClone;
+        });
+      }
+
+      // Handle the finally-block for the trivial case, where we just pass through the try block
+      // This must happen AFTER handling the return statements, as the finally block may add return
+      // statements of its own.
+      const finallyBlock = match.getBlock(finallySyntax);
+      return finallyBlock;
+    });
+    if (finallyBlock) {
+      ctx.link.syntaxToNode(match.requireSyntax("finally"), finallyBlock.entry);
+    }
+
+    // This is the exit we get to if we don't have an exception
+    let happyExit: string | null = bodyBlock.exit;
+
+    if (finallyBlock?.entry) {
+      // Connect `try` to `finally`
+      const toFinally = bodyBlock.exit;
+      if (toFinally) builder.addEdge(toFinally, finallyBlock.entry);
+      happyExit = finallyBlock.exit;
+      // Connect `except` to `finally`
+      if (exceptBlock?.exit)
+        builder.addEdge(exceptBlock.exit, finallyBlock.entry as string);
+    } else {
+      // We need to connect the `except` blocks to the merge node
+      if (exceptBlock?.exit) builder.addEdge(exceptBlock.exit, mergeNode);
+    }
+
+    if (happyExit) builder.addEdge(happyExit, mergeNode);
+
+    return matcher.update({
+      entry: bodyBlock.entry,
+      exit: mergeNode,
+    });
+  });
 }

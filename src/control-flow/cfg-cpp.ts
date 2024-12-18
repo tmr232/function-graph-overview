@@ -1,7 +1,10 @@
 import type Parser from "web-tree-sitter";
 import { getStatementHandlers } from "./cfg-c.ts";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
-import { forEachLoopProcessor } from "./common-patterns.ts";
+import {
+  forEachLoopProcessor,
+  processThrowStatement,
+} from "./common-patterns.ts";
 import {
   type Context,
   GenericCFGBuilder,
@@ -105,18 +108,4 @@ function processTryStatement(
       exit: mergeNode,
     });
   });
-}
-
-function processThrowStatement(
-  throwSyntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  const { builder } = ctx;
-  const throwNode = builder.addNode(
-    "THROW",
-    throwSyntax.text,
-    throwSyntax.startIndex,
-  );
-  ctx.link.syntaxToNode(throwSyntax, throwNode);
-  return { entry: throwNode, exit: null };
 }
