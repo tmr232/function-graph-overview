@@ -7,15 +7,15 @@ import {
   type BuilderOptions,
   type CFG,
 } from "./cfg-defs";
+import { pairwise } from "./itertools.ts";
 import { NodeMapper } from "./node-mapper";
-import { pairwise } from "./zip";
 
 export interface Dispatch {
   /**
    * Process a single AST node into a basic block
    * @param syntax
    */
-  single(syntax: Parser.SyntaxNode | null): BasicBlock;
+  single(syntax: Parser.SyntaxNode | null, extra?: Extra): BasicBlock;
 
   /**
    * Process an array of AST nodes into a basic clock
@@ -34,6 +34,17 @@ export interface Context {
   dispatch: Dispatch;
   state: BlockHandler;
   link: Link;
+  extra?: Extra;
+}
+
+/**
+ * Bits of extra context to add when needed.
+ */
+export interface Extra {
+  /**
+   * The label for the current statement, of one exists
+   */
+  label?: string;
 }
 
 /**
@@ -120,7 +131,10 @@ export class GenericCFGBuilder {
     };
   }
 
-  private dispatchSingle(syntax: Parser.SyntaxNode | null): BasicBlock {
+  private dispatchSingle(
+    syntax: Parser.SyntaxNode | null,
+    extra?: Extra,
+  ): BasicBlock {
     if (!syntax) {
       const emptyNode = this.builder.addNode("EMPTY", "Empty node", null);
       return { entry: emptyNode, exit: emptyNode };
@@ -143,6 +157,7 @@ export class GenericCFGBuilder {
           this.nodeMapper,
         ),
       },
+      extra: extra,
     });
   }
 

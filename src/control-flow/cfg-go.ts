@@ -1,20 +1,31 @@
 import type Parser from "web-tree-sitter";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
+  getChildFieldText,
+  labeledBreakProcessor,
+  processComment,
+  processContinueStatement,
+  processGotoStatement,
+  processLabeledStatement,
+  processReturnStatement,
+  processStatementSequence,
+} from "./common-patterns.ts";
+import {
   type Context,
   GenericCFGBuilder,
   type StatementHandlers,
 } from "./generic-cfg-builder";
 import { type SwitchOptions, buildSwitch, collectCases } from "./switch-utils";
 
-function getChildFieldText(node: Parser.SyntaxNode, fieldName: string): string {
-  const child = node.childForFieldName(fieldName);
-  return child ? child.text : "";
-}
+const processBreakStatement = labeledBreakProcessor(`
+    (break_statement
+        (label_name)? @label
+    )
+    `);
 
 const statementHandlers: StatementHandlers = {
   named: {
-    block: processBlockStatement,
+    block: processStatementSequence,
     if_statement: processIfStatement,
     for_statement: processForStatement,
     expression_switch_statement: processSwitchStatement,
@@ -48,28 +59,6 @@ function processSelectStatement(
   return processSwitchlike(syntax, { noImplicitDefault: true }, ctx);
 }
 
-function processBlockStatement(
-  syntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  const blockBlock = ctx.dispatch.many(syntax.namedChildren);
-  ctx.builder.setDefault(blockBlock.entry, { startOffset: syntax.startIndex });
-  ctx.link.syntaxToNode(syntax, blockBlock.entry);
-  return blockBlock;
-}
-
-function processReturnStatement(
-  syntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  const returnNode = ctx.builder.addNode(
-    "RETURN",
-    syntax.text,
-    syntax.startIndex,
-  );
-  ctx.link.syntaxToNode(syntax, returnNode);
-  return { entry: returnNode, exit: null };
-}
 function defaultProcessStatement(
   syntax: Parser.SyntaxNode,
   ctx: Context,
@@ -81,71 +70,6 @@ function defaultProcessStatement(
   );
   ctx.link.syntaxToNode(syntax, newNode);
   return { entry: newNode, exit: newNode };
-}
-
-function processGotoStatement(
-  gotoSyntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  const name = gotoSyntax.firstNamedChild?.text as string;
-  const gotoNode = ctx.builder.addNode("GOTO", name, gotoSyntax.startIndex);
-  ctx.link.syntaxToNode(gotoSyntax, gotoNode);
-  return {
-    entry: gotoNode,
-    exit: null,
-    gotos: [{ node: gotoNode, label: name }],
-  };
-}
-function processLabeledStatement(
-  labelSyntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  const name = getChildFieldText(labelSyntax, "label");
-  const labelNode = ctx.builder.addNode("LABEL", name, labelSyntax.startIndex);
-  ctx.link.syntaxToNode(labelSyntax, labelNode);
-  const labelContentSyntax = labelSyntax.namedChildren[1];
-  if (labelContentSyntax) {
-    const { entry: labeledEntry, exit: labeledExit } = ctx.state.update(
-      ctx.dispatch.single(labelContentSyntax),
-    );
-    if (labeledEntry) ctx.builder.addEdge(labelNode, labeledEntry);
-    return ctx.state.update({
-      entry: labelNode,
-      exit: labeledExit,
-      labels: new Map([[name, labelNode]]),
-    });
-  }
-  // Go allows for empty labels.
-  return ctx.state.update({
-    entry: labelNode,
-    exit: labelNode,
-    labels: new Map([[name, labelNode]]),
-  });
-}
-
-function processContinueStatement(
-  continueSyntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  const continueNode = ctx.builder.addNode(
-    "CONTINUE",
-    "CONTINUE",
-    continueSyntax.startIndex,
-  );
-  ctx.link.syntaxToNode(continueSyntax, continueNode);
-  return { entry: continueNode, exit: null, continues: [continueNode] };
-}
-function processBreakStatement(
-  breakSyntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  const breakNode = ctx.builder.addNode(
-    "BREAK",
-    "BREAK",
-    breakSyntax.startIndex,
-  );
-  ctx.link.syntaxToNode(breakSyntax, breakNode);
-  return { entry: breakNode, exit: null, breaks: [breakNode] };
 }
 
 function processForStatement(
@@ -204,11 +128,11 @@ function processForStatement(
       if (bodyExit) ctx.builder.addEdge(bodyExit, headNode);
       state.forEachBreak((breakNode) => {
         ctx.builder.addEdge(breakNode, exitNode);
-      });
+      }, ctx.extra?.label);
 
       state.forEachContinue((continueNode) => {
         ctx.builder.addEdge(continueNode, headNode);
-      });
+      }, ctx.extra?.label);
       return state.update({ entry: headNode, exit: exitNode });
     }
     default:
@@ -265,25 +189,6 @@ function processIfStatement(
   }
 
   return ctx.state.update({ entry: conditionNode, exit: mergeNode });
-}
-
-function processComment(
-  commentSyntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
-  // We only ever ger here when marker comments are enabled,
-  // and only for marker comments as the rest are filtered out.
-  const commentNode = ctx.builder.addNode(
-    "MARKER_COMMENT",
-    commentSyntax.text,
-    commentSyntax.startIndex,
-  );
-  ctx.link.syntaxToNode(commentSyntax, commentNode);
-  if (ctx.options.markerPattern) {
-    const marker = commentSyntax.text.match(ctx.options.markerPattern)?.[1];
-    if (marker) ctx.builder.addMarker(commentNode, marker);
-  }
-  return { entry: commentNode, exit: commentNode };
 }
 
 const caseTypes = new Set([

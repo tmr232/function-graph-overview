@@ -111,11 +111,11 @@ export interface BasicBlock {
    *
    * A `continue` is active if it's target is outside the current block.
    */
-  continues?: string[];
+  continues?: ExitStatement[];
   /**
    * The active `break` nodes within this block.
    */
-  breaks?: string[];
+  breaks?: ExitStatement[];
   /**
    * All the labels within this block.
    *
@@ -156,9 +156,23 @@ export interface CFG {
   offsetToNode: SimpleRange<string>[];
 }
 
+/**
+ * Represents a `break` or a `continue` statement.
+ */
+export type ExitStatement = {
+  /**
+   * The node we jump from
+   */
+  from: string;
+  /**
+   * The label we jump to, if one exists
+   */
+  label?: string;
+};
+
 export class BlockHandler {
-  private breaks: string[] = [];
-  private continues: string[] = [];
+  private breaks: ExitStatement[] = [];
+  private continues: ExitStatement[] = [];
   private labels: Map<string, string> = new Map();
   private gotos: Array<Goto> = [];
   /**
@@ -171,18 +185,47 @@ export class BlockHandler {
    */
   private returns: Array<string> = [];
 
+  private shouldHandle(label?: string): (stmt: ExitStatement) => boolean {
+    return (stmt: ExitStatement) => {
+      // A break/continue without a label matches any relevant statement.
+      if (!stmt.label) {
+        return true;
+      }
+      // A break/continue with a label matches only the correct label.
+      return stmt.label === label;
+    };
+  }
+
   /**
    * Operate on all collected breaks and clear them.
    * @param callback Handles the breaks, linking them to the relevant nodes.
+   * @param label If exists, include breaks matching the label
    */
-  public forEachBreak(callback: (breakNode: string) => void) {
-    this.breaks.forEach(callback);
-    this.breaks = [];
+  public forEachBreak(callback: (breakNode: string) => void, label?: string) {
+    const matchingBreaks = this.breaks.filter(this.shouldHandle(label));
+    const unhandledBreaks = this.breaks.filter(
+      (e) => !this.shouldHandle(label)(e),
+    );
+
+    for (const { from } of matchingBreaks) {
+      callback(from);
+    }
+    this.breaks = unhandledBreaks;
   }
 
-  public forEachContinue(callback: (continueNode: string) => void) {
-    this.continues.forEach(callback);
-    this.continues = [];
+  public forEachContinue(
+    callback: (continueNode: string) => void,
+    label?: string,
+  ) {
+    const matchingContinues = this.continues.filter(this.shouldHandle(label));
+    const unhandledContinues = this.continues.filter(
+      (e) => !this.shouldHandle(label)(e),
+    );
+
+    for (const { from } of matchingContinues) {
+      callback(from);
+    }
+    this.continues = unhandledContinues;
   }
 
   public forEachReturn(callback: (returnNode: string) => string) {

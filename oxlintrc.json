@@ -4,5 +4,6 @@
     "correctness": "error",
     "perf": "error",
     "suspicious": "error"
-  }
+  },
+  "ignorePatterns": ["*.svelte"]
 }

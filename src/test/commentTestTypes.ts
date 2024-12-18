@@ -22,6 +22,13 @@ export interface Requirements {
    */
   reaches?: [string, string][];
   /**
+   * [source, target] pairs to assert un-reachability in the CFG
+   *
+   * Nodes need to be marked with a comment, containing `CFG: ` followed
+   * by the marker to use in the test.
+   */
+  unreach?: [string, string][];
+  /**
    * Require rendering to succeed for this test.
    *
    * This is mostly useful when debugging rendering errors.

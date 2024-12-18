@@ -62,6 +62,16 @@ const supportedLanguages: SupportedLanguage[] = [
     language: "Python" as Language,
     parserName: "tree-sitter-python.wasm",
   },
+  {
+    languageId: "typescript",
+    language: "TypeScript" as Language,
+    parserName: "tree-sitter-typescript.wasm",
+  },
+  {
+    languageId: "javascript",
+    language: "TypeScript" as Language,
+    parserName: "tree-sitter-typescript.wasm",
+  },
 ];
 
 const supportedLanguageIds = new Set(

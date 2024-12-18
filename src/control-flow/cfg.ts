@@ -6,12 +6,19 @@ import {
 import type { BuilderOptions, CFGBuilder } from "./cfg-defs";
 import { createCFGBuilder as createGoCFGBuilder } from "./cfg-go";
 import { createCFGBuilder as createPythonCFGBuilder } from "./cfg-python";
+import { createCFGBuilder as createTypeScriptCFGBuilder } from "./cfg-typescript.ts";
 
 // ADD-LANGUAGES-HERE
 /**
  * The languages we support
  */
-export const supportedLanguages = ["C", "Go", "Python", "C++"] as const;
+export const supportedLanguages = [
+  "C",
+  "Go",
+  "Python",
+  "C++",
+  "TypeScript",
+] as const;
 export type Language = (typeof supportedLanguages)[number];
 export function isValidLanguage(language: string): language is Language {
   return (supportedLanguages as readonly string[]).includes(language);
@@ -35,6 +42,8 @@ export function newCFGBuilder(
       return createPythonCFGBuilder(options);
     case "C++":
       return createCppCFGBuilder(options);
+    case "TypeScript":
+      return createTypeScriptCFGBuilder(options);
   }
 }
 
@@ -46,4 +55,11 @@ export const functionNodeTypes: { [language in Language]: string[] } = {
   C: ["function_definition"],
   "C++": cppFunctionNodeNames,
   Python: ["function_definition"],
+  TypeScript: [
+    "function_declaration",
+    "arrow_function",
+    "function_expression",
+    "generator_function",
+    "generator_function_declaration",
+  ],
 };

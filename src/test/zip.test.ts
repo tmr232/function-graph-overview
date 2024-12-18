@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { pairwise, structZip, zip } from "../control-flow/zip";
+import { pairwise, structZip, zip } from "../control-flow/itertools.ts";
 
 test("zip", () => {
   expect([...zip([1, 2, 3], ["a", "b", "c"])]).toEqual([

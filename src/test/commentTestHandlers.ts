@@ -106,6 +106,25 @@ export const requirementTests: {
     }
     return null;
   },
+  unreach(testFunc: TestFunction) {
+    if (testFunc.reqs.unreach !== undefined) {
+      const cfg = buildMarkerCFG(testFunc.language, testFunc.function);
+      const markerMap = getMarkerMap(cfg);
+      const getNode = (marker: string) => {
+        const node = markerMap.get(marker);
+        if (node) {
+          return node;
+        }
+        throw new Error(`No node found for marker ${marker}`);
+      };
+      for (const [source, target] of testFunc.reqs.unreach) {
+        if (pathExists(cfg.graph, getNode(source), getNode(target))) {
+          return `expected no paths from ${source} to ${target} but a path was found`;
+        }
+      }
+    }
+    return null;
+  },
   render(testFunc: TestFunction) {
     if (testFunc.reqs.render !== undefined) {
       const cfg = buildSimpleCFG(testFunc.language, testFunc.function);

@@ -2,6 +2,7 @@
   import { go } from "@codemirror/lang-go";
   import { cpp } from "@codemirror/lang-cpp";
   import { python } from "@codemirror/lang-python";
+  import {javascript} from "@codemirror/lang-javascript";
   import Graph from "./Graph.svelte";
   import type { Language } from "../control-flow/cfg";
   import * as LZString from "lz-string";
@@ -18,6 +19,7 @@
     C: "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
     "C++": "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
     Python: "def example():\n    if x:\n        return",
+    TypeScript: "function main() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
   };
 
   export let code: { [language in Language]?: string } = {};
@@ -44,6 +46,7 @@
       text: "C++ (experimental)",
       codeMirror: cpp,
     },
+    {language:"TypeScript" as Language, text:"TypeScript (experimental)", codeMirror: ()=>javascript({typescript:true})}
   ] as const;
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -65,6 +68,11 @@
   if (urlParams.has("python")) {
     languageCode.Python = LZString.decompressFromEncodedURIComponent(
       urlParams.get("python"),
+    );
+  }
+  if (urlParams.has("typescript")) {
+    languageCode.TypeScript = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("typescript"),
     );
   }
 

@@ -7,5 +7,6 @@
   "entryPoints": ["src/control-flow/*"],
   "readme": "CONTRIBUTING.md",
   "name": "Function Graph Overview",
-  "sort": ["source-order"]
+  "sort": ["source-order"],
+  "exclude": ["src/test/commentTestSamples", "src/demo/src/assets"]
 }
