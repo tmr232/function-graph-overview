@@ -58,3 +58,5 @@ Custom color schems are created via the [interactive demo](https://tmr232.github
 - [C](https://tmr232.github.io/function-graph-overview/?language=1)
 - [C++](https://tmr232.github.io/function-graph-overview/?language=3)
 - [Python](https://tmr232.github.io/function-graph-overview/?language=2)
+- TypesScript & TSX
+- JavaScript & JSX

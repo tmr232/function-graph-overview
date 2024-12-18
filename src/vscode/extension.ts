@@ -72,6 +72,16 @@ const supportedLanguages: SupportedLanguage[] = [
     language: "TypeScript" as Language,
     parserName: "tree-sitter-typescript.wasm",
   },
+  {
+    languageId: "typescriptreact",
+    language: "TSX" as Language,
+    parserName: "tree-sitter-tsx.wasm",
+  },
+  {
+    languageId: "javascriptreact",
+    language: "TSX" as Language,
+    parserName: "tree-sitter-tsx.wasm",
+  },
 ];
 
 const supportedLanguageIds = new Set(
@@ -136,6 +146,7 @@ function getCurrentCode(): {
   const document = editor.document;
   const languageId = document.languageId;
   if (!supportedLanguageIds.has(languageId)) {
+    console.log(`Unsupported language id: ${languageId}`);
     return null;
   }
 

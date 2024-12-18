@@ -91,7 +91,6 @@ function processForStatement(
   ) @for
   `,
   );
-  console.log(match);
   if (match.getSyntax("for_clause")) {
     return processForClauseLoop(forNode, ctx);
   }
