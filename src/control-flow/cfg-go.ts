@@ -1,6 +1,7 @@
 import type Parser from "web-tree-sitter";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
+  forEachLoopProcessor,
   getChildFieldText,
   labeledBreakProcessor,
   processComment,
@@ -76,68 +77,200 @@ function processForStatement(
   forNode: Parser.SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  const { state } = ctx;
-  switch (forNode.namedChildCount) {
-    // One child means only loop body, two children means loop head.
-    case 1: {
-      const headNode = ctx.builder.addNode(
-        "LOOP_HEAD",
-        "loop head",
-        forNode.startIndex,
-      );
-      ctx.link.syntaxToNode(forNode, headNode);
-      const { entry: bodyEntry, exit: bodyExit } = state.update(
-        ctx.dispatch.single(forNode.firstNamedChild),
-      );
-      if (bodyEntry) ctx.builder.addEdge(headNode, bodyEntry);
-      if (bodyExit) ctx.builder.addEdge(bodyExit, headNode);
-      const exitNode = ctx.builder.addNode(
-        "LOOP_EXIT",
-        "loop exit",
-        forNode.endIndex,
-      );
-      state.forEachBreak((breakNode) => {
-        ctx.builder.addEdge(breakNode, exitNode);
-      });
-
-      state.forEachContinue((continueNode) => {
-        ctx.builder.addEdge(continueNode, headNode);
-      });
-      return state.update({ entry: headNode, exit: exitNode });
-    }
-    // TODO: Handle the case where there is no loop condition, only init and update.
-    case 2: {
-      const headNode = ctx.builder.addNode(
-        "LOOP_HEAD",
-        "loop head",
-        forNode.startIndex,
-      );
-      ctx.link.syntaxToNode(forNode, headNode);
-      const { entry: bodyEntry, exit: bodyExit } = state.update(
-        ctx.dispatch.single(forNode.namedChildren[1] as Parser.SyntaxNode),
-      );
-      const exitNode = ctx.builder.addNode(
-        "LOOP_EXIT",
-        "loop exit",
-        forNode.endIndex,
-      );
-      if (bodyEntry) {
-        ctx.builder.addEdge(headNode, bodyEntry, "consequence");
-      }
-      ctx.builder.addEdge(headNode, exitNode, "alternative");
-      if (bodyExit) ctx.builder.addEdge(bodyExit, headNode);
-      state.forEachBreak((breakNode) => {
-        ctx.builder.addEdge(breakNode, exitNode);
-      }, ctx.extra?.label);
-
-      state.forEachContinue((continueNode) => {
-        ctx.builder.addEdge(continueNode, headNode);
-      }, ctx.extra?.label);
-      return state.update({ entry: headNode, exit: exitNode });
-    }
-    default:
-      throw new Error(`Unsupported for type: ${forNode.firstNamedChild?.type}`);
+  const match = ctx.matcher.match(
+    forNode,
+    `
+  (for_statement
+      [
+          (for_clause) @for_clause
+          (range_clause) @range_clause
+          (_) @expression
+      ]?
+      body: (_ "{" @open-body) @body
+      (#not-eq? @expression @body)
+  ) @for
+  `,
+  );
+  console.log(match);
+  if (match.getSyntax("for_clause")) {
+    return processForClauseLoop(forNode, ctx);
   }
+  if (match.getSyntax("range_clause")) {
+    return forEachLoopProcessor({
+      query: `
+        (for_statement
+          (range_clause) @range
+          body: (_ "{" @open-body) @body
+        ) @for
+      `,
+      body: "body",
+      headerEnd: "open-body",
+    })(forNode, ctx);
+  }
+  if (match.getSyntax("expression")) {
+    return forEachLoopProcessor({
+      query: `
+        (for_statement
+            (_) @expression
+            body: (_ "{" @open-body) @body
+        ) @for
+      `,
+      body: "body",
+      headerEnd: "open-body",
+    })(forNode, ctx);
+  }
+  // Infinite loop
+  return processInfiniteLoop(ctx, forNode);
+}
+
+function processInfiniteLoop(ctx: Context, forNode: Parser.SyntaxNode) {
+  const match = ctx.matcher.match(
+    forNode,
+    `
+    (for_statement
+        body: (_ "{" @open-body) @body
+    ) @for
+  `,
+  );
+
+  const bodySyntax = match.requireSyntax("body");
+  const bodyBlock = match.getBlock(bodySyntax);
+
+  if (bodyBlock.exit) ctx.builder.addEdge(bodyBlock.exit, bodyBlock.entry);
+
+  const exitNode = ctx.builder.addNode(
+    "LOOP_EXIT",
+    "loop exit",
+    forNode.endIndex,
+  );
+
+  ctx.state.forEachContinue((continueNode) => {
+    ctx.builder.addEdge(continueNode, bodyBlock.entry);
+  }, ctx.extra?.label);
+
+  ctx.state.forEachBreak((breakNode) => {
+    ctx.builder.addEdge(breakNode, exitNode);
+  }, ctx.extra?.label);
+
+  return ctx.state.update({ entry: bodyBlock.entry, exit: exitNode });
+}
+
+function processForClauseLoop(
+  forNode: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const match = ctx.matcher.match(
+    forNode,
+    `
+        (for_statement
+            (for_clause
+                initializer: (_)? @init
+                ";" @init-semi
+                condition: (_)? @cond
+                ";" @cond-semi
+                update: (_)? @update
+            ) @for_clause
+            body: (_) @body
+        ) @for
+        `,
+  );
+
+  const initSyntax = match.getSyntax("init");
+  const condSyntax = match.getSyntax("cond");
+  const updateSyntax = match.getSyntax("update");
+  const bodySyntax = match.requireSyntax("body");
+
+  const initBlock = match.getBlock(initSyntax);
+  const condBlock = match.getBlock(condSyntax);
+  const updateBlock = match.getBlock(updateSyntax);
+  const bodyBlock = match.getBlock(bodySyntax);
+
+  const entryNode = ctx.builder.addNode(
+    "EMPTY",
+    "loop head",
+    forNode.startIndex,
+  );
+  const exitNode = ctx.builder.addNode(
+    "FOR_EXIT",
+    "loop exit",
+    forNode.endIndex,
+  );
+  const headNode = ctx.builder.addNode(
+    "LOOP_HEAD",
+    "loop head",
+    forNode.startIndex,
+  );
+  const headBlock = { entry: headNode, exit: headNode };
+
+  ctx.link.syntaxToNode(forNode, entryNode);
+  if (condBlock) {
+    ctx.link.syntaxToNode(match.requireSyntax("cond-semi"), condBlock.entry);
+  }
+
+  if (initSyntax)
+    ctx.link.offsetToSyntax(initSyntax, match.requireSyntax("init-semi"), {
+      reverse: true,
+      includeTo: true,
+    });
+  if (condSyntax)
+    ctx.link.offsetToSyntax(condSyntax, match.requireSyntax("cond-semi"), {
+      reverse: true,
+      includeTo: true,
+    });
+  if (!condSyntax && initSyntax)
+    ctx.link.offsetToSyntax(initSyntax, match.requireSyntax("cond-semi"), {
+      includeTo: true,
+      reverse: true,
+    });
+
+  const chainBlocks = (entry: string | null, blocks: (BasicBlock | null)[]) => {
+    let prevExit: string | null = entry;
+    for (const block of blocks) {
+      if (!block) continue;
+      if (prevExit && block.entry) ctx.builder.addEdge(prevExit, block.entry);
+      prevExit = block.exit;
+    }
+    return prevExit;
+  };
+
+  /*
+  entry -> init -> cond +-> body -> head -> update -> cond
+                        --> exit
+
+  top = chain(entry, init,)
+
+  if cond:
+      chain(top, cond)
+      cond +-> body
+      cond --> exit
+      chain(body, head, update, cond)
+  else:
+      chain(top, body, head, update, body)
+
+  chain(continue, head)
+  chain(break, exit)
+  */
+  const topExit = chainBlocks(entryNode, [initBlock]);
+  if (condBlock) {
+    chainBlocks(topExit, [condBlock]);
+    if (condBlock.exit) {
+      ctx.builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
+      ctx.builder.addEdge(condBlock.exit, exitNode, "alternative");
+      chainBlocks(bodyBlock.exit ?? null, [headBlock, updateBlock, condBlock]);
+    }
+  } else {
+    chainBlocks(topExit, [bodyBlock, headBlock, updateBlock, bodyBlock]);
+  }
+
+  ctx.matcher.state.forEachContinue((continueNode) => {
+    ctx.builder.addEdge(continueNode, headNode);
+  }, ctx.extra?.label);
+
+  ctx.matcher.state.forEachBreak((breakNode) => {
+    ctx.builder.addEdge(breakNode, exitNode);
+  }, ctx.extra?.label);
+
+  return ctx.matcher.update({ entry: entryNode, exit: exitNode });
 }
 
 function processIfStatement(
