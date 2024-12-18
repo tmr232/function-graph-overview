@@ -240,7 +240,9 @@ function IfWithoutBraces() {
 }
 
 
-
+/*
+exits: 1
+ */
 function LabeledStatement() {
   let str = '';
 
@@ -251,4 +253,18 @@ function LabeledStatement() {
     str = str + i;
   }
 
+}
+
+/*
+unreach: [["SOURCE","UNREACH"]]
+*/
+function LabelledStatementFlow() {
+  loop1: for (const x of xs) {
+    for (;;) {
+      // CFG: SOURCE
+      break loop1
+    }
+    // CFG: UNREACH
+    unreachable_from_inner_loop()
+  }
 }

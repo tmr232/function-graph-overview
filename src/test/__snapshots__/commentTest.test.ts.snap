@@ -24458,3 +24458,49 @@ exports[`TypeScript: sample.ts!LabeledStatement: Segmentation 1`] = `
   },
 ]
 `;
+
+exports[`TypeScript: sample.ts!LabelledStatementFlow: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+minHeight=0.5;
+height=0.8999999999999999;
+];
+}"
+`;
+
+exports[`TypeScript: sample.ts!LabelledStatementFlow: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node2",
+  },
+  {
+    "start": 2830,
+    "value": "node2",
+  },
+  {
+    "start": 2867,
+    "value": "node2",
+  },
+  {
+    "start": 3013,
+    "value": "node2",
+  },
+  {
+    "start": 3015,
+    "value": "node2",
+  },
+  {
+    "start": 3015,
+    "value": "node2",
+  },
+]
+`;
