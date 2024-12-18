@@ -6,6 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.12] - 2024-12-18
+
 ### Added
 
 - A simple CLI script to render a single function from a file (`scripts/render-function.ts`)
