@@ -369,7 +369,11 @@ function processContinueStatement(
     continueSyntax.startIndex,
   );
   ctx.link.syntaxToNode(continueSyntax, continueNode);
-  return { entry: continueNode, exit: null, continues: [continueNode] };
+  return {
+    entry: continueNode,
+    exit: null,
+    continues: [{ from: continueNode }],
+  };
 }
 function processBreakStatement(
   breakSyntax: Parser.SyntaxNode,
@@ -378,7 +382,7 @@ function processBreakStatement(
   const { builder } = ctx;
   const breakNode = builder.addNode("BREAK", "BREAK", breakSyntax.startIndex);
   ctx.link.syntaxToNode(breakSyntax, breakNode);
-  return { entry: breakNode, exit: null, breaks: [breakNode] };
+  return { entry: breakNode, exit: null, breaks: [{ from: breakNode }] };
 }
 
 function processIfStatement(

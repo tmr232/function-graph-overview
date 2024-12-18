@@ -157,11 +157,11 @@ export function forEachLoopProcessor(
 
     matcher.state.forEachContinue((continueNode) => {
       builder.addEdge(continueNode, headNode);
-    });
+    }, ctx.extra?.label);
 
     matcher.state.forEachBreak((breakNode) => {
       builder.addEdge(breakNode, exitNode);
-    });
+    }, ctx.extra?.label);
 
     return matcher.update({ entry: headNode, exit: exitNode });
   };
@@ -282,11 +282,11 @@ export function cStyleForStatementProcessor(
 
     ctx.matcher.state.forEachContinue((continueNode) => {
       ctx.builder.addEdge(continueNode, headNode);
-    });
+    }, ctx.extra?.label);
 
     ctx.matcher.state.forEachBreak((breakNode) => {
       ctx.builder.addEdge(breakNode, exitNode);
-    });
+    }, ctx.extra?.label);
 
     return ctx.matcher.update({ entry: entryNode, exit: exitNode });
   };
@@ -327,11 +327,11 @@ export function cStyleWhileProcessor(): (
 
     ctx.matcher.state.forEachContinue((continueNode) => {
       if (condBlock.entry) ctx.builder.addEdge(continueNode, condBlock.entry);
-    });
+    }, ctx.extra?.label);
 
     ctx.matcher.state.forEachBreak((breakNode) => {
       ctx.builder.addEdge(breakNode, exitNode);
-    });
+    }, ctx.extra?.label);
 
     ctx.link.syntaxToNode(bodySyntax, bodyBlock.entry);
     ctx.link.syntaxToNode(condSyntax, condBlock.entry);
@@ -377,11 +377,11 @@ export function cStyleDoWhileProcessor(): (
 
     ctx.matcher.state.forEachContinue((continueNode) => {
       if (condBlock.entry) ctx.builder.addEdge(continueNode, condBlock.entry);
-    });
+    }, ctx.extra?.label);
 
     ctx.matcher.state.forEachBreak((breakNode) => {
       ctx.builder.addEdge(breakNode, exitNode);
-    });
+    }, ctx.extra?.label);
 
     ctx.link.syntaxToNode(bodySyntax, bodyBlock.entry);
     ctx.link.syntaxToNode(condSyntax, condBlock.entry);
@@ -423,7 +423,7 @@ export function processLabeledStatement(
   const labelContentSyntax = labelSyntax.namedChildren[1];
   if (labelContentSyntax) {
     const { entry: labeledEntry, exit: labeledExit } = ctx.state.update(
-      ctx.dispatch.single(labelContentSyntax),
+      ctx.dispatch.single(labelContentSyntax, { label: name }),
     );
     if (labeledEntry) ctx.builder.addEdge(labelNode, labeledEntry);
     return ctx.state.update({
@@ -450,7 +450,11 @@ export function processContinueStatement(
     continueSyntax.startIndex,
   );
   ctx.link.syntaxToNode(continueSyntax, continueNode);
-  return { entry: continueNode, exit: null, continues: [continueNode] };
+  return {
+    entry: continueNode,
+    exit: null,
+    continues: [{ from: continueNode }],
+  };
 }
 
 export function processBreakStatement(
@@ -463,7 +467,28 @@ export function processBreakStatement(
     breakSyntax.startIndex,
   );
   ctx.link.syntaxToNode(breakSyntax, breakNode);
-  return { entry: breakNode, exit: null, breaks: [breakNode] };
+  return { entry: breakNode, exit: null, breaks: [{ from: breakNode }] };
+}
+
+export function labeledBreakProcessor(
+  queryString: string,
+): (breakSyntax: Parser.SyntaxNode, ctx: Context) => BasicBlock {
+  return (breakSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock => {
+    const match = ctx.matcher.match(breakSyntax, queryString);
+    const labelSyntax = match.getSyntax("label");
+    const label = labelSyntax?.text;
+    const breakNode = ctx.builder.addNode(
+      "BREAK",
+      "BREAK",
+      breakSyntax.startIndex,
+    );
+    ctx.link.syntaxToNode(breakSyntax, breakNode);
+    return {
+      entry: breakNode,
+      exit: null,
+      breaks: [{ from: breakNode, label }],
+    };
+  };
 }
 
 export function processStatementSequence(

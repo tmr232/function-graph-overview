@@ -268,3 +268,14 @@ function LabelledStatementFlow() {
     unreachable_from_inner_loop()
   }
 }
+
+/*
+unreach: [["B", "A"]]
+ */
+function TrivialUnreach() {
+  //CFG: A
+  if (x) {
+    //CFG: B
+    console.log("NO!")
+  }
+}

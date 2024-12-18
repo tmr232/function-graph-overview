@@ -7,9 +7,10 @@ import {
   cStyleIfProcessor,
   cStyleWhileProcessor,
   forEachLoopProcessor,
-  processBreakStatement,
+  labeledBreakProcessor,
   processComment,
   processContinueStatement,
+  processLabeledStatement,
   processReturnStatement,
   processStatementSequence,
 } from "./common-patterns.ts";
@@ -71,6 +72,11 @@ const cStyleForStatementQuery = `
 ) @for
 `;
 
+const processBreakStatement = labeledBreakProcessor(`
+    (break_statement
+        label: (_)? @label
+    )
+    `);
 const statementHandlers: StatementHandlers = {
   named: {
     statement_block: processStatementSequence,
@@ -84,6 +90,7 @@ const statementHandlers: StatementHandlers = {
     break_statement: processBreakStatement,
     return_statement: processReturnStatement,
     comment: processComment,
+    labeled_statement: processLabeledStatement,
   },
   default: defaultProcessStatement,
 };
@@ -144,7 +151,7 @@ function processSwitchlike(
 
   blockHandler.forEachBreak((breakNode) => {
     ctx.builder.addEdge(breakNode, mergeNode);
-  });
+  }, ctx.extra?.label);
 
   const braceMatch = ctx.matcher.match(
     switchSyntax,

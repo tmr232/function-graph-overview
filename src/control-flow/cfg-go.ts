@@ -2,7 +2,7 @@ import type Parser from "web-tree-sitter";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
   getChildFieldText,
-  processBreakStatement,
+  labeledBreakProcessor,
   processComment,
   processContinueStatement,
   processGotoStatement,
@@ -16,6 +16,12 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder";
 import { type SwitchOptions, buildSwitch, collectCases } from "./switch-utils";
+
+const processBreakStatement = labeledBreakProcessor(`
+    (break_statement
+        (label_name)? @label
+    )
+    `);
 
 const statementHandlers: StatementHandlers = {
   named: {
@@ -122,11 +128,11 @@ function processForStatement(
       if (bodyExit) ctx.builder.addEdge(bodyExit, headNode);
       state.forEachBreak((breakNode) => {
         ctx.builder.addEdge(breakNode, exitNode);
-      });
+      }, ctx.extra?.label);
 
       state.forEachContinue((continueNode) => {
         ctx.builder.addEdge(continueNode, headNode);
-      });
+      }, ctx.extra?.label);
       return state.update({ entry: headNode, exit: exitNode });
     }
     default:
