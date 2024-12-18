@@ -228,6 +228,7 @@ function processTryStatement(
       match.getBlock(bodySyntax),
     );
     ctx.link.syntaxToNode(trySyntax, bodyBlock.entry);
+    const headNode = bodyBlock.entry;
 
     // We handle `except` blocks before the `finally` block to support `return` handling.
     const exceptBlock = builder.withCluster("except", () =>
@@ -235,12 +236,9 @@ function processTryStatement(
     );
     if (exceptBlock) {
       ctx.link.syntaxToNode(match.requireSyntax("except"), exceptBlock.entry);
-    }
 
-    // We attach the except-blocks to the top of the `try` body.
-    // In the rendering, we will connect them to the side of the node, and use invisible lines for it.
-    const headNode = bodyBlock.entry;
-    if (exceptBlock) {
+      // We attach the except-blocks to the top of the `try` body.
+      // In the rendering, we will connect them to the side of the node, and use invisible lines for it.
       // Yes, this is effectively a head-to-head link. But that's ok.
       builder.addEdge(headNode, exceptBlock.entry, "exception");
     }
