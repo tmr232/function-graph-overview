@@ -29,6 +29,7 @@
     "./webview-content",
     "./dist",
     "./src/components/lightdark.ts",
-    "src/test/commentTestSamples"
+    "src/test/commentTestSamples",
+    "src/demo/src/assets"
   ]
 }
