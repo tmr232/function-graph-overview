@@ -9,6 +9,7 @@ import { initializeParser } from "../src/parser-loader/bun.ts";
 
 type FileType = { ext: string; language: Language };
 
+// ADD-LANGUAGES-HERE
 export const fileTypes: FileType[] = [
   { ext: "c", language: "C" },
   { ext: "cpp", language: "C++" },
@@ -18,6 +19,10 @@ export const fileTypes: FileType[] = [
   { ext: "cc", language: "C++" },
   { ext: "py", language: "Python" },
   { ext: "go", language: "Go" },
+  { ext: "ts", language: "TypeScript" },
+  { ext: "js", language: "TypeScript" },
+  { ext: "tsx", language: "TSX" },
+  { ext: "jsx", language: "TSX" },
 ];
 
 export const parsers: { [language in Language]: Parser } = Object.fromEntries(
