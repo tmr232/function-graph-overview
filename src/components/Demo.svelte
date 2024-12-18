@@ -42,12 +42,12 @@
     { language: "C" as Language, text: "C", codeMirror: cpp },
     {
       language: "Python" as Language,
-      text: "Python (experimental)",
+      text: "Python",
       codeMirror: python,
     },
     {
       language: "C++" as Language,
-      text: "C++ (experimental)",
+      text: "C++",
       codeMirror: cpp,
     },
     {language:"TypeScript" as Language, text:"TypeScript (experimental)", codeMirror: ()=>javascript({typescript:true})},
@@ -78,6 +78,11 @@
   if (urlParams.has("typescript")) {
     languageCode.TypeScript = LZString.decompressFromEncodedURIComponent(
       urlParams.get("typescript"),
+    );
+  }
+  if (urlParams.has("tsx")) {
+    languageCode.TSX = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("tsx"),
     );
   }
 
