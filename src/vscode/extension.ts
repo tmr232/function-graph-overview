@@ -136,6 +136,7 @@ function getCurrentCode(): {
   const document = editor.document;
   const languageId = document.languageId;
   if (!supportedLanguageIds.has(languageId)) {
+    console.log(`Unsupported language id: ${languageId}`)
     return null;
   }
 
@@ -412,6 +413,6 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 // This method is called when your extension is deactivated
-export function deactivate() {}
+export function deactivate() { }
 
 //------------------------------------------------
