@@ -63,6 +63,13 @@
       return;
     }
   };
+
+  let simplify = true;
+  let flatSwitch = false;
+  let highlight = true;
+  window.setSimplify = (flag: boolean) => (simplify = flag);
+  window.setFlatSwitch = (flag: boolean) => (flatSwitch = flag);
+  window.setHighlight = (flag: boolean) => (highlight = flag);
 </script>
 
 <main>
@@ -70,6 +77,9 @@
     {codeAndOffset}
     bind:this={display}
     {colorList}
+    {simplify}
+    {flatSwitch}
+    {highlight}
     on:node-clicked={navigateTo}
   />
 </main>
