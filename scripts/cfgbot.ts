@@ -1,5 +1,5 @@
 import * as process from "node:process";
-import { AtpAgent, RichText } from "@atproto/api";
+import { AtpAgent, RichText, UnicodeString } from "@atproto/api";
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import { $, Glob } from "bun";
 import type { SyntaxNode } from "web-tree-sitter";
@@ -26,8 +26,9 @@ async function main() {
   const agent = new AtpAgent({ service: "https://bsky.social" });
   await agent.login({ identifier, password });
 
-  const { png: imageData, text } = await preparePost(
-    "C:\\Code\\sandbox\\function-graph-overview\\src",
+  const { png: imageData, text, alt, link } = await preparePost(
+    // "C:\\Code\\sandbox\\function-graph-overview\\src",
+    "C:\\Temp\\2024-12-29-glibc\\glibc",
   );
 
   // const imageData = await Bun.file(
@@ -38,18 +39,30 @@ async function main() {
     throw new Error("Failed to upload image");
   }
 
+  const linkText = new UnicodeString(text);
+
+
   const richText = new RichText({ text });
   await richText.detectFacets(agent);
 
   const postResponse = await agent.post({
     text: richText.text,
-    facets: richText.facets,
+    facets: [
+      {
+        index: { byteStart: 0, byteEnd: linkText.length },
+        features: [{
+          $type: 'app.bsky.richtext.facet#link',
+          uri: link
+        }]
+      }
+    ],
     embed: {
       $type: "app.bsky.embed.images",
       images: [
         {
-          alt: "Control flow graph",
+          alt,
           image: response.data.blob,
+          // aspectRatio: { height: 2, width: 1 }
         },
       ],
     },
@@ -70,6 +83,12 @@ await main();
 3. Render the function
 4. Post it, along with source attribution
  */
+
+function makeLink(func: Func): string {
+  const line = func.func.startPosition.row + 1;
+  const link = `https://sourceware.org/git/?p=glibc.git;a=blob;f=${func.file.replace('\\', '/')};hb=0852c4aab7870adbd188f7d27985f1631c8596df#l${line}`
+  return link;
+}
 
 function normalizeFuncdef(funcdef: string): string {
   return funcdef
@@ -136,7 +155,7 @@ async function chooseFunction(
 
 function isAlreadySeen(file: string, func: SyntaxNode): boolean {
   const cfg = buildCFG(func, getLanguage(file));
-  return cfg.graph.order < 5;
+  return cfg.graph.order < 50;
 }
 
 function chooseColorScheme(): ColorScheme {
@@ -151,19 +170,33 @@ async function renderFunction(
   const cfg = buildCFG(func.func, getLanguage(func.file));
   const svg = graphviz.dot(graphToDot(cfg, false, undefined, colors));
   await Bun.write("cfgbot.svg", svg);
-  await $`uvx --isolated --from cairosvg cairosvg cfgbot.svg -o cfgbot.png -s 5`;
+  await $`uvx --isolated --from cairosvg cairosvg cfgbot.svg -o cfgbot.png --output-height 2000 -b ${colors["graph.background"]}`;
   return Bun.file("cfgbot.png").bytes();
 }
 
 async function preparePost(
   root: string,
-): Promise<{ png: Uint8Array; text: string }> {
+): Promise<{ png: Uint8Array; text: string, alt: string, link: string }> {
   const func = await chooseFunction(root, isAlreadySeen, 100);
   if (!func) {
     throw new Error("No function found!");
   }
 
   const image = await renderFunction(func, chooseColorScheme());
-
-  return { png: image, text: getFuncdef(await Bun.file(path.join(root, func.file)).text(), func.func) };
+  console.log(makeLink(func))
+  const funcdef = getFuncdef(await Bun.file(path.join(root, func.file)).text(), func.func);
+  const text = `${func.file}:${func.func.startPosition.row + 1}:${funcdef}`
+  const link = makeLink(func);
+  return { png: image, text, alt: `Graph of the ${funcdef} function from ${func.file}`, link };
 }
+
+
+/*
+Next steps:
+
+1. Create script to export (filename, function start position, node count)
+    of a full codebase into JSON
+2. Write a script that takes a (filename, start position) and renders a function to SVG
+3. Convert the rest of the bot to Python, so that image manipulation is easy.
+4. Add link to the web-demo with the selected code & language & color-scheme
+*/
