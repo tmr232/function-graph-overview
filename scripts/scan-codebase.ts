@@ -11,7 +11,7 @@ import { Glob } from "bun";
 import { newCFGBuilder } from "../src/control-flow/cfg";
 import { fileTypes, getLanguage, iterFunctions } from "./file-parsing.ts";
 
-function iterSourceFiles(root: string): IterableIterator<string> {
+export function iterSourceFiles(root: string): IterableIterator<string> {
   const sourceGlob = new Glob(
     `**/*.{${fileTypes.map(({ ext }) => ext).join(",")}}`,
   );

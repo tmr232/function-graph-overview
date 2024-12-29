@@ -62,7 +62,7 @@ export function getValue<T>(
   ranges: SimpleRange<T>[],
   pos: number,
 ): T | undefined {
-  return ranges.findLast((range) => pos >= range.start)?.value;
+  return ranges.findLast((range) => pos >= range.start).value;
 }
 
 export function* iterRanges<T>(

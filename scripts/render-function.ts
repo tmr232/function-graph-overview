@@ -24,7 +24,7 @@ function normalizeFuncdef(funcdef: string): string {
     .trim();
 }
 
-function buildCFG(func: Parser.SyntaxNode, language: Language): CFG {
+export function buildCFG(func: Parser.SyntaxNode, language: Language): CFG {
   const builder = newCFGBuilder(language, { flatSwitch: true });
 
   let cfg = builder.buildCFG(func);
