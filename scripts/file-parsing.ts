@@ -1,8 +1,9 @@
 import path from "node:path";
 import type Parser from "web-tree-sitter";
+import type { SyntaxNode } from "web-tree-sitter";
 import {
-  type Language,
   functionNodeTypes,
+  type Language,
   supportedLanguages,
 } from "../src/control-flow/cfg.ts";
 import { initializeParser } from "../src/parser-loader/bun.ts";
@@ -70,4 +71,20 @@ export function* iterFunctions(
   }
 
   yield* visitNode();
+}
+
+function normalizeFuncdef(funcdef: string): string {
+  return funcdef
+    .replaceAll("\r", "")
+    .replaceAll("\n", " ")
+    .replaceAll(/\s+/g, " ")
+    .trim();
+}
+
+export function getFuncDef(sourceCode: string, func: SyntaxNode): string {
+  const body = func.childForFieldName("body");
+  if (!body) {
+    throw new Error("No function body");
+  }
+  return normalizeFuncdef(sourceCode.slice(func.startIndex, body.startIndex));
 }

@@ -10,18 +10,10 @@ import {
 } from "../src/control-flow/cfg.ts";
 import { simplifyCFG, trimFor } from "../src/control-flow/graph-ops.ts";
 import { graphToDot } from "../src/control-flow/render.ts";
-import { getLanguage, iterFunctions } from "./file-parsing.ts";
+import { getFuncDef, getLanguage, iterFunctions } from "./file-parsing.ts";
 
 function isLanguage(language: string): language is Language {
   return supportedLanguages.includes(language as Language);
-}
-
-function normalizeFuncdef(funcdef: string): string {
-  return funcdef
-    .replaceAll("\r", "")
-    .replaceAll("\n", " ")
-    .replaceAll(/\s+/g, " ")
-    .trim();
 }
 
 export function buildCFG(func: Parser.SyntaxNode, language: Language): CFG {
@@ -81,13 +73,12 @@ async function main() {
   const sourceCode = await Bun.file(filepath).text();
   const startIndex = Number.parseInt(functionName);
   for (const func of iterFunctions(sourceCode, language)) {
-    const body = func.childForFieldName("body");
-    if (!body) {
+    let funcDef: string;
+    try {
+      funcDef = getFuncDef(sourceCode, func);
+    } catch {
       continue;
     }
-    const funcDef = normalizeFuncdef(
-      sourceCode.slice(func.startIndex, body.startIndex),
-    );
     if (funcDef.includes(functionName) || startIndex === func.startIndex) {
       possibleMatches.push({ name: funcDef, func: func });
     }

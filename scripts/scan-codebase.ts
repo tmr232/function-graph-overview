@@ -9,7 +9,7 @@ import * as path from "node:path";
 import { parseArgs } from "node:util";
 import { Glob } from "bun";
 import { newCFGBuilder } from "../src/control-flow/cfg";
-import { fileTypes, getLanguage, iterFunctions } from "./file-parsing.ts";
+import { fileTypes, getFuncDef, getLanguage, iterFunctions } from "./file-parsing.ts";
 
 export function iterSourceFiles(root: string): IterableIterator<string> {
   const sourceGlob = new Glob(
@@ -30,6 +30,7 @@ async function* iterInfo(root: string) {
         file: filename,
         startIndex: func.startIndex,
         nodeCount: cfg.graph.order,
+        funcDef: getFuncDef(code, func),
       };
     }
   }
