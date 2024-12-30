@@ -18,6 +18,23 @@ export function iterSourceFiles(root: string): IterableIterator<string> {
   return sourceGlob.scanSync(root);
 }
 
+async function* iterInfo(root: string) {
+  for (const filename of iterSourceFiles(root)) {
+    const filepath = path.join(root, filename);
+    const code = await Bun.file(filepath).text();
+    const language = getLanguage(filename);
+    for (const func of iterFunctions(code, language)) {
+      const builder = newCFGBuilder(language, {});
+      const cfg = builder.buildCFG(func);
+      yield {
+        file: filename,
+        startIndex: func.startIndex,
+        nodeCount: cfg.graph.order,
+      };
+    }
+  }
+}
+
 async function main() {
   const { values } = parseArgs({
     args: Bun.argv,
@@ -31,17 +48,13 @@ async function main() {
   });
 
   const root = values.root ?? ".";
-
-  for (const filename of iterSourceFiles(root)) {
-    const filepath = path.join(root, filename);
-    const code = await Bun.file(filepath).text();
-    const language = getLanguage(filename);
-    for (const func of iterFunctions(code, language)) {
-      const builder = newCFGBuilder(language, {});
-      const cfg = builder.buildCFG(func);
-      console.log(filepath, func.startPosition, cfg.graph.order);
-    }
+  console.log("[");
+  for await (const entry of iterInfo(root)) {
+    console.log(`${JSON.stringify(entry)},`);
   }
+  console.log("]");
 }
 
-await main();
+if (require.main === module) {
+  await main();
+}

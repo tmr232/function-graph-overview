@@ -1,19 +1,19 @@
+import path from "node:path";
 import * as process from "node:process";
 import { AtpAgent, RichText, UnicodeString } from "@atproto/api";
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import { $, Glob } from "bun";
 import type { SyntaxNode } from "web-tree-sitter";
+import { type CFG, mergeNodeAttrs } from "../src/control-flow/cfg-defs.ts";
+import { type Language, newCFGBuilder } from "../src/control-flow/cfg.ts";
 import {
   type ColorScheme,
   getDarkColorList,
   listToScheme,
 } from "../src/control-flow/colors.ts";
+import { simplifyCFG, trimFor } from "../src/control-flow/graph-ops.ts";
 import { graphToDot } from "../src/control-flow/render.ts";
 import { fileTypes, getLanguage, iterFunctions } from "./file-parsing.ts";
-import { type Language, newCFGBuilder } from "../src/control-flow/cfg.ts";
-import { type CFG, mergeNodeAttrs } from "../src/control-flow/cfg-defs.ts";
-import { simplifyCFG, trimFor } from "../src/control-flow/graph-ops.ts";
-import path from "node:path";
 
 async function main() {
   const password = process.env.BLUESKY_PASSWORD;
@@ -26,7 +26,12 @@ async function main() {
   const agent = new AtpAgent({ service: "https://bsky.social" });
   await agent.login({ identifier, password });
 
-  const { png: imageData, text, alt, link } = await preparePost(
+  const {
+    png: imageData,
+    text,
+    alt,
+    link,
+  } = await preparePost(
     // "C:\\Code\\sandbox\\function-graph-overview\\src",
     "C:\\Temp\\2024-12-29-glibc\\glibc",
   );
@@ -41,7 +46,6 @@ async function main() {
 
   const linkText = new UnicodeString(text);
 
-
   const richText = new RichText({ text });
   await richText.detectFacets(agent);
 
@@ -50,11 +54,13 @@ async function main() {
     facets: [
       {
         index: { byteStart: 0, byteEnd: linkText.length },
-        features: [{
-          $type: 'app.bsky.richtext.facet#link',
-          uri: link
-        }]
-      }
+        features: [
+          {
+            $type: "app.bsky.richtext.facet#link",
+            uri: link,
+          },
+        ],
+      },
     ],
     embed: {
       $type: "app.bsky.embed.images",
@@ -86,7 +92,7 @@ await main();
 
 function makeLink(func: Func): string {
   const line = func.func.startPosition.row + 1;
-  const link = `https://sourceware.org/git/?p=glibc.git;a=blob;f=${func.file.replace('\\', '/')};hb=0852c4aab7870adbd188f7d27985f1631c8596df#l${line}`
+  const link = `https://sourceware.org/git/?p=glibc.git;a=blob;f=${func.file.replace("\\", "/")};hb=0852c4aab7870adbd188f7d27985f1631c8596df#l${line}`;
   return link;
 }
 
@@ -176,20 +182,27 @@ async function renderFunction(
 
 async function preparePost(
   root: string,
-): Promise<{ png: Uint8Array; text: string, alt: string, link: string }> {
+): Promise<{ png: Uint8Array; text: string; alt: string; link: string }> {
   const func = await chooseFunction(root, isAlreadySeen, 100);
   if (!func) {
     throw new Error("No function found!");
   }
 
   const image = await renderFunction(func, chooseColorScheme());
-  console.log(makeLink(func))
-  const funcdef = getFuncdef(await Bun.file(path.join(root, func.file)).text(), func.func);
-  const text = `${func.file}:${func.func.startPosition.row + 1}:${funcdef}`
+  console.log(makeLink(func));
+  const funcdef = getFuncdef(
+    await Bun.file(path.join(root, func.file)).text(),
+    func.func,
+  );
+  const text = `${func.file}:${func.func.startPosition.row + 1}:${funcdef}`;
   const link = makeLink(func);
-  return { png: image, text, alt: `Graph of the ${funcdef} function from ${func.file}`, link };
+  return {
+    png: image,
+    text,
+    alt: `Graph of the ${funcdef} function from ${func.file}`,
+    link,
+  };
 }
-
 
 /*
 Next steps:

@@ -79,6 +79,7 @@ async function main() {
 
   const possibleMatches: { name: string; func: Parser.SyntaxNode }[] = [];
   const sourceCode = await Bun.file(filepath).text();
+  const startIndex = Number.parseInt(functionName);
   for (const func of iterFunctions(sourceCode, language)) {
     const body = func.childForFieldName("body");
     if (!body) {
@@ -87,7 +88,7 @@ async function main() {
     const funcDef = normalizeFuncdef(
       sourceCode.slice(func.startIndex, body.startIndex),
     );
-    if (funcDef.includes(functionName)) {
+    if (funcDef.includes(functionName) || startIndex === func.startIndex) {
       possibleMatches.push({ name: funcDef, func: func });
     }
   }
@@ -117,4 +118,6 @@ async function main() {
   }
 }
 
-await main();
+if (require.main === module) {
+  await main();
+}
