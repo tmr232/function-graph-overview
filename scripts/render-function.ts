@@ -2,28 +2,14 @@ import * as path from "node:path";
 import { parseArgs } from "node:util";
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import type Parser from "web-tree-sitter";
-import { type CFG, mergeNodeAttrs } from "../src/control-flow/cfg-defs.ts";
-import {
-  type Language,
-  newCFGBuilder,
-  supportedLanguages,
-} from "../src/control-flow/cfg.ts";
-import { simplifyCFG, trimFor } from "../src/control-flow/graph-ops.ts";
+import { type Language, supportedLanguages } from "../src/control-flow/cfg.ts";
 import { graphToDot } from "../src/control-flow/render.ts";
 import { getFuncDef, getLanguage, iterFunctions } from "./file-parsing.ts";
+import { buildCFG } from "./cfg-helper.ts";
+import { deserializeColorList, listToScheme } from "../src/control-flow/colors.ts";
 
 function isLanguage(language: string): language is Language {
   return supportedLanguages.includes(language as Language);
-}
-
-export function buildCFG(func: Parser.SyntaxNode, language: Language): CFG {
-  const builder = newCFGBuilder(language, { flatSwitch: true });
-
-  let cfg = builder.buildCFG(func);
-
-  cfg = trimFor(cfg);
-  cfg = simplifyCFG(cfg, mergeNodeAttrs);
-  return cfg;
 }
 
 function writeError(message: string): void {
@@ -50,6 +36,9 @@ async function main() {
       out: {
         type: "string",
       },
+      colors: {
+        type:"string",
+      }
     },
     strict: true,
     allowPositionals: true,
@@ -100,7 +89,11 @@ async function main() {
   const func: Parser.SyntaxNode = possibleMatches[0].func;
   const graphviz = await Graphviz.load();
   const cfg = buildCFG(func, language);
-  const svg = graphviz.dot(graphToDot(cfg));
+
+
+  const colorScheme = values.colors?listToScheme(deserializeColorList(await Bun.file(values.colors).text())):undefined;
+
+  const svg = graphviz.dot(graphToDot(cfg, false, undefined, colorScheme));
 
   if (values.out) {
     await Bun.write(values.out, svg);

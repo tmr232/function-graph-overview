@@ -14,6 +14,7 @@ import {
 import { simplifyCFG, trimFor } from "../src/control-flow/graph-ops.ts";
 import { graphToDot } from "../src/control-flow/render.ts";
 import { fileTypes, getLanguage, iterFunctions } from "./file-parsing.ts";
+import { buildCFG } from "./cfg-helper.ts";
 
 async function main() {
   const password = process.env.BLUESKY_PASSWORD;
@@ -112,15 +113,6 @@ function getFuncdef(sourceCode: string, func: SyntaxNode): string {
   return normalizeFuncdef(sourceCode.slice(func.startIndex, body.startIndex));
 }
 
-export function buildCFG(func: SyntaxNode, language: Language): CFG {
-  const builder = newCFGBuilder(language, { flatSwitch: true });
-
-  let cfg = builder.buildCFG(func);
-
-  cfg = trimFor(cfg);
-  cfg = simplifyCFG(cfg, mergeNodeAttrs);
-  return cfg;
-}
 
 export function iterSourceFiles(root: string): IterableIterator<string> {
   const sourceGlob = new Glob(

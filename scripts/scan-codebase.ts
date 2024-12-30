@@ -8,8 +8,13 @@ import * as path from "node:path";
  */
 import { parseArgs } from "node:util";
 import { Glob } from "bun";
-import { newCFGBuilder } from "../src/control-flow/cfg";
-import { fileTypes, getFuncDef, getLanguage, iterFunctions } from "./file-parsing.ts";
+import {
+  fileTypes,
+  getFuncDef,
+  getLanguage,
+  iterFunctions,
+} from "./file-parsing.ts";
+import { buildCFG } from "./cfg-helper.ts";
 
 export function iterSourceFiles(root: string): IterableIterator<string> {
   const sourceGlob = new Glob(
@@ -24,13 +29,13 @@ async function* iterInfo(root: string) {
     const code = await Bun.file(filepath).text();
     const language = getLanguage(filename);
     for (const func of iterFunctions(code, language)) {
-      const builder = newCFGBuilder(language, {});
-      const cfg = builder.buildCFG(func);
+      const cfg = buildCFG(func, language);
       yield {
         file: filename,
         startIndex: func.startIndex,
         nodeCount: cfg.graph.order,
         funcDef: getFuncDef(code, func),
+        startPosition: func.startPosition,
       };
     }
   }
@@ -49,11 +54,8 @@ async function main() {
   });
 
   const root = values.root ?? ".";
-  console.log("[");
-  for await (const entry of iterInfo(root)) {
-    console.log(`${JSON.stringify(entry)},`);
-  }
-  console.log("]");
+
+  process.stdout.write(JSON.stringify(await Array.fromAsync(iterInfo(root))));
 }
 
 if (require.main === module) {
