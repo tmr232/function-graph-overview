@@ -8,13 +8,13 @@ import * as path from "node:path";
  */
 import { parseArgs } from "node:util";
 import { Glob } from "bun";
+import { buildCFG } from "./cfg-helper.ts";
 import {
   fileTypes,
   getFuncDef,
   getLanguage,
   iterFunctions,
 } from "./file-parsing.ts";
-import { buildCFG } from "./cfg-helper.ts";
 
 export function iterSourceFiles(root: string): IterableIterator<string> {
   const sourceGlob = new Glob(

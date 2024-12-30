@@ -2,8 +2,8 @@ import path from "node:path";
 import type Parser from "web-tree-sitter";
 import type { SyntaxNode } from "web-tree-sitter";
 import {
-  functionNodeTypes,
   type Language,
+  functionNodeTypes,
   supportedLanguages,
 } from "../src/control-flow/cfg.ts";
 import { initializeParser } from "../src/parser-loader/bun.ts";

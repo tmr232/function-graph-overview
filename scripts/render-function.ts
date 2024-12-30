@@ -3,10 +3,13 @@ import { parseArgs } from "node:util";
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import type Parser from "web-tree-sitter";
 import { type Language, supportedLanguages } from "../src/control-flow/cfg.ts";
+import {
+  deserializeColorList,
+  listToScheme,
+} from "../src/control-flow/colors.ts";
 import { graphToDot } from "../src/control-flow/render.ts";
-import { getFuncDef, getLanguage, iterFunctions } from "./file-parsing.ts";
 import { buildCFG } from "./cfg-helper.ts";
-import { deserializeColorList, listToScheme } from "../src/control-flow/colors.ts";
+import { getFuncDef, getLanguage, iterFunctions } from "./file-parsing.ts";
 
 function isLanguage(language: string): language is Language {
   return supportedLanguages.includes(language as Language);
@@ -37,8 +40,8 @@ async function main() {
         type: "string",
       },
       colors: {
-        type:"string",
-      }
+        type: "string",
+      },
     },
     strict: true,
     allowPositionals: true,
@@ -61,6 +64,12 @@ async function main() {
   const possibleMatches: { name: string; func: Parser.SyntaxNode }[] = [];
   const sourceCode = await Bun.file(filepath).text();
   const startIndex = Number.parseInt(functionName);
+  let startPosition: { row: number; column: number } | undefined;
+  try {
+    startPosition = JSON.parse(functionName);
+  } catch {
+    startPosition = undefined;
+  }
   for (const func of iterFunctions(sourceCode, language)) {
     let funcDef: string;
     try {
@@ -68,7 +77,12 @@ async function main() {
     } catch {
       continue;
     }
-    if (funcDef.includes(functionName) || startIndex === func.startIndex) {
+    if (
+      funcDef.includes(functionName) ||
+      startIndex === func.startIndex ||
+      (startPosition?.row === func.startPosition.row &&
+        startPosition.column === func.startPosition.column)
+    ) {
       possibleMatches.push({ name: funcDef, func: func });
     }
   }
@@ -90,8 +104,9 @@ async function main() {
   const graphviz = await Graphviz.load();
   const cfg = buildCFG(func, language);
 
-
-  const colorScheme = values.colors?listToScheme(deserializeColorList(await Bun.file(values.colors).text())):undefined;
+  const colorScheme = values.colors
+    ? listToScheme(deserializeColorList(await Bun.file(values.colors).text()))
+    : undefined;
 
   const svg = graphviz.dot(graphToDot(cfg, false, undefined, colorScheme));
 
