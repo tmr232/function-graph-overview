@@ -50,6 +50,11 @@
     return { line, rawURL };
   }
 
+  /**
+   * Build the CFG with the same configuration as the CFGBot
+   * @param func The function to generate a CFG for
+   * @param language The code language
+   */
   function buildCFG(func: Parser.SyntaxNode, language: Language): CFG {
     const builder = newCFGBuilder(language, { flatSwitch: true });
 
@@ -60,6 +65,13 @@
     return cfg;
   }
 
+  /**
+   * Find the function that starts at a given line in the code.
+   * Assumes there is only one.
+   * @param code The source code to search in
+   * @param language Source code language
+   * @param line Line number, 1-based.
+   */
   function getFunctionByLine(
     code: string,
     language: Language,
@@ -100,15 +112,17 @@
     return graphviz.dot(graphToDot(cfg, false, undefined, colorScheme));
   }
 
-  /*
-  1. URL should contain:
-      - GitHub URL (if not raw - convert!)
-      - Line number
-      - Optional - column number (usually not needed, but should be used by the bot just in case)
-      - Optional - color scheme (start with dark/light, add custom later)
-  2. Fetch code from URL, parse and get the relevant function
-  3. Render the SVG to screen
-  4. Add a "download SVG" button
+  /* TODO:
+      - Add controls
+        - Download SVG button
+        - Zoom buttons
+          - Zoom in
+          - Zoom out
+          - 1:1
+          - Fit to screen
+      - Page background should match SVG background
+      - Show more detailed progress to the user
+
    */
 </script>
 
