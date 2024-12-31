@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { getLanguage, initParsers, iterFunctions } from "../../file-parsing/vite";
+  import {
+    getLanguage,
+    initParsers,
+    iterFunctions,
+  } from "../../file-parsing/vite";
   import type Parser from "web-tree-sitter";
   import { type SyntaxNode } from "web-tree-sitter";
   import { type Language, newCFGBuilder } from "../../control-flow/cfg";
