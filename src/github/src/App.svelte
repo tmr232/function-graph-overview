@@ -4,13 +4,17 @@
 
   import { getLanguage, iterFunctions } from "../../file-parsing/vite";
   import type Parser from "web-tree-sitter";
-  import {type SyntaxNode } from "web-tree-sitter";
+  import { type SyntaxNode } from "web-tree-sitter";
   import { type Language, newCFGBuilder } from "../../control-flow/cfg";
   import { type CFG, mergeNodeAttrs } from "../../control-flow/cfg-defs";
   import { simplifyCFG, trimFor } from "../../control-flow/graph-ops";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
   import { graphToDot } from "../../control-flow/render";
-  import { getDarkColorList, getLightColorList, listToScheme } from "../../control-flow/colors";
+  import {
+    getDarkColorList,
+    getLightColorList,
+    listToScheme,
+  } from "../../control-flow/colors";
 
   /**
    * A reference to a function on GitHub
@@ -23,24 +27,27 @@
     /**
      * The line-number for the function
      */
-    line:number;
+    line: number;
   };
 
   /**
    * Get the line number raw file URL from a GitHub URL
    * @param githubURL URL pointing to a specific file and line
    */
-  function parseGithubUrl(githubURL:string):GithubCodeRef {
+  function parseGithubUrl(githubURL: string): GithubCodeRef {
     const url = new URL(githubURL);
     // Remove the `#L` that precede the number
-    const line  = Number.parseInt(url.hash.slice(2));
+    const line = Number.parseInt(url.hash.slice(2));
     if (Number.isNaN(line)) {
       throw new Error("Missing line number.");
     }
 
-    const rawURL = githubURL.replace(/(?<host>https:\/\/github.com\/)(?<project>\w+\/\w+\/)(blob\/)(?<path>.*)(#L\d+)/, "https://raw.githubusercontent.com/$<project>$<path>");
+    const rawURL = githubURL.replace(
+      /(?<host>https:\/\/github.com\/)(?<project>\w+\/\w+\/)(blob\/)(?<path>.*)(#L\d+)/,
+      "https://raw.githubusercontent.com/$<project>$<path>",
+    );
 
-    return {line, rawURL};
+    return { line, rawURL };
   }
 
   function buildCFG(func: Parser.SyntaxNode, language: Language): CFG {
@@ -53,11 +60,15 @@
     return cfg;
   }
 
-  function getFunctionByLine(code:string, language:Language, line:number):SyntaxNode|undefined {
+  function getFunctionByLine(
+    code: string,
+    language: Language,
+    line: number,
+  ): SyntaxNode | undefined {
     for (const func of iterFunctions(code, language)) {
       // GitHub lines are 1-based, TreeSitter rows are 0-based
       if (func.startPosition.row + 1 === line) {
-        return func
+        return func;
       }
     }
     return undefined;
@@ -65,16 +76,16 @@
 
   async function render() {
     const urlSearchParams = new URLSearchParams(window.location.search);
-    const githubUrl = urlSearchParams.get("github")??"";
-    const colors = urlSearchParams.get("colors")??"dark";
+    const githubUrl = urlSearchParams.get("github") ?? "";
+    const colors = urlSearchParams.get("colors") ?? "dark";
     if (colors !== "light" && colors !== "dark") {
       throw new Error(`Unsupported color scheme ${colors}`);
     }
-    const {line, rawURL} = parseGithubUrl(githubUrl);
+    const { line, rawURL } = parseGithubUrl(githubUrl);
     const response = await fetch(rawURL);
     const code = await response.text();
     // We assume that the raw URL always ends with the file extension
-    const language = getLanguage(rawURL)
+    const language = getLanguage(rawURL);
 
     const func = getFunctionByLine(code, language, line);
     if (!func) {
@@ -82,7 +93,9 @@
     }
 
     const cfg = buildCFG(func, language);
-    const colorScheme = listToScheme(colors==="light"?getLightColorList():getDarkColorList());
+    const colorScheme = listToScheme(
+      colors === "light" ? getLightColorList() : getDarkColorList(),
+    );
     const graphviz = await Graphviz.load();
     return graphviz.dot(graphToDot(cfg, false, undefined, colorScheme));
   }
@@ -102,9 +115,9 @@
 <pre>
   {#await render()}
     Loading code...
-    {:then svg}
+  {:then svg}
     {@html svg}
   <!--  {:catch error}-->
 	<!--<p style="color: red">{error.message}</p>-->
-{/await}
+  {/await}
 </pre>
