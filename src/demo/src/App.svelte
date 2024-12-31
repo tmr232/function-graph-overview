@@ -4,7 +4,7 @@
   import demoCodeC from "./assets/demo.c?raw";
   import demoCodePython from "./assets/demo.py?raw";
   import demoCodeCpp from "./assets/demo.cpp?raw";
-  import demoCodeTypeScript from "./assets/demo.ts?raw"
+  import demoCodeTypeScript from "./assets/demo.ts?raw";
   import { isDark } from "../../components/lightdark";
   import { onDestroy } from "svelte";
   import type { Language } from "../../control-flow/cfg.ts";
