@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getLanguage, iterFunctions } from "../../file-parsing/vite";
+  import { getLanguage, initParsers, iterFunctions } from "../../file-parsing/vite";
   import type Parser from "web-tree-sitter";
   import { type SyntaxNode } from "web-tree-sitter";
   import { type Language, newCFGBuilder } from "../../control-flow/cfg";
@@ -71,11 +71,12 @@
    * @param language Source code language
    * @param line Line number, 1-based.
    */
-  function getFunctionByLine(
+  async function getFunctionByLine(
     code: string,
     language: Language,
     line: number,
-  ): SyntaxNode | undefined {
+  ): Promise<SyntaxNode | undefined> {
+    await initParsers();
     for (const func of iterFunctions(code, language)) {
       // GitHub lines are 1-based, TreeSitter rows are 0-based
       if (func.startPosition.row + 1 === line) {
@@ -117,7 +118,7 @@
     // We assume that the raw URL always ends with the file extension
     const language = getLanguage(rawURL);
 
-    const func = getFunctionByLine(code, language, line);
+    const func = await getFunctionByLine(code, language, line);
     if (!func) {
       throw new Error(`Unable to find function on line ${line}`);
     }
