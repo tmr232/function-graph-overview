@@ -12,7 +12,7 @@ export default tseslint.config(
       "webview-content",
       "src/frontend",
       "src/jetbrains",
-      "src/github",
+      "src/render",
       "src/demo",
       "src/components",
       ".vscode-test.mjs",
