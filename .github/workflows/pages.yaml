@@ -17,6 +17,9 @@ jobs:
       - name: "Build Demo Website"
         run: bun build-demo
 
+      - name: "Build Render Website"
+        run: bun build-render
+
       - name: "Build docs"
         run: bun typedoc --out ./dist/demo/docs
 

@@ -9,7 +9,11 @@ import * as path from "node:path";
 import { parseArgs } from "node:util";
 import { Glob } from "bun";
 import { newCFGBuilder } from "../src/control-flow/cfg";
-import { fileTypes, getLanguage, iterFunctions } from "./file-parsing.ts";
+import {
+  fileTypes,
+  getLanguage,
+  iterFunctions,
+} from "../src/file-parsing/bun.ts";
 
 function iterSourceFiles(root: string): IterableIterator<string> {
   const sourceGlob = new Glob(

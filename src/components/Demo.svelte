@@ -2,7 +2,7 @@
   import { go } from "@codemirror/lang-go";
   import { cpp } from "@codemirror/lang-cpp";
   import { python } from "@codemirror/lang-python";
-  import {javascript} from "@codemirror/lang-javascript";
+  import { javascript } from "@codemirror/lang-javascript";
   import Graph from "./Graph.svelte";
   import type { Language } from "../control-flow/cfg";
   import * as LZString from "lz-string";
@@ -20,7 +20,8 @@
     "C++": "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
     Python: "def example():\n    if x:\n        return",
     TypeScript: "function main() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
-    TSX: "function getGreeting(user) {\n" +
+    TSX:
+      "function getGreeting(user) {\n" +
       "  if (user) {\n" +
       "    return <h1>Hello, {formatName(user)}!</h1>;  }\n" +
       "  return <h1>Hello, Stranger.</h1>;}",
@@ -50,8 +51,16 @@
       text: "C++",
       codeMirror: cpp,
     },
-    {language:"TypeScript" as Language, text:"TypeScript (experimental)", codeMirror: ()=>javascript({typescript:true})},
-    {language:"TSX" as Language, text:"TSX (experimental)", codeMirror: ()=>javascript({typescript:true, jsx:true})},
+    {
+      language: "TypeScript" as Language,
+      text: "TypeScript (experimental)",
+      codeMirror: () => javascript({ typescript: true }),
+    },
+    {
+      language: "TSX" as Language,
+      text: "TSX (experimental)",
+      codeMirror: () => javascript({ typescript: true, jsx: true }),
+    },
   ] as const;
 
   const urlParams = new URLSearchParams(window.location.search);

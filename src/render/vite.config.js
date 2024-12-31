@@ -6,8 +6,8 @@ export default defineConfig({
   plugins: [svelte()],
   build: {
     copyPublicDir: true,
-    outDir: "../../dist/demo",
+    outDir: "../../dist/demo/render",
     emptyOutDir: true,
   },
-  base: "/function-graph-overview/",
+  base: "/function-graph-overview/render/",
 });

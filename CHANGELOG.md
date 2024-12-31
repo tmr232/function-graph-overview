@@ -9,6 +9,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Added
 
 - The JetBrains plugin can now change settings: flat switch, simplification, highlighting, and color scheme
+- `/render` page to render code directly from GitHub, given a URL with a line number.
 
 ## [0.0.12] - 2024-12-18
 
