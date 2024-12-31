@@ -10,7 +10,7 @@ import {
 } from "../src/control-flow/cfg.ts";
 import { simplifyCFG, trimFor } from "../src/control-flow/graph-ops.ts";
 import { graphToDot } from "../src/control-flow/render.ts";
-import { getLanguage, iterFunctions } from "./file-parsing.ts";
+import { getLanguage, iterFunctions } from "../src/file-parsing/bun.ts";
 
 function isLanguage(language: string): language is Language {
   return supportedLanguages.includes(language as Language);

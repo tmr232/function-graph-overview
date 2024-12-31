@@ -57,6 +57,7 @@
     "publish": "bun run package && bun run vsce-publish",
     "clean": "rm -r ./dist",
     "web": "bun run --cwd ./src/frontend/ vite",
+    "github": "bun run --cwd ./src/github/ vite",
     "web-tests": "bun run ./scripts/collect-comment-tests.ts",
     "demo": "bun run --cwd ./src/demo/ vite",
     "build-demo": "bun run --cwd ./src/demo/ vite build --outDir ../../dist/demo --base '/function-graph-overview/'",
