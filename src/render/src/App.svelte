@@ -1,7 +1,4 @@
 <script lang="ts">
-  // https://github.com/python/cpython/blob/2bd5a7ab0f4a1f65ab8043001bd6e8416c5079bd/Lib/test/pythoninfo.py#L877
-  // https://raw.githubusercontent.com/python/cpython/2bd5a7ab0f4a1f65ab8043001bd6e8416c5079bd/Lib/test/pythoninfo.py
-
   import { getLanguage, iterFunctions } from "../../file-parsing/vite";
   import type Parser from "web-tree-sitter";
   import { type SyntaxNode } from "web-tree-sitter";
@@ -15,6 +12,7 @@
     getLightColorList,
     listToScheme,
   } from "../../control-flow/colors";
+  import { tick } from "svelte";
 
   /**
    * A reference to a function on GitHub
@@ -86,6 +84,22 @@
     return undefined;
   }
 
+  function setBackgroundColor(colors: "light" | "dark") {
+    if (colors === "dark") {
+      document.body.style.backgroundColor = "black";
+    } else {
+      document.body.style.backgroundColor = "#ddd";
+    }
+  }
+
+  function getColorScheme(colors: string) {
+    return listToScheme(
+      colors === "light" ? getLightColorList() : getDarkColorList(),
+    );
+  }
+
+  let rawSVG: string | undefined;
+
   async function render() {
     const urlSearchParams = new URLSearchParams(window.location.search);
     const githubUrl = urlSearchParams.get("github") ?? "";
@@ -93,6 +107,9 @@
     if (colors !== "light" && colors !== "dark") {
       throw new Error(`Unsupported color scheme ${colors}`);
     }
+    const colorScheme = getColorScheme(colors);
+    setBackgroundColor(colors);
+
     const { line, rawURL } = parseGithubUrl(githubUrl);
     const response = await fetch(rawURL);
     const code = await response.text();
@@ -105,33 +122,117 @@
     }
 
     const cfg = buildCFG(func, language);
-    const colorScheme = listToScheme(
-      colors === "light" ? getLightColorList() : getDarkColorList(),
-    );
     const graphviz = await Graphviz.load();
-    return graphviz.dot(graphToDot(cfg, false, undefined, colorScheme));
+    rawSVG = graphviz.dot(graphToDot(cfg, false, undefined, colorScheme));
+    return rawSVG;
+  }
+
+
+  function getSVGSize(svg:string):{width: string, height:string} {
+    const {width, height} = /<svg width="(?<width>\w+pt)" height="(?<height>\w+pt)"/gm.exec(svg).groups;
+    return {width, height};
+  }
+
+  function downloadString(text: string, fileType: string, fileName: string) {
+    const blob = new Blob([text], { type: fileType });
+
+    const a = document.createElement("a");
+    a.download = fileName;
+    a.href = URL.createObjectURL(blob);
+    a.dataset.downloadurl = [fileType, a.download, a.href].join(":");
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () {
+      URL.revokeObjectURL(a.href);
+    }, 1500);
+  }
+
+  function saveSVG() {
+    if (!rawSVG) {
+      return;
+    }
+    downloadString(rawSVG, "image/svg+xml", "function-graph-overview.svg");
+  }
+
+  function calculateScale(size:{width:string, height:string}, tick:number) {
+    /*
+     tick == 0 => fit => calc(100dvh + 0 * height)
+     tick == 10 => 1:1 => calc(0 * 100dvh + height)
+     */
+    const sizeRatio = tick / tickMax;
+    const screenUnits = 100 * (1-sizeRatio);
+    const width = `calc(${sizeRatio} * ${size.width} + ${screenUnits}dvw)`;
+    const height = `calc(${sizeRatio} * ${size.height} + ${screenUnits}dvh)`;
+    return {width, height}
+  }
+
+  function scaleToFit() {
+    const {width, height} = calculateScale(getSVGSize(rawSVG), 0);
+    document.querySelector("svg").style.width = width;
+    document.querySelector("svg").style.height = height;
+  }
+
+  function setScale(tick:number) {
+    if (!rawSVG) return;
+    const {width, height} = calculateScale(getSVGSize(rawSVG), tick);
+    document.querySelector("svg").style.width = width;
+    document.querySelector("svg").style.height = height;
+  }
+
+  function onScaleChange(event) {
+    setScale(event.target.value);
   }
 
   /* TODO:
       - Add controls
-        - Download SVG button
         - Zoom buttons
           - Zoom in
           - Zoom out
           - 1:1
           - Fit to screen
-      - Page background should match SVG background
       - Show more detailed progress to the user
 
    */
+
+  const tickMax = 10;
+  let scaleTick = 0;
+
+  $: setScale(scaleTick)
 </script>
 
-<pre>
+<div class="controlsContainer">
+  <div class="controls">
+    <input type="range" min="0" max={tickMax} step="1" on:change={onScaleChange} bind:value={scaleTick}/>
+    <button on:click={scaleToFit}>Fit</button>
+    <button on:click={saveSVG}>Download SVG</button>
+  </div>
+</div>
+<div class="svgContainer">
   {#await render()}
     Loading code...
   {:then svg}
     {@html svg}
-  <!--  {:catch error}-->
-	<!--<p style="color: red">{error.message}</p>-->
+    <!--  {:catch error}-->
+    <!--<p style="color: red">{error.message}</p>-->
   {/await}
-</pre>
+</div>
+
+<style>
+  .controlsContainer {
+    position: fixed;
+    display: flex;
+    justify-content: right;
+    width: 100%;
+  }
+  .controls {
+    margin: 1em;
+  }
+  .svgContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
