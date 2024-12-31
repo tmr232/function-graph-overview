@@ -2,18 +2,36 @@ import * as path from "node:path";
 import { parseArgs } from "node:util";
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import type Parser from "web-tree-sitter";
+import type { SyntaxNode } from "web-tree-sitter";
 import { type Language, supportedLanguages } from "../src/control-flow/cfg.ts";
 import {
   deserializeColorList,
   listToScheme,
 } from "../src/control-flow/colors.ts";
 import { graphToDot } from "../src/control-flow/render.ts";
+import { getLanguage, iterFunctions } from "../src/file-parsing/bun.ts";
 import { buildCFG } from "./cfg-helper.ts";
-import { getFuncDef, getLanguage, iterFunctions } from "./file-parsing.ts";
 
 function isLanguage(language: string): language is Language {
   return supportedLanguages.includes(language as Language);
 }
+
+function normalizeFuncdef(funcdef: string): string {
+  return funcdef
+    .replaceAll("\r", "")
+    .replaceAll("\n", " ")
+    .replaceAll(/\s+/g, " ")
+    .trim();
+}
+
+export function getFuncDef(sourceCode: string, func: SyntaxNode): string {
+  const body = func.childForFieldName("body");
+  if (!body) {
+    throw new Error("No function body");
+  }
+  return normalizeFuncdef(sourceCode.slice(func.startIndex, body.startIndex));
+}
+
 
 function writeError(message: string): void {
   Bun.write(Bun.stderr, `${message}\n`);
