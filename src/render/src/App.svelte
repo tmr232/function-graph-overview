@@ -12,7 +12,8 @@
     getLightColorList,
     listToScheme,
   } from "../../control-flow/colors";
-  import { tick } from "svelte";
+  import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
+  import { onMount } from "svelte";
 
   /**
    * A reference to a function on GitHub
@@ -127,12 +128,6 @@
     return rawSVG;
   }
 
-
-  function getSVGSize(svg:string):{width: string, height:string} {
-    const {width, height} = /<svg width="(?<width>\w+pt)" height="(?<height>\w+pt)"/gm.exec(svg).groups;
-    return {width, height};
-  }
-
   function downloadString(text: string, fileType: string, fileName: string) {
     const blob = new Blob([text], { type: fileType });
 
@@ -156,66 +151,41 @@
     downloadString(rawSVG, "image/svg+xml", "function-graph-overview.svg");
   }
 
-  function calculateScale(size:{width:string, height:string}, tick:number) {
-    /*
-     tick == 0 => fit => calc(100dvh + 0 * height)
-     tick == 10 => 1:1 => calc(0 * 100dvh + height)
-     */
-    const sizeRatio = tick / tickMax;
-    const screenUnits = 100 * (1-sizeRatio);
-    const width = `calc(${sizeRatio} * ${size.width} + ${screenUnits}dvw)`;
-    const height = `calc(${sizeRatio} * ${size.height} + ${screenUnits}dvh)`;
-    return {width, height}
+  let panzoom: PanzoomObject | undefined;
+
+  function resetView() {
+    panzoom?.reset();
   }
 
-  function scaleToFit() {
-    const {width, height} = calculateScale(getSVGSize(rawSVG), 0);
-    document.querySelector("svg").style.width = width;
-    document.querySelector("svg").style.height = height;
-  }
-
-  function setScale(tick:number) {
-    if (!rawSVG) return;
-    const {width, height} = calculateScale(getSVGSize(rawSVG), tick);
-    document.querySelector("svg").style.width = width;
-    document.querySelector("svg").style.height = height;
-  }
-
-  function onScaleChange(event) {
-    setScale(event.target.value);
+  function makeZoomable() {
+    const elem = document.querySelector(".svgContainer");
+    panzoom = Panzoom(elem, { maxScale: 100, minScale: 1 });
+    elem.parentElement.addEventListener("wheel", panzoom.zoomWithWheel);
   }
 
   /* TODO:
-      - Add controls
-        - Zoom buttons
-          - Zoom in
-          - Zoom out
-          - 1:1
-          - Fit to screen
       - Show more detailed progress to the user
 
    */
 
-  const tickMax = 10;
-  let scaleTick = 0;
-
-  $: setScale(scaleTick)
+  onMount(() => {
+    makeZoomable();
+  });
 </script>
 
 <div class="controlsContainer">
   <div class="controls">
-    <input type="range" min="0" max={tickMax} step="1" on:change={onScaleChange} bind:value={scaleTick}/>
-    <button on:click={scaleToFit}>Fit</button>
+    <button on:click={resetView}>Reset View</button>
     <button on:click={saveSVG}>Download SVG</button>
   </div>
 </div>
 <div class="svgContainer">
   {#await render()}
-    Loading code...
+    <p style="color: green">Loading code...</p>
   {:then svg}
     {@html svg}
-    <!--  {:catch error}-->
-    <!--<p style="color: red">{error.message}</p>-->
+  {:catch error}
+    <p style="color: red">{error.message}</p>
   {/await}
 </div>
 
@@ -225,6 +195,7 @@
     display: flex;
     justify-content: right;
     width: 100%;
+    z-index: 1000;
   }
   .controls {
     margin: 1em;
@@ -234,5 +205,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    width: 100dvw;
+    height: 100dvh;
   }
 </style>
