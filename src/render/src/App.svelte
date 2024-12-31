@@ -149,6 +149,15 @@
     }, 1500);
   }
 
+  function openCode() {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const githubUrl = urlSearchParams.get("github") ?? "";
+
+    if (!githubUrl) return;
+
+    window.open(githubUrl, "_blank").focus();
+  }
+
   function saveSVG() {
     if (!rawSVG) {
       return;
@@ -181,6 +190,7 @@
 <div class="controlsContainer">
   <div class="controls">
     <button on:click={resetView}>Reset View</button>
+    <button on:click={openCode}>Open Code</button>
     <button on:click={saveSVG}>Download SVG</button>
   </div>
 </div>
