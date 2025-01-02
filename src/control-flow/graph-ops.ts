@@ -131,16 +131,26 @@ export function detectBacklinks(
   entry: string,
 ): { from: string; to: string }[] {
   const backlinks: { from: string; to: string }[] = [];
-  const stack: { node: string; path: string[] }[] = [{ node: entry, path: [] }];
+  const stack: { node: string; path: string[] }[] = [{ node: entry, path: new Set<string>() }]; // Using Set() for O(1) path lookups
+
+  // If we ever visit a node that lead to a cycle, we will find the cycle.
+  // No need to revisit to revisit nodes from different paths. 
+  const visited = new Set<string>();
+
   let current = stack.pop();
   for (; current !== undefined; current = stack.pop()) {
     const { node, path } = current;
+    if (visited.has(node)) continue;
+    visited.add(node);
     for (const child of graph.outNeighbors(node)) {
-      if (path.includes(child)) {
-        backlinks.push({ from: node, to: child });
+      if (path.has(child) || child == node) { // Self-loops must be explicitly checked because of the sequence of stack pushes
+        // Only store backlinks once
+        if (!backlinks.some(item => item.from == node && item.to == child)){
+          backlinks.push({ from: node, to: child });
+        }
         continue;
       }
-      stack.push({ node: child, path: [...path, node] });
+      stack.push({ node: child, path: new Set([...path, node]) });
     }
   }
 
