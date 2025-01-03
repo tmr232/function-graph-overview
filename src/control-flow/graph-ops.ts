@@ -136,6 +136,12 @@ export function detectBacklinks(
     { node: entry, path: new Set<string>() },
   ];
 
+  const alreadyFound = (backlink: { from: string; to: string }): boolean => {
+    return backlinks.some(
+      (item) => item.from === backlink.from && item.to === backlink.to,
+    );
+  };
+
   // If we ever visit a node that lead to a cycle, we will find the cycle.
   // No need to revisit nodes from different paths.
   const visited = new Set<string>();
@@ -149,14 +155,13 @@ export function detectBacklinks(
       // Self-loops must be explicitly checked because of the sequence of stack pushes
       if (path.has(child) || child === node) {
         // Only store backlinks once
-        if (
-          !backlinks.some((item) => item.from === node && item.to === child)
-        ) {
-          backlinks.push({ from: node, to: child });
+        const backlink = { from: node, to: child };
+        if (!alreadyFound(backlink)) {
+          backlinks.push(backlink);
         }
         continue;
       }
-      stack.push({ node: child, path: new Set([...path, node]) });
+      stack.push({ node: child, path: new Set(path).add(node) });
     }
   }
 
