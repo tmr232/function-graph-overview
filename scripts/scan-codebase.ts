@@ -43,7 +43,7 @@ async function* iterFunctionInfo(
   filenames: IterableIterator<string>,
 ): AsyncIterableIterator<{
   node_count: number;
-  start_position: { row:number, column:number };
+  start_position: { row: number; column: number };
   funcdef: string;
   filename: string;
 }> {

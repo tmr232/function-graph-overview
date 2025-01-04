@@ -7,14 +7,21 @@ import type {
   GraphNode,
 } from "../src/control-flow/cfg-defs.ts";
 import { graphToDot } from "../src/control-flow/render.ts";
+import { getColorScheme } from "./render-function.ts";
 
 async function main() {
   const {
+    values,
     positionals: [_runtime, _this, gist_url],
   } = parseArgs({
     args: Bun.argv,
     strict: true,
     allowPositionals: true,
+    options: {
+      colors: {
+        type: "string",
+      },
+    },
   });
 
   if (!gist_url) {
@@ -39,9 +46,10 @@ async function main() {
     throw new Error("No entry found");
   }
   const cfg: CFG = { graph, entry, offsetToNode: [] };
-  const dot = graphToDot(cfg);
+  const colorScheme = await getColorScheme(values.colors);
+
   const graphviz = await Graphviz.load();
-  const svg = graphviz.dot(dot);
+  const svg = graphviz.dot(graphToDot(cfg, false, undefined, colorScheme));
   console.log(svg);
   // console.log(dot);
 }
