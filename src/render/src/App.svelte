@@ -7,17 +7,26 @@
   import type Parser from "web-tree-sitter";
   import { type SyntaxNode } from "web-tree-sitter";
   import { type Language, newCFGBuilder } from "../../control-flow/cfg";
-  import { type CFG, mergeNodeAttrs } from "../../control-flow/cfg-defs";
+  import {
+    type CFG,
+    type GraphEdge,
+    type GraphNode,
+    mergeNodeAttrs,
+  } from "../../control-flow/cfg-defs";
   import { simplifyCFG, trimFor } from "../../control-flow/graph-ops";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
   import { graphToDot } from "../../control-flow/render";
   import {
+    type ColorScheme,
     getDarkColorList,
     getLightColorList,
     listToScheme,
   } from "../../control-flow/colors";
   import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
   import { onMount } from "svelte";
+  import { MultiDirectedGraph } from "graphology";
+
+  let codeUrl: string | undefined;
 
   /**
    * A reference to a function on GitHub
@@ -26,7 +35,7 @@
     /**
      * The URL for the raw file on GitHub
      */
-    rawURL: string;
+    rawUrl: string;
     /**
      * The line-number for the function
      */
@@ -45,12 +54,12 @@
       throw new Error("Missing line number.");
     }
 
-    const rawURL = githubURL.replace(
+    const rawUrl = githubURL.replace(
       /(?<host>https:\/\/github.com\/)(?<project>\w+\/\w+\/)(blob\/)(?<path>.*)(#L\d+)/,
       "https://raw.githubusercontent.com/$<project>$<path>",
     );
 
-    return { line, rawURL };
+    return { line, rawUrl };
   }
 
   /**
@@ -106,30 +115,103 @@
 
   let rawSVG: string | undefined;
 
-  async function render() {
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const githubUrl = urlSearchParams.get("github") ?? "";
-    const colors = urlSearchParams.get("colors") ?? "dark";
-    if (colors !== "light" && colors !== "dark") {
-      throw new Error(`Unsupported color scheme ${colors}`);
-    }
-    const colorScheme = getColorScheme(colors);
-    setBackgroundColor(colors);
+  type GithubParams = {
+    type: "GitHub";
+    rawUrl: string;
+    codeUrl: string;
+    line: number;
+  };
+  type GraphParams = {
+    type: "Graph";
+    rawUrl: string;
+  };
+  type Params = (GithubParams | GraphParams) & {
+    colorScheme: ColorScheme;
+    colors: "light" | "dark";
+  };
 
-    const { line, rawURL } = parseGithubUrl(githubUrl);
-    const response = await fetch(rawURL);
+  function parseUrlSearchParams(urlSearchParams: URLSearchParams): Params {
+    const githubUrl = urlSearchParams.get("github");
+    const colors = urlSearchParams.get("colors") ?? "dark";
+    const graphUrl = urlSearchParams.get("graph");
+
+    if (colors !== "dark" && colors !== "light") {
+      throw new Error("Invalid color scheme");
+    }
+    if (!(githubUrl || graphUrl)) {
+      throw new Error("No URL provided");
+    }
+    if (githubUrl && graphUrl) {
+      throw new Error("Too many URLs provided");
+    }
+
+    const colorScheme = getColorScheme(colors);
+
+    if (githubUrl) {
+      const { line, rawUrl } = parseGithubUrl(githubUrl);
+      return { type: "GitHub", rawUrl, line, colorScheme, colors, codeUrl };
+    }
+    return {
+      type: "Graph",
+      rawUrl: graphUrl,
+      colorScheme: colorScheme,
+      colors,
+    };
+  }
+
+  async function createGitHubCFG(ghParams: GithubParams): Promise<CFG> {
+    const { rawUrl, line } = ghParams;
+    const response = await fetch(rawUrl);
     const code = await response.text();
     // We assume that the raw URL always ends with the file extension
-    const language = getLanguage(rawURL);
+    const language = getLanguage(rawUrl);
 
     const func = await getFunctionByLine(code, language, line);
     if (!func) {
       throw new Error(`Unable to find function on line ${line}`);
     }
 
-    const cfg = buildCFG(func, language);
+    return buildCFG(func, language);
+  }
+
+  async function createGraphCFG(graphParams: GraphParams): Promise<CFG> {
+    const { rawUrl } = graphParams;
+    const response = await fetch(rawUrl);
+    const jsonData = await response.json();
+    const graph = new MultiDirectedGraph<GraphNode, GraphEdge>();
+    graph.import(jsonData);
+
+    const entry = graph.findNode(
+      (node, _attributes) => graph.inDegree(node) === 0,
+    );
+    if (!entry) {
+      throw new Error("No entry found");
+    }
+    return { graph, entry, offsetToNode: [] };
+  }
+
+  async function createCFG(params: Params): Promise<CFG> {
+    switch (params.type) {
+      case "GitHub":
+        return createGitHubCFG(params);
+      case "Graph":
+        return createGraphCFG(params);
+    }
+  }
+
+  async function render() {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = parseUrlSearchParams(urlSearchParams);
+    setBackgroundColor(params.colors);
+    if (params.type === "GitHub") {
+      codeUrl = params.codeUrl;
+    }
+
+    const cfg = await createCFG(params);
     const graphviz = await Graphviz.load();
-    rawSVG = graphviz.dot(graphToDot(cfg, false, undefined, colorScheme));
+    rawSVG = graphviz.dot(
+      graphToDot(cfg, false, undefined, params.colorScheme),
+    );
     return rawSVG;
   }
 
@@ -150,12 +232,7 @@
   }
 
   function openCode() {
-    const urlSearchParams = new URLSearchParams(window.location.search);
-    const githubUrl = urlSearchParams.get("github") ?? "";
-
-    if (!githubUrl) return;
-
-    window.open(githubUrl, "_blank").focus();
+    window.open(codeUrl, "_blank").focus();
   }
 
   function saveSVG() {
@@ -190,7 +267,12 @@
 <div class="controlsContainer">
   <div class="controls">
     <button on:click={resetView}>Reset View</button>
-    <button on:click={openCode}>Open Code</button>
+    <button
+      on:click={openCode}
+      disabled={!Boolean(codeUrl)}
+      title={Boolean(codeUrl) ? "" : "Only available for GitHub code"}
+      >Open Code</button
+    >
     <button on:click={saveSVG}>Download SVG</button>
   </div>
 </div>
