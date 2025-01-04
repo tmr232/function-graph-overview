@@ -11,6 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - The JetBrains plugin can now change settings: flat switch, simplification, highlighting, and color scheme
 - `/render` page to render code directly from GitHub, given a URL with a line number.
 - `render-graph.ts` script to render a graph from a JSON file exported from code
+- `/render` page can now render a graph provided to it directly.
 
 ### Fixed
 
