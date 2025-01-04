@@ -5,8 +5,8 @@ import type Parser from "web-tree-sitter";
 import type { SyntaxNode } from "web-tree-sitter";
 import { type Language, supportedLanguages } from "../src/control-flow/cfg.ts";
 import {
-  deserializeColorList,
-  listToScheme,
+  deserializeColorList, getDarkColorList, getLightColorList,
+  listToScheme
 } from "../src/control-flow/colors.ts";
 import { graphToDot } from "../src/control-flow/render.ts";
 import { getLanguage, iterFunctions } from "../src/file-parsing/bun.ts";
@@ -32,9 +32,22 @@ export function getFuncDef(sourceCode: string, func: SyntaxNode): string {
   return normalizeFuncdef(sourceCode.slice(func.startIndex, body.startIndex));
 }
 
-
 function writeError(message: string): void {
   Bun.write(Bun.stderr, `${message}\n`);
+}
+
+async function getColorScheme(
+  colors?:string
+) {
+  if (!colors || colors === "dark") {
+    return listToScheme(getDarkColorList())
+  }
+  if (colors === "light") {
+    return listToScheme(getLightColorList())
+  }
+  return colors
+    ? listToScheme(deserializeColorList(await Bun.file(colors).text()))
+    : undefined;
 }
 
 async function main() {
@@ -122,9 +135,7 @@ async function main() {
   const graphviz = await Graphviz.load();
   const cfg = buildCFG(func, language);
 
-  const colorScheme = values.colors
-    ? listToScheme(deserializeColorList(await Bun.file(values.colors).text()))
-    : undefined;
+  const colorScheme = await getColorScheme(values.colors)
 
   const svg = graphviz.dot(graphToDot(cfg, false, undefined, colorScheme));
 
