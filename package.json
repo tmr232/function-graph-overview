@@ -14,7 +14,6 @@
     "esbuild-plugin-copy": "^2.1.1"
   },
   "devDependencies": {
-    "@atproto/api": "^0.13.23",
     "@biomejs/biome": "1.9.4",
     "@codemirror/lang-cpp": "^6.0.2",
     "@codemirror/lang-go": "^6.0.1",
