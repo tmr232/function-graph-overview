@@ -2,6 +2,10 @@
   "main": "./dist/vscode/extension.cjs",
   "module": "index.ts",
   "type": "module",
+
+  "workspaces": [
+    "packages/experimental"
+  ],
   "dependencies": {
     "@hpcc-js/wasm-graphviz": "^1.6.1",
     "@types/vscode": "^1.94.0",
@@ -11,7 +15,8 @@
     "web-tree-sitter": "^0.23.2",
     "@vscode/vsce": "^3.1.1",
     "esbuild": "^0.20.2",
-    "esbuild-plugin-copy": "^2.1.1"
+    "esbuild-plugin-copy": "^2.1.1",
+    "experimental": "workspace:*"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
@@ -41,6 +46,7 @@
     "tree-sitter-go": "^0.23.1",
     "tree-sitter-python": "^0.23.2",
     "tree-sitter-typescript": "^0.23.2",
+    "ts_dependency_graph": "^2.1.1",
     "typedoc": "^0.27.1",
     "typescript-eslint": "^8.16.0",
     "vite": "^5.4.8"
@@ -80,7 +86,9 @@
   "description": "Function Graph Overview",
   "displayName": "Function Graph Overview",
   "icon": "./media/icon.png",
-  "categories": ["Visualization"],
+  "categories": [
+    "Visualization"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/tmr232/function-graph-overview.git"
@@ -108,7 +116,12 @@
         },
         "functionGraphOverview.colorScheme": {
           "type": "string",
-          "enum": ["System", "Light", "Dark", "Custom"],
+          "enum": [
+            "System",
+            "Light",
+            "Dark",
+            "Custom"
+          ],
           "markdownEnumDescriptions": [
             "Based on the active color theme",
             "Light color scheme",

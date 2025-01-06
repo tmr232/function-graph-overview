@@ -8,7 +8,8 @@ import type {
   GraphNode,
   NodeType,
 } from "./cfg-defs.ts";
-
+import * as ex from "experimental"
+console.log(ex)
 /**
  * Constructs the CFG
  */
