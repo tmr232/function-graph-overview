@@ -51,7 +51,6 @@ async function main() {
   const graphviz = await Graphviz.load();
   const svg = graphviz.dot(graphToDot(cfg, false, undefined, colorScheme));
   console.log(svg);
-  // console.log(dot);
 }
 
 if (require.main === module) {
