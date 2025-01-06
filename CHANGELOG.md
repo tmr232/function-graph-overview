@@ -6,6 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.13] - 2025-01-06
+
 ### Added
 
 - The JetBrains plugin can now change settings: flat switch, simplification, highlighting, and color scheme
