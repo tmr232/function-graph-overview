@@ -3,9 +3,7 @@
   "module": "index.ts",
   "type": "module",
 
-  "workspaces": [
-    "packages/experimental"
-  ],
+  "workspaces": ["packages/experimental"],
   "dependencies": {
     "@hpcc-js/wasm-graphviz": "^1.6.1",
     "@types/vscode": "^1.94.0",
@@ -86,9 +84,7 @@
   "description": "Function Graph Overview",
   "displayName": "Function Graph Overview",
   "icon": "./media/icon.png",
-  "categories": [
-    "Visualization"
-  ],
+  "categories": ["Visualization"],
   "repository": {
     "type": "git",
     "url": "https://github.com/tmr232/function-graph-overview.git"
@@ -116,12 +112,7 @@
         },
         "functionGraphOverview.colorScheme": {
           "type": "string",
-          "enum": [
-            "System",
-            "Light",
-            "Dark",
-            "Custom"
-          ],
+          "enum": ["System", "Light", "Dark", "Custom"],
           "markdownEnumDescriptions": [
             "Based on the active color theme",
             "Light color scheme",

@@ -1,3 +1,4 @@
+import * as ex from "experimental";
 import { MultiDirectedGraph } from "graphology";
 import type {
   CFGGraph,
@@ -8,8 +9,7 @@ import type {
   GraphNode,
   NodeType,
 } from "./cfg-defs.ts";
-import * as ex from "experimental"
-console.log(ex)
+console.log(ex);
 /**
  * Constructs the CFG
  */
