@@ -55,7 +55,7 @@
     }
 
     const rawUrl = githubURL.replace(
-      /(?<host>https:\/\/github.com\/)(?<project>\w+\/\w+\/)(blob\/)(?<path>.*)(#L\d+)/,
+      /(?<host>https:\/\/github.com\/)(?<project>[^/]+\/[^/]+\/)(blob\/)(?<path>.*)(#L\d+)/,
       "https://raw.githubusercontent.com/$<project>$<path>",
     );
 
