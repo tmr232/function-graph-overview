@@ -149,7 +149,14 @@
 
     if (githubUrl) {
       const { line, rawUrl } = parseGithubUrl(githubUrl);
-      return { type: "GitHub", rawUrl, line, colorScheme, colors, codeUrl };
+      return {
+        type: "GitHub",
+        rawUrl,
+        line,
+        colorScheme,
+        colors,
+        codeUrl: githubUrl,
+      };
     }
     return {
       type: "Graph",
