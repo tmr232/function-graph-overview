@@ -4,14 +4,15 @@
   "type": "module",
   "dependencies": {
     "@hpcc-js/wasm-graphviz": "^1.6.1",
+    "@svgdotjs/svg.js": "^3.2.4",
     "@types/vscode": "^1.94.0",
+    "@vscode/vsce": "^3.1.1",
+    "esbuild": "^0.20.2",
+    "esbuild-plugin-copy": "^2.1.1",
     "graphology": "^0.25.4",
     "graphology-operators": "^1.6.0",
     "graphology-traversal": "^0.3.1",
-    "web-tree-sitter": "^0.23.2",
-    "@vscode/vsce": "^3.1.1",
-    "esbuild": "^0.20.2",
-    "esbuild-plugin-copy": "^2.1.1"
+    "web-tree-sitter": "^0.23.2"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
