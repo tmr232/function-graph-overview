@@ -183,7 +183,8 @@ export class GenericCFGBuilder {
         if (/cfg-overlay-start/.test(nodeAttributes.code)) {
           // begin overlay
           console.log("start overlay!");
-          this.builder.startOverlay(nodeAttributes.code);
+          console.log(/.*cfg-overlay-start: (.*)/gm.exec(nodeAttributes.code)[1]);
+          this.builder.startOverlay(/.*cfg-overlay-start: (.*)/gm.exec(nodeAttributes.code)?.pop()??nodeAttributes.code);
         } else if (/cfg-overlay-end/.test(nodeAttributes.code)) {
           // end overlay
           console.log("end overlay1");
