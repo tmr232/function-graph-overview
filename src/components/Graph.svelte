@@ -22,6 +22,8 @@
     getLightColorList,
     type ColorList,
   } from "../control-flow/colors";
+  import { renderOverlay } from "../control-flow/overlay.ts";
+  import { SVG } from "@svgdotjs/svg.js";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
@@ -212,6 +214,10 @@
   export function applyColors(colors: ColorList) {
     colorList = colors;
   }
+
+  window.applyOverlay = () => {
+    renderOverlay(cfg);
+  };
 </script>
 
 <div class="results">

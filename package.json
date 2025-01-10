@@ -12,6 +12,7 @@
     "graphology": "^0.25.4",
     "graphology-operators": "^1.6.0",
     "graphology-traversal": "^0.3.1",
+    "svgdom": "^0.1.19",
     "web-tree-sitter": "^0.23.2"
   },
   "devDependencies": {
@@ -27,6 +28,7 @@
     "@sveltejs/vite-plugin-svelte": "^3.1.2",
     "@types/bun": "latest",
     "@types/eslint__js": "^8.42.3",
+    "@types/svgdom": "^0.1.2",
     "eslint": "^9.12.0",
     "graphology-utils": "^2.5.2",
     "lz-string": "^1.5.0",

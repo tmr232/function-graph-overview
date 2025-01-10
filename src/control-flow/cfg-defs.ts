@@ -56,6 +56,12 @@ export type Cluster = {
   depth: number;
 };
 
+export type OverlayTag = {
+  text: string;
+  parent?: OverlayTag;
+  depth: number;
+};
+
 export interface GraphNode {
   /** What type of syntax node are we representing here? */
   type: NodeType;
@@ -77,6 +83,8 @@ export interface GraphNode {
    * This is used for mapping between the graph and the code for navigation.
    */
   startOffset: number | null;
+  /** The nearest overlay for this node */
+  overlayTag?: OverlayTag;
 }
 
 export interface GraphEdge {
@@ -335,20 +343,26 @@ export interface CFGBuilder {
   buildCFG(functionSyntax: Parser.SyntaxNode): CFG;
 }
 
-/**
- * Nodes are changes during simplification, and we need to remap them to match.
- * @param cfg
- */
-export function remapNodeTargets(cfg: CFG): CFG {
+export function getNodeRemapper(cfg: CFG): (node: string) => string {
   const remap = new Map<string, string>();
   cfg.graph.forEachNode((node, { targets }) => {
     for (const target of targets) {
       remap.set(target, node);
     }
   });
+  return (node) => remap.get(node) ?? node;
+}
+
+/**
+ * Nodes are changes during simplification, and we need to remap them to match.
+ * @param cfg
+ */
+export function remapNodeTargets(cfg: CFG): CFG {
+  const remapper = getNodeRemapper(cfg);
+
   const offsetToNode = cfg.offsetToNode.map(({ start, value: node }) => ({
     start,
-    value: remap.get(node) ?? node,
+    value: remapper(node),
   }));
 
   // Copying the graph is needed.

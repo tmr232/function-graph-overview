@@ -7,6 +7,7 @@ import type {
   EdgeType,
   GraphNode,
   NodeType,
+  OverlayTag,
 } from "./cfg-defs.ts";
 
 /**
@@ -17,6 +18,20 @@ export class Builder {
   private nodeId = 0;
   private clusterId: ClusterId = 0;
   private activeClusters: Cluster[] = [];
+  private activeOverlay?: OverlayTag = undefined;
+
+  public startOverlay(text: string): OverlayTag {
+    this.activeOverlay = {
+      text,
+      parent: this.activeOverlay,
+      depth: this.activeOverlay ? this.activeOverlay.depth + 1 : 0,
+    };
+    return this.activeOverlay;
+  }
+
+  public endOverlay() {
+    this.activeOverlay = this.activeOverlay?.parent;
+  }
 
   private startCluster(type: ClusterType): Cluster {
     const parent =
@@ -77,6 +92,7 @@ export class Builder {
       cluster,
       targets: [id],
       startOffset: startOffset,
+      overlayTag: this.activeOverlay,
     });
     return id;
   }
