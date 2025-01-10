@@ -8,7 +8,7 @@
   import { isDark } from "../../components/lightdark";
   import { onDestroy } from "svelte";
   import type { Language } from "../../control-flow/cfg.ts";
-  import { SVG } from '@svgdotjs/svg.js'
+  import { SVG } from "@svgdotjs/svg.js";
 
   document.body.dataset.theme = isDark ? "dark" : "light";
 
@@ -25,13 +25,13 @@
     TypeScript: demoCodeTypeScript,
   };
 
-  function overlayNodes(nodeNames: string[]):void {
+  function overlayNodes(nodeNames: string[]): void {
     let svg = SVG(document.querySelector("svg"));
-    const makeDeepClone=true;
-    const assignNewIds=false;
+    const makeDeepClone = true;
+    const assignNewIds = false;
     let temp = svg.clone(makeDeepClone, assignNewIds);
     let graph = temp.findOne("#graph0");
-    let group = temp.group()
+    let group = temp.group();
     group.transform(graph.transform());
     for (const nodeName of nodeNames) {
       group.add(graph.findOne(`#${nodeName}`));
@@ -40,9 +40,15 @@
     let overlayGroup = svg.group();
     overlayGroup.transform(svg.findOne("#graph0").transform());
     const padding = 20;
-    overlayGroup.rect(group.width()+padding*2, group.height()+padding*2).move(group.x() - padding, group.y() - padding).fill("#ff00ff44");
-    overlayGroup.text("Hello, World!").fill("#000").move(group.x(), group.y() - padding);
-    overlayGroup.css({"pointer-events": "none"});
+    overlayGroup
+      .rect(group.width() + padding * 2, group.height() + padding * 2)
+      .move(group.x() - padding, group.y() - padding)
+      .fill("#ff00ff44");
+    overlayGroup
+      .text("Hello, World!")
+      .fill("#000")
+      .move(group.x(), group.y() - padding);
+    overlayGroup.css({ "pointer-events": "none" });
   }
   window.overlayNodes = overlayNodes;
   window.SVG = SVG;
