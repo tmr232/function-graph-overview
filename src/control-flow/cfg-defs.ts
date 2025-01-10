@@ -57,6 +57,7 @@ export interface GraphNode {
   lines: number;
   markers: string[];
   cluster?: Cluster;
+  /** All the node IDs represented by this node after simplification. */
   targets: string[];
   startOffset: number | null;
 }
