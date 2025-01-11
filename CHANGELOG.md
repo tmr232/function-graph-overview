@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Fixed
+
+- `finally` blocks are now supported in TypeScript. 
+
 ## [0.0.13] - 2025-01-06
 
 ### Added
