@@ -208,7 +208,7 @@ function processTryStatement(
         )? @except
         finalizer: (finally_clause
             body: (_) @finally-body
-        )?
+        )? @finally
     ) @try
       `,
   );
