@@ -305,10 +305,8 @@ export async function activate(context: vscode.ExtensionContext) {
   function onNodeClick(node: string): void {
     if (!savedCFG) return;
     const offset = savedCFG.graph.getNodeAttribute(node, "startOffset");
-    if (offset !== null) {
-      moveCursorAndReveal(offset);
-      focusEditor();
-    }
+    moveCursorAndReveal(offset);
+    focusEditor();
   }
 
   context.subscriptions.push(

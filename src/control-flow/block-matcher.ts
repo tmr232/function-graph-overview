@@ -68,7 +68,7 @@ function getSyntaxMany(
 
 export class BlockMatcher {
   private blockHandler: BlockHandler = new BlockHandler();
-  private dispatchSingle: (syntax: Parser.SyntaxNode | null) => BasicBlock;
+  private dispatchSingle: (syntax: Parser.SyntaxNode) => BasicBlock;
   public update = this.blockHandler.update.bind(this.blockHandler);
 
   constructor(dispatchSingle: BlockMatcher["dispatchSingle"]) {

@@ -100,7 +100,9 @@ export function collectCases(
     );
     ctx.link.syntaxToNode(caseSyntax, conditionNode);
 
-    const consequenceBlock = ctx.state.update(ctx.dispatch.many(consequence));
+    const consequenceBlock = ctx.state.update(
+      ctx.dispatch.many(consequence, caseSyntax),
+    );
     if (consequence.length > 0) {
       ctx.link.offsetToSyntax(
         ctx.matcher

@@ -20,13 +20,17 @@ export interface Dispatch {
   /**
    * Process an array of AST nodes into a basic clock
    * @param statements
+   * @param parent is the parent node for the statements, used for
+   *        its positioning information if the statements array is empty.
    */
-  many(statements: Parser.SyntaxNode[]): BasicBlock;
+  many(statements: Parser.SyntaxNode[], parent: Parser.SyntaxNode): BasicBlock;
 }
+
 export interface Link {
   syntaxToNode: InstanceType<typeof NodeMapper>["linkSyntaxToNode"];
   offsetToSyntax: InstanceType<typeof NodeMapper>["linkOffsetToSyntax"];
 }
+
 export interface Context {
   builder: Builder;
   options: BuilderOptions;
@@ -97,7 +101,7 @@ export class GenericCFGBuilder {
     if (bodySyntax) {
       const blockHandler = new BlockHandler();
       const { entry, exit } = blockHandler.update(
-        this.dispatchMany(bodySyntax.namedChildren),
+        this.dispatchMany(bodySyntax.namedChildren, bodySyntax),
       );
 
       blockHandler.processGotos((gotoNode, labelNode) =>
@@ -131,15 +135,7 @@ export class GenericCFGBuilder {
     };
   }
 
-  private dispatchSingle(
-    syntax: Parser.SyntaxNode | null,
-    extra?: Extra,
-  ): BasicBlock {
-    if (!syntax) {
-      const emptyNode = this.builder.addNode("EMPTY", "Empty node", null);
-      return { entry: emptyNode, exit: emptyNode };
-    }
-
+  private dispatchSingle(syntax: Parser.SyntaxNode, extra?: Extra): BasicBlock {
     const handler = this.handlers.named[syntax.type] ?? this.handlers.default;
     const matcher = new BlockMatcher(this.dispatchSingle.bind(this));
     return handler(syntax, {
@@ -161,7 +157,10 @@ export class GenericCFGBuilder {
     });
   }
 
-  private dispatchMany(statements: Parser.SyntaxNode[]): BasicBlock {
+  private dispatchMany(
+    statements: Parser.SyntaxNode[],
+    parent: Parser.SyntaxNode,
+  ): BasicBlock {
     const blockHandler = new BlockHandler();
     // Ignore comments
     const codeStatements = statements.filter((syntax) => {
@@ -173,7 +172,11 @@ export class GenericCFGBuilder {
     });
 
     if (codeStatements.length === 0) {
-      const emptyNode = this.builder.addNode("EMPTY", "empty block", null);
+      const emptyNode = this.builder.addNode(
+        "EMPTY",
+        "empty block",
+        parent.startIndex,
+      );
       return { entry: emptyNode, exit: emptyNode };
     }
 
