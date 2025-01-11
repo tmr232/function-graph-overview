@@ -82,7 +82,7 @@ export interface GraphNode {
   /** The source-code offset the syntax represented by the node starts at.
    * This is used for mapping between the graph and the code for navigation.
    */
-  startOffset: number | null;
+  startOffset: number;
   /** The nearest overlay for this node */
   overlayTag?: OverlayTag;
 }
@@ -300,12 +300,7 @@ export function mergeNodeAttrs(
     return null;
   }
 
-  const startOffset = (() => {
-    if (from.startOffset === null || into.startOffset === null) {
-      return from.startOffset ?? into.startOffset;
-    }
-    return Math.min(from.startOffset, into.startOffset);
-  })();
+  const startOffset = Math.min(from.startOffset, into.startOffset);
 
   return {
     type: from.type,
