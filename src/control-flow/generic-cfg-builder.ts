@@ -164,7 +164,11 @@ export class GenericCFGBuilder {
     const blockHandler = new BlockHandler();
 
     if (statements.length === 0) {
-      const emptyNode = this.builder.addNode("EMPTY", "empty block", parent.startIndex);
+      const emptyNode = this.builder.addNode(
+        "EMPTY",
+        "empty block",
+        parent.startIndex,
+      );
       return { entry: emptyNode, exit: emptyNode };
     }
 
@@ -182,8 +186,13 @@ export class GenericCFGBuilder {
         if (/cfg-overlay-start/.test(nodeAttributes.code)) {
           // begin overlay
           console.log("start overlay!");
-          console.log(/.*cfg-overlay-start: (.*)/gm.exec(nodeAttributes.code)[1]);
-          this.builder.startOverlay(/.*cfg-overlay-start: (.*)/gm.exec(nodeAttributes.code)?.pop()??nodeAttributes.code);
+          console.log(
+            /.*cfg-overlay-start: (.*)/gm.exec(nodeAttributes.code)[1],
+          );
+          this.builder.startOverlay(
+            /.*cfg-overlay-start: (.*)/gm.exec(nodeAttributes.code)?.pop() ??
+              nodeAttributes.code,
+          );
         } else if (/cfg-overlay-end/.test(nodeAttributes.code)) {
           // end overlay
           console.log("end overlay1");
