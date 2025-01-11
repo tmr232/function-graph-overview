@@ -66,6 +66,7 @@
     const { trim, simplify, verbose, flatSwitch, highlight } = options;
     tree = parsers[language].parse(code);
     const functionSyntax = getFirstFunction(tree, language);
+    console.log(functionSyntax?.descendantsOfType("comment"));
     if (!functionSyntax) {
       throw new Error("No function found!");
     }
@@ -83,8 +84,17 @@
         ? getValue(cfg.offsetToNode, highlightOffset)
         : undefined;
     dot = graphToDot(cfg, verbose, nodeToHighlight, listToScheme(colorList));
-
-    return graphviz.dot(dot);
+    const rawSvg= graphviz.dot(dot);
+    try {
+      const parser = new DOMParser();
+      const dom = parser.parseFromString(rawSvg, "image/svg+xml");
+      console.log(dom);
+      console.log(SVG(dom.documentElement));
+      console.log(SVG(rawSvg));
+    } catch (error) {
+      console.error(error);
+    }
+    return rawSvg;
   }
 
   function renderWrapper(

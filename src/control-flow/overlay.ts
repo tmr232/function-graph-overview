@@ -1,5 +1,7 @@
 import { SVG } from "@svgdotjs/svg.js";
-import { type CFG, type OverlayTag, getNodeRemapper } from "./cfg-defs.ts";
+import { type CFG, type OverlayTag, getNodeRemapper, type GraphNode, mergeNodeAttrs } from "./cfg-defs.ts";
+import type { Language } from "./cfg.ts";
+import Parser from "web-tree-sitter";
 
 type Overlay = {
   nodes: string[];
@@ -83,5 +85,31 @@ export function renderOverlay(cfg: CFG) {
   const remapper = getNodeRemapper(cfg);
   for (const { text, nodes } of overlays) {
     overlayNodes(text, nodes.map(remapper));
+  }
+}
+
+function svgFromString(rawSvg: string) {
+  const parser = new DOMParser();
+  const dom = parser.parseFromString(rawSvg, "image/svg+xml");
+  return SVG(dom.documentElement);
+}
+
+function overlayAttrMerger(from:GraphNode, into:GraphNode): GraphNode| null {
+  if (getOverlayFor(from.startOffset) !== getOverlayFor(into.startOffset)) {
+    return null;
+  }
+
+  return mergeNodeAttrs(from, into);
+}
+
+export function parseOverlay(func:Parser.SyntaxNode, language:Language) {
+  const comments = func.descendantsOfType("comment");
+  const overlayStack = [];
+  for (const comment of comments) {
+    if (isOverlayStart(comment)) {
+      // Create overlay
+    } else if (isOverlayEnd(comment)) {
+      // End overlay
+    }
   }
 }
