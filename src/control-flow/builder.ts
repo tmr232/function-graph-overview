@@ -62,11 +62,7 @@ export class Builder {
    * @param code
    * @param startOffset The offset in the code for which the node is generated
    */
-  public addNode(
-    type: NodeType,
-    code: string,
-    startOffset: number | null,
-  ): string {
+  public addNode(type: NodeType, code: string, startOffset: number): string {
     const id = `node${this.nodeId++}`;
     const cluster = this.activeClusters[this.activeClusters.length - 1];
     this.graph.addNode(id, {
