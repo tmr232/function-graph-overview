@@ -24876,3 +24876,544 @@ exports[`TypeScript: sample.ts!TrivialUnreach: Segmentation 1`] = `
   },
 ]
 `;
+
+exports[`TypeScript: issue65-try-finally.ts!tryCatch: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+subgraph cluster_0 {
+penwidth=0;
+color="#ffffff";
+bgcolor="#ddddff";
+class="tryComplex";
+
+subgraph cluster_1 {
+penwidth=0;
+color="#ffffff";
+bgcolor="#ddffdd";
+class="try";
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+
+}
+
+subgraph cluster_2 {
+penwidth=0;
+color="#ffffff";
+bgcolor="#ffdddd";
+class="except";
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+
+}
+
+}    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 -> node3 [penwidth=1;
+color="#0000ff";
+style="invis";
+headport="e";
+tailport="w";
+];
+    node0 -> node2 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node3 -> node4 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node2 -> node4 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`TypeScript: issue65-try-finally.ts!tryCatch: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 16,
+    "value": "node0",
+  },
+  {
+    "start": 40,
+    "value": "node2",
+  },
+  {
+    "start": 44,
+    "value": "node2",
+  },
+  {
+    "start": 50,
+    "value": "node2",
+  },
+  {
+    "start": 54,
+    "value": "node2",
+  },
+  {
+    "start": 58,
+    "value": "node2",
+  },
+  {
+    "start": 59,
+    "value": "node3",
+  },
+  {
+    "start": 65,
+    "value": "node3",
+  },
+  {
+    "start": 71,
+    "value": "node3",
+  },
+  {
+    "start": 75,
+    "value": "node3",
+  },
+  {
+    "start": 79,
+    "value": "node3",
+  },
+  {
+    "start": 79,
+    "value": "node2",
+  },
+  {
+    "start": 79,
+    "value": "node2",
+  },
+  {
+    "start": 81,
+    "value": "node0",
+  },
+  {
+    "start": 81,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`TypeScript: issue65-try-finally.ts!tryFinaly: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+subgraph cluster_0 {
+penwidth=0;
+color="#ffffff";
+bgcolor="#ddddff";
+class="tryComplex";
+
+subgraph cluster_1 {
+penwidth=0;
+color="#ffffff";
+bgcolor="#ddffdd";
+class="try";
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+
+}
+
+subgraph cluster_3 {
+penwidth=0;
+color="#ffffff";
+bgcolor="#ffffdd";
+class="finally";
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+
+}
+
+}    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 -> node3 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node0 -> node2 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node3 -> node4 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`TypeScript: issue65-try-finally.ts!tryCatchFinally: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+subgraph cluster_0 {
+penwidth=0;
+color="#ffffff";
+bgcolor="#ddddff";
+class="tryComplex";
+
+subgraph cluster_1 {
+penwidth=0;
+color="#ffffff";
+bgcolor="#ddffdd";
+class="try";
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+
+}
+
+subgraph cluster_2 {
+penwidth=0;
+color="#ffffff";
+bgcolor="#ffdddd";
+class="except";
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+
+}
+
+subgraph cluster_3 {
+penwidth=0;
+color="#ffffff";
+bgcolor="#ffffdd";
+class="finally";
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+
+}
+
+}    node0 [style="filled";
+label="";
+id="node0";
+shape="invhouse";
+class="entry";
+fillcolor="#48AB30";
+height=0.5;
+];
+    node2 [style="filled";
+label="";
+id="node2";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node3 [style="filled";
+label="";
+id="node3";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node4 [style="filled";
+label="";
+id="node4";
+shape="box";
+class="default";
+fillcolor="#d3d3d3";
+height=0.3;
+];
+    node5 [style="filled";
+label="";
+id="node5";
+shape="house";
+class="exit";
+fillcolor="#AB3030";
+height=0.6;
+];
+    node2 -> node3 [penwidth=1;
+color="#0000ff";
+style="invis";
+headport="e";
+tailport="w";
+];
+    node2 -> node4 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node3 -> node4 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node0 -> node2 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+    node4 -> node5 [penwidth=1;
+color="#0000ff";
+class="regular";
+];
+}"
+`;
+
+exports[`TypeScript: issue65-try-finally.ts!tryFinaly: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 99,
+    "value": "node0",
+  },
+  {
+    "start": 124,
+    "value": "node2",
+  },
+  {
+    "start": 128,
+    "value": "node2",
+  },
+  {
+    "start": 134,
+    "value": "node2",
+  },
+  {
+    "start": 138,
+    "value": "node2",
+  },
+  {
+    "start": 142,
+    "value": "node2",
+  },
+  {
+    "start": 143,
+    "value": "node3",
+  },
+  {
+    "start": 151,
+    "value": "node3",
+  },
+  {
+    "start": 157,
+    "value": "node3",
+  },
+  {
+    "start": 161,
+    "value": "node3",
+  },
+  {
+    "start": 165,
+    "value": "node3",
+  },
+  {
+    "start": 165,
+    "value": "node2",
+  },
+  {
+    "start": 165,
+    "value": "node2",
+  },
+  {
+    "start": 167,
+    "value": "node0",
+  },
+  {
+    "start": 167,
+    "value": "node0",
+  },
+]
+`;
+
+exports[`TypeScript: issue65-try-finally.ts!tryCatchFinally: Segmentation 1`] = `
+[
+  {
+    "start": 0,
+    "value": "node0",
+  },
+  {
+    "start": 185,
+    "value": "node0",
+  },
+  {
+    "start": 216,
+    "value": "node2",
+  },
+  {
+    "start": 220,
+    "value": "node2",
+  },
+  {
+    "start": 226,
+    "value": "node2",
+  },
+  {
+    "start": 230,
+    "value": "node2",
+  },
+  {
+    "start": 234,
+    "value": "node2",
+  },
+  {
+    "start": 235,
+    "value": "node3",
+  },
+  {
+    "start": 241,
+    "value": "node3",
+  },
+  {
+    "start": 247,
+    "value": "node3",
+  },
+  {
+    "start": 251,
+    "value": "node3",
+  },
+  {
+    "start": 255,
+    "value": "node3",
+  },
+  {
+    "start": 255,
+    "value": "node2",
+  },
+  {
+    "start": 256,
+    "value": "node4",
+  },
+  {
+    "start": 264,
+    "value": "node4",
+  },
+  {
+    "start": 270,
+    "value": "node4",
+  },
+  {
+    "start": 274,
+    "value": "node4",
+  },
+  {
+    "start": 278,
+    "value": "node4",
+  },
+  {
+    "start": 278,
+    "value": "node2",
+  },
+  {
+    "start": 278,
+    "value": "node2",
+  },
+  {
+    "start": 280,
+    "value": "node0",
+  },
+  {
+    "start": 280,
+    "value": "node0",
+  },
+]
+`;
