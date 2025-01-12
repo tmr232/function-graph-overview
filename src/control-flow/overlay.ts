@@ -1,4 +1,4 @@
-import { type Dom, SVG } from "@svgdotjs/svg.js";
+import { type Container, type Element, SVG, type Svg } from "@svgdotjs/svg.js";
 import type Parser from "web-tree-sitter";
 import type { GraphNode } from "./cfg-defs.ts";
 import {
@@ -8,7 +8,29 @@ import {
   newRanges,
 } from "./ranges.ts";
 
-export function addOverlay(text: string, nodes: string[], svg: Dom) {
+type BoundingBox = {
+  readonly width: number;
+  readonly height: number;
+  readonly x: number;
+  readonly y: number;
+};
+
+function getBoundingBox(group: Container): BoundingBox {
+  const boundingBox = {
+    width: group.width(),
+    height: group.height(),
+    x: group.x(),
+    y: group.y(),
+  };
+  if (Object.values(boundingBox).some((n) => typeof n !== "number")) {
+    throw new Error(
+      `Expected all bounding-box properties to be numbers: ${boundingBox}`,
+    );
+  }
+  return boundingBox as BoundingBox;
+}
+
+export function addOverlay(text: string, nodes: string[], svg: Svg) {
   const makeDeepClone = true;
   const assignNewIds = false;
   const temp = svg.clone(makeDeepClone, assignNewIds);
@@ -18,11 +40,17 @@ export function addOverlay(text: string, nodes: string[], svg: Dom) {
   // and query its position and proportions.
   const nodeGroup = temp.group();
   for (const nodeName of nodes) {
-    nodeGroup.add(temp.findOne(`#${nodeName}`));
+    const nodeElement: Element | null = temp.findOne(
+      `#${nodeName}`,
+    ) as Element | null;
+    if (!nodeElement) {
+      throw new Error(`Missing node ${nodeName}`);
+    }
+    nodeGroup.add(nodeElement);
   }
 
   const overlayGroup = svg.group();
-  const graph = svg.findOne("#graph0");
+  const graph: Container | null = svg.findOne("#graph0") as Container | null;
   if (!graph) {
     // This should never happen, as the name is guaranteed by the
     // rendering of the graph using DOT.
@@ -31,15 +59,21 @@ export function addOverlay(text: string, nodes: string[], svg: Dom) {
     throw new Error("Missing graph element #graph0 in SVG.");
   }
   overlayGroup.transform(graph.transform());
+
+  const boundingBox = getBoundingBox(nodeGroup);
+
   const padding = 20;
   overlayGroup
-    .rect(nodeGroup.width() + padding * 2, nodeGroup.height() + padding * 2)
-    .move(nodeGroup.x() - padding, nodeGroup.y() - padding)
+    .rect(boundingBox.width + padding * 2, boundingBox.height + padding * 2)
+    .move(boundingBox.x - padding, boundingBox.y - padding)
     .fill("#ff00ff44");
   overlayGroup
     .text(text)
     .fill("#000")
-    .move(nodeGroup.x(), nodeGroup.y() - padding);
+    .move(boundingBox.x, boundingBox.y - padding);
+  // @ts-expect-error: Work around but in svg.js
+  // The bug is already fixed in https://github.com/svgdotjs/svg.js/commit/1f5f978accc559f54aed0868e1a7a575a14a6d74
+  // but that version was not yet released.
   overlayGroup.css({ "pointer-events": "none" });
 }
 

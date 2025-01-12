@@ -1,6 +1,5 @@
 <script lang="ts">
   import Parser from "web-tree-sitter";
-  import ColorPicker from "svelte-awesome-color-picker";
   import { newCFGBuilder, type Language } from "../control-flow/cfg";
   import {
     mergeNodeAttrs,
@@ -27,10 +26,8 @@
     createOverlayAttrMerger,
     createOverlayRange,
     parseOverlay,
-    renderOverlay,
     svgFromString,
   } from "../control-flow/overlay.ts";
-  import { SVG } from "@svgdotjs/svg.js";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
@@ -238,10 +235,6 @@
   export function applyColors(colors: ColorList) {
     colorList = colors;
   }
-
-  window.applyOverlay = () => {
-    renderOverlay(cfg);
-  };
 </script>
 
 <div class="results">

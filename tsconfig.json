@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "lib": ["ESNext"],
+    /* Most of our code runs in the browser, so we'll declare it as such for now */
+    "lib": ["ESNext", "DOM"],
     "target": "ESNext",
     "module": "ESNext",
     "moduleDetection": "force",
