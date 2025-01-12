@@ -2,7 +2,7 @@ import { type Dom, SVG } from "@svgdotjs/svg.js";
 import { type CFG, type OverlayTag, getNodeRemapper, type GraphNode, mergeNodeAttrs } from "./cfg-defs.ts";
 import type { Language } from "./cfg.ts";
 import Parser from "web-tree-sitter";
-import { addRange, inplaceAddRange, newRanges, type SimpleRange } from "./ranges.ts";
+import { addRange, getValue, inplaceAddRange, newRanges, type SimpleRange } from "./ranges.ts";
 
 type Overlay = {
   nodes: string[];
@@ -119,14 +119,16 @@ export function svgFromString(rawSvg: string) {
   const dom = parser.parseFromString(rawSvg, "image/svg+xml");
   return SVG(dom.documentElement);
 }
+export function createOverlayAttrMerger(overlayRanges:SimpleRange<OverlayRange|undefined>[], defaultFn:(from:GraphNode, into:GraphNode)=>GraphNode|null) {
+  return (from:GraphNode, into:GraphNode): GraphNode| null => {
+    if (getValue(overlayRanges, from.startOffset) !== getValue(overlayRanges, into.startOffset)) {
+      return null;
+    }
 
-function overlayAttrMerger(from:GraphNode, into:GraphNode): GraphNode| null {
-  if (getOverlayFor(from.startOffset) !== getOverlayFor(into.startOffset)) {
-    return null;
+    return defaultFn(from, into);
   }
-
-  return mergeNodeAttrs(from, into);
 }
+
 const overlayStartRegex = /\bcfg-overlay-start: (.*)/
 const overlayEndRegex = /\bcfg-overlay-end\b/
 

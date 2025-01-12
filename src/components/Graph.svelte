@@ -23,7 +23,7 @@
     type ColorList,
   } from "../control-flow/colors";
   import {
-    addOverlay,
+    addOverlay, createOverlayAttrMerger,
     createOverlayRange,
     parseOverlay,
     renderOverlay,
@@ -76,8 +76,8 @@
     if (!functionSyntax) {
       throw new Error("No function found!");
     }
-
-    // const overlays = createOverlayRange()
+    const overlays = parseOverlay(functionSyntax);
+    const overlayRanges = createOverlayRange(overlays);
 
     const builder = newCFGBuilder(language, { flatSwitch });
 
@@ -85,7 +85,7 @@
 
     if (!cfg) return "";
     if (trim) cfg = trimFor(cfg);
-    if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
+    if (simplify) cfg = simplifyCFG(cfg, createOverlayAttrMerger(overlayRanges, mergeNodeAttrs));
     cfg = remapNodeTargets(cfg);
     const nodeToHighlight =
       highlightOffset && highlight
@@ -94,7 +94,6 @@
     dot = graphToDot(cfg, verbose, nodeToHighlight, listToScheme(colorList));
     const rawSvg= graphviz.dot(dot);
     const svgElement = svgFromString(rawSvg);
-    const overlays = parseOverlay(functionSyntax);
     for (const overlay of overlays) {
       const nodesToOverlay = cfg.graph.filterNodes((_node, {startOffset})=>{
         return overlay.startOffset <= startOffset && startOffset <= overlay.endOffset
