@@ -12,24 +12,34 @@ export function addOverlay(text: string, nodes: string[], svg: Dom) {
   const makeDeepClone = true;
   const assignNewIds = false;
   const temp = svg.clone(makeDeepClone, assignNewIds);
-  const graph = temp.findOne("#graph0");
-  const group = temp.group();
-  group.transform(graph.transform());
+
+  // We collect all the nodes we want to overlay in a single group.
+  // Then we treat the group as a bounding-box for the nodes,
+  // and query its position and proportions.
+  const nodeGroup = temp.group();
   for (const nodeName of nodes) {
-    group.add(graph.findOne(`#${nodeName}`));
+    nodeGroup.add(temp.findOne(`#${nodeName}`));
   }
 
   const overlayGroup = svg.group();
-  overlayGroup.transform(svg.findOne("#graph0").transform());
+  const graph = svg.findOne("#graph0");
+  if (!graph) {
+    // This should never happen, as the name is guaranteed by the
+    // rendering of the graph using DOT.
+    // But if we change something there, it's important to know
+    // where we rely on it.
+    throw new Error("Missing graph element #graph0 in SVG.");
+  }
+  overlayGroup.transform(graph.transform());
   const padding = 20;
   overlayGroup
-    .rect(group.width() + padding * 2, group.height() + padding * 2)
-    .move(group.x() - padding, group.y() - padding)
+    .rect(nodeGroup.width() + padding * 2, nodeGroup.height() + padding * 2)
+    .move(nodeGroup.x() - padding, nodeGroup.y() - padding)
     .fill("#ff00ff44");
   overlayGroup
     .text(text)
     .fill("#000")
-    .move(group.x(), group.y() - padding);
+    .move(nodeGroup.x(), nodeGroup.y() - padding);
   overlayGroup.css({ "pointer-events": "none" });
 }
 
@@ -44,13 +54,6 @@ export function createOverlayAttrMerger(
   defaultFn: (from: GraphNode, into: GraphNode) => GraphNode | null,
 ) {
   return (from: GraphNode, into: GraphNode): GraphNode | null => {
-    console.log(
-      "merge?",
-      from,
-      into,
-      getValue(overlayRanges, from.startOffset),
-      getValue(overlayRanges, into.startOffset),
-    );
     if (
       getValue(overlayRanges, from.startOffset) !==
       getValue(overlayRanges, into.startOffset)
