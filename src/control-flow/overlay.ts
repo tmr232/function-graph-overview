@@ -1,6 +1,7 @@
 import { type Container, type Element, SVG, type Svg } from "@svgdotjs/svg.js";
 import type Parser from "web-tree-sitter";
-import type { GraphNode } from "./cfg-defs.ts";
+import type { CFG, GraphNode } from "./cfg-defs.ts";
+import type { AttrMerger } from "./graph-ops.ts";
 import {
   type SimpleRange,
   getValue,
@@ -71,18 +72,77 @@ export function addOverlay(text: string, nodes: string[], svg: Svg) {
     .text(text)
     .fill("#000")
     .move(boundingBox.x, boundingBox.y - padding);
+
   // @ts-expect-error: Work around but in svg.js
   // The bug is already fixed in https://github.com/svgdotjs/svg.js/commit/1f5f978accc559f54aed0868e1a7a575a14a6d74
   // but that version was not yet released.
   overlayGroup.css({ "pointer-events": "none" });
+
+  // This next part puts the overlay _under_ the graph.
+  graph.before(overlayGroup);
 }
 
+export class OverlayBuilder {
+  private readonly overlays: OverlayRange[];
+  private readonly overlayRanges: SimpleRange<OverlayRange | undefined>[];
+
+  constructor(functionSyntax: Parser.SyntaxNode) {
+    this.overlays = parseOverlay(functionSyntax);
+    this.overlayRanges = createOverlayRange(this.overlays);
+  }
+
+  public getAttrMerger(defaultFn: AttrMerger) {
+    return createOverlayAttrMerger(this.overlayRanges, defaultFn);
+  }
+
+  public renderOnto(cfg: CFG, rawSvg: string): string {
+    const svg = svgFromString(rawSvg);
+    this.moveBackgroundBack(svg);
+
+    for (const overlay of this.overlays) {
+      const nodesToOverlay = cfg.graph.filterNodes((_node, { startOffset }) => {
+        return (
+          overlay.startOffset <= startOffset && startOffset < overlay.endOffset
+        );
+      });
+      addOverlay(overlay.text, nodesToOverlay, svg);
+    }
+
+    return svg.svg();
+  }
+
+  private moveBackgroundBack(svg: Svg) {
+    // First, we move the background polygon out of the graph group and to the back
+    const graph = svg.findOne("#graph0") as Container | null;
+    if (!graph) {
+      // This should never happen, as the name is guaranteed by the
+      // rendering of the graph using DOT.
+      // But if we change something there, it's important to know
+      // where we rely on it.
+      throw new Error("Missing graph element #graph0 in SVG.");
+    }
+    const backgroundPolygon = graph.children()[0];
+    if (backgroundPolygon?.type === "polygon") {
+      graph.before(backgroundPolygon.x(0).y(0));
+    }
+  }
+}
+
+/**
+ * Create an SVG object from a string representing an SVG
+ * @param rawSvg the SVG string
+ */
 export function svgFromString(rawSvg: string): Svg {
   const parser = new DOMParser();
   const dom = parser.parseFromString(rawSvg, "image/svg+xml");
   return SVG(dom.documentElement) as Svg;
 }
 
+/**
+ * Creates an `AttrMerger` that doesn't merge across overlay boundary.
+ * @param overlayRanges
+ * @param defaultFn AttrMerger to wrap
+ */
 export function createOverlayAttrMerger(
   overlayRanges: SimpleRange<OverlayRange | undefined>[],
   defaultFn: (from: GraphNode, into: GraphNode) => GraphNode | null,
@@ -121,7 +181,6 @@ export function parseOverlay(func: Parser.SyntaxNode): OverlayRange[] {
   const stack: { startOffset: number; text: string }[] = [];
   const overlays: OverlayRange[] = [];
   for (const comment of comments) {
-    console.log("comment text", comment.text);
     const text = parseOverlayStart(comment.text);
     if (text) {
       stack.push({ startOffset: comment.startIndex, text });

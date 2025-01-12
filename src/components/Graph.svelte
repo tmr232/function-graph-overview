@@ -21,13 +21,7 @@
     getLightColorList,
     type ColorList,
   } from "../control-flow/colors";
-  import {
-    addOverlay,
-    createOverlayAttrMerger,
-    createOverlayRange,
-    parseOverlay,
-    svgFromString,
-  } from "../control-flow/overlay.ts";
+  import { OverlayBuilder } from "../control-flow/overlay.ts";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
@@ -70,13 +64,10 @@
     const { trim, simplify, verbose, flatSwitch, highlight } = options;
     tree = parsers[language].parse(code);
     const functionSyntax = getFirstFunction(tree, language);
-    console.log(functionSyntax?.descendantsOfType("comment"));
     if (!functionSyntax) {
       throw new Error("No function found!");
     }
-    const overlays = parseOverlay(functionSyntax);
-    const overlayRanges = createOverlayRange(overlays);
-    console.log("RANGES", overlayRanges);
+    const overlayBuilder = new OverlayBuilder(functionSyntax);
 
     const builder = newCFGBuilder(language, { flatSwitch });
 
@@ -85,10 +76,7 @@
     if (!cfg) return "";
     if (trim) cfg = trimFor(cfg);
     if (simplify)
-      cfg = simplifyCFG(
-        cfg,
-        createOverlayAttrMerger(overlayRanges, mergeNodeAttrs),
-      );
+      cfg = simplifyCFG(cfg, overlayBuilder.getAttrMerger(mergeNodeAttrs));
     cfg = remapNodeTargets(cfg);
     const nodeToHighlight =
       highlightOffset && highlight
@@ -96,16 +84,7 @@
         : undefined;
     dot = graphToDot(cfg, verbose, nodeToHighlight, listToScheme(colorList));
     const rawSvg = graphviz.dot(dot);
-    const svgElement = svgFromString(rawSvg);
-    for (const overlay of overlays) {
-      const nodesToOverlay = cfg.graph.filterNodes((_node, { startOffset }) => {
-        return (
-          overlay.startOffset <= startOffset && startOffset < overlay.endOffset
-        );
-      });
-      addOverlay(overlay.text, nodesToOverlay, svgElement);
-    }
-    return svgElement.svg();
+    return overlayBuilder.renderOnto(cfg, rawSvg);
   }
 
   function renderWrapper(
