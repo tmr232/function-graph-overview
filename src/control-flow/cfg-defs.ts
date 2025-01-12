@@ -56,12 +56,6 @@ export type Cluster = {
   depth: number;
 };
 
-export type OverlayTag = {
-  text: string;
-  parent?: OverlayTag;
-  depth: number;
-};
-
 export interface GraphNode {
   /** What type of syntax node are we representing here? */
   type: NodeType;
@@ -83,8 +77,6 @@ export interface GraphNode {
    * This is used for mapping between the graph and the code for navigation.
    */
   startOffset: number;
-  /** The nearest overlay for this node */
-  overlayTag?: OverlayTag;
 }
 
 export interface GraphEdge {

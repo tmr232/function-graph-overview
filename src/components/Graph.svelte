@@ -23,11 +23,12 @@
     type ColorList,
   } from "../control-flow/colors";
   import {
-    addOverlay, createOverlayAttrMerger,
+    addOverlay,
+    createOverlayAttrMerger,
     createOverlayRange,
     parseOverlay,
     renderOverlay,
-    svgFromString
+    svgFromString,
   } from "../control-flow/overlay.ts";
   import { SVG } from "@svgdotjs/svg.js";
 
@@ -86,18 +87,24 @@
 
     if (!cfg) return "";
     if (trim) cfg = trimFor(cfg);
-    if (simplify) cfg = simplifyCFG(cfg, createOverlayAttrMerger(overlayRanges, mergeNodeAttrs));
+    if (simplify)
+      cfg = simplifyCFG(
+        cfg,
+        createOverlayAttrMerger(overlayRanges, mergeNodeAttrs),
+      );
     cfg = remapNodeTargets(cfg);
     const nodeToHighlight =
       highlightOffset && highlight
         ? getValue(cfg.offsetToNode, highlightOffset)
         : undefined;
     dot = graphToDot(cfg, verbose, nodeToHighlight, listToScheme(colorList));
-    const rawSvg= graphviz.dot(dot);
+    const rawSvg = graphviz.dot(dot);
     const svgElement = svgFromString(rawSvg);
     for (const overlay of overlays) {
-      const nodesToOverlay = cfg.graph.filterNodes((_node, {startOffset})=>{
-        return overlay.startOffset <= startOffset && startOffset < overlay.endOffset
+      const nodesToOverlay = cfg.graph.filterNodes((_node, { startOffset }) => {
+        return (
+          overlay.startOffset <= startOffset && startOffset < overlay.endOffset
+        );
       });
       addOverlay(overlay.text, nodesToOverlay, svgElement);
     }

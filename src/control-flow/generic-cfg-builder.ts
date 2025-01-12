@@ -162,8 +162,16 @@ export class GenericCFGBuilder {
     parent: Parser.SyntaxNode,
   ): BasicBlock {
     const blockHandler = new BlockHandler();
+    // Ignore comments
+    const codeStatements = statements.filter((syntax) => {
+      if (syntax.type !== "comment") {
+        return true;
+      }
 
-    if (statements.length === 0) {
+      return Boolean(this.options.markerPattern?.test(syntax.text));
+    });
+
+    if (codeStatements.length === 0) {
       const emptyNode = this.builder.addNode(
         "EMPTY",
         "empty block",
@@ -172,40 +180,11 @@ export class GenericCFGBuilder {
       return { entry: emptyNode, exit: emptyNode };
     }
 
-    const blocks: BasicBlock[] = [];
-    for (const statement of statements) {
-      const block = blockHandler.update(this.dispatchSingle(statement));
-      const nodeAttributes = this.builder
-        .getGraph()
-        .getNodeAttributes(block.entry);
-      // TODO: No need to call all comments marker comments, right?
-      //       Also, we are breaking the assumption that all comments processed
-      //       by the CFG builders are marker-comments, so the code needs to be
-      //       adjusted for that.
-      if (nodeAttributes.type === "MARKER_COMMENT") {
-        if (/cfg-overlay-start/.test(nodeAttributes.code)) {
-          // begin overlay
-          console.log("start overlay!");
-          console.log(
-            /.*cfg-overlay-start: (.*)/gm.exec(nodeAttributes.code)[1],
-          );
-          this.builder.startOverlay(
-            /.*cfg-overlay-start: (.*)/gm.exec(nodeAttributes.code)?.pop() ??
-              nodeAttributes.code,
-          );
-        } else if (/cfg-overlay-end/.test(nodeAttributes.code)) {
-          // end overlay
-          console.log("end overlay1");
-          this.builder.endOverlay();
-        }
-      }
-      blocks.push(block);
-    }
+    const blocks = codeStatements.map((statement) =>
+      blockHandler.update(this.dispatchSingle(statement)),
+    );
 
-    // TODO: If we have an open overlay here, we need to close it, and report
-    //       an error.
-
-    for (const [prevStatement, statement] of pairwise(statements)) {
+    for (const [prevStatement, statement] of pairwise(codeStatements)) {
       this.nodeMapper.linkOffsetToSyntax(prevStatement, statement);
     }
 
