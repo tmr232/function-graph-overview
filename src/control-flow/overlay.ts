@@ -121,6 +121,7 @@ export function svgFromString(rawSvg: string) {
 }
 export function createOverlayAttrMerger(overlayRanges:SimpleRange<OverlayRange|undefined>[], defaultFn:(from:GraphNode, into:GraphNode)=>GraphNode|null) {
   return (from:GraphNode, into:GraphNode): GraphNode| null => {
+    console.log("merge?", from, into, getValue(overlayRanges, from.startOffset), getValue(overlayRanges, into.startOffset));
     if (getValue(overlayRanges, from.startOffset) !== getValue(overlayRanges, into.startOffset)) {
       return null;
     }
@@ -147,6 +148,7 @@ export function parseOverlay(func:Parser.SyntaxNode): OverlayRange[] {
   const stack:{startOffset:number, text:string}[] = [];
   const overlays:OverlayRange[] = [];
   for (const comment of comments) {
+    console.log("comment text", comment.text);
     const text = parseOverlayStart(comment.text);
     if (text) {
       stack.push({startOffset:comment.startIndex, text});
@@ -169,7 +171,7 @@ export function parseOverlay(func:Parser.SyntaxNode): OverlayRange[] {
 
 export function createOverlayRange(overlays:OverlayRange[]):SimpleRange<OverlayRange|undefined>[] {
   const ranges = newRanges<OverlayRange|undefined>(undefined);
-  for (const overlay of overlays.toSorted((a, b)=>b.depth-a.depth)) {
+  for (const overlay of overlays.toSorted((a, b)=>a.depth-b.depth)) {
     inplaceAddRange(ranges, overlay.startOffset, overlay.endOffset, overlay);
   }
   return ranges;

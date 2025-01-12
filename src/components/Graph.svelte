@@ -78,6 +78,7 @@
     }
     const overlays = parseOverlay(functionSyntax);
     const overlayRanges = createOverlayRange(overlays);
+    console.log("RANGES", overlayRanges);
 
     const builder = newCFGBuilder(language, { flatSwitch });
 
@@ -96,7 +97,7 @@
     const svgElement = svgFromString(rawSvg);
     for (const overlay of overlays) {
       const nodesToOverlay = cfg.graph.filterNodes((_node, {startOffset})=>{
-        return overlay.startOffset <= startOffset && startOffset <= overlay.endOffset
+        return overlay.startOffset <= startOffset && startOffset < overlay.endOffset
       });
       addOverlay(overlay.text, nodesToOverlay, svgElement);
     }
