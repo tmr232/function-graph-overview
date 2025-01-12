@@ -71,8 +71,8 @@
     "oxlint-ci": "bunx oxlint --ignore-path=oxlint-ignore.txt  -D correctness -D perf -D suspicious -A no-await-in-loop",
     "prettier-format": "bunx prettier **/*.svelte --write",
     "prettier-check": "bunx prettier **/*.svelte --check",
-    "lint": "bunx biome check --fix && bun oxlint-fix  && bun prettier-format && bunx eslint --fix && bunx tsc --noEmit",
-    "ci": "bunx biome ci && bun oxlint-ci && bun prettier-check && bunx eslint && bunx tsc --noEmit",
+    "lint": "bunx biome check --fix && bun oxlint-fix  && bun prettier-format && bunx eslint --fix && bunx tsc --noEmit && bun typedoc",
+    "ci": "bunx biome ci && bun oxlint-ci && bun prettier-check && bunx eslint && bunx tsc --noEmit && bun typedoc",
     "generate-parsers": "bun run ./scripts/generate-parsers.ts",
     "typedoc": "bunx typedoc --treatWarningsAsErrors"
   },

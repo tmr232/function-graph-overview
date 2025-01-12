@@ -9,6 +9,10 @@ import {
   newRanges,
 } from "./ranges.ts";
 
+/**
+ * Represents a visual bounding box in SVG.
+ * All units should be pixels (px).
+ */
 type BoundingBox = {
   width: number;
   height: number;
@@ -16,6 +20,10 @@ type BoundingBox = {
   y: number;
 };
 
+/**
+ * Returns the bounding-box of the provided bounding-boxes.
+ * @param boxes a non-empty array of boxes.
+ */
 function mergeBoundingBoxes(boxes: BoundingBox[]): BoundingBox {
   return boxes.reduce((prev, current) => {
     const x = Math.min(prev.x, current.x);
@@ -27,6 +35,11 @@ function mergeBoundingBoxes(boxes: BoundingBox[]): BoundingBox {
   });
 }
 
+/**
+ * Returns the bounding-box of an SVG G element.
+ * Assumes units are not specified in the SVG.
+ * @param group
+ */
 function getBoundingBox(group: Container): BoundingBox {
   /*
   All the units we get here are in pixels!
@@ -45,7 +58,14 @@ function getBoundingBox(group: Container): BoundingBox {
   return boundingBox as BoundingBox;
 }
 
-export function addOverlay(text: string, nodes: string[], svg: Svg) {
+/**
+ * Render an overlay (note) onto the given SVG
+ * @param text note text
+ * @param nodes nodes to include
+ * @param svg SVG to render onto
+ * @returns the bounding box of the newly added overlay.
+ */
+function addOverlay(text: string, nodes: string[], svg: Svg) {
   const makeDeepClone = true;
   const assignNewIds = false;
   const temp = svg.clone(makeDeepClone, assignNewIds);
@@ -184,7 +204,7 @@ export class OverlayBuilder {
  * Create an SVG object from a string representing an SVG
  * @param rawSvg the SVG string
  */
-export function svgFromString(rawSvg: string): Svg {
+function svgFromString(rawSvg: string): Svg {
   const parser = new DOMParser();
   const dom = parser.parseFromString(rawSvg, "image/svg+xml");
   return SVG(dom.documentElement) as Svg;
@@ -195,7 +215,7 @@ export function svgFromString(rawSvg: string): Svg {
  * @param overlayRanges
  * @param defaultFn AttrMerger to wrap
  */
-export function createOverlayAttrMerger(
+function createOverlayAttrMerger(
   overlayRanges: SimpleRange<OverlayRange | undefined>[],
   defaultFn: (from: GraphNode, into: GraphNode) => GraphNode | null,
 ) {
@@ -229,7 +249,7 @@ type OverlayRange = {
   depth: number;
 };
 
-export function parseOverlay(func: Parser.SyntaxNode): OverlayRange[] {
+function parseOverlay(func: Parser.SyntaxNode): OverlayRange[] {
   const comments = func.descendantsOfType("comment");
   const stack: { startOffset: number; text: string }[] = [];
   const overlays: OverlayRange[] = [];
@@ -254,7 +274,7 @@ export function parseOverlay(func: Parser.SyntaxNode): OverlayRange[] {
   return overlays;
 }
 
-export function createOverlayRange(
+function createOverlayRange(
   overlays: OverlayRange[],
 ): SimpleRange<OverlayRange | undefined>[] {
   const ranges = newRanges<OverlayRange | undefined>(undefined);
