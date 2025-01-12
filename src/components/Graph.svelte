@@ -22,7 +22,13 @@
     getLightColorList,
     type ColorList,
   } from "../control-flow/colors";
-  import { renderOverlay } from "../control-flow/overlay.ts";
+  import {
+    addOverlay,
+    createOverlayRange,
+    parseOverlay,
+    renderOverlay,
+    svgFromString
+  } from "../control-flow/overlay.ts";
   import { SVG } from "@svgdotjs/svg.js";
 
   let parsers: Parsers;
@@ -71,6 +77,8 @@
       throw new Error("No function found!");
     }
 
+    // const overlays = createOverlayRange()
+
     const builder = newCFGBuilder(language, { flatSwitch });
 
     cfg = builder.buildCFG(functionSyntax);
@@ -85,16 +93,15 @@
         : undefined;
     dot = graphToDot(cfg, verbose, nodeToHighlight, listToScheme(colorList));
     const rawSvg= graphviz.dot(dot);
-    try {
-      const parser = new DOMParser();
-      const dom = parser.parseFromString(rawSvg, "image/svg+xml");
-      console.log(dom);
-      console.log(SVG(dom.documentElement));
-      console.log(SVG(rawSvg));
-    } catch (error) {
-      console.error(error);
+    const svgElement = svgFromString(rawSvg);
+    const overlays = parseOverlay(functionSyntax);
+    for (const overlay of overlays) {
+      const nodesToOverlay = cfg.graph.filterNodes((_node, {startOffset})=>{
+        return overlay.startOffset <= startOffset && startOffset <= overlay.endOffset
+      });
+      addOverlay(overlay.text, nodesToOverlay, svgElement);
     }
-    return rawSvg;
+    return svgElement.html();
   }
 
   function renderWrapper(

@@ -1,7 +1,8 @@
-import { SVG } from "@svgdotjs/svg.js";
+import { type Dom, SVG } from "@svgdotjs/svg.js";
 import { type CFG, type OverlayTag, getNodeRemapper, type GraphNode, mergeNodeAttrs } from "./cfg-defs.ts";
 import type { Language } from "./cfg.ts";
 import Parser from "web-tree-sitter";
+import { addRange, inplaceAddRange, newRanges, type SimpleRange } from "./ranges.ts";
 
 type Overlay = {
   nodes: string[];
@@ -80,6 +81,31 @@ function overlayNodes(
   overlayGroup.css({ "pointer-events": "none" });
 }
 
+export function addOverlay(text:string, nodes:string[], svg:Dom) {
+  const makeDeepClone = true;
+  const assignNewIds = false;
+  const temp = svg.clone(makeDeepClone, assignNewIds);
+  const graph = temp.findOne("#graph0");
+  const group = temp.group();
+  group.transform(graph.transform());
+  for (const nodeName of nodes) {
+    group.add(graph.findOne(`#${nodeName}`));
+  }
+
+  const overlayGroup = svg.group();
+  overlayGroup.transform(svg.findOne("#graph0").transform());
+  const padding = 20;
+  overlayGroup
+    .rect(group.width() + padding * 2, group.height() + padding * 2)
+    .move(group.x() - padding, group.y() - padding)
+    .fill("#ff00ff44");
+  overlayGroup
+    .text(text)
+    .fill("#000")
+    .move(group.x(), group.y() - padding);
+  overlayGroup.css({ "pointer-events": "none" });
+}
+
 export function renderOverlay(cfg: CFG) {
   const overlays = collectOverlays(cfg);
   const remapper = getNodeRemapper(cfg);
@@ -88,7 +114,7 @@ export function renderOverlay(cfg: CFG) {
   }
 }
 
-function svgFromString(rawSvg: string) {
+export function svgFromString(rawSvg: string) {
   const parser = new DOMParser();
   const dom = parser.parseFromString(rawSvg, "image/svg+xml");
   return SVG(dom.documentElement);
@@ -101,15 +127,48 @@ function overlayAttrMerger(from:GraphNode, into:GraphNode): GraphNode| null {
 
   return mergeNodeAttrs(from, into);
 }
+const overlayStartRegex = /\bcfg-overlay-start: (.*)/
+const overlayEndRegex = /\bcfg-overlay-end\b/
 
-export function parseOverlay(func:Parser.SyntaxNode, language:Language) {
+function parseOverlayStart(comment:string): string | undefined {
+  return overlayStartRegex.exec(comment)?.pop();
+}
+
+function isOverlayEnd(comment:string): boolean {
+  return overlayEndRegex.test(comment);
+}
+type OverlayRange = { startOffset: number, text: string, endOffset: number, depth:number };
+
+
+export function parseOverlay(func:Parser.SyntaxNode): OverlayRange[] {
   const comments = func.descendantsOfType("comment");
-  const overlayStack = [];
+  const stack:{startOffset:number, text:string}[] = [];
+  const overlays:OverlayRange[] = [];
   for (const comment of comments) {
-    if (isOverlayStart(comment)) {
-      // Create overlay
-    } else if (isOverlayEnd(comment)) {
-      // End overlay
+    const text = parseOverlayStart(comment.text);
+    if (text) {
+      stack.push({startOffset:comment.startIndex, text});
+    } else if (isOverlayEnd(comment.text)) {
+      const overlayStart = stack.pop();
+      if (!overlayStart) {
+        throw new Error("Overlay start-end mismatch")
+      }
+      const overlay = {
+        startOffset: overlayStart.startOffset,
+        text: overlayStart.text,
+        endOffset: comment.startIndex,
+        depth: stack.length,
+      };
+      overlays.push(overlay);
     }
   }
+  return overlays;
+}
+
+export function createOverlayRange(overlays:OverlayRange[]):SimpleRange<OverlayRange|undefined>[] {
+  const ranges = newRanges<OverlayRange|undefined>(undefined);
+  for (const overlay of overlays.toSorted((a, b)=>b.depth-a.depth)) {
+    inplaceAddRange(ranges, overlay.startOffset, overlay.endOffset, overlay);
+  }
+  return ranges;
 }
