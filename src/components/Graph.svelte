@@ -105,7 +105,7 @@
       });
       addOverlay(overlay.text, nodesToOverlay, svgElement);
     }
-    return svgElement.html();
+    return svgElement.svg();
   }
 
   function renderWrapper(

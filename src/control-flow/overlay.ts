@@ -77,10 +77,10 @@ export function addOverlay(text: string, nodes: string[], svg: Svg) {
   overlayGroup.css({ "pointer-events": "none" });
 }
 
-export function svgFromString(rawSvg: string) {
+export function svgFromString(rawSvg: string): Svg {
   const parser = new DOMParser();
   const dom = parser.parseFromString(rawSvg, "image/svg+xml");
-  return SVG(dom.documentElement);
+  return SVG(dom.documentElement) as Svg;
 }
 
 export function createOverlayAttrMerger(
