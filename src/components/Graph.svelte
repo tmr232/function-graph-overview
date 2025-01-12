@@ -28,6 +28,7 @@
   let dot: string;
   let cfg: CFG;
   let tree: Parser.Tree;
+  let savedSvg: string;
   export let colorList = getLightColorList();
   export let offsetToHighlight: number | undefined = undefined;
   export let code: string;
@@ -84,7 +85,8 @@
         : undefined;
     dot = graphToDot(cfg, verbose, nodeToHighlight, listToScheme(colorList));
     const rawSvg = graphviz.dot(dot);
-    return overlayBuilder.renderOnto(cfg, rawSvg);
+    savedSvg = overlayBuilder.renderOnto(cfg, rawSvg);
+    return savedSvg;
   }
 
   function renderWrapper(
@@ -103,7 +105,7 @@
   }
 
   export function getSVG() {
-    return graphviz.dot(dot);
+    return savedSvg;
   }
   export function getDOT() {
     return graphviz.dot(dot, "canon");

@@ -10,13 +10,27 @@ import {
 } from "./ranges.ts";
 
 type BoundingBox = {
-  readonly width: number;
-  readonly height: number;
-  readonly x: number;
-  readonly y: number;
+  width: number;
+  height: number;
+  x: number;
+  y: number;
 };
 
+function mergeBoundingBoxes(boxes: BoundingBox[]): BoundingBox {
+  return boxes.reduce((prev, current) => {
+    const x = Math.min(prev.x, current.x);
+    const y = Math.min(prev.y, current.y);
+    const width = Math.max(prev.x + prev.width, current.x + current.width) - x;
+    const height =
+      Math.max(prev.y + prev.height, current.y + current.height) - y;
+    return { x, y, width, height };
+  });
+}
+
 function getBoundingBox(group: Container): BoundingBox {
+  /*
+  All the units we get here are in pixels!
+   */
   const boundingBox = {
     width: group.width(),
     height: group.height(),
@@ -67,7 +81,8 @@ export function addOverlay(text: string, nodes: string[], svg: Svg) {
   overlayGroup
     .rect(boundingBox.width + padding * 2, boundingBox.height + padding * 2)
     .move(boundingBox.x - padding, boundingBox.y - padding)
-    .fill("#ff00ff44");
+    .fill("#ffed7a")
+    .stroke("#000");
   overlayGroup
     .text(text)
     .fill("#000")
@@ -80,6 +95,7 @@ export function addOverlay(text: string, nodes: string[], svg: Svg) {
 
   // This next part puts the overlay _under_ the graph.
   graph.before(overlayGroup);
+  return getBoundingBox(overlayGroup);
 }
 
 export class OverlayBuilder {
@@ -97,21 +113,48 @@ export class OverlayBuilder {
 
   public renderOnto(cfg: CFG, rawSvg: string): string {
     const svg = svgFromString(rawSvg);
-    this.moveBackgroundBack(svg);
+    const originalHeight = svg.viewbox().height;
 
+    const boundingBoxes: BoundingBox[] = [];
     for (const overlay of this.overlays) {
       const nodesToOverlay = cfg.graph.filterNodes((_node, { startOffset }) => {
         return (
           overlay.startOffset <= startOffset && startOffset < overlay.endOffset
         );
       });
-      addOverlay(overlay.text, nodesToOverlay, svg);
+      boundingBoxes.push(addOverlay(overlay.text, nodesToOverlay, svg));
     }
 
+    if (boundingBoxes.length > 0) {
+      const merged = mergeBoundingBoxes(boundingBoxes);
+      // Quirks of the generation from DOT.
+      // This compensates for the weird transform on the graph group.
+      merged.y += originalHeight - 4;
+
+      const viewbox = svg.viewbox();
+      const adjusted = mergeBoundingBoxes([merged, viewbox]);
+      Object.assign(viewbox, adjusted);
+
+      // Allow for a bit more space at the bottom
+      viewbox.height += 10;
+
+      // Apply the new viewbox
+      svg.viewbox(viewbox);
+
+      /*
+      DOT specifies the SVG width and height in pt, but everything else without
+      units, resulting in px.
+      As a result, we need to add the `pt` when we finish manipulating the
+      viewport to keep rendering to the page at the same size. 
+      */
+      svg.width(`${viewbox.width}pt`);
+      svg.height(`${viewbox.height}pt`);
+    }
+    this.updateBackground(svg);
     return svg.svg();
   }
 
-  private moveBackgroundBack(svg: Svg) {
+  private updateBackground(svg: Svg) {
     // First, we move the background polygon out of the graph group and to the back
     const graph = svg.findOne("#graph0") as Container | null;
     if (!graph) {
@@ -123,7 +166,16 @@ export class OverlayBuilder {
     }
     const backgroundPolygon = graph.children()[0];
     if (backgroundPolygon?.type === "polygon") {
-      graph.before(backgroundPolygon.x(0).y(0));
+      const viewbox = svg.viewbox();
+      svg
+        .first()
+        .before(
+          backgroundPolygon
+            .x(viewbox.x)
+            .y(viewbox.y)
+            .width(viewbox.width)
+            .height(viewbox.height),
+        );
     }
   }
 }
@@ -169,6 +221,7 @@ function parseOverlayStart(comment: string): string | undefined {
 function isOverlayEnd(comment: string): boolean {
   return overlayEndRegex.test(comment);
 }
+
 type OverlayRange = {
   startOffset: number;
   text: string;
