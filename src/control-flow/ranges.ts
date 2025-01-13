@@ -115,4 +115,10 @@ export class Lookup<T> {
   public iter() {
     return this[Symbol.iterator]();
   }
+
+  public clone(): Lookup<T> {
+    const lookup = new Lookup(this.get(0));
+    lookup.ranges = [...this.ranges];
+    return lookup;
+  }
 }

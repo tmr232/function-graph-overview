@@ -2,7 +2,6 @@ import type { MultiDirectedGraph } from "graphology";
 import { subgraph } from "graphology-operators";
 import { bfsFromNode } from "graphology-traversal";
 import type { CFG, GraphNode } from "./cfg-defs";
-import { evolve } from "./evolve";
 
 export function distanceFromEntry(cfg: CFG): Map<string, number> {
   const { graph, entry } = cfg;
@@ -106,7 +105,7 @@ export function simplifyCFG(cfg: CFG, mergeAttrs?: AttrMerger): CFG {
   } catch (error) {
     console.log(error);
   }
-  return evolve(cfg, { graph, entry });
+  return { entry: entry, graph: graph, offsetToNode: cfg.offsetToNode.clone() };
 }
 
 /**
@@ -123,7 +122,11 @@ export function trimFor(cfg: CFG): CFG {
     reachable.push(node);
   });
 
-  return evolve(cfg, { graph: subgraph(graph, reachable) });
+  return {
+    entry: cfg.entry,
+    graph: subgraph(graph, reachable),
+    offsetToNode: cfg.offsetToNode.clone(),
+  };
 }
 
 export function detectBacklinks(

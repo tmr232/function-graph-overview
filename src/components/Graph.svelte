@@ -21,6 +21,7 @@
     type ColorList,
   } from "../control-flow/colors";
   import { OverlayBuilder } from "../control-flow/overlay.ts";
+  import { Lookup } from "../control-flow/ranges.ts";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
@@ -75,17 +76,21 @@
     const builder = newCFGBuilder(language, { flatSwitch });
 
     cfg = builder.buildCFG(functionSyntax);
-
+    console.log("1Is correct type?", cfg.offsetToNode instanceof Lookup);
     if (!cfg) return "";
     if (trim) cfg = trimFor(cfg);
+    console.log("2Is correct type?", cfg.offsetToNode instanceof Lookup);
     if (simplify) {
       if (showRegions) {
         cfg = simplifyCFG(cfg, overlayBuilder.getAttrMerger(mergeNodeAttrs));
+        console.log("3Is correct type?", cfg.offsetToNode instanceof Lookup);
       } else {
         cfg = simplifyCFG(cfg, mergeNodeAttrs);
+        console.log("4Is correct type?", cfg.offsetToNode instanceof Lookup);
       }
     }
     cfg = remapNodeTargets(cfg);
+    console.log("5Is correct type?", cfg.offsetToNode instanceof Lookup);
     const nodeToHighlight =
       highlightOffset && highlight
         ? cfg.offsetToNode.get(highlightOffset)
