@@ -1,6 +1,6 @@
 import type { MultiDirectedGraph } from "graphology";
 import type Parser from "web-tree-sitter";
-import { Lookup } from "./ranges";
+import type { Lookup } from "./ranges";
 
 export type NodeType =
   | "YIELD"
@@ -345,8 +345,6 @@ export function getNodeRemapper(cfg: CFG): (node: string) => string {
  */
 export function remapNodeTargets(cfg: CFG): CFG {
   const remapper = getNodeRemapper(cfg);
-  console.log(cfg.offsetToNode instanceof Lookup);
-  console.log(cfg.offsetToNode);
   const offsetToNode = cfg.offsetToNode.mapValues(remapper);
 
   // Copying the graph is needed.
