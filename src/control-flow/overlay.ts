@@ -4,6 +4,9 @@ import type { CFG, GraphNode } from "./cfg-defs.ts";
 import type { AttrMerger } from "./graph-ops.ts";
 import { Lookup } from "./ranges.ts";
 
+const OVERLAY_START_REGEX = /\bcfg-region-start: (.*)/;
+const OVERLAY_END_REGEX = /\bcfg-region-end\b/;
+
 /**
  * Represents a visual bounding box in SVG.
  * All units should be pixels (px).
@@ -226,15 +229,12 @@ function createOverlayAttrMerger(
   };
 }
 
-const overlayStartRegex = /\bcfg-overlay-start: (.*)/;
-const overlayEndRegex = /\bcfg-overlay-end\b/;
-
 function parseOverlayStart(comment: string): string | undefined {
-  return overlayStartRegex.exec(comment)?.pop();
+  return OVERLAY_START_REGEX.exec(comment)?.pop();
 }
 
 function isOverlayEnd(comment: string): boolean {
-  return overlayEndRegex.test(comment);
+  return OVERLAY_END_REGEX.test(comment);
 }
 
 type OverlayRange = {
