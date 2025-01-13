@@ -101,6 +101,7 @@
   let colorPicker = false;
   let verbose = urlParams.has("verbose");
   let showSegmentation = urlParams.has("segmentation");
+  let showRegions = urlParams.has("showRegions");
   let debugMode = urlParams.has("debug");
   let fontSize = "1em";
   const range = (start: number, end: number) =>
@@ -277,6 +278,9 @@
         <input type="checkbox" id="colorPicker" bind:checked={colorPicker} />
         <label for="colorPicker">Color Picker</label>
 
+        <input type="checkbox" id="highlight" bind:checked={highlight} />
+        <label for="highlight">Highlight</label>
+
         {#if debugMode}
           <input type="checkbox" id="verbose" bind:checked={verbose} />
           <label for="verbose">Verbose</label>
@@ -288,8 +292,8 @@
           />
           <label for="showSegmentation">Show Segmnetation</label>
 
-          <input type="checkbox" id="highlight" bind:checked={highlight} />
-          <label for="highlight">Highlight</label>
+          <input type="checkbox" id="showRegions" bind:checked={showRegions} />
+          <label for="showRegions">Show Regions</label>
         {/if}
       </div>
       <div class="download">
@@ -307,6 +311,7 @@
       {flatSwitch}
       {verbose}
       {highlight}
+      {showRegions}
       bind:this={graph}
       on:node-clicked={onNodeClicked}
     />

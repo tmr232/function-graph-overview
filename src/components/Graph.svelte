@@ -38,6 +38,7 @@
   export let trim: boolean = true;
   export let flatSwitch: boolean = false;
   export let highlight: boolean = true;
+  export let showRegions: boolean = false;
 
   const dispatch = createEventDispatcher();
 
@@ -53,6 +54,7 @@
     readonly trim: boolean;
     readonly flatSwitch: boolean;
     readonly highlight: boolean;
+    readonly showRegions: boolean;
   }
 
   function renderCode(
@@ -62,7 +64,8 @@
     options: RenderOptions,
     colorList: ColorList,
   ) {
-    const { trim, simplify, verbose, flatSwitch, highlight } = options;
+    const { trim, simplify, verbose, flatSwitch, highlight, showRegions } =
+      options;
     tree = parsers[language].parse(code);
     const functionSyntax = getFirstFunction(tree, language);
     if (!functionSyntax) {
@@ -76,8 +79,13 @@
 
     if (!cfg) return "";
     if (trim) cfg = trimFor(cfg);
-    if (simplify)
-      cfg = simplifyCFG(cfg, overlayBuilder.getAttrMerger(mergeNodeAttrs));
+    if (simplify) {
+      if (showRegions) {
+        cfg = simplifyCFG(cfg, overlayBuilder.getAttrMerger(mergeNodeAttrs));
+      } else {
+        cfg = simplifyCFG(cfg, mergeNodeAttrs);
+      }
+    }
     cfg = remapNodeTargets(cfg);
     const nodeToHighlight =
       highlightOffset && highlight
@@ -85,7 +93,11 @@
         : undefined;
     dot = graphToDot(cfg, verbose, nodeToHighlight, listToScheme(colorList));
     const rawSvg = graphviz.dot(dot);
-    savedSvg = overlayBuilder.renderOnto(cfg, rawSvg);
+    if (showRegions) {
+      savedSvg = overlayBuilder.renderOnto(cfg, rawSvg);
+    } else {
+      savedSvg = rawSvg;
+    }
     return savedSvg;
   }
 
@@ -234,6 +246,7 @@
           trim,
           flatSwitch,
           highlight,
+          showRegions,
         },
         colorList,
       )}
