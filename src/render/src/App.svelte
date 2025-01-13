@@ -25,6 +25,7 @@
   import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
   import { onMount } from "svelte";
   import { MultiDirectedGraph } from "graphology";
+  import { Lookup } from "../../control-flow/ranges";
 
   let codeUrl: string | undefined;
 
@@ -194,7 +195,7 @@
     if (!entry) {
       throw new Error("No entry found");
     }
-    return { graph, entry, offsetToNode: [] };
+    return { graph, entry, offsetToNode: new Lookup("Not found") };
   }
 
   async function createCFG(params: Params): Promise<CFG> {

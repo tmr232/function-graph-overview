@@ -14,7 +14,6 @@
     initialize as initializeUtils,
     type Parsers,
   } from "./utils";
-  import { getValue } from "../control-flow/ranges";
   import { createEventDispatcher } from "svelte";
   import {
     listToScheme,
@@ -89,7 +88,7 @@
     cfg = remapNodeTargets(cfg);
     const nodeToHighlight =
       highlightOffset && highlight
-        ? getValue(cfg.offsetToNode, highlightOffset)
+        ? cfg.offsetToNode.get(highlightOffset)
         : undefined;
     dot = graphToDot(cfg, verbose, nodeToHighlight, listToScheme(colorList));
     const rawSvg = graphviz.dot(dot);

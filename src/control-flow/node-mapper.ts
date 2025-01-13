@@ -1,5 +1,5 @@
 import type Parser from "web-tree-sitter";
-import { type SimpleRange, inplaceAddRange, newRanges } from "./ranges";
+import { Lookup } from "./ranges";
 /**
  * This module provides the facilities for matching code offsets to CFG nodes.
  *
@@ -79,24 +79,21 @@ export class NodeMapper {
 
   private buildRanges(
     functionSyntax: Parser.SyntaxNode,
-  ): SimpleRange<Parser.SyntaxNode>[] {
-    const ranges = newRanges(functionSyntax);
+  ): Lookup<Parser.SyntaxNode> {
+    const lookup = new Lookup(functionSyntax);
     for (const { start, stop, value } of this.ranges.toSorted(
       (b, a) => a.stop - a.start - (b.stop - b.start),
     )) {
-      inplaceAddRange(ranges, start, stop, value);
+      lookup.add(start, stop, value);
     }
-    return ranges;
+    return lookup;
   }
 
-  public getIndexMapping(
-    functionSyntax: Parser.SyntaxNode,
-  ): SimpleRange<string>[] {
+  public getIndexMapping(functionSyntax: Parser.SyntaxNode): Lookup<string> {
     const syntaxToNode = this.getMapping();
     const ranges = this.buildRanges(functionSyntax);
-    return ranges.map(({ start, value }) => ({
-      start,
-      value: syntaxToNode.get(value.id) ?? "Not found",
-    }));
+    return ranges.mapValues(
+      (value) => syntaxToNode.get(value.id) ?? "Not found",
+    );
   }
 }

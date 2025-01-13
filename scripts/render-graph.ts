@@ -6,6 +6,7 @@ import type {
   GraphEdge,
   GraphNode,
 } from "../src/control-flow/cfg-defs.ts";
+import { Lookup } from "../src/control-flow/ranges.ts";
 import { graphToDot } from "../src/control-flow/render.ts";
 import { getColorScheme } from "./render-function.ts";
 
@@ -45,7 +46,7 @@ async function main() {
   if (!entry) {
     throw new Error("No entry found");
   }
-  const cfg: CFG = { graph, entry, offsetToNode: [] };
+  const cfg: CFG = { graph, entry, offsetToNode: new Lookup("Not found") };
   const colorScheme = await getColorScheme(values.colors);
 
   const graphviz = await Graphviz.load();

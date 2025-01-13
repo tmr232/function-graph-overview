@@ -1,4 +1,4 @@
-export type SimpleRange<T> = { start: number; value: T };
+type SimpleRange<T> = { start: number; value: T };
 
 function preAddRange<T>(
   ranges: readonly SimpleRange<T>[],
@@ -34,21 +34,11 @@ function preAddRange<T>(
   return { at: spliceAt + 1, deleteCount: 0, toSplice };
 }
 
-export function newRanges<T>(value: T): SimpleRange<T>[] {
+function newRanges<T>(value: T): SimpleRange<T>[] {
   return [{ start: 0, value }];
 }
 
-export function addRange<T>(
-  ranges: SimpleRange<T>[],
-  start: number,
-  stop: number,
-  value: T,
-): SimpleRange<T>[] {
-  const { at, toSplice, deleteCount } = preAddRange(ranges, start, stop, value);
-  return ranges.toSpliced(at, deleteCount, ...toSplice);
-}
-
-export function inplaceAddRange<T>(
+function inplaceAddRange<T>(
   ranges: SimpleRange<T>[],
   start: number,
   stop: number,
@@ -63,7 +53,7 @@ export function inplaceAddRange<T>(
  * @param ranges The ranges to query
  * @param pos The position to query. Must be >=0.
  */
-export function getValue<T>(ranges: SimpleRange<T>[], pos: number): T {
+function getValue<T>(ranges: SimpleRange<T>[], pos: number): T {
   const lastMatch = ranges.findLast((range) => pos >= range.start);
   if (!lastMatch) {
     // This should never happen. But if it does - it's better to get a
@@ -73,9 +63,9 @@ export function getValue<T>(ranges: SimpleRange<T>[], pos: number): T {
   return lastMatch.value;
 }
 
-export function* iterRanges<T>(
+function* iterRanges<T>(
   ranges: SimpleRange<T>[],
-): IterableIterator<{ start: number; stop?: number; value: T }> {
+): Generator<{ start: number; stop?: number; value: T }> {
   let i = 0;
   for (; i < ranges.length - 1; ++i) {
     yield {
@@ -94,7 +84,7 @@ export function* iterRanges<T>(
 }
 
 export class Lookup<T> {
-  private readonly ranges: SimpleRange<T>[];
+  private ranges: SimpleRange<T>[];
   constructor(value: T) {
     this.ranges = newRanges(value);
   }
@@ -103,11 +93,26 @@ export class Lookup<T> {
     inplaceAddRange(this.ranges, start, stop, value);
   }
 
-  public get(position: number): T | undefined {
+  public get(position: number): T {
     return getValue(this.ranges, position);
   }
 
+  public mapValues<U>(fn: (value: T) => U): Lookup<U> {
+    const lookup = new Lookup(fn(this.get(0)));
+    lookup.ranges = Array.from(
+      this[Symbol.iterator]().map(({ start, value }) => ({
+        start,
+        value: fn(value),
+      })),
+    );
+    return lookup;
+  }
+
   [Symbol.iterator]() {
-    return iterRanges(this.ranges)[Symbol.iterator];
+    return iterRanges(this.ranges);
+  }
+
+  public iter() {
+    return this[Symbol.iterator]();
   }
 }

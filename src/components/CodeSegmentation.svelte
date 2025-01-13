@@ -13,7 +13,6 @@
     initialize as initializeUtils,
     type Parsers,
   } from "./utils";
-  import { iterRanges } from "../control-flow/ranges";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
@@ -36,7 +35,7 @@
   type NodeColors = Map<string, string>;
 
   function createNodeColors(cfg: CFG): Map<string, string> {
-    const nodes = new Set(cfg.offsetToNode.map(({ value }) => value));
+    const nodes = new Set(cfg.offsetToNode.iter().map(({ value }) => value));
     const nodeColors = new Map(
       [...nodes.keys()].map((node, i, { length }) => [
         node,
@@ -55,7 +54,7 @@
     let result = "";
     const funcStart = functionSyntax.startIndex;
     const funcEnd = functionSyntax.endIndex;
-    for (const { start, stop, value: node } of iterRanges(cfg.offsetToNode)) {
+    for (const { start, stop, value: node } of cfg.offsetToNode) {
       if ((stop ?? 0) < funcStart || start > funcEnd) {
         continue;
       }

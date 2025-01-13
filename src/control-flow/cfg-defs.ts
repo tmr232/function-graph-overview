@@ -1,7 +1,7 @@
 import type { MultiDirectedGraph } from "graphology";
 import type Parser from "web-tree-sitter";
 import { evolve } from "./evolve";
-import type { SimpleRange } from "./ranges";
+import type { Lookup } from "./ranges";
 
 export type NodeType =
   | "YIELD"
@@ -171,7 +171,7 @@ export interface CFG {
   /**
    * A mapping between source-code offsets and their matching CFG nodes
    */
-  offsetToNode: SimpleRange<string>[];
+  offsetToNode: Lookup<string>;
 }
 
 /**
@@ -346,11 +346,7 @@ export function getNodeRemapper(cfg: CFG): (node: string) => string {
  */
 export function remapNodeTargets(cfg: CFG): CFG {
   const remapper = getNodeRemapper(cfg);
-
-  const offsetToNode = cfg.offsetToNode.map(({ start, value: node }) => ({
-    start,
-    value: remapper(node),
-  }));
+  const offsetToNode = cfg.offsetToNode.mapValues(remapper);
 
   // Copying the graph is needed.
   // Seems that some of the graph properties don't survive the structured clone.
