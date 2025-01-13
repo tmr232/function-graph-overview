@@ -67,7 +67,7 @@ export function getValue<T>(
 
 export function* iterRanges<T>(
   ranges: SimpleRange<T>[],
-): Generator<{ start: number; stop?: number; value: T }> {
+): IterableIterator<{ start: number; stop?: number; value: T }> {
   let i = 0;
   for (; i < ranges.length - 1; ++i) {
     yield {
@@ -82,5 +82,24 @@ export function* iterRanges<T>(
   if (i < ranges.length) {
     // @ts-expect-error: We know ranges[i] exists.
     yield { start: ranges[i].start, value: ranges[i].value };
+  }
+}
+
+export class Range<T> {
+  private readonly ranges: SimpleRange<T>[];
+  constructor(value: T) {
+    this.ranges = newRanges(value);
+  }
+
+  public add(start: number, stop: number, value: T): void {
+    inplaceAddRange(this.ranges, start, stop, value);
+  }
+
+  public get(position: number): T | undefined {
+    return getValue(this.ranges, position);
+  }
+
+  [Symbol.iterator]() {
+    return iterRanges(this.ranges)[Symbol.iterator];
   }
 }
