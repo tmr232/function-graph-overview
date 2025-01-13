@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Added
+
+- Region comment note overlay thingies in the demo, hidden in debug mode or under the `showRegions` parameter.
+  Once enabled, use `cfg-overlay-start: My Message` and `cfg-overlay-end` comments to delimit regions and show
+  them in the graph.
+
 ### Fixed
 
 - `finally` blocks are now supported in TypeScript. 
