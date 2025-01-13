@@ -14,7 +14,6 @@
   import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
   import { initialize as initializeUtils, type Parsers } from "./utils";
-  import { getValue } from "../control-flow/ranges";
   import { createEventDispatcher } from "svelte";
   import {
     listToScheme,
@@ -93,7 +92,7 @@
     if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
     cfg = remapNodeTargets(cfg);
     const nodeToHighlight = highlight
-      ? getValue(cfg.offsetToNode, cursorOffset)
+      ? cfg.offsetToNode.get(cursorOffset)
       : undefined;
     dot = graphToDot(cfg, verbose, nodeToHighlight, listToScheme(colorList));
 

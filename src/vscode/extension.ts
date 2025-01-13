@@ -21,7 +21,6 @@ import {
   listToScheme,
 } from "../control-flow/colors";
 import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
-import { getValue } from "../control-flow/ranges";
 import { graphToDot } from "../control-flow/render";
 import { OverviewViewProvider } from "./overview-view";
 
@@ -399,7 +398,7 @@ export async function activate(context: vscode.ExtensionContext) {
         // Only highlight if there's more than one node to the graph.
         const shouldHighlight = highlightCurrentNode && cfg.graph.order > 1;
         const nodeToHighlight = shouldHighlight
-          ? getValue(cfg.offsetToNode, offset)
+          ? cfg.offsetToNode.get(offset)
           : undefined;
         const dot = graphToDot(cfg, false, nodeToHighlight, colorScheme);
         const svg = graphviz.dot(dot);

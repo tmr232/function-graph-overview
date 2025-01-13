@@ -14,7 +14,6 @@
     initialize as initializeUtils,
     type Parsers,
   } from "./utils";
-  import { getValue } from "../control-flow/ranges";
   import { createEventDispatcher } from "svelte";
   import {
     listToScheme,
@@ -22,6 +21,7 @@
     type ColorList,
   } from "../control-flow/colors";
   import { OverlayBuilder } from "../control-flow/overlay.ts";
+  import { Lookup } from "../control-flow/ranges.ts";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
@@ -76,7 +76,6 @@
     const builder = newCFGBuilder(language, { flatSwitch });
 
     cfg = builder.buildCFG(functionSyntax);
-
     if (!cfg) return "";
     if (trim) cfg = trimFor(cfg);
     if (simplify) {
@@ -89,7 +88,7 @@
     cfg = remapNodeTargets(cfg);
     const nodeToHighlight =
       highlightOffset && highlight
-        ? getValue(cfg.offsetToNode, highlightOffset)
+        ? cfg.offsetToNode.get(highlightOffset)
         : undefined;
     dot = graphToDot(cfg, verbose, nodeToHighlight, listToScheme(colorList));
     const rawSvg = graphviz.dot(dot);
