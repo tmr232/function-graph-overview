@@ -4,8 +4,8 @@ import type { CFG, GraphNode } from "./cfg-defs.ts";
 import type { AttrMerger } from "./graph-ops.ts";
 import { Lookup } from "./ranges.ts";
 
-const OVERLAY_START_REGEX = /\bcfg-region-start: (.*)/;
-const OVERLAY_END_REGEX = /\bcfg-region-end\b/;
+const OVERLAY_START_REGEX = /\bcfg-overlay-start: (.*)/;
+const OVERLAY_END_REGEX = /\bcfg-overlay-end\b/;
 
 /**
  * Represents a visual bounding box in SVG.
