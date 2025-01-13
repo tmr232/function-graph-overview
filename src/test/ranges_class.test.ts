@@ -1,8 +1,8 @@
 import { expect, test } from "bun:test";
-import { Range } from "../control-flow/ranges";
+import { Lookup } from "../control-flow/ranges";
 
 test("Basic Range Test", () => {
-  const range = new Range("A");
+  const range = new Lookup("A");
 
   range.add(10, 20, "B");
   range.add(30, 40, "C");
@@ -15,7 +15,7 @@ test("Basic Range Test", () => {
 });
 
 test("Add to 0", () => {
-  const range = new Range("A");
+  const range = new Lookup("A");
   range.add(0, 20, "B");
 
   expect(range.get(0)).toBe("B");
@@ -23,7 +23,7 @@ test("Add to 0", () => {
 });
 
 test("Add to same start", () => {
-  const range = new Range("A");
+  const range = new Lookup("A");
 
   range.add(10, 60, "B");
   range.add(10, 40, "C");
@@ -35,7 +35,7 @@ test("Add to same start", () => {
 });
 
 test("Invalid range addition", () => {
-  const range = new Range("A");
+  const range = new Lookup("A");
 
   range.add(50, 60, "B");
   expect(() => {

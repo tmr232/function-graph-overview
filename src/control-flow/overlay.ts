@@ -2,12 +2,7 @@ import { type Container, type Element, SVG, type Svg } from "@svgdotjs/svg.js";
 import type Parser from "web-tree-sitter";
 import type { CFG, GraphNode } from "./cfg-defs.ts";
 import type { AttrMerger } from "./graph-ops.ts";
-import {
-  type SimpleRange,
-  getValue,
-  inplaceAddRange,
-  newRanges,
-} from "./ranges.ts";
+import { Lookup } from "./ranges.ts";
 
 /**
  * Represents a visual bounding box in SVG.
@@ -120,15 +115,15 @@ function addOverlay(text: string, nodes: string[], svg: Svg) {
 
 export class OverlayBuilder {
   private readonly overlays: OverlayRange[];
-  private readonly overlayRanges: SimpleRange<OverlayRange | undefined>[];
+  private readonly overlayLookup: Lookup<OverlayRange | undefined>;
 
   constructor(functionSyntax: Parser.SyntaxNode) {
     this.overlays = parseOverlay(functionSyntax);
-    this.overlayRanges = createOverlayRange(this.overlays);
+    this.overlayLookup = createOverlayRange(this.overlays);
   }
 
   public getAttrMerger(defaultFn: AttrMerger) {
-    return createOverlayAttrMerger(this.overlayRanges, defaultFn);
+    return createOverlayAttrMerger(this.overlayLookup, defaultFn);
   }
 
   public renderOnto(cfg: CFG, rawSvg: string): string {
@@ -212,17 +207,17 @@ function svgFromString(rawSvg: string): Svg {
 
 /**
  * Creates an `AttrMerger` that doesn't merge across overlay boundary.
- * @param overlayRanges
+ * @param overlayLookup
  * @param defaultFn AttrMerger to wrap
  */
 function createOverlayAttrMerger(
-  overlayRanges: SimpleRange<OverlayRange | undefined>[],
+  overlayLookup: Lookup<OverlayRange | undefined>,
   defaultFn: (from: GraphNode, into: GraphNode) => GraphNode | null,
 ) {
   return (from: GraphNode, into: GraphNode): GraphNode | null => {
     if (
-      getValue(overlayRanges, from.startOffset) !==
-      getValue(overlayRanges, into.startOffset)
+      overlayLookup.get(from.startOffset) !==
+      overlayLookup.get(into.startOffset)
     ) {
       return null;
     }
@@ -276,10 +271,10 @@ function parseOverlay(func: Parser.SyntaxNode): OverlayRange[] {
 
 function createOverlayRange(
   overlays: OverlayRange[],
-): SimpleRange<OverlayRange | undefined>[] {
-  const ranges = newRanges<OverlayRange | undefined>(undefined);
+): Lookup<OverlayRange | undefined> {
+  const lookup = new Lookup<OverlayRange | undefined>(undefined);
   for (const overlay of overlays.toSorted((a, b) => a.depth - b.depth)) {
-    inplaceAddRange(ranges, overlay.startOffset, overlay.endOffset, overlay);
+    lookup.add(overlay.startOffset, overlay.endOffset, overlay);
   }
-  return ranges;
+  return lookup;
 }

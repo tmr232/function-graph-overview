@@ -85,7 +85,7 @@ export function* iterRanges<T>(
   }
 }
 
-export class Range<T> {
+export class Lookup<T> {
   private readonly ranges: SimpleRange<T>[];
   constructor(value: T) {
     this.ranges = newRanges(value);
