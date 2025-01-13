@@ -1,6 +1,5 @@
 <script lang="ts">
   import Parser from "web-tree-sitter";
-  import ColorPicker from "svelte-awesome-color-picker";
   import { newCFGBuilder, type Language } from "../control-flow/cfg";
   import {
     mergeNodeAttrs,
@@ -22,12 +21,14 @@
     getLightColorList,
     type ColorList,
   } from "../control-flow/colors";
+  import { OverlayBuilder } from "../control-flow/overlay.ts";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
   let dot: string;
   let cfg: CFG;
   let tree: Parser.Tree;
+  let savedSvg: string;
   export let colorList = getLightColorList();
   export let offsetToHighlight: number | undefined = undefined;
   export let code: string;
@@ -37,6 +38,7 @@
   export let trim: boolean = true;
   export let flatSwitch: boolean = false;
   export let highlight: boolean = true;
+  export let showRegions: boolean = false;
 
   const dispatch = createEventDispatcher();
 
@@ -52,6 +54,7 @@
     readonly trim: boolean;
     readonly flatSwitch: boolean;
     readonly highlight: boolean;
+    readonly showRegions: boolean;
   }
 
   function renderCode(
@@ -61,12 +64,14 @@
     options: RenderOptions,
     colorList: ColorList,
   ) {
-    const { trim, simplify, verbose, flatSwitch, highlight } = options;
+    const { trim, simplify, verbose, flatSwitch, highlight, showRegions } =
+      options;
     tree = parsers[language].parse(code);
     const functionSyntax = getFirstFunction(tree, language);
     if (!functionSyntax) {
       throw new Error("No function found!");
     }
+    const overlayBuilder = new OverlayBuilder(functionSyntax);
 
     const builder = newCFGBuilder(language, { flatSwitch });
 
@@ -74,15 +79,26 @@
 
     if (!cfg) return "";
     if (trim) cfg = trimFor(cfg);
-    if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
+    if (simplify) {
+      if (showRegions) {
+        cfg = simplifyCFG(cfg, overlayBuilder.getAttrMerger(mergeNodeAttrs));
+      } else {
+        cfg = simplifyCFG(cfg, mergeNodeAttrs);
+      }
+    }
     cfg = remapNodeTargets(cfg);
     const nodeToHighlight =
       highlightOffset && highlight
         ? getValue(cfg.offsetToNode, highlightOffset)
         : undefined;
     dot = graphToDot(cfg, verbose, nodeToHighlight, listToScheme(colorList));
-
-    return graphviz.dot(dot);
+    const rawSvg = graphviz.dot(dot);
+    if (showRegions) {
+      savedSvg = overlayBuilder.renderOnto(cfg, rawSvg);
+    } else {
+      savedSvg = rawSvg;
+    }
+    return savedSvg;
   }
 
   function renderWrapper(
@@ -101,7 +117,7 @@
   }
 
   export function getSVG() {
-    return graphviz.dot(dot);
+    return savedSvg;
   }
   export function getDOT() {
     return graphviz.dot(dot, "canon");
@@ -230,6 +246,7 @@
           trim,
           flatSwitch,
           highlight,
+          showRegions,
         },
         colorList,
       )}

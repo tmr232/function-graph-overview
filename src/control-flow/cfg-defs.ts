@@ -45,19 +45,37 @@ export type ClusterType =
   | "try-complex";
 export type ClusterId = number;
 export type Cluster = {
+  /** A unique identifier for the cluster. */
   id: ClusterId;
   type: ClusterType;
+  /** Clusters can be nested. */
   parent?: Cluster;
+  /** How deep are we in the hierarchy?
+   * Used for sorting clusters when rendering.
+   */
   depth: number;
 };
 
 export interface GraphNode {
+  /** What type of syntax node are we representing here? */
   type: NodeType;
+  /** The actual source-code text for the node.
+   * Useful for debugging, but not much else.
+   */
   code: string;
+  /** The number of lines-of-code the node represents.
+   * Used to determine the height of the node when rendering.
+   */
   lines: number;
+  /** Node markers for reachability testing */
   markers: string[];
+  /** The cluster the node resides in, if any. */
   cluster?: Cluster;
+  /** All the node IDs represented by this node after simplification. */
   targets: string[];
+  /** The source-code offset the syntax represented by the node starts at.
+   * This is used for mapping between the graph and the code for navigation.
+   */
   startOffset: number;
 }
 
@@ -312,20 +330,26 @@ export interface CFGBuilder {
   buildCFG(functionSyntax: Parser.SyntaxNode): CFG;
 }
 
-/**
- * Nodes are changes during simplification, and we need to remap them to match.
- * @param cfg
- */
-export function remapNodeTargets(cfg: CFG): CFG {
+export function getNodeRemapper(cfg: CFG): (node: string) => string {
   const remap = new Map<string, string>();
   cfg.graph.forEachNode((node, { targets }) => {
     for (const target of targets) {
       remap.set(target, node);
     }
   });
+  return (node) => remap.get(node) ?? node;
+}
+
+/**
+ * Nodes are changes during simplification, and we need to remap them to match.
+ * @param cfg
+ */
+export function remapNodeTargets(cfg: CFG): CFG {
+  const remapper = getNodeRemapper(cfg);
+
   const offsetToNode = cfg.offsetToNode.map(({ start, value: node }) => ({
     start,
-    value: remap.get(node) ?? node,
+    value: remapper(node),
   }));
 
   // Copying the graph is needed.
