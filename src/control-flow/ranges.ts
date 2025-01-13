@@ -58,11 +58,19 @@ export function inplaceAddRange<T>(
   ranges.splice(at, deleteCount, ...toSplice);
 }
 
-export function getValue<T>(
-  ranges: SimpleRange<T>[],
-  pos: number,
-): T | undefined {
-  return ranges.findLast((range) => pos >= range.start)?.value;
+/**
+ * Get the value at the given position
+ * @param ranges The ranges to query
+ * @param pos The position to query. Must be >=0.
+ */
+export function getValue<T>(ranges: SimpleRange<T>[], pos: number): T {
+  const lastMatch = ranges.findLast((range) => pos >= range.start);
+  if (!lastMatch) {
+    // This should never happen. But if it does - it's better to get a
+    // well-defined error.
+    throw new Error(`Failed to find value at given position ${pos}`);
+  }
+  return lastMatch.value;
 }
 
 export function* iterRanges<T>(
