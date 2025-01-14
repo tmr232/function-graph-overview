@@ -116,7 +116,7 @@ export class OverviewViewProvider implements vscode.WebviewViewProvider {
         <head>
           <meta charset="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <meta http-equiv="Content-Security-Policy" content="default-src 'none';connect-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; script-src ${webview.cspSource} 'wasm-unsafe-eval';">
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none';connect-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; script-src ${webview.cspSource} 'wasm-unsafe-eval' 'nonce-${nonce}';">
           <link rel="stylesheet" type="text/css" nonce="${nonce}" href="${stylesUri}">
           <title>Hello World</title>
         </head>
