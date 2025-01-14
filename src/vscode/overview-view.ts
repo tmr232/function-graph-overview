@@ -40,7 +40,9 @@ export class OverviewViewProvider implements vscode.WebviewViewProvider {
       localResourceRoots: [this._extensionUri],
     };
 
-    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+    console.log("webview options", webviewView.webview.options);
+
+    webviewView.webview.html = this._getWebviewContent(webviewView.webview);
     webviewView.webview.onDidReceiveMessage((message) => {
       switch (message.event) {
         case "node-clicked":
@@ -56,6 +58,8 @@ export class OverviewViewProvider implements vscode.WebviewViewProvider {
   private getWebviewUri(webview: vscode.Webview, filename: string): vscode.Uri {
     return webview.asWebviewUri(this.getUri(filename));
   }
+
+
 
   private _getHtmlForWebview(webview: vscode.Webview): string {
     // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
@@ -94,6 +98,34 @@ export class OverviewViewProvider implements vscode.WebviewViewProvider {
     }
 
     return html;
+  }
+
+  private _getWebviewContent(webview: vscode.Webview) {
+    // The CSS file from the React build output
+    const stylesUri = this.getWebviewUri(webview,  "assets/index.css");
+    // The JS file from the React build output
+    const scriptUri = this.getWebviewUri(webview,  "assets/index.js");
+
+    const nonce = getNonce();
+    console.log("CSP Source", webview.cspSource);
+    console.log("script uri", scriptUri);
+    // Tip: Install the es6-string-html VS Code extension to enable code highlighting below
+    return /*html*/ `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none';connect-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; script-src ${webview.cspSource} 'wasm-unsafe-eval';">
+          <link rel="stylesheet" type="text/css" nonce="${nonce}" href="${stylesUri}">
+          <title>Hello World</title>
+        </head>
+        <body>
+          <div id="app"></div>
+          <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
+        </body>
+      </html>
+    `;
   }
 }
 
