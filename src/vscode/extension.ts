@@ -236,15 +236,17 @@ function focusEditor() {
       preview: false, // Don't open in preview mode
       viewColumn: editor.viewColumn,
     });
+    console.log("Focus!!!");
   }
 }
 
 function moveCursorAndReveal(offset: number) {
+  console.log("yo yo yo");
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     return;
   }
-
+  console.log("Moving!");
   const position = editor.document.positionAt(offset);
   editor.selection = new vscode.Selection(position, position);
 
@@ -301,9 +303,8 @@ export async function activate(context: vscode.ExtensionContext) {
   let cfgKey: CFGKey | undefined;
   let savedCFG: CFG | undefined;
 
-  function onNodeClick(node: string): void {
-    if (!savedCFG) return;
-    const offset = savedCFG.graph.getNodeAttribute(node, "startOffset");
+  function onNodeClick(offset: number): void {
+    // if (!savedCFG) return;
     moveCursorAndReveal(offset);
     focusEditor();
   }
@@ -357,53 +358,7 @@ export async function activate(context: vscode.ExtensionContext) {
           return;
         }
 
-        const tree = parsers[language].parse(code);
-
-        const functionSyntax = getFunctionAtPosition(tree, position, language);
-        if (!functionSyntax) return;
-
-        console.log(functionSyntax);
-        const nameSyntax = functionSyntax.childForFieldName("name");
-        if (nameSyntax) {
-          console.log("Currently in", nameSyntax.text);
-        }
-
-        const { flatSwitch, simplify, highlightCurrentNode, colorScheme } =
-          loadSettings();
-        // We'd like to avoid re-running CFG generation for a function if nothing changed.
-        const newKey: CFGKey = {
-          flatSwitch,
-          simplify,
-          functionText: functionSyntax.text,
-        };
-        let cfg: CFG;
-        if (cfgKey && isSameKey(newKey, cfgKey) && savedCFG) {
-          cfg = savedCFG;
-        } else {
-          cfgKey = newKey;
-
-          const builder = newCFGBuilder(language, { flatSwitch });
-          cfg = builder.buildCFG(functionSyntax);
-          cfg = trimFor(cfg);
-          if (simplify) {
-            cfg = simplifyCFG(cfg, mergeNodeAttrs);
-          }
-          cfg = remapNodeTargets(cfg);
-
-          savedCFG = cfg;
-        }
-        // TODO: Highlighting in the DOT is a cute trick, but might become less effective on larger functions.
-        //       So it works for now, but I'll probably need to replace it with CSS so that I only render once per function.
-
-        // Only highlight if there's more than one node to the graph.
-        const shouldHighlight = highlightCurrentNode && cfg.graph.order > 1;
-        const nodeToHighlight = shouldHighlight
-          ? cfg.offsetToNode.get(offset)
-          : undefined;
-        const dot = graphToDot(cfg, false, nodeToHighlight, colorScheme);
-        const svg = graphviz.dot(dot);
-
-        provider.setSVG(svg, colorScheme["graph.background"]);
+        provider.setCode(code, offset, language);
       },
     ),
   );

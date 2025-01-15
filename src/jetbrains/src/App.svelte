@@ -2,7 +2,7 @@
   import { isDark } from "../../components/lightdark";
   import { onDestroy } from "svelte";
   import Jetbrains from "../../components/Jetbrains.svelte";
-  import { isValidLanguage, type Language } from "../../control-flow/cfg";
+  import { isValidLanguage, type Language, newCFGBuilder } from "../../control-flow/cfg";
   import {
     deserializeColorList,
     type ColorList,
@@ -22,6 +22,9 @@
   onDestroy(unsubscribe);
 
   let display: Jetbrains;
+
+  const vscode = acquireVsCodeApi?acquireVsCodeApi():undefined;
+
 
   let codeAndOffset: {
     code: string;
@@ -44,8 +47,20 @@
     e: CustomEvent<{ node: string; offset: number | null }>,
   ): void {
     console.log("navigateTo", e);
-    if (e.detail.offset !== null && window.navigateTo)
+    if (e.detail.offset === null) {
+      // We don't know the offset, so we can't navigate to it.
+      // TODO: Check if this can actually happen now.
+      //       We changed the representation of nodes, so it shouldn't.
+      return;
+    }
+    // Handle JetBrains, which registers a `navigateTo` global function
+    if (window.navigateTo) {
       window.navigateTo(e.detail.offset.toString());
+    }else {
+      // Handle VSCode
+      console.log("Node clicked! Posting message", e.detail.offset)
+      vscode?.postMessage({ event: "node-clicked", offset: e.detail.offset });
+    }
   }
 
   window.setCode = setCode;
@@ -70,6 +85,45 @@
   window.setSimplify = (flag: boolean) => (simplify = flag);
   window.setFlatSwitch = (flag: boolean) => (flatSwitch = flag);
   window.setHighlight = (flag: boolean) => (highlight = flag);
+
+
+  function initVSCode() {
+    if (!vscode) {
+      // We're not running in VSCode
+      return;
+    }
+    console.log("Initializing VSCode API")
+    // Handle messages sent from the extension to the webview
+    window.addEventListener("message", (event) => {
+      console.log("Received message", event.data);
+      const message = event.data; // The json data that the extension sent
+      switch (message.type) {
+        case "updateCode": {
+          setCode(message.code, message.offset, message.language);
+          break;
+        }
+      }
+    });
+
+    const onClick = (event)=> {
+      let target = event.target;
+      while (
+        target.tagName !== "div" &&
+        target.tagName !== "svg" &&
+        !target.classList.contains("node")
+        ) {
+        target = target.parentElement;
+      }
+      if (!target.classList.contains("node")) {
+        return;
+      }
+      vscode.postMessage({ event: "node-clicked", node: target.id });
+    }
+
+    window.addEventListener("click", onClick);
+  }
+
+  initVSCode();
 </script>
 
 <main>

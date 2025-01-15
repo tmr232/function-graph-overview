@@ -8,6 +8,13 @@ export default defineConfig({
     copyPublicDir: true,
     outDir: "../../dist/jetbrains",
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        entryFileNames: "assets/[name].js",
+        chunkFileNames: "assets/[name].js",
+        assetFileNames: "assets/[name].[ext]",
+      },
+    },
   },
   base: "",
 });

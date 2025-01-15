@@ -3,7 +3,7 @@
   "tasks": [
     {
       "type": "bun",
-      "script": "bun run --cwd ${workspaceFolder} ./scripts/build-with-esbuild.ts",
+      "script": "bun run --cwd ${workspaceFolder} ./scripts/build-with-esbuild.ts && bun build-jetbrains",
       "problemMatcher": [],
       "label": "bun: build",
       "detail": "bun run ./scripts/build-with-esbuild.ts - package.json",
