@@ -1,11 +1,50 @@
 <script lang="ts">
+  /*
+  We need to define the interfaces here clearly, and then implement them.
+
+  In:
+    - code
+    - offset
+    - config
+
+  Out:
+    - offset (on click)
+
+
+  ## Caching
+
+  We should be able to do basic caching when viewing the same function.
+  On new {code, offset}, we:
+  1. Check if the code is the same - if it is not, we start from scratch
+  2. If it is, check if we're inside the same function. If it is - only change
+     highlight.
+
+  We should also be able to cache multiple functions in the same file, or more
+  complex things, but that's later.
+
+  We should split things into "IDE drivers" that get the input from the IDE
+  or send it back, and the "application level" that should be unified.
+
+  On load, we should default to a dark placeholder, and change to light one
+  only when we know we should.
+  Alternatively, we can avoid rendering anything before the color-scheme is set.
+  It _feels_ a bit slow, but should be near instant and avoid flashing.
+
+  I should probably write type-definitions for the VSCode and JetBrains APIs
+  so that it all looks nice here.
+
+  At a later stage, all the rendering code should be unified into a library
+  and put in a class. Repeating it for anything that needs to draw a graph
+  with some config is a mess. And would be more of a mess once we add
+  overlays and panzoom, and all the fun features. It's better to have as many
+  of those features in one place only.
+   */
   import { isDark } from "../../components/lightdark";
   import { onDestroy } from "svelte";
   import Jetbrains from "../../components/Jetbrains.svelte";
   import {
     isValidLanguage,
     type Language,
-    newCFGBuilder,
   } from "../../control-flow/cfg";
   import {
     deserializeColorList,
