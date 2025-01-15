@@ -1,18 +1,8 @@
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
-import Parser, { type SyntaxNode } from "web-tree-sitter";
-import {
-  type Language,
-  functionNodeTypes,
-  newCFGBuilder,
+import type {
+  Language,
 } from "../control-flow/cfg";
-import {
-  type CFG,
-  mergeNodeAttrs,
-  remapNodeTargets,
-} from "../control-flow/cfg-defs";
 import {
   type ColorScheme,
   deserializeColorList,
@@ -20,7 +10,6 @@ import {
   getLightColorList,
   listToScheme,
 } from "../control-flow/colors";
-import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
 import { graphToDot } from "../control-flow/render";
 import { OverviewViewProvider } from "./overview-view";
 
@@ -34,52 +23,40 @@ interface SupportedLanguage {
    * The CFG language
    */
   language: Language;
-  /**
-   * Name of the parser to use
-   */
-  parserName: string;
 }
 // ADD-LANGUAGES-HERE
 const supportedLanguages: SupportedLanguage[] = [
   {
     languageId: "c",
     language: "C" as Language,
-    parserName: "tree-sitter-c.wasm",
   },
   {
     languageId: "cpp",
     language: "C++" as Language,
-    parserName: "tree-sitter-cpp.wasm",
   },
   {
     languageId: "go",
     language: "Go" as Language,
-    parserName: "tree-sitter-go.wasm",
   },
   {
     languageId: "python",
     language: "Python" as Language,
-    parserName: "tree-sitter-python.wasm",
   },
   {
     languageId: "typescript",
     language: "TypeScript" as Language,
-    parserName: "tree-sitter-typescript.wasm",
   },
   {
     languageId: "javascript",
     language: "TypeScript" as Language,
-    parserName: "tree-sitter-typescript.wasm",
   },
   {
     languageId: "typescriptreact",
     language: "TSX" as Language,
-    parserName: "tree-sitter-tsx.wasm",
   },
   {
     languageId: "javascriptreact",
     language: "TSX" as Language,
-    parserName: "tree-sitter-tsx.wasm",
   },
 ];
 
@@ -95,42 +72,6 @@ const idToLanguage = (languageId: string): Language | null => {
   return null;
 };
 
-async function initializeParsers(
-  context: vscode.ExtensionContext,
-): Promise<Record<Language, Parser>> {
-  // const parsers: { [key in Language]: Parser } = {};
-  const parsers: Partial<Record<Language, Parser>> = {};
-
-  for (const lang of supportedLanguages) {
-    const languagePath = vscode.Uri.joinPath(
-      context.extensionUri,
-      "parsers",
-      lang.parserName,
-    ).fsPath;
-    parsers[lang.language] = await initializeParser(context, languagePath);
-  }
-
-  return parsers as Record<Language, Parser>;
-}
-
-async function initializeParser(
-  context: vscode.ExtensionContext,
-  languagePath: string,
-) {
-  await Parser.init({
-    locateFile(_scriptName: string, _scriptDirectory: string) {
-      return vscode.Uri.joinPath(
-        context.extensionUri,
-        "parsers",
-        "tree-sitter.wasm",
-      ).fsPath;
-    },
-  });
-  const parser = new Parser();
-  const Go = await Parser.Language.load(languagePath);
-  parser.setLanguage(Go);
-  return parser;
-}
 
 function getCurrentCode(): {
   code: string;
@@ -203,30 +144,8 @@ function loadSettings(): Settings {
     colorScheme: listToScheme(colorList),
   };
 }
-type CFGKey = { functionText: string; flatSwitch: boolean; simplify: boolean };
 
-function isSameKey(a: CFGKey, b: CFGKey): boolean {
-  return JSON.stringify(a) === JSON.stringify(b);
-}
 
-function getFunctionAtPosition(
-  tree: Parser.Tree,
-  position: vscode.Position,
-  language: Language,
-): Parser.SyntaxNode | null {
-  let syntax: SyntaxNode | null = tree.rootNode.descendantForPosition({
-    row: position.line,
-    column: position.character,
-  });
-
-  while (syntax) {
-    if (functionNodeTypes[language].includes(syntax.type)) {
-      break;
-    }
-    syntax = syntax.parent;
-  }
-  return syntax;
-}
 
 function focusEditor() {
   const editor = vscode.window.activeTextEditor;
@@ -298,13 +217,9 @@ export async function activate(context: vscode.ExtensionContext) {
     'Congratulations, your extension "function-graph-overview" is now active!',
   );
 
-  const parsers = await initializeParsers(context);
 
-  let cfgKey: CFGKey | undefined;
-  let savedCFG: CFG | undefined;
 
   function onNodeClick(offset: number): void {
-    // if (!savedCFG) return;
     moveCursorAndReveal(offset);
     focusEditor();
   }
@@ -316,7 +231,6 @@ export async function activate(context: vscode.ExtensionContext) {
         // TODO: Make this react to all the CFG settings.
         if (e.affectsConfiguration("functionGraphOverview")) {
           const settings = loadSettings();
-          if (!savedCFG) return;
           const dot = graphToDot(
             savedCFG,
             false,
@@ -334,7 +248,6 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.window.onDidChangeActiveColorTheme(() => {
       const settings = loadSettings();
-      if (!savedCFG) return;
       const dot = graphToDot(savedCFG, false, undefined, settings.colorScheme);
       const svg = graphviz.dot(dot);
 
