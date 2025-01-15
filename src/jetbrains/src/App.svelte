@@ -2,7 +2,11 @@
   import { isDark } from "../../components/lightdark";
   import { onDestroy } from "svelte";
   import Jetbrains from "../../components/Jetbrains.svelte";
-  import { isValidLanguage, type Language, newCFGBuilder } from "../../control-flow/cfg";
+  import {
+    isValidLanguage,
+    type Language,
+    newCFGBuilder,
+  } from "../../control-flow/cfg";
   import {
     deserializeColorList,
     type ColorList,
@@ -23,8 +27,7 @@
 
   let display: Jetbrains;
 
-  const vscode = acquireVsCodeApi?acquireVsCodeApi():undefined;
-
+  const vscode = acquireVsCodeApi ? acquireVsCodeApi() : undefined;
 
   let codeAndOffset: {
     code: string;
@@ -56,9 +59,9 @@
     // Handle JetBrains, which registers a `navigateTo` global function
     if (window.navigateTo) {
       window.navigateTo(e.detail.offset.toString());
-    }else {
+    } else {
       // Handle VSCode
-      console.log("Node clicked! Posting message", e.detail.offset)
+      console.log("Node clicked! Posting message", e.detail.offset);
       vscode?.postMessage({ event: "node-clicked", offset: e.detail.offset });
     }
   }
@@ -86,13 +89,12 @@
   window.setFlatSwitch = (flag: boolean) => (flatSwitch = flag);
   window.setHighlight = (flag: boolean) => (highlight = flag);
 
-
   function initVSCode() {
     if (!vscode) {
       // We're not running in VSCode
       return;
     }
-    console.log("Initializing VSCode API")
+    console.log("Initializing VSCode API");
     // Handle messages sent from the extension to the webview
     window.addEventListener("message", (event) => {
       console.log("Received message", event.data);
@@ -105,20 +107,20 @@
       }
     });
 
-    const onClick = (event)=> {
+    const onClick = (event) => {
       let target = event.target;
       while (
         target.tagName !== "div" &&
         target.tagName !== "svg" &&
         !target.classList.contains("node")
-        ) {
+      ) {
         target = target.parentElement;
       }
       if (!target.classList.contains("node")) {
         return;
       }
       vscode.postMessage({ event: "node-clicked", node: target.id });
-    }
+    };
 
     window.addEventListener("click", onClick);
   }

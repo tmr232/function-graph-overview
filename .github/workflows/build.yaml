@@ -35,6 +35,8 @@ jobs:
 
       - run: bun install --production
 
+      - run: bun build-jetbrains
+
       - run: bun run package
 
       - name: Setup Environment

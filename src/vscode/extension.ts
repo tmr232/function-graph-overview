@@ -1,8 +1,5 @@
-import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import * as vscode from "vscode";
-import type {
-  Language,
-} from "../control-flow/cfg";
+import type { Language } from "../control-flow/cfg";
 import {
   type ColorScheme,
   deserializeColorList,
@@ -10,68 +7,23 @@ import {
   getLightColorList,
   listToScheme,
 } from "../control-flow/colors";
-import { graphToDot } from "../control-flow/render";
 import { OverviewViewProvider } from "./overview-view";
 
-let graphviz: Graphviz;
-interface SupportedLanguage {
-  /**
-   * The VSCode languageId to match on
-   */
-  languageId: string;
-  /**
-   * The CFG language
-   */
-  language: Language;
-}
 // ADD-LANGUAGES-HERE
-const supportedLanguages: SupportedLanguage[] = [
-  {
-    languageId: "c",
-    language: "C" as Language,
-  },
-  {
-    languageId: "cpp",
-    language: "C++" as Language,
-  },
-  {
-    languageId: "go",
-    language: "Go" as Language,
-  },
-  {
-    languageId: "python",
-    language: "Python" as Language,
-  },
-  {
-    languageId: "typescript",
-    language: "TypeScript" as Language,
-  },
-  {
-    languageId: "javascript",
-    language: "TypeScript" as Language,
-  },
-  {
-    languageId: "typescriptreact",
-    language: "TSX" as Language,
-  },
-  {
-    languageId: "javascriptreact",
-    language: "TSX" as Language,
-  },
-];
-
-const supportedLanguageIds = new Set(
-  supportedLanguages.map((lang) => lang.languageId),
-);
-const idToLanguage = (languageId: string): Language | null => {
-  for (const lang of supportedLanguages) {
-    if (lang.languageId === languageId) {
-      return lang.language;
-    }
-  }
-  return null;
+const languageMapping: { [key: string]: Language } = {
+  c: "C",
+  cpp: "C++",
+  go: "Go",
+  python: "Python",
+  typescript: "TypeScript",
+  javascript: "TypeScript",
+  typescriptreact: "TypeScript",
+  javascriptreact: "TypeScript",
 };
 
+const idToLanguage = (languageId: string): Language | undefined => {
+  return languageMapping[languageId];
+};
 
 function getCurrentCode(): {
   code: string;
@@ -85,13 +37,10 @@ function getCurrentCode(): {
 
   const document = editor.document;
   const languageId = document.languageId;
-  if (!supportedLanguageIds.has(languageId)) {
-    console.log(`Unsupported language id: ${languageId}`);
-    return null;
-  }
 
   const language = idToLanguage(languageId);
   if (!language) {
+    console.log(`Unsupported language id: ${languageId}`);
     return null;
   }
 
@@ -145,8 +94,6 @@ function loadSettings(): Settings {
   };
 }
 
-
-
 function focusEditor() {
   const editor = vscode.window.activeTextEditor;
   if (editor) {
@@ -179,30 +126,14 @@ function moveCursorAndReveal(offset: number) {
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
-  graphviz = await Graphviz.load();
-
-  const helloWorldDark = `digraph G { 
-    bgcolor="#1e1e1e"
-    node [color="#e0e0e0", fontcolor="#e0e0e0"]
-    edge [color="#e0e0e0"]
-    Hello -> World 
-}`;
-  const helloWorldLight = "digraph G { Hello -> World }";
-
   // We use the color theme for the initial graph, as it's a good way to avoid
   // shocking the user without being overly complicated with reading custom
   // color schemes.
-  const helloWorldSvg = graphviz.dot(
-    isThemeDark() ? helloWorldDark : helloWorldLight,
-  );
-  const helloWorldBGColor = isThemeDark() ? "#1e1e1e" : "white";
+  const _helloWorldBGColor = isThemeDark() ? "#1e1e1e" : "white";
 
-  const provider = new OverviewViewProvider(
-    context.extensionUri,
-    helloWorldSvg,
-    helloWorldBGColor,
-    onNodeClick,
-  );
+  // TODO: We should probably pass the initial config in here, so that the initial
+  //       graph will be in the right color theme.
+  const provider = new OverviewViewProvider(context.extensionUri, onNodeClick);
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
@@ -217,8 +148,6 @@ export async function activate(context: vscode.ExtensionContext) {
     'Congratulations, your extension "function-graph-overview" is now active!',
   );
 
-
-
   function onNodeClick(offset: number): void {
     moveCursorAndReveal(offset);
     focusEditor();
@@ -230,16 +159,8 @@ export async function activate(context: vscode.ExtensionContext) {
         // TODO: This currently only changes the color-scheme.
         // TODO: Make this react to all the CFG settings.
         if (e.affectsConfiguration("functionGraphOverview")) {
-          const settings = loadSettings();
-          const dot = graphToDot(
-            savedCFG,
-            false,
-            undefined,
-            settings.colorScheme,
-          );
-          const svg = graphviz.dot(dot);
-
-          provider.setSVG(svg, settings.colorScheme["graph.background"]);
+          const _settings = loadSettings();
+          // TODO: Trigger a redraw
         }
       },
     ),
@@ -247,11 +168,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.window.onDidChangeActiveColorTheme(() => {
-      const settings = loadSettings();
-      const dot = graphToDot(savedCFG, false, undefined, settings.colorScheme);
-      const svg = graphviz.dot(dot);
-
-      provider.setSVG(svg, settings.colorScheme["graph.background"]);
+      const _settings = loadSettings();
+      // TODO: Trigger a redraw
     }),
   );
 
