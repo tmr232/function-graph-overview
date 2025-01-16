@@ -126,14 +126,13 @@ function moveCursorAndReveal(offset: number) {
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
-  // We use the color theme for the initial graph, as it's a good way to avoid
-  // shocking the user without being overly complicated with reading custom
-  // color schemes.
-  const _helloWorldBGColor = isThemeDark() ? "#1e1e1e" : "white";
-
   // TODO: We should probably pass the initial config in here, so that the initial
   //       graph will be in the right color theme.
-  const provider = new OverviewViewProvider(context.extensionUri, onNodeClick);
+  const provider = new OverviewViewProvider(
+    context.extensionUri,
+    onNodeClick,
+    isThemeDark(),
+  );
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(

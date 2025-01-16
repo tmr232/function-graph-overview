@@ -39,34 +39,125 @@
   overlays and panzoom, and all the fun features. It's better to have as many
   of those features in one place only.
    */
-  import { isDark } from "../../components/lightdark";
-  import { onDestroy } from "svelte";
+
   import Jetbrains from "../../components/Jetbrains.svelte";
-  import {
-    isValidLanguage,
-    type Language,
-  } from "../../control-flow/cfg";
+  import { isValidLanguage, type Language } from "../../control-flow/cfg";
   import {
     deserializeColorList,
     type ColorList,
+    getDarkColorList,
+    getLightColorList,
   } from "../../control-flow/colors";
   import * as defaultDark from "./defaultDark.json";
-  document.body.dataset.theme = isDark ? "dark" : "light";
 
-  let colorList: ColorList = defaultDark.scheme as ColorList;
-  document.body.style.backgroundColor = colorList.find(
-    ({ name }) => name === "graph.background",
-  ).hex;
+  let simplify = true;
+  let flatSwitch = false;
+  let highlight = true;
 
-  const unsubscribe = isDark.subscribe((isDark) => {
-    document.body.dataset.theme = isDark ? "dark" : "light";
-  });
+  // Set initial background color
+  const colorList = (function () {
+    function isDarkTheme(): boolean {
+      return document.body.dataset.theme !== "light";
+    }
+    // This is the JetBrains colorlist
+    let colorList: ColorList = defaultDark.scheme as ColorList;
+    if (acquireVsCodeApi) {
+      // This is the VSCode colorList
+      colorList = getDarkColorList();
+    }
+    if (!isDarkTheme()) {
+      colorList = getLightColorList();
+    }
+    document.body.style.backgroundColor = colorList.find(
+      ({ name }) => name === "graph.background",
+    ).hex;
 
-  onDestroy(unsubscribe);
+    return colorList;
+  })();
 
   let display: Jetbrains;
 
-  const vscode = acquireVsCodeApi ? acquireVsCodeApi() : undefined;
+  type Config = {
+    simplify?: boolean;
+    flatSwitch?: boolean;
+    highlight?: boolean;
+  };
+  type State = {
+    code?: string;
+    offset?: number;
+    language?: Language;
+    config?: Config;
+  };
+  class StateHandler {
+    private state: State = {
+      config: { simplify: true, flatSwitch: false, highlight: true },
+    };
+    private navigateToHandlers: ((offset: number) => void)[] = [];
+    public update(state: Partial<State>): void {
+      const config = Object.assign(this.state.config, state.config);
+      Object.assign(this.state, state);
+      this.state.config = config;
+
+      simplify = Boolean(this.state.config.simplify);
+      flatSwitch = Boolean(this.state.config.flatSwitch);
+      highlight = Boolean(this.state.config.highlight);
+
+      setCode(this.state.code, this.state.offset, this.state.language);
+    }
+    public onNavigateTo(callback: (offset: number) => void): void {
+      this.navigateToHandlers.push(callback);
+    }
+
+    public navigateTo(offset: number): void {
+      for (const handler of this.navigateToHandlers) {
+        handler(offset);
+      }
+    }
+  }
+
+  function initVSCode(stateHandler: StateHandler): void {
+    const vscode = acquireVsCodeApi ? acquireVsCodeApi() : undefined;
+
+    if (!vscode) {
+      // We're not running in VSCode
+      return;
+    }
+    console.log("Initializing VSCode API");
+    // Handle messages sent from the extension to the webview
+    window.addEventListener("message", (event) => {
+      console.log("Received message", event.data);
+      const message = event.data; // The json data that the extension sent
+      switch (message.type) {
+        case "updateCode": {
+          stateHandler.update({
+            code: message.code,
+            offset: message.offset,
+            language: message.language,
+          });
+          break;
+        }
+      }
+    });
+
+    stateHandler.onNavigateTo((offset: number) => {
+      // Handle VSCode
+      console.log("Node clicked! Posting message", offset);
+      vscode?.postMessage({ event: "node-clicked", offset: offset });
+    });
+  }
+
+  function initJetBrains(stateHandler: StateHandler): void {
+    stateHandler.onNavigateTo((offset: number) => {
+      if (!window.navigateTo) {
+        return;
+      }
+      window.navigateTo(offset.toString());
+    });
+  }
+
+  const stateHandler = new StateHandler();
+  initVSCode(stateHandler);
+  initJetBrains(stateHandler);
 
   let codeAndOffset: {
     code: string;
@@ -95,14 +186,7 @@
       //       We changed the representation of nodes, so it shouldn't.
       return;
     }
-    // Handle JetBrains, which registers a `navigateTo` global function
-    if (window.navigateTo) {
-      window.navigateTo(e.detail.offset.toString());
-    } else {
-      // Handle VSCode
-      console.log("Node clicked! Posting message", e.detail.offset);
-      vscode?.postMessage({ event: "node-clicked", offset: e.detail.offset });
-    }
+    stateHandler.navigateTo(e.detail.offset);
   }
 
   window.setCode = setCode;
@@ -121,50 +205,12 @@
     }
   };
 
-  let simplify = true;
-  let flatSwitch = false;
-  let highlight = true;
-  window.setSimplify = (flag: boolean) => (simplify = flag);
-  window.setFlatSwitch = (flag: boolean) => (flatSwitch = flag);
-  window.setHighlight = (flag: boolean) => (highlight = flag);
-
-  function initVSCode() {
-    if (!vscode) {
-      // We're not running in VSCode
-      return;
-    }
-    console.log("Initializing VSCode API");
-    // Handle messages sent from the extension to the webview
-    window.addEventListener("message", (event) => {
-      console.log("Received message", event.data);
-      const message = event.data; // The json data that the extension sent
-      switch (message.type) {
-        case "updateCode": {
-          setCode(message.code, message.offset, message.language);
-          break;
-        }
-      }
-    });
-
-    const onClick = (event) => {
-      let target = event.target;
-      while (
-        target.tagName !== "div" &&
-        target.tagName !== "svg" &&
-        !target.classList.contains("node")
-      ) {
-        target = target.parentElement;
-      }
-      if (!target.classList.contains("node")) {
-        return;
-      }
-      vscode.postMessage({ event: "node-clicked", node: target.id });
-    };
-
-    window.addEventListener("click", onClick);
-  }
-
-  initVSCode();
+  window.setSimplify = (flag: boolean) =>
+    stateHandler.update({ config: { simplify: flag } });
+  window.setFlatSwitch = (flag: boolean) =>
+    stateHandler.update({ config: { flatSwitch: flag } });
+  window.setHighlight = (flag: boolean) =>
+    stateHandler.update({ config: { highlight: flag } });
 </script>
 
 <main>

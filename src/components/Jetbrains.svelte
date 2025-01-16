@@ -104,12 +104,18 @@
     options: RenderOptions,
     colorList: ColorList,
   ) {
+    // TODO: Use a media query to choose between light and dark placeholder
+    // window.matchMedia?.("(prefers-color-scheme: dark)").matches
+    const bgcolor = colorList.find(
+      ({ name }) => name === "graph.background",
+    ).hex;
+    const color = colorList.find(({ name }) => name === "node.highlight").hex;
     try {
       if (codeAndOffset === null) {
-        svg = graphviz.dot(`digraph G { 
-    bgcolor="#2B2D30"
-    node [color="#e0e0e0", fontcolor="#e0e0e0"]
-    edge [color="#e0e0e0"]
+        svg = graphviz.dot(/*DOT*/ `digraph G {
+    bgcolor="${bgcolor}"
+    node [color="${color}", fontcolor="${color}"]
+    edge [color="${color}"]
     Hello -> World 
 }`);
       } else {

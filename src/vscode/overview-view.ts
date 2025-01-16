@@ -10,6 +10,7 @@ export class OverviewViewProvider implements vscode.WebviewViewProvider {
   constructor(
     private readonly _extensionUri: vscode.Uri,
     nodeClickHandler: (offset: number) => void,
+    private readonly isDark: boolean,
   ) {
     this._nodeClickHandler = nodeClickHandler;
   }
@@ -65,15 +66,10 @@ export class OverviewViewProvider implements vscode.WebviewViewProvider {
   }
 
   private _getWebviewContent(webview: vscode.Webview) {
-    // The CSS file from the React build output
     const stylesUri = this.getWebviewUri(webview, "assets/index.css");
-    // The JS file from the React build output
     const scriptUri = this.getWebviewUri(webview, "assets/index.js");
 
     const nonce = getNonce();
-    console.log("CSP Source", webview.cspSource);
-    console.log("script uri", scriptUri);
-    // Tip: Install the es6-string-html VS Code extension to enable code highlighting below
     return /*html*/ `
       <!DOCTYPE html>
       <html lang="en">
@@ -82,9 +78,9 @@ export class OverviewViewProvider implements vscode.WebviewViewProvider {
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <meta http-equiv="Content-Security-Policy" content="default-src 'none';connect-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline' 'nonce-${nonce}'; script-src ${webview.cspSource} 'wasm-unsafe-eval' 'nonce-${nonce}';">
           <link rel="stylesheet" type="text/css" nonce="${nonce}" href="${stylesUri}">
-          <title>Hello World</title>
+          <title>Function Graph Overview</title>
         </head>
-        <body>
+        <body data-theme="${this.isDark ? "dark" : "light"}">
           <div id="app"></div>
           <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
         </body>
