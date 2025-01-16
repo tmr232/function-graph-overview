@@ -59,10 +59,7 @@
     getLightColorList,
   } from "../../control-flow/colors";
   import * as jetbrainsDarkTheme from "./defaultDark.json";
-  import type {
-    MessageToWebview,
-    NavigateTo,
-  } from "../../vscode/messages.ts";
+  import type { MessageToWebview, NavigateTo } from "../../vscode/messages.ts";
 
   let simplify = true;
   let flatSwitch = false;

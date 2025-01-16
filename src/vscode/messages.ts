@@ -15,7 +15,7 @@ export type UpdateCode = {
 export type MessageToWebview = UpdateCode;
 export type MessageToVscode = NavigateTo;
 
-export type Message = MessageToVscode | MessageToWebview;
+type Message = MessageToVscode | MessageToWebview;
 
 // Create a type that extracts the tag literal type from the Message union
 type MessageTagOf<Msg extends Message> = Msg["tag"];
