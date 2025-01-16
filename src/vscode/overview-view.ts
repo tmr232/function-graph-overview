@@ -12,6 +12,12 @@ export class OverviewViewProvider implements vscode.WebviewViewProvider {
   private _view?: vscode.WebviewView;
   private messageHandler: MessageHandler<MessageToVscode>;
 
+  /**
+   * Initialize the WebView
+   * @param _extensionUri
+   * @param isDark theme to use for the initial graph
+   * @param messageHandlers handlers for messages from the webview
+   */
   constructor(
     private readonly _extensionUri: vscode.Uri,
     private readonly isDark: boolean,
@@ -20,6 +26,10 @@ export class OverviewViewProvider implements vscode.WebviewViewProvider {
     this.messageHandler = new MessageHandler(messageHandlers);
   }
 
+  /**
+   * Post a message to the WebView, to be handled there.
+   * @param message The message to post
+   */
   public postMessage<T extends MessageToWebview>(message: T) {
     if (this._view) {
       this._view.webview.postMessage(message);

@@ -1,4 +1,5 @@
 import type { Language } from "../control-flow/cfg.ts";
+import type { ColorList } from "../control-flow/colors.ts";
 
 export type NavigateTo = {
   tag: "navigateTo";
@@ -12,7 +13,15 @@ export type UpdateCode = {
   code: string;
 };
 
-export type MessageToWebview = UpdateCode;
+export type UpdateSettings = {
+  tag: "updateSettings";
+  flatSwitch: boolean;
+  simplify: boolean;
+  highlightCurrentNode: boolean;
+  colorList: ColorList;
+};
+
+export type MessageToWebview = UpdateCode | UpdateSettings;
 export type MessageToVscode = NavigateTo;
 
 type Message = MessageToVscode | MessageToWebview;

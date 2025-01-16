@@ -66,7 +66,7 @@
   let highlight = true;
 
   // Set initial background color
-  const colorList = (function () {
+  let colorList = (function () {
     function isDarkTheme(): boolean {
       return document.body.dataset.theme !== "light";
     }
@@ -92,6 +92,7 @@
     simplify?: boolean;
     flatSwitch?: boolean;
     highlight?: boolean;
+    colorList?: ColorList;
   };
   type State = {
     code?: string;
@@ -147,6 +148,14 @@
           });
           break;
         }
+        case "updateSettings":
+          flatSwitch = message.flatSwitch;
+          simplify = message.simplify;
+          highlight = message.highlightCurrentNode;
+          colorList = message.colorList;
+          document.body.style.backgroundColor = colorList.find(
+            ({ name }) => name === "graph.background",
+          ).hex;
       }
     });
 

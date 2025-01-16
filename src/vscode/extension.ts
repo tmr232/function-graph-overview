@@ -1,13 +1,12 @@
 import * as vscode from "vscode";
 import type { Language } from "../control-flow/cfg";
 import {
-  type ColorScheme,
+  type ColorList,
   deserializeColorList,
   getDarkColorList,
   getLightColorList,
-  listToScheme,
 } from "../control-flow/colors";
-import type { UpdateCode } from "./messages.ts";
+import type { UpdateCode, UpdateSettings } from "./messages.ts";
 import { OverviewViewProvider } from "./overview-view";
 
 // ADD-LANGUAGES-HERE
@@ -58,7 +57,7 @@ type Settings = {
   flatSwitch: boolean;
   simplify: boolean;
   highlightCurrentNode: boolean;
-  colorScheme: ColorScheme;
+  colorList: ColorList;
 };
 type ColorSchemeOptions = "Light" | "Dark" | "Custom" | "System";
 function loadSettings(): Settings {
@@ -91,7 +90,7 @@ function loadSettings(): Settings {
     flatSwitch: config.get("flatSwitch") ?? false,
     simplify: config.get("simplify") ?? false,
     highlightCurrentNode: config.get("highlightCurrentNode") ?? true,
-    colorScheme: listToScheme(colorList),
+    colorList: colorList,
   };
 }
 
@@ -159,8 +158,14 @@ export async function activate(context: vscode.ExtensionContext) {
         // TODO: This currently only changes the color-scheme.
         // TODO: Make this react to all the CFG settings.
         if (e.affectsConfiguration("functionGraphOverview")) {
-          const _settings = loadSettings();
-          // TODO: Trigger a redraw
+          const settings = loadSettings();
+          provider.postMessage<UpdateSettings>({
+            tag: "updateSettings",
+            flatSwitch: settings.flatSwitch,
+            simplify: settings.simplify,
+            highlightCurrentNode: settings.highlightCurrentNode,
+            colorList: settings.colorList,
+          });
         }
       },
     ),
@@ -168,8 +173,14 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.window.onDidChangeActiveColorTheme(() => {
-      const _settings = loadSettings();
-      // TODO: Trigger a redraw
+      const settings = loadSettings();
+      provider.postMessage<UpdateSettings>({
+        tag: "updateSettings",
+        flatSwitch: settings.flatSwitch,
+        simplify: settings.simplify,
+        highlightCurrentNode: settings.highlightCurrentNode,
+        colorList: settings.colorList,
+      });
     }),
   );
 
