@@ -107,7 +107,6 @@ function focusEditor() {
 }
 
 function moveCursorAndReveal(offset: number) {
-  console.log("yo yo yo");
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
     return;
@@ -126,8 +125,6 @@ function moveCursorAndReveal(offset: number) {
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export async function activate(context: vscode.ExtensionContext) {
-  // TODO: We should probably pass the initial config in here, so that the initial
-  //       graph will be in the right color theme.
   const provider = new OverviewViewProvider(
     context.extensionUri,
     isThemeDark(),
@@ -155,8 +152,6 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration(
       (e: vscode.ConfigurationChangeEvent) => {
-        // TODO: This currently only changes the color-scheme.
-        // TODO: Make this react to all the CFG settings.
         if (e.affectsConfiguration("functionGraphOverview")) {
           const settings = loadSettings();
           provider.postMessage<UpdateSettings>({
