@@ -1,3 +1,13 @@
+<script lang="ts" context="module">
+  import type { MessageToVscode } from "../../vscode/messages.ts";
+
+  declare const acquireVsCodeApi:
+    | undefined
+    | (() => {
+        postMessage<T extends MessageToVscode>(message: T): void;
+      });
+</script>
+
 <script lang="ts">
   /*
   We need to define the interfaces here clearly, and then implement them.
@@ -48,7 +58,11 @@
     getDarkColorList,
     getLightColorList,
   } from "../../control-flow/colors";
-  import * as defaultDark from "./defaultDark.json";
+  import * as jetbrainsDarkTheme from "./defaultDark.json";
+  import type {
+    MessageToWebview,
+    NavigateTo,
+  } from "../../vscode/messages.ts";
 
   let simplify = true;
   let flatSwitch = false;
@@ -60,7 +74,7 @@
       return document.body.dataset.theme !== "light";
     }
     // This is the JetBrains colorlist
-    let colorList: ColorList = defaultDark.scheme as ColorList;
+    let colorList: ColorList = jetbrainsDarkTheme.scheme as ColorList;
     if (acquireVsCodeApi) {
       // This is the VSCode colorList
       colorList = getDarkColorList();
@@ -124,10 +138,10 @@
     }
     console.log("Initializing VSCode API");
     // Handle messages sent from the extension to the webview
-    window.addEventListener("message", (event) => {
+    window.addEventListener("message", (event: { data: MessageToWebview }) => {
       console.log("Received message", event.data);
       const message = event.data; // The json data that the extension sent
-      switch (message.type) {
+      switch (message.tag) {
         case "updateCode": {
           stateHandler.update({
             code: message.code,
@@ -142,7 +156,7 @@
     stateHandler.onNavigateTo((offset: number) => {
       // Handle VSCode
       console.log("Node clicked! Posting message", offset);
-      vscode?.postMessage({ event: "node-clicked", offset: offset });
+      vscode?.postMessage<NavigateTo>({ tag: "navigateTo", offset: offset });
     });
   }
 

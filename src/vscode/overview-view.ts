@@ -1,28 +1,28 @@
 import * as crypto from "node:crypto";
 import * as vscode from "vscode";
-import type { Language } from "../control-flow/cfg.ts";
+import {
+  MessageHandler,
+  type MessageHandlersOf,
+  type MessageToVscode,
+  type MessageToWebview,
+} from "./messages.ts";
 
 export class OverviewViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "functionGraphOverview.overview";
-  private readonly _nodeClickHandler: (offset: number) => void;
   private _view?: vscode.WebviewView;
+  private messageHandler: MessageHandler<MessageToVscode>;
 
   constructor(
     private readonly _extensionUri: vscode.Uri,
-    nodeClickHandler: (offset: number) => void,
     private readonly isDark: boolean,
+    messageHandlers: MessageHandlersOf<MessageToVscode>,
   ) {
-    this._nodeClickHandler = nodeClickHandler;
+    this.messageHandler = new MessageHandler(messageHandlers);
   }
 
-  public setCode(code: string, offset: number, language: Language) {
+  public postMessage<T extends MessageToWebview>(message: T) {
     if (this._view) {
-      this._view.webview.postMessage({
-        type: "updateCode",
-        code,
-        offset,
-        language,
-      });
+      this._view.webview.postMessage(message);
     }
   }
 
@@ -43,13 +43,9 @@ export class OverviewViewProvider implements vscode.WebviewViewProvider {
     console.log("webview options", webviewView.webview.options);
 
     webviewView.webview.html = this._getWebviewContent(webviewView.webview);
-    webviewView.webview.onDidReceiveMessage((message) => {
-      switch (message.event) {
-        case "node-clicked":
-          console.log("Node clicked!", message.offset, this._nodeClickHandler);
-          this._nodeClickHandler(message.offset);
-      }
-    });
+    webviewView.webview.onDidReceiveMessage((message: MessageToVscode) =>
+      this.messageHandler.handleMessage(message),
+    );
   }
 
   private getUri(filename: string): vscode.Uri {

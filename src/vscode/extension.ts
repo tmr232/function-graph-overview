@@ -7,6 +7,7 @@ import {
   getLightColorList,
   listToScheme,
 } from "../control-flow/colors";
+import type { UpdateCode } from "./messages.ts";
 import { OverviewViewProvider } from "./overview-view";
 
 // ADD-LANGUAGES-HERE
@@ -130,8 +131,8 @@ export async function activate(context: vscode.ExtensionContext) {
   //       graph will be in the right color theme.
   const provider = new OverviewViewProvider(
     context.extensionUri,
-    onNodeClick,
     isThemeDark(),
+    { navigateTo: ({ offset }) => onNodeClick(offset) },
   );
 
   context.subscriptions.push(
@@ -187,8 +188,12 @@ export async function activate(context: vscode.ExtensionContext) {
         if (!code || !languageId || !language) {
           return;
         }
-
-        provider.setCode(code, offset, language);
+        provider.postMessage<UpdateCode>({
+          tag: "updateCode",
+          code,
+          offset,
+          language,
+        });
       },
     ),
   );
