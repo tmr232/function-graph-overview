@@ -64,7 +64,7 @@
     const renderResult = renderer.render(
       functionSyntax,
       language,
-      highlightOffset,
+      cursorOffset,
     );
     dot = renderResult.dot;
     getNodeOffset = renderResult.getNodeOffset;
