@@ -151,10 +151,6 @@
       offset: cfg.graph.getNodeAttribute(target.id, "startOffset"),
     });
   }
-
-  export function applyColors(colors: ColorList) {
-    colorList = colors;
-  }
 </script>
 
 {#await initialize() then}
