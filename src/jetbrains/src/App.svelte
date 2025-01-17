@@ -2,7 +2,7 @@
   import type { MessageToVscode } from "../../vscode/messages.ts";
 
   declare const acquireVsCodeApi:
-    | undefined
+    | void
     | (() => {
         postMessage<T extends MessageToVscode>(message: T): void;
       });
@@ -46,9 +46,8 @@
   /**
    * Are we running in a VSCode WebView?
    */
-  function inVsCode(): boolean {
-    return typeof acquireVsCodeApi !== "undefined";
-  }
+  const vscode =
+    typeof acquireVsCodeApi !== "undefined" ? acquireVsCodeApi() : undefined;
 
   let simplify = true;
   let flatSwitch = false;
@@ -59,9 +58,10 @@
     function isDarkTheme(): boolean {
       return document.body.dataset.theme !== "light";
     }
+
     // This is the JetBrains colorlist
     let colorList: ColorList = jetbrainsDarkTheme.scheme as ColorList;
-    if (inVsCode()) {
+    if (vscode) {
       // This is the VSCode colorList
       colorList = getDarkColorList();
     }
@@ -89,11 +89,13 @@
     language?: Language;
     config?: Config;
   };
+
   class StateHandler {
     private state: State = {
       config: { simplify: true, flatSwitch: false, highlight: true },
     };
     private navigateToHandlers: ((offset: number) => void)[] = [];
+
     public update(state: Partial<State>): void {
       const config = Object.assign(this.state.config, state.config);
       Object.assign(this.state, state);
@@ -105,6 +107,7 @@
 
       setCode(this.state.code, this.state.offset, this.state.language);
     }
+
     public onNavigateTo(callback: (offset: number) => void): void {
       this.navigateToHandlers.push(callback);
     }
@@ -130,8 +133,6 @@
   }
 
   function initVSCode(stateHandler: StateHandler): void {
-    const vscode = inVsCode() ? acquireVsCodeApi() : undefined;
-
     if (!vscode) {
       // We're not running in VSCode
       return;
