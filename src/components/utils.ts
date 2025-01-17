@@ -3,16 +3,14 @@ import type Parser from "web-tree-sitter";
 import {
   type Language,
   functionNodeTypes,
-  newCFGBuilder,
   supportedLanguages,
 } from "../control-flow/cfg";
-import { type CFG, mergeNodeAttrs } from "../control-flow/cfg-defs";
-import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
-import { graphToDot } from "../control-flow/render";
+import { getDefaultColorList } from "../control-flow/colors.ts";
 import { initializeParser } from "../parser-loader/vite.ts";
 import { requirementTests } from "../test/commentTestHandlers";
 import type { TestFunction } from "../test/commentTestTypes";
 import type { TestFuncRecord } from "../test/commentTestUtils";
+import { type RenderOptions, Renderer } from "./renderer.ts";
 
 export type Parsers = { [language in Language]: Parser };
 
@@ -83,20 +81,12 @@ export function runTest(record: TestFuncRecord): TestResults[] {
   }
   return testResults;
 }
-export interface RenderOptions {
-  readonly simplify: boolean;
-  readonly verbose: boolean;
-  readonly trim: boolean;
-  readonly flatSwitch: boolean;
-}
 
 export function processRecord(
   record: TestFuncRecord,
   options: RenderOptions,
 ): { dot?: string; ast: string; svg?: string; error?: Error } {
-  const { trim, simplify, verbose, flatSwitch } = options;
   const tree = parsers[record.language].parse(record.code);
-  const builder = newCFGBuilder(record.language, { flatSwitch });
   const functionSyntax = getFirstFunction(
     tree,
     record.language,
@@ -104,22 +94,21 @@ export function processRecord(
 
   const ast = functionSyntax.toString();
 
-  let cfg: CFG;
-
   try {
-    cfg = builder.buildCFG(functionSyntax);
+    const renderer = new Renderer(options, getDefaultColorList(), graphviz);
+    const { dot: rawDot, svg } = renderer.render(
+      functionSyntax,
+      record.language,
+      undefined,
+    );
+
+    const dot = graphviz.dot(rawDot, "canon" as Format);
+
+    return { dot, ast, svg };
   } catch (error) {
     return {
       ast,
       error: error instanceof Error ? error : new Error(`${error}`),
     };
   }
-
-  if (trim) cfg = trimFor(cfg);
-  if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
-  const rawDot = graphToDot(cfg, verbose);
-  const dot = graphviz.dot(rawDot, "canon" as Format);
-  const svg = graphviz.dot(dot);
-
-  return { dot, ast, svg };
 }

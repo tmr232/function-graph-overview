@@ -88,6 +88,10 @@ export function getDarkColorList(): ColorList {
   return structuredClone(darkColorList);
 }
 
+export function getDefaultColorList(): ColorList {
+  return structuredClone(defaultColorList);
+}
+
 export function getDefaultColorScheme(): ColorScheme {
   return structuredClone(defaultColorScheme);
 }
