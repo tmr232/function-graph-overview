@@ -11,7 +11,7 @@ export default tseslint.config(
       "dist",
       "webview-content",
       "src/frontend",
-      "src/jetbrains",
+      "src/webview",
       "src/render",
       "src/demo",
       "src/components",

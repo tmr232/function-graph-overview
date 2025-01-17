@@ -32,7 +32,7 @@
 </script>
 
 <script lang="ts">
-  import Jetbrains from "../../components/Jetbrains.svelte";
+  import WebviewRenderer from "../../components/WebviewRenderer.svelte";
   import { isValidLanguage, type Language } from "../../control-flow/cfg";
   import {
     deserializeColorList,
@@ -219,7 +219,7 @@
 </script>
 
 <main>
-  <Jetbrains
+  <WebviewRenderer
     {codeAndOffset}
     {colorList}
     {simplify}

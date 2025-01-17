@@ -59,12 +59,7 @@ export class OverviewViewProvider implements vscode.WebviewViewProvider {
   }
 
   private getUri(filename: string): vscode.Uri {
-    return vscode.Uri.joinPath(
-      this._extensionUri,
-      "dist",
-      "jetbrains",
-      filename,
-    );
+    return vscode.Uri.joinPath(this._extensionUri, "dist", "webview", filename);
   }
 
   private getWebviewUri(webview: vscode.Webview, filename: string): vscode.Uri {

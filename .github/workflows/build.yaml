@@ -35,7 +35,7 @@ jobs:
 
       - run: bun install
 
-      - run: bun build-jetbrains
+      - run: bun build-webview
 
       - run: bun run package
 
@@ -61,9 +61,9 @@ jobs:
       - uses: oven-sh/setup-bun@v2
 
       - run: bun install
-      - run: bun build-jetbrains
+      - run: bun build-webview
 
       - uses: actions/upload-artifact@v4
         with:
           name: "Jetbrains"
-          path: "./dist/jetbrains/"
+          path: "./dist/webview/"
