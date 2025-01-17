@@ -66,7 +66,7 @@
     "demo": "bun run --cwd ./src/demo/ vite",
     "build-demo": "bun run --cwd ./src/demo/ vite build",
     "build-render": "bun run --cwd ./src/render/ vite build",
-    "build-jetbrains": "bun run --cwd ./src/jetbrains/ vite build",
+    "build-webview": "bun run --cwd src/webview/ vite build",
     "oxlint-fix": "bunx oxlint --ignore-path=oxlint-ignore.txt --fix -D correctness -D perf -D suspicious -A no-await-in-loop",
     "oxlint-ci": "bunx oxlint --ignore-path=oxlint-ignore.txt  -D correctness -D perf -D suspicious -A no-await-in-loop",
     "prettier-format": "bunx prettier **/*.svelte --write",

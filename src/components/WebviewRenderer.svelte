@@ -104,12 +104,17 @@
     options: RenderOptions,
     colorList: ColorList,
   ) {
+    console.log("Rendering!", codeAndOffset, colorList);
+    const bgcolor = colorList.find(
+      ({ name }) => name === "graph.background",
+    ).hex;
+    const color = colorList.find(({ name }) => name === "node.highlight").hex;
     try {
       if (codeAndOffset === null) {
-        svg = graphviz.dot(`digraph G { 
-    bgcolor="#2B2D30"
-    node [color="#e0e0e0", fontcolor="#e0e0e0"]
-    edge [color="#e0e0e0"]
+        svg = graphviz.dot(/*DOT*/ `digraph G {
+    bgcolor="${bgcolor}"
+    node [color="${color}", fontcolor="${color}"]
+    edge [color="${color}"]
     Hello -> World 
 }`);
       } else {
@@ -145,10 +150,6 @@
       node: target.id,
       offset: cfg.graph.getNodeAttribute(target.id, "startOffset"),
     });
-  }
-
-  export function applyColors(colors: ColorList) {
-    colorList = colors;
   }
 </script>
 

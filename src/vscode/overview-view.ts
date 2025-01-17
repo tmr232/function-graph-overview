@@ -1,28 +1,38 @@
 import * as crypto from "node:crypto";
-import * as fs from "node:fs";
 import * as vscode from "vscode";
+import {
+  MessageHandler,
+  type MessageHandlersOf,
+  type MessageToVscode,
+  type MessageToWebview,
+} from "./messages.ts";
 
 export class OverviewViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "functionGraphOverview.overview";
-  private readonly helloWorldSvg: string;
-  private readonly helloWorldBGColor: string;
-  private readonly _nodeClickHandler: (node: string) => void;
   private _view?: vscode.WebviewView;
+  private messageHandler: MessageHandler<MessageToVscode>;
 
+  /**
+   * Initialize the WebView
+   * @param _extensionUri
+   * @param isDark theme to use for the initial graph
+   * @param messageHandlers handlers for messages from the webview
+   */
   constructor(
     private readonly _extensionUri: vscode.Uri,
-    helloWorldSvg: string,
-    helloWorldBGColor: string,
-    nodeClickHandler: (node: string) => void,
+    private readonly isDark: boolean,
+    messageHandlers: MessageHandlersOf<MessageToVscode>,
   ) {
-    this.helloWorldSvg = helloWorldSvg;
-    this.helloWorldBGColor = helloWorldBGColor;
-    this._nodeClickHandler = nodeClickHandler;
+    this.messageHandler = new MessageHandler(messageHandlers);
   }
 
-  public setSVG(svg: string, bgColor: string) {
+  /**
+   * Post a message to the WebView, to be handled there.
+   * @param message The message to post
+   */
+  public postMessage<T extends MessageToWebview>(message: T) {
     if (this._view) {
-      this._view.webview.postMessage({ type: "svgImage", svg, bgColor });
+      this._view.webview.postMessage(message);
     }
   }
 
@@ -40,60 +50,41 @@ export class OverviewViewProvider implements vscode.WebviewViewProvider {
       localResourceRoots: [this._extensionUri],
     };
 
-    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
-    webviewView.webview.onDidReceiveMessage((message) => {
-      switch (message.event) {
-        case "node-clicked":
-          this._nodeClickHandler(message.node);
-      }
-    });
+    webviewView.webview.html = this._getWebviewContent(webviewView.webview);
+    webviewView.webview.onDidReceiveMessage((message: MessageToVscode) =>
+      this.messageHandler.handleMessage(message),
+    );
   }
 
   private getUri(filename: string): vscode.Uri {
-    return vscode.Uri.joinPath(this._extensionUri, "webview-content", filename);
+    return vscode.Uri.joinPath(this._extensionUri, "dist", "webview", filename);
   }
 
   private getWebviewUri(webview: vscode.Webview, filename: string): vscode.Uri {
     return webview.asWebviewUri(this.getUri(filename));
   }
 
-  private _getHtmlForWebview(webview: vscode.Webview): string {
-    // Get the local path to main script run in the webview, then convert it to a uri we can use in the webview.
-    const scriptUri = this.getWebviewUri(webview, "main.js");
+  private _getWebviewContent(webview: vscode.Webview) {
+    const stylesUri = this.getWebviewUri(webview, "assets/index.css");
+    const scriptUri = this.getWebviewUri(webview, "assets/index.js");
 
-    // Do the same for the stylesheet.
-    const styleResetUri = this.getWebviewUri(webview, "reset.css");
-    const styleVSCodeUri = this.getWebviewUri(webview, "vscode.css");
-    const styleMainUri = this.getWebviewUri(webview, "main.css");
-
-    // Use a nonce to only allow a specific script to be run.
     const nonce = getNonce();
-
-    const htmlPath = this.getUri("index.html").fsPath;
-    let html = fs.readFileSync(htmlPath).toString();
-
-    const replacements: [RegExp, string][] = [
-      [/#{nonce}/g, nonce],
-      [/#{cspSource}/g, webview.cspSource],
-      [/#{styleResetUri}/g, styleResetUri.toString()],
-      [/#{styleVSCodeUri}/g, styleVSCodeUri.toString()],
-      [/#{styleMainUri}/g, styleMainUri.toString()],
-      [/#{scriptUri}/g, scriptUri.toString()],
-      [/#{helloWorldSvg}/g, this.helloWorldSvg],
-      [/#{helloWorldBGColor}/g, this.helloWorldBGColor],
-    ];
-
-    for (const [pattern, substitute] of replacements) {
-      html = html.replaceAll(pattern, substitute);
-    }
-
-    // Make sure we did not forget any replacements
-    const unreplaced = html.match(/#{\w+}/g);
-    if (unreplaced) {
-      console.log("Unreplaced placeholder found!", unreplaced);
-    }
-
-    return html;
+    return /*html*/ `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none';connect-src ${webview.cspSource}; style-src ${webview.cspSource} 'nonce-${nonce}'; script-src ${webview.cspSource} 'wasm-unsafe-eval' 'nonce-${nonce}';">
+          <link rel="stylesheet" type="text/css" nonce="${nonce}" href="${stylesUri}">
+          <title>Function Graph Overview</title>
+        </head>
+        <body data-theme="${this.isDark ? "dark" : "light"}">
+          <div id="app"></div>
+          <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
+        </body>
+      </html>
+    `;
   }
 }
 
