@@ -26,6 +26,7 @@
   import { onMount } from "svelte";
   import { MultiDirectedGraph } from "graphology";
   import { Lookup } from "../../control-flow/ranges";
+  import {SVG} from "@svgdotjs/svg.js"
 
   let codeUrl: string | undefined;
 
@@ -262,10 +263,26 @@
     elem.parentElement.addEventListener("wheel", panzoom.zoomWithWheel);
   }
 
-  /* TODO:
-      - Show more detailed progress to the user
+  function panToNode(nodeId: string) {
+    const container = document.querySelector("body");
+    const svg = document.querySelector("svg");
+    const node = svg.querySelector(`#${nodeId}`);
 
-   */
+    // Find the midpoint for the screen and the node to center on
+    const findMidpoint = (el:Element)=>{
+      const boundingClientRect = el.getBoundingClientRect();
+      return {x:boundingClientRect.x + boundingClientRect.width/2, y:boundingClientRect.y + boundingClientRect.height/2}
+    }
+    const containerMidpoint = findMidpoint(container);
+    const nodeMidpoint = findMidpoint(node)
+
+    // Find the diff between them - that is our relative pan
+    const panDiff = {x: containerMidpoint.x -nodeMidpoint.x, y: containerMidpoint.y -nodeMidpoint.y};
+
+    // Relative movement is scaled by the scale, so we need to undo that scaling.
+    const scale = panzoom.getScale();
+    panzoom.pan(panDiff.x / scale, panDiff.y / scale, {animate:true, relative:true});
+  }
 
   onMount(() => {
     makeZoomable();
@@ -282,6 +299,7 @@
       >Open Code</button
     >
     <button on:click={saveSVG}>Download SVG</button>
+    <button on:click={()=>panToNode("node19")}>Pan to node</button>
   </div>
 </div>
 <div class="svgContainer">
