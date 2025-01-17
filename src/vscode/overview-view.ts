@@ -50,8 +50,6 @@ export class OverviewViewProvider implements vscode.WebviewViewProvider {
       localResourceRoots: [this._extensionUri],
     };
 
-    console.log("webview options", webviewView.webview.options);
-
     webviewView.webview.html = this._getWebviewContent(webviewView.webview);
     webviewView.webview.onDidReceiveMessage((message: MessageToVscode) =>
       this.messageHandler.handleMessage(message),

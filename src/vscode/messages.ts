@@ -1,3 +1,6 @@
+/**
+ * Defines the message types VSCode uses to communicate with the WebView.
+ */
 import type { Language } from "../control-flow/cfg.ts";
 import type { ColorList } from "../control-flow/colors.ts";
 
@@ -37,6 +40,9 @@ export type MessageHandlersOf<Msg extends Message> = {
   [T in MessageTagOf<Msg>]: (message: MessageMapOf<Msg>[T]) => void;
 };
 
+/**
+ * Handles messages in a type-safe manner.
+ */
 export class MessageHandler<Msg extends Message> {
   constructor(private messageHandlers: MessageHandlersOf<Msg>) {}
 
