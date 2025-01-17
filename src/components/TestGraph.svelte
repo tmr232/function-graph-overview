@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { processRecord, type RenderOptions } from "./utils";
+  import { processRecord } from "./utils";
   import { type TestFuncRecord } from "../test/commentTestUtils";
   import * as LZString from "lz-string";
+  import type { RenderOptions } from "./renderer.ts";
 
   let ast: string = "";
   let dot: string = "";
