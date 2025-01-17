@@ -1,32 +1,18 @@
 <script lang="ts">
   import Parser, { type SyntaxNode } from "web-tree-sitter";
-  import {
-    newCFGBuilder,
-    type Language,
-    functionNodeTypes,
-  } from "../control-flow/cfg";
-  import {
-    mergeNodeAttrs,
-    remapNodeTargets,
-    type CFG,
-  } from "../control-flow/cfg-defs";
-  import { graphToDot } from "../control-flow/render";
-  import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
+  import { functionNodeTypes, type Language } from "../control-flow/cfg";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
   import { initialize as initializeUtils, type Parsers } from "./utils";
   import { createEventDispatcher } from "svelte";
-  import {
-    listToScheme,
-    getLightColorList,
-    type ColorList,
-  } from "../control-flow/colors";
+  import { type ColorList, getLightColorList } from "../control-flow/colors";
+  import { Renderer } from "./renderer.ts";
 
   type CodeAndOffset = { code: string; offset: number; language: Language };
 
   let parsers: Parsers;
   let graphviz: Graphviz;
   let dot: string;
-  let cfg: CFG;
+  let getNodeOffset: (nodeId: string) => number | undefined = () => undefined;
   let tree: Parser.Tree;
   let svg: string;
   export let colorList = getLightColorList();
@@ -43,14 +29,6 @@
     const utils = await initializeUtils();
     parsers = utils.parsers;
     graphviz = utils.graphviz;
-  }
-
-  interface RenderOptions {
-    readonly simplify: boolean;
-    readonly verbose: boolean;
-    readonly trim: boolean;
-    readonly flatSwitch: boolean;
-    readonly highlight: boolean;
   }
 
   function getFunctionAtOffset(
@@ -76,27 +54,22 @@
     options: RenderOptions,
     colorList: ColorList,
   ) {
-    const { trim, simplify, verbose, flatSwitch, highlight } = options;
     tree = parsers[language].parse(code);
     const functionSyntax = getFunctionAtOffset(tree, cursorOffset, language);
     if (!functionSyntax) {
       throw new Error("No function found!");
     }
 
-    const builder = newCFGBuilder(language, { flatSwitch });
+    const renderer = new Renderer(options, colorList, graphviz);
+    const renderResult = renderer.render(
+      functionSyntax,
+      language,
+      cursorOffset,
+    );
+    dot = renderResult.dot;
+    getNodeOffset = renderResult.getNodeOffset;
 
-    cfg = builder.buildCFG(functionSyntax);
-
-    if (!cfg) return "";
-    if (trim) cfg = trimFor(cfg);
-    if (simplify) cfg = simplifyCFG(cfg, mergeNodeAttrs);
-    cfg = remapNodeTargets(cfg);
-    const nodeToHighlight = highlight
-      ? cfg.offsetToNode.get(cursorOffset)
-      : undefined;
-    dot = graphToDot(cfg, verbose, nodeToHighlight, listToScheme(colorList));
-
-    return graphviz.dot(dot);
+    return renderResult.svg;
   }
 
   function renderWrapper(
@@ -133,7 +106,6 @@
   }
 
   function onClick(event: MouseEvent) {
-    console.log("onClick triggered!");
     let target: Element = event.target as Element;
     while (
       target.tagName !== "div" &&
@@ -148,7 +120,7 @@
     }
     dispatch("node-clicked", {
       node: target.id,
-      offset: cfg.graph.getNodeAttribute(target.id, "startOffset"),
+      offset: getNodeOffset(target.id),
     });
   }
 </script>

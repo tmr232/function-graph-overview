@@ -1,13 +1,6 @@
 <script lang="ts">
   import Parser from "web-tree-sitter";
-  import { newCFGBuilder, type Language } from "../control-flow/cfg";
-  import {
-    mergeNodeAttrs,
-    remapNodeTargets,
-    type CFG,
-  } from "../control-flow/cfg-defs";
-  import { graphToDot } from "../control-flow/render";
-  import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
+  import { type Language } from "../control-flow/cfg";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
   import {
     getFirstFunction,
@@ -16,19 +9,18 @@
   } from "./utils";
   import { createEventDispatcher } from "svelte";
   import {
-    listToScheme,
-    getLightColorList,
     type ColorList,
+    getLightColorList,
+    listToScheme,
   } from "../control-flow/colors";
-  import { OverlayBuilder } from "../control-flow/overlay.ts";
-  import { Lookup } from "../control-flow/ranges.ts";
+  import { Renderer, type RenderOptions } from "./renderer.ts";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
   let dot: string;
-  let cfg: CFG;
   let tree: Parser.Tree;
   let savedSvg: string;
+  let getNodeOffset: (nodeId: string) => number | undefined = () => undefined;
   export let colorList = getLightColorList();
   export let offsetToHighlight: number | undefined = undefined;
   export let code: string;
@@ -48,15 +40,6 @@
     graphviz = utils.graphviz;
   }
 
-  interface RenderOptions {
-    readonly simplify: boolean;
-    readonly verbose: boolean;
-    readonly trim: boolean;
-    readonly flatSwitch: boolean;
-    readonly highlight: boolean;
-    readonly showRegions: boolean;
-  }
-
   function renderCode(
     code: string,
     language: Language,
@@ -64,39 +47,21 @@
     options: RenderOptions,
     colorList: ColorList,
   ) {
-    const { trim, simplify, verbose, flatSwitch, highlight, showRegions } =
-      options;
     tree = parsers[language].parse(code);
     const functionSyntax = getFirstFunction(tree, language);
     if (!functionSyntax) {
       throw new Error("No function found!");
     }
-    const overlayBuilder = new OverlayBuilder(functionSyntax);
 
-    const builder = newCFGBuilder(language, { flatSwitch });
-
-    cfg = builder.buildCFG(functionSyntax);
-    if (!cfg) return "";
-    if (trim) cfg = trimFor(cfg);
-    if (simplify) {
-      if (showRegions) {
-        cfg = simplifyCFG(cfg, overlayBuilder.getAttrMerger(mergeNodeAttrs));
-      } else {
-        cfg = simplifyCFG(cfg, mergeNodeAttrs);
-      }
-    }
-    cfg = remapNodeTargets(cfg);
-    const nodeToHighlight =
-      highlightOffset && highlight
-        ? cfg.offsetToNode.get(highlightOffset)
-        : undefined;
-    dot = graphToDot(cfg, verbose, nodeToHighlight, listToScheme(colorList));
-    const rawSvg = graphviz.dot(dot);
-    if (showRegions) {
-      savedSvg = overlayBuilder.renderOnto(cfg, rawSvg);
-    } else {
-      savedSvg = rawSvg;
-    }
+    const renderer = new Renderer(options, colorList, graphviz);
+    const renderResult = renderer.render(
+      functionSyntax,
+      language,
+      highlightOffset,
+    );
+    savedSvg = renderResult.svg;
+    dot = renderResult.dot;
+    getNodeOffset = renderResult.getNodeOffset;
     return savedSvg;
   }
 
@@ -137,7 +102,7 @@
     }
     dispatch("node-clicked", {
       node: target.id,
-      offset: cfg.graph.getNodeAttribute(target.id, "startOffset"),
+      offset: getNodeOffset(target.id),
     });
   }
 
