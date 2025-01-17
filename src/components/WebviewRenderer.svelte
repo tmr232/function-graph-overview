@@ -5,7 +5,7 @@
   import { initialize as initializeUtils, type Parsers } from "./utils";
   import { createEventDispatcher } from "svelte";
   import { type ColorList, getLightColorList } from "../control-flow/colors";
-  import { Renderer } from "./renderer.ts";
+  import { Renderer, type RenderOptions } from "./renderer.ts";
 
   type CodeAndOffset = { code: string; offset: number; language: Language };
 
@@ -22,6 +22,7 @@
   export let trim: boolean = true;
   export let flatSwitch: boolean = false;
   export let highlight: boolean = true;
+  export let showRegions: boolean = false;
 
   const dispatch = createEventDispatcher();
 
@@ -138,6 +139,7 @@
         trim,
         flatSwitch,
         highlight,
+        showRegions,
       },
       colorList,
     )}
