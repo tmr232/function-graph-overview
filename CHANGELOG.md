@@ -16,6 +16,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - `finally` blocks are now supported in TypeScript. 
 
+### Changed
+
+- VSCode and JetBrains now use the same WebView content.
+- Placeholder ("Hello, World!") graph colors are now determined by the color scheme.
+- VSCode settings now applied instantly to the graph.
+
 ## [0.0.13] - 2025-01-06
 
 ### Added
