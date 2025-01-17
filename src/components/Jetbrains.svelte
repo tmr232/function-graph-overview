@@ -104,8 +104,7 @@
     options: RenderOptions,
     colorList: ColorList,
   ) {
-    // TODO: Use a media query to choose between light and dark placeholder
-    // window.matchMedia?.("(prefers-color-scheme: dark)").matches
+    console.log("Rendering!", codeAndOffset, colorList);
     const bgcolor = colorList.find(
       ({ name }) => name === "graph.background",
     ).hex;

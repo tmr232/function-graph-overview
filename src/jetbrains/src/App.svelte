@@ -6,6 +6,23 @@
     | (() => {
         postMessage<T extends MessageToVscode>(message: T): void;
       });
+
+  declare global {
+    interface Window {
+      JetBrains?: {
+        ToExtension?: {
+          navigateTo: (offset: string) => void;
+        };
+        ToWebview?: {
+          setColors: (colors: string) => void;
+          setCode: (code: string, offset: number, language: string) => void;
+          setSimplify: (simplify: boolean) => void;
+          setFlatSwitch: (flatSwitch: boolean) => void;
+          setHighlight: (highlight: boolean) => void;
+        };
+      };
+    }
+  }
 </script>
 
 <script lang="ts">
@@ -61,6 +78,10 @@
   import * as jetbrainsDarkTheme from "./defaultDark.json";
   import type { MessageToWebview, NavigateTo } from "../../vscode/messages.ts";
 
+  function inVsCode(): boolean {
+    return typeof acquireVsCodeApi !== "undefined";
+  }
+
   let simplify = true;
   let flatSwitch = false;
   let highlight = true;
@@ -72,7 +93,7 @@
     }
     // This is the JetBrains colorlist
     let colorList: ColorList = jetbrainsDarkTheme.scheme as ColorList;
-    if (acquireVsCodeApi) {
+    if (inVsCode()) {
       // This is the VSCode colorList
       colorList = getDarkColorList();
     }
@@ -85,8 +106,6 @@
 
     return colorList;
   })();
-
-  let display: Jetbrains;
 
   type Config = {
     simplify?: boolean;
@@ -128,7 +147,7 @@
   }
 
   function initVSCode(stateHandler: StateHandler): void {
-    const vscode = acquireVsCodeApi ? acquireVsCodeApi() : undefined;
+    const vscode = inVsCode() ? acquireVsCodeApi() : undefined;
 
     if (!vscode) {
       // We're not running in VSCode
@@ -167,11 +186,33 @@
   }
 
   function initJetBrains(stateHandler: StateHandler): void {
-    stateHandler.onNavigateTo((offset: number) => {
-      if (!window.navigateTo) {
+    function setColors(colors: string) {
+      try {
+        colorList = deserializeColorList(colors);
+        document.body.style.backgroundColor = colorList.find(
+          ({ name }) => name === "graph.background",
+        ).hex;
+      } catch (error) {
+        console.trace(error);
         return;
       }
-      window.navigateTo(offset.toString());
+    }
+
+    // Set callbacks for use by the JetBrains extension
+    window.JetBrains ??= {};
+    window.JetBrains.ToWebview = {
+      setSimplify: (flag: boolean) =>
+        stateHandler.update({ config: { simplify: flag } }),
+      setFlatSwitch: (flag: boolean) =>
+        stateHandler.update({ config: { flatSwitch: flag } }),
+      setHighlight: (flag: boolean) =>
+        stateHandler.update({ config: { highlight: flag } }),
+      setCode,
+      setColors,
+    };
+
+    stateHandler.onNavigateTo((offset: number) => {
+      window.JetBrains?.ToExtension?.navigateTo(offset.toString());
     });
   }
 
@@ -185,15 +226,11 @@
     language: Language;
   } | null = null;
 
-  function setCode(
-    newCode: string,
-    offset: number,
-    language: string = "Python",
-  ) {
+  function setCode(newCode: string, offset: number, language: string) {
+    console.log("SetCode", newCode, offset, language);
     if (isValidLanguage(language)) {
       codeAndOffset = { code: newCode, offset, language };
     }
-    console.log(newCode, offset, language);
   }
 
   function navigateTo(
@@ -208,35 +245,11 @@
     }
     stateHandler.navigateTo(e.detail.offset);
   }
-
-  window.setCode = setCode;
-  window.setColors = (colors: string) => {
-    if (!display) return;
-
-    try {
-      const colorList = deserializeColorList(colors);
-      display.applyColors(colorList);
-      document.body.style.backgroundColor = colorList.find(
-        ({ name }) => name === "graph.background",
-      ).hex;
-    } catch (error) {
-      console.trace(error);
-      return;
-    }
-  };
-
-  window.setSimplify = (flag: boolean) =>
-    stateHandler.update({ config: { simplify: flag } });
-  window.setFlatSwitch = (flag: boolean) =>
-    stateHandler.update({ config: { flatSwitch: flag } });
-  window.setHighlight = (flag: boolean) =>
-    stateHandler.update({ config: { highlight: flag } });
 </script>
 
 <main>
   <Jetbrains
     {codeAndOffset}
-    bind:this={display}
     {colorList}
     {simplify}
     {flatSwitch}
