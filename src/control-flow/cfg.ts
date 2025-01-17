@@ -61,15 +61,13 @@ export const functionNodeTypes: { [language in Language]: string[] } = {
   TypeScript: [
     "function_declaration",
     "arrow_function",
+    "method_definition",
     "function_expression",
     "generator_function",
     "generator_function_declaration",
   ],
-  TSX: [
-    "function_declaration",
-    "arrow_function",
-    "function_expression",
-    "generator_function",
-    "generator_function_declaration",
-  ],
+  // We copy the TypeScript values here
+  TSX: [],
 };
+
+functionNodeTypes.TSX = functionNodeTypes.TypeScript;
