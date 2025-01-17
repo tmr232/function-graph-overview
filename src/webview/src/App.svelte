@@ -126,7 +126,6 @@
   } | null = null;
 
   function setCode(newCode: string, offset: number, language: string) {
-    console.log("SetCode", newCode, offset, language);
     if (isValidLanguage(language)) {
       codeAndOffset = { code: newCode, offset, language };
     }
@@ -137,10 +136,8 @@
       // We're not running in VSCode
       return;
     }
-    console.log("Initializing VSCode API");
     // Handle messages sent from the extension to the webview
     window.addEventListener("message", (event: { data: MessageToWebview }) => {
-      console.log("Received message", event.data);
       const message = event.data; // The json data that the extension sent
       switch (message.tag) {
         case "updateCode": {
@@ -163,8 +160,6 @@
     });
 
     stateHandler.onNavigateTo((offset: number) => {
-      // Handle VSCode
-      console.log("Node clicked! Posting message", offset);
       vscode?.postMessage<NavigateTo>({ tag: "navigateTo", offset: offset });
     });
   }
@@ -207,7 +202,6 @@
   function navigateTo(
     e: CustomEvent<{ node: string; offset: number | null }>,
   ): void {
-    console.log("navigateTo", e);
     if (e.detail.offset === null) {
       // We don't know the offset, so we can't navigate to it.
       // TODO: Check if this can actually happen now.
