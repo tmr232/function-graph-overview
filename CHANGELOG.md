@@ -15,6 +15,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 ### Fixed
 
 - `finally` blocks are now supported in TypeScript. 
+- Methods are now supported in TypeScript.
 
 ### Changed
 
