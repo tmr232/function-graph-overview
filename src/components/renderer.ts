@@ -34,6 +34,7 @@ export class Renderer {
     svg: string;
     dot: string;
     getNodeOffset: (nodeId: string) => number | undefined;
+    getOffsetNode: (offset: number) => string;
   } {
     const overlayBuilder = new OverlayBuilder(functionSyntax);
 
@@ -77,8 +78,9 @@ export class Renderer {
     return {
       svg: svg,
       dot,
-      getNodeOffset: (nodeId: string) =>
+      getNodeOffset: (nodeId: string): number =>
         cfg.graph.getNodeAttribute(nodeId, "startOffset"),
+      getOffsetNode: (offset: number): string => cfg.offsetToNode.get(offset),
     };
   }
 }

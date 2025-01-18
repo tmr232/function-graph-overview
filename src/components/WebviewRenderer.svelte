@@ -16,6 +16,7 @@
   let graphviz: Graphviz;
   let dot: string;
   let getNodeOffset: (nodeId: string) => number | undefined = () => undefined;
+  let getOffsetNode: (offset: number) => string;
   let tree: Parser.Tree;
   let svg: string;
   export let colorList = getLightColorList();
@@ -72,12 +73,14 @@
     );
     dot = renderResult.dot;
     getNodeOffset = renderResult.getNodeOffset;
-
+    getOffsetNode = renderResult.getOffsetNode;
     // TODO: Only reset when we move between functions
     const newHash = objectHash(functionSyntax.startPosition);
     if (newHash !== resultHash) {
-      panzoom.reset();
+      panzoom.reset({ animate: false });
       resultHash = newHash;
+    } else {
+      panToNode(getOffsetNode(cursorOffset));
     }
 
     return renderResult.svg;
