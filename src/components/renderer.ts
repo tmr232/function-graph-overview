@@ -1,7 +1,7 @@
 import type { Graphviz } from "@hpcc-js/wasm-graphviz";
 import type Parser from "web-tree-sitter";
 import { type Language, newCFGBuilder } from "../control-flow/cfg";
-import { mergeNodeAttrs, remapNodeTargets } from "../control-flow/cfg-defs";
+import { type BuilderOptions, type CFG, mergeNodeAttrs, remapNodeTargets } from "../control-flow/cfg-defs";
 import { type ColorList, listToScheme } from "../control-flow/colors";
 import {
   type AttrMerger,
@@ -11,6 +11,8 @@ import {
 import { OverlayBuilder } from "../control-flow/overlay.ts";
 import { graphToDot } from "../control-flow/render";
 
+
+
 export interface RenderOptions {
   readonly simplify: boolean;
   readonly verbose: boolean;
@@ -19,6 +21,15 @@ export interface RenderOptions {
   readonly highlight: boolean;
   readonly showRegions: boolean;
 }
+
+function buildCFG(functionSyntax:Parser.SyntaxNode, language:Language, options:BuilderOptions):CFG {
+  const builder = newCFGBuilder(language, options);
+
+  // Build the CFG
+  return builder.buildCFG(functionSyntax);
+}
+
+
 export class Renderer {
   constructor(
     private readonly options: RenderOptions,
