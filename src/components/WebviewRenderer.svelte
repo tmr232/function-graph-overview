@@ -9,6 +9,13 @@
   import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
   import objectHash from "object-hash";
 
+  /*
+  TODO:
+    - [ ] Highlight as an SVG edit, not a re-render
+    - [ ] Remember position when returning to the same function (if the code didn't change)
+    - [ ] Change the pointer
+   */
+
   type CodeAndOffset = { code: string; offset: number; language: Language };
 
   let resultHash: string = "";

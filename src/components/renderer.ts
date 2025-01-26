@@ -10,7 +10,7 @@ import {
 } from "../control-flow/graph-ops";
 import { OverlayBuilder } from "../control-flow/overlay.ts";
 import { graphToDot } from "../control-flow/render";
-
+import {LRUCache} from "lru-cache";
 
 
 export interface RenderOptions {
@@ -95,3 +95,4 @@ export class Renderer {
     };
   }
 }
+

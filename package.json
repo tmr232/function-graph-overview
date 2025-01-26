@@ -12,6 +12,7 @@
     "graphology": "^0.25.4",
     "graphology-operators": "^1.6.0",
     "graphology-traversal": "^0.3.1",
+    "lru-cache": "^11.0.2",
     "object-hash": "^3.0.0",
     "svgdom": "^0.1.19",
     "web-tree-sitter": "^0.23.2"
