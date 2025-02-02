@@ -1,13 +1,18 @@
-import objectHash from "object-hash";
 import { LRUCache } from "lru-cache";
 
-export function memoized<R extends {}>(
-  fn: (...args: any[]) => R,
-  hashFunc: (...args: any[]) => string,
+/**
+ * Return a memoized version of the given function
+ * @param fn The function to memoize
+ * @param hashFunc Hash function to use for the arguments
+ * @param capacity Number of entries to keep memoized
+ */
+export function memoizeFunction<V extends {}, K extends {}, Args extends unknown[]>(
+  fn: (...args: Args) => V,
+  hashFunc: (...args: Args) => K,
   capacity: number,
-): (...args: any[]) => R {
-  const cache = new LRUCache<string, R>({ max: capacity });
-  return (...args: any[]) => {
+): (...args: Args) => V {
+  const cache = new LRUCache<K, V>({ max: capacity });
+  return (...args: Args) => {
     const key = hashFunc(...args);
     const cachedValue = cache.get(key);
     if (cachedValue) {
@@ -18,18 +23,3 @@ export function memoized<R extends {}>(
     return calculatedValue;
   };
 }
-
-  const m = memoized(
-    (a: number, b: string, c: number) => {
-      console.log(b);
-      return a + c;
-    },
-    (a, b, c) => objectHash([a, c]),
-    4,
-  );
-
-  m(1,"a",2);
-  m(1,"b",2);
-  m(1,"c",3);
-
-
