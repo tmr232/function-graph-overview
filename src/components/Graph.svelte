@@ -84,7 +84,7 @@
     return savedSvg;
   }
   export function getDOT() {
-    return graphviz.dot(dot, "canon");
+    return dot;
   }
 
   function onClick(event: MouseEvent) {
