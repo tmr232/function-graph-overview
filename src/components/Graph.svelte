@@ -63,7 +63,7 @@
       throw new Error("No function found!");
     }
 
-    const renderer = getRenderer(options, colorList, graphviz)
+    const renderer = getRenderer(options, colorList, graphviz);
     const renderResult = renderer.render(
       functionSyntax,
       language,

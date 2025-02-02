@@ -1,6 +1,5 @@
 import type { Graphviz } from "@hpcc-js/wasm-graphviz";
 import { type G, type Polygon, SVG, type Svg } from "@svgdotjs/svg.js";
-import { LRUCache } from "lru-cache";
 import objectHash from "object-hash";
 import type Parser from "web-tree-sitter";
 import { type Language, newCFGBuilder } from "../control-flow/cfg";
@@ -13,6 +12,7 @@ import {
 } from "../control-flow/graph-ops";
 import { OverlayBuilder } from "../control-flow/overlay.ts";
 import { graphToDot } from "../control-flow/render";
+import { memoizeFunction } from "./caching.ts";
 
 export interface RenderOptions {
   readonly simplify: boolean;
@@ -23,15 +23,13 @@ export interface RenderOptions {
   readonly showRegions: boolean;
 }
 
-type CachedValue = {
-  dot: string;
-  svg: string;
-  getNodeOffset: (nodeId: string) => number | undefined;
-  offsetToNode: (offset: number) => string | undefined;
-};
-
 export class Renderer {
-  private cache = new LRUCache<string, CachedValue>({ max: 100 });
+  private memoizedRenderStatic = memoizeFunction({
+    func: this.renderStatic.bind(this),
+    hash: (functionSyntax: Parser.SyntaxNode, language: Language) =>
+      objectHash({ code: functionSyntax.text, language }),
+    max: 1,
+  });
   constructor(
     private readonly options: RenderOptions,
     private readonly colorList: ColorList,
@@ -47,23 +45,10 @@ export class Renderer {
     dot: string;
     getNodeOffset: (nodeId: string) => number | undefined;
   } {
-    // Check the cache for previous outputs
-    const cacheKeyObj = {
-      code: functionSyntax.text,
+    let { dot, svg, getNodeOffset, offsetToNode } = this.memoizedRenderStatic(
+      functionSyntax,
       language,
-    };
-    const cacheKey = objectHash(cacheKeyObj);
-    const cachedResult = this.cache.get(cacheKey);
-    let { dot, svg, getNodeOffset, offsetToNode } = (() => {
-      if (cachedResult) {
-        console.log("Using cache");
-        return cachedResult;
-      }
-      console.log("Re-rendering");
-      const newResult = this.renderStatic(functionSyntax, language);
-      this.cache.set(cacheKey, newResult);
-      return newResult;
-    })();
+    );
 
     const nodeToHighlight =
       offsetToHighlight && this.options.highlight
