@@ -2,7 +2,7 @@ import type { Graphviz } from "@hpcc-js/wasm-graphviz";
 import { type G, type Polygon, SVG, type Svg } from "@svgdotjs/svg.js";
 import type Parser from "web-tree-sitter";
 import { type Language, newCFGBuilder } from "../control-flow/cfg";
-import { mergeNodeAttrs, remapNodeTargets } from "../control-flow/cfg-defs";
+import { type CFG, mergeNodeAttrs, remapNodeTargets } from "../control-flow/cfg-defs";
 import { type ColorList, listToScheme } from "../control-flow/colors";
 import {
   type AttrMerger,
@@ -11,6 +11,8 @@ import {
 } from "../control-flow/graph-ops";
 import { OverlayBuilder } from "../control-flow/overlay.ts";
 import { graphToDot } from "../control-flow/render";
+import objectHash from "object-hash";
+import { LRUCache } from 'lru-cache';
 
 export interface RenderOptions {
   readonly simplify: boolean;
@@ -20,7 +22,16 @@ export interface RenderOptions {
   readonly highlight: boolean;
   readonly showRegions: boolean;
 }
+
+type CachedValue = {
+  dot: string;
+  svg: string;
+  getNodeOffset: (nodeId: string) => number | undefined;
+  offsetToNode: (offset: number) => string | undefined;
+};
+
 export class Renderer {
+  private cache = new LRUCache<string, CachedValue>({ max: 100 });
   constructor(
     private readonly options: RenderOptions,
     private readonly colorList: ColorList,
@@ -36,37 +47,29 @@ export class Renderer {
     dot: string;
     getNodeOffset: (nodeId: string) => number | undefined;
   } {
-    const overlayBuilder = new OverlayBuilder(functionSyntax);
+    // Check the cache for previous outputs
+    const cacheKeyObj = {
+      code: functionSyntax.text,
+      language,
+    };
+    const cacheKey = objectHash(cacheKeyObj);
+    const cachedResult = this.cache.get(cacheKey);
+    let { dot, svg, getNodeOffset, offsetToNode } = (() => {
+      if (cachedResult) {
+        console.log("Using cache");
+        return cachedResult;
+      }
+      console.log("Re-rendering");
+      const newResult =  this.renderStatic(functionSyntax, language);
+      this.cache.set(cacheKey, newResult);
+      return newResult;
+    })();
 
-    const builder = newCFGBuilder(language, {
-      flatSwitch: this.options.flatSwitch,
-    });
 
-    // Build the CFG
-    let cfg = builder.buildCFG(functionSyntax);
-    if (!cfg) throw new Error("Failed generating CFG for function");
-    if (this.options.trim) cfg = trimFor(cfg);
-    const nodeAttributeMerger: AttrMerger = this.options.showRegions
-      ? overlayBuilder.getAttrMerger(mergeNodeAttrs)
-      : mergeNodeAttrs;
-    if (this.options.simplify) {
-      cfg = simplifyCFG(cfg, nodeAttributeMerger);
-    }
-    cfg = remapNodeTargets(cfg);
     const nodeToHighlight =
       offsetToHighlight && this.options.highlight
-        ? cfg.offsetToNode.get(offsetToHighlight)
+        ? offsetToNode(offsetToHighlight)
         : undefined;
-
-    // Render to DOT
-    const dot = graphToDot(
-      cfg,
-      this.options.verbose,
-      listToScheme(this.colorList),
-    );
-
-    // Render SVG
-    let svg = this.graphviz.dot(dot);
 
     // Highlight Node
     if (nodeToHighlight) {
@@ -85,16 +88,53 @@ export class Renderer {
       svg = dom.svg();
     }
 
+    return {
+      svg: svg,
+      dot,
+      getNodeOffset,
+    };
+  }
+
+  private renderStatic(functionSyntax: Parser.SyntaxNode, language: Language) {
+    const overlayBuilder = new OverlayBuilder(functionSyntax);
+
+    const builder = newCFGBuilder(language, {
+      flatSwitch: this.options.flatSwitch,
+    });
+
+    // Build the CFG
+    let cfg = builder.buildCFG(functionSyntax);
+    if (!cfg) throw new Error("Failed generating CFG for function");
+    if (this.options.trim) cfg = trimFor(cfg);
+    const nodeAttributeMerger: AttrMerger = this.options.showRegions
+      ? overlayBuilder.getAttrMerger(mergeNodeAttrs)
+      : mergeNodeAttrs;
+    if (this.options.simplify) {
+      cfg = simplifyCFG(cfg, nodeAttributeMerger);
+    }
+    cfg = remapNodeTargets(cfg);
+
+    // Render to DOT
+    const dot = graphToDot(
+      cfg,
+      this.options.verbose,
+      listToScheme(this.colorList),
+    );
+
+    // Render SVG
+    let svg = this.graphviz.dot(dot);
+
     // Overlay regions
     if (this.options.showRegions) {
       svg = overlayBuilder.renderOnto(cfg, svg);
     }
 
     return {
-      svg: svg,
+      svg,
       dot,
       getNodeOffset: (nodeId: string) =>
         cfg.graph.getNodeAttribute(nodeId, "startOffset"),
+      offsetToNode: (offset: number) => cfg.offsetToNode.get(offset),
     };
   }
 }
