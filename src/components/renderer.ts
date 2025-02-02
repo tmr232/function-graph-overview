@@ -28,7 +28,7 @@ export class Renderer {
     func: this.renderStatic.bind(this),
     hash: (functionSyntax: Parser.SyntaxNode, language: Language) =>
       objectHash({ code: functionSyntax.text, language }),
-    max: 1,
+    max: 100,
   });
   constructor(
     private readonly options: RenderOptions,
