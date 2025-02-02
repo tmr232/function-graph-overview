@@ -14,6 +14,8 @@
     listToScheme,
   } from "../control-flow/colors";
   import { Renderer, type RenderOptions } from "./renderer.ts";
+  import objectHash from "object-hash";
+  import { LRUCache } from "lru-cache";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
@@ -34,6 +36,8 @@
 
   const dispatch = createEventDispatcher();
 
+  const rendererCache = new LRUCache<string, Renderer>({ max: 1 });
+
   async function initialize() {
     const utils = await initializeUtils();
     parsers = utils.parsers;
@@ -53,7 +57,16 @@
       throw new Error("No function found!");
     }
 
-    const renderer = new Renderer(options, colorList, graphviz);
+    const renderer = (() => {
+      const key = objectHash({ options, colorList });
+      const cached = rendererCache.get(key);
+      if (cached) {
+        return cached;
+      }
+      const newRenderer = new Renderer(options, colorList, graphviz);
+      rendererCache.set(key, newRenderer);
+      return newRenderer;
+    })();
     const renderResult = renderer.render(
       functionSyntax,
       language,

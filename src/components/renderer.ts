@@ -1,8 +1,10 @@
 import type { Graphviz } from "@hpcc-js/wasm-graphviz";
 import { type G, type Polygon, SVG, type Svg } from "@svgdotjs/svg.js";
+import { LRUCache } from "lru-cache";
+import objectHash from "object-hash";
 import type Parser from "web-tree-sitter";
 import { type Language, newCFGBuilder } from "../control-flow/cfg";
-import { type CFG, mergeNodeAttrs, remapNodeTargets } from "../control-flow/cfg-defs";
+import { mergeNodeAttrs, remapNodeTargets } from "../control-flow/cfg-defs";
 import { type ColorList, listToScheme } from "../control-flow/colors";
 import {
   type AttrMerger,
@@ -11,8 +13,6 @@ import {
 } from "../control-flow/graph-ops";
 import { OverlayBuilder } from "../control-flow/overlay.ts";
 import { graphToDot } from "../control-flow/render";
-import objectHash from "object-hash";
-import { LRUCache } from 'lru-cache';
 
 export interface RenderOptions {
   readonly simplify: boolean;
@@ -60,11 +60,10 @@ export class Renderer {
         return cachedResult;
       }
       console.log("Re-rendering");
-      const newResult =  this.renderStatic(functionSyntax, language);
+      const newResult = this.renderStatic(functionSyntax, language);
       this.cache.set(cacheKey, newResult);
       return newResult;
     })();
-
 
     const nodeToHighlight =
       offsetToHighlight && this.options.highlight
