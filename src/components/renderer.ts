@@ -1,4 +1,5 @@
 import type { Graphviz } from "@hpcc-js/wasm-graphviz";
+import { type G, type Polygon, SVG, type Svg } from "@svgdotjs/svg.js";
 import type Parser from "web-tree-sitter";
 import { type Language, newCFGBuilder } from "../control-flow/cfg";
 import { mergeNodeAttrs, remapNodeTargets } from "../control-flow/cfg-defs";
@@ -61,17 +62,32 @@ export class Renderer {
     const dot = graphToDot(
       cfg,
       this.options.verbose,
-      nodeToHighlight,
       listToScheme(this.colorList),
     );
 
     // Render SVG
-    const rawSvg = this.graphviz.dot(dot);
-    let svg: string;
+    let svg = this.graphviz.dot(dot);
+
+    // Highlight Node
+    if (nodeToHighlight) {
+      const dom = svgFromString(svg);
+      const node: G | null = dom.findOne(`g#${nodeToHighlight}`) as G | null;
+      if (node) {
+        // The highlight class is used when previewing colors in the demo.
+        node.addClass("highlight");
+      }
+      const poly: Polygon | null = dom.findOne(
+        `g#${nodeToHighlight} polygon`,
+      ) as Polygon | null;
+      if (poly) {
+        poly.fill(listToScheme(this.colorList)["node.highlight"]);
+      }
+      svg = dom.svg();
+    }
+
+    // Overlay regions
     if (this.options.showRegions) {
-      svg = overlayBuilder.renderOnto(cfg, rawSvg);
-    } else {
-      svg = rawSvg;
+      svg = overlayBuilder.renderOnto(cfg, svg);
     }
 
     return {
@@ -81,4 +97,9 @@ export class Renderer {
         cfg.graph.getNodeAttribute(nodeId, "startOffset"),
     };
   }
+}
+function svgFromString(rawSvg: string): Svg {
+  const parser = new DOMParser();
+  const dom = parser.parseFromString(rawSvg, "image/svg+xml");
+  return SVG(dom.documentElement) as Svg;
 }

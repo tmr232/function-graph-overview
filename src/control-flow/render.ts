@@ -17,17 +17,14 @@ function indent(text: string): string {
 class RenderContext {
   public readonly verbose: boolean;
   private readonly backlinks: { from: string; to: string }[];
-  private readonly highlightedNode: string | undefined;
   public readonly colorScheme: ColorScheme;
   constructor(
     verbose: boolean,
     backlinks: { from: string; to: string }[],
     colorScheme: ColorScheme,
-    highlightedNode?: string,
   ) {
     this.verbose = verbose;
     this.backlinks = backlinks;
-    this.highlightedNode = highlightedNode;
     this.colorScheme = colorScheme;
   }
 
@@ -35,9 +32,6 @@ class RenderContext {
     return this.backlinks.some(
       (backlink) => from === backlink.from && to === backlink.to,
     );
-  }
-  public isHighlighted(node: string): boolean {
-    return node === this.highlightedNode;
   }
 }
 
@@ -210,7 +204,6 @@ function renderSubgraphs(
 export function graphToDot(
   cfg: CFG,
   verbose = false,
-  nodeToHighlight?: string,
   colorScheme?: ColorScheme,
 ): string {
   const hierarchy = buildHierarchy(cfg);
@@ -222,7 +215,6 @@ export function graphToDot(
       verbose,
       backlinks,
       colorScheme ?? getDefaultColorScheme(),
-      nodeToHighlight,
     ),
   );
 }
@@ -387,9 +379,5 @@ function renderNode(
     graph.getNodeAttribute(node, "lines") * 0.3,
     minHeight,
   );
-  if (context.isHighlighted(node)) {
-    dotAttrs.fillcolor = context.colorScheme["node.highlight"];
-    dotAttrs.class = "highlight";
-  }
   return `${node} [${formatStyle(dotAttrs)}];`;
 }
