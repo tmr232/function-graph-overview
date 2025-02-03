@@ -4,20 +4,27 @@ import type { CFG, CFGGraph, Cluster, ClusterId } from "./cfg-defs";
 import { type ColorScheme, getDefaultColorScheme } from "./colors";
 import { detectBacklinks } from "./graph-ops";
 
+function indent(text: string): string {
+  return (
+    text
+      .split(/\n/)
+      // We only indent non-empty lines
+      .map((line) => (line ? `    ${line}` : ""))
+      .join("\n")
+  );
+}
+
 class RenderContext {
   public readonly verbose: boolean;
   private readonly backlinks: { from: string; to: string }[];
-  private readonly highlightedNode: string | undefined;
   public readonly colorScheme: ColorScheme;
   constructor(
     verbose: boolean,
     backlinks: { from: string; to: string }[],
     colorScheme: ColorScheme,
-    highlightedNode?: string,
   ) {
     this.verbose = verbose;
     this.backlinks = backlinks;
-    this.highlightedNode = highlightedNode;
     this.colorScheme = colorScheme;
   }
 
@@ -25,9 +32,6 @@ class RenderContext {
     return this.backlinks.some(
       (backlink) => from === backlink.from && to === backlink.to,
     );
-  }
-  public isHighlighted(node: string): boolean {
-    return node === this.highlightedNode;
   }
 }
 
@@ -149,25 +153,28 @@ function renderHierarchy(
   hierarchy: Hierarchy,
   context: RenderContext,
 ) {
-  let dotContent = `digraph "" {\n    node [shape=box, color="${context.colorScheme["node.border"]}"];\n    edge [headport=n tailport=s]\n    bgcolor="${context.colorScheme["graph.background"]}"\n`;
+  const parts: string[] = [];
+  parts.push(
+    `digraph "" {\n    node [shape=box, color="${context.colorScheme["node.border"]}"];\n    edge [headport=n tailport=s]\n    bgcolor="${context.colorScheme["graph.background"]}"`,
+  );
 
   const topGraph = cfg.graph;
 
   // First we draw all subgraphs
   for (const child of Object.values(hierarchy.children)) {
-    dotContent += renderSubgraphs(child, context, topGraph);
+    parts.push(indent(renderSubgraphs(child, context, topGraph)));
   }
 
   // Then everything that remains - connecting edges and non-clustered nodes
   hierarchy.graph.forEachNode((node) => {
-    dotContent += renderNode(topGraph, node, context);
+    parts.push(indent(renderNode(topGraph, node, context)));
   });
   hierarchy.graph.forEachEdge((edge, _attributes, source, target) => {
-    dotContent += renderEdge(edge, source, target, topGraph, context);
+    parts.push(indent(renderEdge(edge, source, target, topGraph, context)));
   });
 
-  dotContent += "}";
-  return dotContent;
+  parts.push("}");
+  return parts.join("\n");
 }
 
 function renderSubgraphs(
@@ -175,26 +182,28 @@ function renderSubgraphs(
   context: RenderContext,
   topGraph: CFGGraph,
 ) {
-  let dotContent = "";
-  dotContent += `subgraph cluster_${hierarchy.cluster?.id ?? "toplevel"} {\n`;
-  if (hierarchy.cluster) dotContent += clusterStyle(hierarchy.cluster, context);
+  const parts: string[] = [];
+
+  parts.push(`subgraph cluster_${hierarchy.cluster?.id ?? "toplevel"} {`);
+  if (hierarchy.cluster)
+    parts.push(indent(clusterStyle(hierarchy.cluster, context)));
   hierarchy.graph.forEachNode((node) => {
-    dotContent += renderNode(topGraph, node, context);
+    parts.push(indent(renderNode(topGraph, node, context)));
   });
   for (const child of Object.values(hierarchy.children)) {
-    dotContent += `\n${renderSubgraphs(child, context, topGraph)}\n`;
+    parts.push(indent(`${renderSubgraphs(child, context, topGraph)}`));
   }
   hierarchy.graph.forEachEdge((edge, _attributes, source, target) => {
-    dotContent += renderEdge(edge, source, target, topGraph, context);
+    parts.push(indent(renderEdge(edge, source, target, topGraph, context)));
   });
-  dotContent += "\n}";
-  return dotContent;
+  parts.push("}");
+
+  return parts.join("\n");
 }
 
 export function graphToDot(
   cfg: CFG,
   verbose = false,
-  nodeToHighlight?: string,
   colorScheme?: ColorScheme,
 ): string {
   const hierarchy = buildHierarchy(cfg);
@@ -206,7 +215,6 @@ export function graphToDot(
       verbose,
       backlinks,
       colorScheme ?? getDefaultColorScheme(),
-      nodeToHighlight,
     ),
   );
 }
@@ -217,14 +225,15 @@ function formatStyle(style: DotAttributes): string {
     .map(([name, value]) => {
       switch (typeof value) {
         case "number":
-          return `${name}=${value};\n`;
+          return `${name}=${value}`;
         case "string":
-          return `${name}="${value}";\n`;
+          return `${name}="${value}"`;
         default: // case "undefined":
           return "";
       }
     })
-    .join("");
+    .filter(Boolean)
+    .join("; ");
 }
 
 function clusterStyle(cluster: Cluster, context: RenderContext): string {
@@ -314,7 +323,7 @@ function renderEdge(
     dotAttrs.headport = "s";
     dotAttrs.tailport = "n";
   }
-  return `    ${source} -> ${target} [${formatStyle(dotAttrs)}];\n`;
+  return `${source} -> ${target} [${formatStyle(dotAttrs)}];`;
 }
 
 function renderNode(
@@ -370,9 +379,5 @@ function renderNode(
     graph.getNodeAttribute(node, "lines") * 0.3,
     minHeight,
   );
-  if (context.isHighlighted(node)) {
-    dotAttrs.fillcolor = context.colorScheme["node.highlight"];
-    dotAttrs.class = "highlight";
-  }
-  return `    ${node} [${formatStyle(dotAttrs)}];\n`;
+  return `${node} [${formatStyle(dotAttrs)}];`;
 }

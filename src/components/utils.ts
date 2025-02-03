@@ -1,4 +1,4 @@
-import { type Format, Graphviz } from "@hpcc-js/wasm-graphviz";
+import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import type Parser from "web-tree-sitter";
 import {
   type Language,
@@ -96,13 +96,11 @@ export function processRecord(
 
   try {
     const renderer = new Renderer(options, getDefaultColorList(), graphviz);
-    const { dot: rawDot, svg } = renderer.render(
+    const { dot, svg } = renderer.render(
       functionSyntax,
       record.language,
       undefined,
     );
-
-    const dot = graphviz.dot(rawDot, "canon" as Format);
 
     return { dot, ast, svg };
   } catch (error) {

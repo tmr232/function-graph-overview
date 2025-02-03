@@ -6,8 +6,9 @@
   import { createEventDispatcher, onMount } from "svelte";
   import { type ColorList, getLightColorList } from "../control-flow/colors";
   import { Renderer, type RenderOptions } from "./renderer.ts";
-  import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
+  import { memoizeFunction } from "./caching.ts";
   import objectHash from "object-hash";
+  import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
 
   /*
   TODO:
@@ -34,6 +35,14 @@
   export let flatSwitch: boolean = false;
   export let highlight: boolean = true;
   export let showRegions: boolean = false;
+
+  const getRenderer = memoizeFunction({
+    func: (options: RenderOptions, colorList: ColorList, graphviz: Graphviz) =>
+      new Renderer(options, colorList, graphviz),
+    hash: (options: RenderOptions, colorList: ColorList, _graphviz: Graphviz) =>
+      objectHash({ options, colorList }),
+    max: 1,
+  });
 
   const dispatch = createEventDispatcher();
 
@@ -72,7 +81,7 @@
       throw new Error("No function found!");
     }
 
-    const renderer = new Renderer(options, colorList, graphviz);
+    const renderer = getRenderer(options, colorList, graphviz);
     const renderResult = renderer.render(
       functionSyntax,
       language,

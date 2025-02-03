@@ -14,6 +14,8 @@
     listToScheme,
   } from "../control-flow/colors";
   import { Renderer, type RenderOptions } from "./renderer.ts";
+  import objectHash from "object-hash";
+  import { memoizeFunction } from "./caching.ts";
 
   let parsers: Parsers;
   let graphviz: Graphviz;
@@ -34,6 +36,14 @@
 
   const dispatch = createEventDispatcher();
 
+  const getRenderer = memoizeFunction({
+    func: (options: RenderOptions, colorList: ColorList, graphviz: Graphviz) =>
+      new Renderer(options, colorList, graphviz),
+    hash: (options: RenderOptions, colorList: ColorList, _graphviz: Graphviz) =>
+      objectHash({ options, colorList }),
+    max: 1,
+  });
+
   async function initialize() {
     const utils = await initializeUtils();
     parsers = utils.parsers;
@@ -53,7 +63,7 @@
       throw new Error("No function found!");
     }
 
-    const renderer = new Renderer(options, colorList, graphviz);
+    const renderer = getRenderer(options, colorList, graphviz);
     const renderResult = renderer.render(
       functionSyntax,
       language,
@@ -84,7 +94,7 @@
     return savedSvg;
   }
   export function getDOT() {
-    return graphviz.dot(dot, "canon");
+    return dot;
   }
 
   function onClick(event: MouseEvent) {

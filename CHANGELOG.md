@@ -11,17 +11,21 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Region comment note overlay thingies in the demo, hidden in debug mode or under the `showRegions` parameter.
   Once enabled, use `cfg-overlay-start: My Message` and `cfg-overlay-end` comments to delimit regions and show
   them in the graph.
+- Function rendering is now cached, so that they are only re-rendered when needed.
+  This results in faster update times when moving the cursor in the same function.
 
 ### Fixed
 
 - `finally` blocks are now supported in TypeScript. 
 - Methods are now supported in TypeScript.
+- Exporting DOT files (in debug mode) no longer results in different-looking graphs
 
 ### Changed
 
 - VSCode and JetBrains now use the same WebView content.
 - Placeholder ("Hello, World!") graph colors are now determined by the color scheme.
 - VSCode settings now applied instantly to the graph.
+
 
 ## [0.0.13] - 2025-01-06
 

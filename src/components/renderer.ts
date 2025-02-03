@@ -1,7 +1,9 @@
 import type { Graphviz } from "@hpcc-js/wasm-graphviz";
+import type { G, Polygon } from "@svgdotjs/svg.js";
+import objectHash from "object-hash";
 import type Parser from "web-tree-sitter";
 import { type Language, newCFGBuilder } from "../control-flow/cfg";
-import { type BuilderOptions, type CFG, mergeNodeAttrs, remapNodeTargets } from "../control-flow/cfg-defs";
+import { mergeNodeAttrs, remapNodeTargets } from "../control-flow/cfg-defs";
 import { type ColorList, listToScheme } from "../control-flow/colors";
 import {
   type AttrMerger,
@@ -10,8 +12,8 @@ import {
 } from "../control-flow/graph-ops";
 import { OverlayBuilder } from "../control-flow/overlay.ts";
 import { graphToDot } from "../control-flow/render";
-import {LRUCache} from "lru-cache";
-
+import { svgFromString } from "../control-flow/svgFromString.ts";
+import { memoizeFunction } from "./caching.ts";
 
 export interface RenderOptions {
   readonly simplify: boolean;
@@ -22,15 +24,13 @@ export interface RenderOptions {
   readonly showRegions: boolean;
 }
 
-function buildCFG(functionSyntax:Parser.SyntaxNode, language:Language, options:BuilderOptions):CFG {
-  const builder = newCFGBuilder(language, options);
-
-  // Build the CFG
-  return builder.buildCFG(functionSyntax);
-}
-
-
 export class Renderer {
+  private memoizedRenderStatic = memoizeFunction({
+    func: this.renderStatic.bind(this),
+    hash: (functionSyntax: Parser.SyntaxNode, language: Language) =>
+      objectHash({ code: functionSyntax.text, language }),
+    max: 100,
+  });
   constructor(
     private readonly options: RenderOptions,
     private readonly colorList: ColorList,
@@ -45,8 +45,48 @@ export class Renderer {
     svg: string;
     dot: string;
     getNodeOffset: (nodeId: string) => number | undefined;
-    getOffsetNode: (offset: number) => string;
   } {
+    let { dot, svg, getNodeOffset, offsetToNode } = this.memoizedRenderStatic(
+      functionSyntax,
+      language,
+    );
+
+    // We want to allow the function to move without changing (in case of code
+    // edits in other functions).
+    // To do that, we need to make all offset calculations relative to the
+    // function and not the file.
+    const baseOffset = functionSyntax.startIndex;
+
+    const nodeToHighlight =
+      offsetToHighlight && this.options.highlight
+        ? offsetToNode(offsetToHighlight - baseOffset)
+        : undefined;
+
+    if (nodeToHighlight) {
+      svg = this.highlightNode(svg, nodeToHighlight);
+    }
+
+    return {
+      svg: svg,
+      dot,
+      getNodeOffset: (nodeId: string) => getNodeOffset(nodeId) + baseOffset,
+    };
+  }
+
+  private highlightNode(svg: string, nodeId: string): string {
+    const dom = svgFromString(svg);
+    // We construct the SVG, so we know the node must exist.
+    const node: G = dom.findOne(`g#${nodeId}`) as G;
+    // Same applies to the polygon.
+
+    const poly: Polygon = node.findOne("polygon") as Polygon;
+    // The highlight class is used when previewing colors in the demo.
+    node.addClass("highlight");
+    poly.fill(listToScheme(this.colorList)["node.highlight"]);
+    return dom.svg();
+  }
+
+  private renderStatic(functionSyntax: Parser.SyntaxNode, language: Language) {
     const overlayBuilder = new OverlayBuilder(functionSyntax);
 
     const builder = newCFGBuilder(language, {
@@ -64,35 +104,32 @@ export class Renderer {
       cfg = simplifyCFG(cfg, nodeAttributeMerger);
     }
     cfg = remapNodeTargets(cfg);
-    const nodeToHighlight =
-      offsetToHighlight && this.options.highlight
-        ? cfg.offsetToNode.get(offsetToHighlight)
-        : undefined;
 
     // Render to DOT
     const dot = graphToDot(
       cfg,
       this.options.verbose,
-      nodeToHighlight,
       listToScheme(this.colorList),
     );
 
     // Render SVG
-    const rawSvg = this.graphviz.dot(dot);
-    let svg: string;
+    let svg = this.graphviz.dot(dot);
+
+    // Overlay regions
     if (this.options.showRegions) {
-      svg = overlayBuilder.renderOnto(cfg, rawSvg);
-    } else {
-      svg = rawSvg;
+      svg = overlayBuilder.renderOnto(cfg, svg);
     }
 
     return {
-      svg: svg,
+      svg,
       dot,
-      getNodeOffset: (nodeId: string): number =>
-        cfg.graph.getNodeAttribute(nodeId, "startOffset"),
-      getOffsetNode: (offset: number): string => cfg.offsetToNode.get(offset),
+      // We must work with function-relative offsets, as we want to allow the function
+      // to move without changing.
+      getNodeOffset: (nodeId: string) =>
+        cfg.graph.getNodeAttribute(nodeId, "startOffset") -
+        functionSyntax.startIndex,
+      offsetToNode: (offset: number) =>
+        cfg.offsetToNode.get(offset + functionSyntax.startIndex),
     };
   }
 }
-

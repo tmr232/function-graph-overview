@@ -137,7 +137,7 @@ async function main() {
 
   const colorScheme = await getColorScheme(values.colors);
 
-  const svg = graphviz.dot(graphToDot(cfg, false, undefined, colorScheme));
+  const svg = graphviz.dot(graphToDot(cfg, false, colorScheme));
 
   if (values.out) {
     await Bun.write(values.out, svg);
