@@ -11,6 +11,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Region comment note overlay thingies in the demo, hidden in debug mode or under the `showRegions` parameter.
   Once enabled, use `cfg-overlay-start: My Message` and `cfg-overlay-end` comments to delimit regions and show
   them in the graph.
+- Function rendering is now cached, so that they are only re-rendered when needed.
+  This results in faster update times when moving the cursor in the same function.
 
 ### Fixed
 

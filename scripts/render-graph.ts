@@ -50,7 +50,7 @@ async function main() {
   const colorScheme = await getColorScheme(values.colors);
 
   const graphviz = await Graphviz.load();
-  const svg = graphviz.dot(graphToDot(cfg, false, undefined, colorScheme));
+  const svg = graphviz.dot(graphToDot(cfg, false, colorScheme));
   console.log(svg);
 }
 
