@@ -50,9 +50,15 @@ export class Renderer {
       language,
     );
 
+    // We want to allow the function to move without changing (in case of code
+    // edits in other functions).
+    // To do that, we need to make all offset calculations relative to the
+    // function and not the file.
+    const baseOffset = functionSyntax.startIndex;
+
     const nodeToHighlight =
       offsetToHighlight && this.options.highlight
-        ? offsetToNode(offsetToHighlight)
+        ? offsetToNode(offsetToHighlight - baseOffset)
         : undefined;
 
     // Highlight Node
@@ -75,7 +81,7 @@ export class Renderer {
     return {
       svg: svg,
       dot,
-      getNodeOffset,
+      getNodeOffset:(nodeId:string)=>getNodeOffset(nodeId)+baseOffset
     };
   }
 
@@ -116,9 +122,11 @@ export class Renderer {
     return {
       svg,
       dot,
+      // We must work with function-relative offsets, as we want to allow the function
+      // to move without changing.
       getNodeOffset: (nodeId: string) =>
-        cfg.graph.getNodeAttribute(nodeId, "startOffset"),
-      offsetToNode: (offset: number) => cfg.offsetToNode.get(offset),
+        cfg.graph.getNodeAttribute(nodeId, "startOffset") - functionSyntax.startIndex,
+      offsetToNode: (offset: number) => cfg.offsetToNode.get(offset + functionSyntax.startIndex),
     };
   }
 }
