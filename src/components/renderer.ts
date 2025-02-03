@@ -1,5 +1,5 @@
 import type { Graphviz } from "@hpcc-js/wasm-graphviz";
-import { type G, type Polygon, SVG, type Svg } from "@svgdotjs/svg.js";
+import type { G, Polygon } from "@svgdotjs/svg.js";
 import objectHash from "object-hash";
 import type Parser from "web-tree-sitter";
 import { type Language, newCFGBuilder } from "../control-flow/cfg";
@@ -12,6 +12,7 @@ import {
 } from "../control-flow/graph-ops";
 import { OverlayBuilder } from "../control-flow/overlay.ts";
 import { graphToDot } from "../control-flow/render";
+import { svgFromString } from "../control-flow/svgFromString.ts";
 import { memoizeFunction } from "./caching.ts";
 
 export interface RenderOptions {
@@ -61,28 +62,28 @@ export class Renderer {
         ? offsetToNode(offsetToHighlight - baseOffset)
         : undefined;
 
-    // Highlight Node
     if (nodeToHighlight) {
-      const dom = svgFromString(svg);
-      const node: G | null = dom.findOne(`g#${nodeToHighlight}`) as G | null;
-      if (node) {
-        // The highlight class is used when previewing colors in the demo.
-        node.addClass("highlight");
-      }
-      const poly: Polygon | null = dom.findOne(
-        `g#${nodeToHighlight} polygon`,
-      ) as Polygon | null;
-      if (poly) {
-        poly.fill(listToScheme(this.colorList)["node.highlight"]);
-      }
-      svg = dom.svg();
+      svg = this.highlightNode(svg, nodeToHighlight);
     }
 
     return {
       svg: svg,
       dot,
-      getNodeOffset:(nodeId:string)=>getNodeOffset(nodeId)+baseOffset
+      getNodeOffset: (nodeId: string) => getNodeOffset(nodeId) + baseOffset,
     };
+  }
+
+  private highlightNode(svg: string, nodeId: string): string {
+    const dom = svgFromString(svg);
+    // We construct the SVG, so we know the node must exist.
+    const node: G = dom.findOne(`g#${nodeId}`) as G;
+    // Same applies to the polygon.
+
+    const poly: Polygon = node.findOne("polygon") as Polygon;
+    // The highlight class is used when previewing colors in the demo.
+    node.addClass("highlight");
+    poly.fill(listToScheme(this.colorList)["node.highlight"]);
+    return dom.svg();
   }
 
   private renderStatic(functionSyntax: Parser.SyntaxNode, language: Language) {
@@ -125,13 +126,10 @@ export class Renderer {
       // We must work with function-relative offsets, as we want to allow the function
       // to move without changing.
       getNodeOffset: (nodeId: string) =>
-        cfg.graph.getNodeAttribute(nodeId, "startOffset") - functionSyntax.startIndex,
-      offsetToNode: (offset: number) => cfg.offsetToNode.get(offset + functionSyntax.startIndex),
+        cfg.graph.getNodeAttribute(nodeId, "startOffset") -
+        functionSyntax.startIndex,
+      offsetToNode: (offset: number) =>
+        cfg.offsetToNode.get(offset + functionSyntax.startIndex),
     };
   }
-}
-function svgFromString(rawSvg: string): Svg {
-  const parser = new DOMParser();
-  const dom = parser.parseFromString(rawSvg, "image/svg+xml");
-  return SVG(dom.documentElement) as Svg;
 }

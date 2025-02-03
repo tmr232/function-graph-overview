@@ -1,8 +1,9 @@
-import { type Container, type Element, SVG, type Svg } from "@svgdotjs/svg.js";
+import type { Container, Element, Svg } from "@svgdotjs/svg.js";
 import type Parser from "web-tree-sitter";
 import type { CFG, GraphNode } from "./cfg-defs.ts";
 import type { AttrMerger } from "./graph-ops.ts";
 import { Lookup } from "./ranges.ts";
+import { svgFromString } from "./svgFromString.ts";
 
 const OVERLAY_START_REGEX = /\bcfg-overlay-start: (.*)/;
 const OVERLAY_END_REGEX = /\bcfg-overlay-end\b/;
@@ -196,16 +197,6 @@ export class OverlayBuilder {
         );
     }
   }
-}
-
-/**
- * Create an SVG object from a string representing an SVG
- * @param rawSvg the SVG string
- */
-function svgFromString(rawSvg: string): Svg {
-  const parser = new DOMParser();
-  const dom = parser.parseFromString(rawSvg, "image/svg+xml");
-  return SVG(dom.documentElement) as Svg;
 }
 
 /**
