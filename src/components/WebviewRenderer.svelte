@@ -89,7 +89,7 @@
     );
     dot = renderResult.dot;
     getNodeOffset = renderResult.getNodeOffset;
-    getOffsetNode = renderResult.getOffsetNode;
+    getOffsetNode = renderResult.offsetToNode;
     // TODO: Only reset when we move between functions
     const newHash = objectHash(functionSyntax.startPosition);
     if (newHash !== resultHash) {
@@ -153,6 +153,7 @@
       offset: getNodeOffset(target.id),
     });
     console.log(target.id);
+    // This sometimes clashes with cursor-driven panning
     panToNode(target.id);
   }
 
@@ -184,6 +185,12 @@
     };
     // Relative movement is scaled by the scale, so we need to undo that scaling.
     const scale = panzoom.getScale();
+    /* TODO: Switch to absolute panning to avoid animation issues.
+             Currently, things can change mid-animation and result in really
+             strange positioning.
+             This is probably because clicking a node triggers a pan animation,
+             but also moves the cursor triggering another animation.
+     */
     panzoom.pan(panDiff.x / scale, panDiff.y / scale, {
       animate: true,
       relative: true,
