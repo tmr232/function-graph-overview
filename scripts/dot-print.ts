@@ -1,8 +1,18 @@
-import { fromDot, attribute, toDot, type NodeAttributesObject, type EdgeAttributesObject, Edge } from "ts-graphviz";
-import { type ColorScheme, getDefaultColorScheme } from "../src/control-flow/colors.ts";
+import {
+  type EdgeAttributesObject,
+  type EdgeModel,
+  type NodeAttributesObject,
+  type NodeModel,
+  attribute,
+  fromDot,
+  toDot,
+} from "ts-graphviz";
+import {
+  type ColorScheme,
+  getDefaultColorScheme,
+} from "../src/control-flow/colors.ts";
 
-
-function getNodeAttributes(colorScheme:ColorScheme) {
+function getNodeAttributes(colorScheme: ColorScheme) {
   const nodeAttributes: { [key: string]: NodeAttributesObject } = {
     entry: {
       [attribute.fillcolor]: colorScheme["node.entry"],
@@ -10,23 +20,23 @@ function getNodeAttributes(colorScheme:ColorScheme) {
     },
     exit: {
       [attribute.fillcolor]: colorScheme["node.exit"],
-      [attribute.shape]: "house"
+      [attribute.shape]: "house",
     },
-    "throw": {
+    throw: {
       [attribute.fillcolor]: colorScheme["node.throw"],
-      [attribute.shape]: "triangle"
+      [attribute.shape]: "triangle",
     },
-    "yield": {
+    yield: {
       [attribute.fillcolor]: colorScheme["node.yield"],
       [attribute.shape]: "hexagon",
-      [attribute.orientation]: "90"
-    }
-  }
+      [attribute.orientation]: "90",
+    },
+  };
 
   return nodeAttributes;
 }
 
-function getEdgeClassAttributes(colorScheme:ColorScheme) {
+function getEdgeClassAttributes(colorScheme: ColorScheme) {
   const edgeAttributes: { [key: string]: EdgeAttributesObject } = {
     consequence: {
       [attribute.color]: colorScheme["edge.consequence"],
@@ -36,37 +46,43 @@ function getEdgeClassAttributes(colorScheme:ColorScheme) {
     },
     exception: {
       [attribute.style]: "invis",
-      [attribute.headport]:"e",
-      [attribute.tailport]:"w",
+      [attribute.headport]: "e",
+      [attribute.tailport]: "w",
     },
-  }
+  };
 
   return edgeAttributes;
 }
 
-export function applyTheme(dot:string, colorScheme:ColorScheme):string {
+export function getClasses(item: NodeModel | EdgeModel): string[] {
+  type ClassGetter = (key: (typeof attribute)["class"]) => string | undefined;
+  const classGetter: ClassGetter = item.attributes.get.bind(item.attributes);
+  const classString = classGetter(attribute.class);
+  return (classString ?? "").split(/\s/);
+}
+
+export function applyTheme(dot: string, colorScheme: ColorScheme): string {
   const G = fromDot(dot);
   G.apply({
-    [attribute.bgcolor]:colorScheme["graph.background"],
-  })
+    [attribute.bgcolor]: colorScheme["graph.background"],
+  });
   G.node({
-    [attribute.style]:"filled",
-    [attribute.label]:"",
-    [attribute.shape]:"box",
-    [attribute.fillcolor]:colorScheme["node.default"],
-    [attribute.color]:colorScheme["node.border"],
+    [attribute.style]: "filled",
+    [attribute.label]: "",
+    [attribute.shape]: "box",
+    [attribute.fillcolor]: colorScheme["node.default"],
+    [attribute.color]: colorScheme["node.border"],
   });
   G.edge({
-    [attribute.color]:colorScheme["edge.regular"],
-    [attribute.headport]:"n",
-    [attribute.tailport]:"s",
-    [attribute.penwidth]:1,
-  })
-
+    [attribute.color]: colorScheme["edge.regular"],
+    [attribute.headport]: "n",
+    [attribute.tailport]: "s",
+    [attribute.penwidth]: 1,
+  });
 
   const allNodeAttributes = getNodeAttributes(colorScheme);
   for (const node of G.nodes) {
-    for (const cls of (node.attributes.get(attribute.class)??"").split(/\s/)) {
+    for (const cls of getClasses(node)) {
       const attrObj = allNodeAttributes[cls];
       if (attrObj) {
         node.attributes.apply(attrObj);
@@ -76,7 +92,7 @@ export function applyTheme(dot:string, colorScheme:ColorScheme):string {
 
   const edgeClassAttributes = getEdgeClassAttributes(colorScheme);
   for (const edge of G.edges) {
-    for (const cls of (edge.attributes.get(attribute.class)??"").split(/\s/)) {
+    for (const cls of getClasses(edge)) {
       const attrObj = edgeClassAttributes[cls];
       if (attrObj) {
         edge.attributes.apply(attrObj);
@@ -84,9 +100,9 @@ export function applyTheme(dot:string, colorScheme:ColorScheme):string {
     }
     if (edge.attributes.get(attribute.dir) === "back") {
       edge.attributes.apply({
-        [attribute.penwidth]:2,
-        [attribute.headport]:"s",
-        [attribute.tailport]:"n",
+        [attribute.penwidth]: 2,
+        [attribute.headport]: "s",
+        [attribute.tailport]: "n",
       });
       edge.targets.reverse();
     }
@@ -95,9 +111,14 @@ export function applyTheme(dot:string, colorScheme:ColorScheme):string {
   return toDot(G);
 }
 
-console.log(applyTheme(  `digraph {
+console.log(
+  applyTheme(
+    `digraph {
     a [class="entry"]
     b [class="exit"]
     a -> b [class="default"]
     b -> a [class="alternative" dir="back"]
-  }`, getDefaultColorScheme()))
+  }`,
+    getDefaultColorScheme(),
+  ),
+);
