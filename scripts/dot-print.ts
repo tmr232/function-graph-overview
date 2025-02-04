@@ -1,3 +1,4 @@
+import * as LZString from "lz-string";
 import {
   type EdgeAttributesObject,
   type EdgeModel,
@@ -54,7 +55,7 @@ function getEdgeClassAttributes(colorScheme: ColorScheme) {
   return edgeAttributes;
 }
 
-export function getClasses(item: NodeModel | EdgeModel): string[] {
+function getClasses(item: NodeModel | EdgeModel): string[] {
   type ClassGetter = (key: (typeof attribute)["class"]) => string | undefined;
   const classGetter: ClassGetter = item.attributes.get.bind(item.attributes);
   const classString = classGetter(attribute.class);
@@ -72,6 +73,7 @@ export function applyTheme(dot: string, colorScheme: ColorScheme): string {
     [attribute.shape]: "box",
     [attribute.fillcolor]: colorScheme["node.default"],
     [attribute.color]: colorScheme["node.border"],
+    [attribute.fontname]: "sans-serif",
   });
   G.edge({
     [attribute.color]: colorScheme["edge.regular"],
@@ -111,14 +113,51 @@ export function applyTheme(dot: string, colorScheme: ColorScheme): string {
   return toDot(G);
 }
 
-console.log(
-  applyTheme(
-    `digraph {
-    a [class="entry"]
-    b [class="exit"]
-    a -> b [class="default"]
-    b -> a [class="alternative" dir="back"]
-  }`,
-    getDefaultColorScheme(),
-  ),
-);
+function editDotLink(dot: string): string {
+  return `https://dreampuf.github.io/GraphvizOnline/?compressed=${LZString.compressToEncodedURIComponent(dot)}`;
+}
+
+const graphExamples = {
+  Condition: `
+  a -> b [class="consequence"]
+  a -> c [class="alternative"]
+  b [label="True"]
+  c [label="False"]
+  `,
+  Switch: `
+  a -> b
+  a -> c
+  a -> d
+  a -> e
+  a -> f
+  
+  a -> x [class="alternative"]
+  
+  b -> x
+  c -> x
+  d -> x
+  e -> x
+  f -> x
+  `,
+  Entry: `
+  a [class="entry"]
+  a -> b
+  b [style="invis"]
+  `,
+  Loop: `
+  head -> body [class="consequence"]
+  body -> head [dir=back]
+  head -> exit [class="alternative"]
+  `,
+};
+
+if (require.main === module) {
+  for (const [name, graphContent] of Object.entries(graphExamples)) {
+    console.log(
+      name,
+      editDotLink(
+        applyTheme(`digraph { ${graphContent} }`, getDefaultColorScheme()),
+      ),
+    );
+  }
+}
