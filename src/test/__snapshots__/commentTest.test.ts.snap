@@ -16278,3 +16278,142 @@ Lookup {
   ],
 }
 `;
+
+exports[`Go: labledStatements.go!ContinueToLabel: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node2 [style="filled"; label=""; id="node2"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=1.2];
+    node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node12 [style="filled"; label=""; id="node12"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
+    node4 [style="filled"; label=""; id="node4"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=1.2];
+    node2 -> node3 [penwidth=1; color="#0000ff"; class="regular"];
+    node3 -> node4 [penwidth=2; color="#0000ff"; class="regular"; dir="back"; headport="s"; tailport="n"];
+    node3 -> node12 [penwidth=1; color="#ff0000"; class="alternative"];
+    node3 -> node4 [penwidth=1; color="#008000"; class="consequence"];
+}"
+`;
+
+exports[`Go: labledStatements.go!ContinueToLabel: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node2",
+    },
+    {
+      "start": 252,
+      "value": "node2",
+    },
+    {
+      "start": 277,
+      "value": "node2",
+    },
+    {
+      "start": 285,
+      "value": "node2",
+    },
+    {
+      "start": 289,
+      "value": "node2",
+    },
+    {
+      "start": 295,
+      "value": "node2",
+    },
+    {
+      "start": 296,
+      "value": "node2",
+    },
+    {
+      "start": 297,
+      "value": "node3",
+    },
+    {
+      "start": 302,
+      "value": "node3",
+    },
+    {
+      "start": 303,
+      "value": "node3",
+    },
+    {
+      "start": 303,
+      "value": "node2",
+    },
+    {
+      "start": 304,
+      "value": "node4",
+    },
+    {
+      "start": 307,
+      "value": "node2",
+    },
+    {
+      "start": 308,
+      "value": "node4",
+    },
+    {
+      "start": 331,
+      "value": "node4",
+    },
+    {
+      "start": 345,
+      "value": "Not found",
+    },
+    {
+      "start": 348,
+      "value": "node4",
+    },
+    {
+      "start": 352,
+      "value": "node4",
+    },
+    {
+      "start": 377,
+      "value": "node4",
+    },
+    {
+      "start": 391,
+      "value": "node4",
+    },
+    {
+      "start": 395,
+      "value": "node8",
+    },
+    {
+      "start": 398,
+      "value": "node4",
+    },
+    {
+      "start": 398,
+      "value": "node8",
+    },
+    {
+      "start": 419,
+      "value": "node4",
+    },
+    {
+      "start": 422,
+      "value": "node2",
+    },
+    {
+      "start": 422,
+      "value": "node2",
+    },
+    {
+      "start": 422,
+      "value": "node2",
+    },
+    {
+      "start": 424,
+      "value": "node2",
+    },
+    {
+      "start": 424,
+      "value": "node2",
+    },
+  ],
+}
+`;

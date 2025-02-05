@@ -4,8 +4,8 @@ import {
   forEachLoopProcessor,
   getChildFieldText,
   labeledBreakProcessor,
+  labeledContinueProcessor,
   processComment,
-  processContinueStatement,
   processGotoStatement,
   processLabeledStatement,
   processReturnStatement,
@@ -23,6 +23,12 @@ const processBreakStatement = labeledBreakProcessor(`
         (label_name)? @label
     )
     `);
+
+const processContinueStatement = labeledContinueProcessor(`
+    (continue_statement
+        (label_name)? @label
+    )
+`);
 
 const statementHandlers: StatementHandlers = {
   named: {
