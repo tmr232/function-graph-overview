@@ -470,6 +470,27 @@ export function processBreakStatement(
   return { entry: breakNode, exit: null, breaks: [{ from: breakNode }] };
 }
 
+export function labeledContinueProcessor(
+  queryString: string,
+): (continueSyntax: Parser.SyntaxNode, ctx: Context) => BasicBlock {
+  return (continueSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock => {
+    const match = ctx.matcher.match(continueSyntax, queryString);
+    const labelSyntax = match.getSyntax("label");
+    const label = labelSyntax?.text;
+    const continueNode = ctx.builder.addNode(
+      "CONTINUE",
+      "CONTINUE",
+      continueSyntax.startIndex,
+    );
+    ctx.link.syntaxToNode(continueSyntax, continueNode);
+    return {
+      entry: continueNode,
+      exit: null,
+      continues: [{ from: continueNode, label }],
+    };
+  };
+}
+
 export function labeledBreakProcessor(
   queryString: string,
 ): (breakSyntax: Parser.SyntaxNode, ctx: Context) => BasicBlock {
