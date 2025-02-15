@@ -217,9 +217,7 @@
 
     const cfg = await createCFG(params);
     const graphviz = await Graphviz.load();
-    rawSVG = graphviz.dot(
-      graphToDot(cfg, false, undefined, params.colorScheme),
-    );
+    rawSVG = graphviz.dot(graphToDot(cfg, false, params.colorScheme));
     return rawSVG;
   }
 
