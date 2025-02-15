@@ -96,7 +96,7 @@
   }
 
   let simplify = true;
-  let flatSwitch = false;
+  let flatSwitch = true;
   let highlight = true;
   let colorPicker = false;
   let verbose = urlParams.has("verbose");

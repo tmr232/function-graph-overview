@@ -87,8 +87,8 @@ function loadSettings(): Settings {
   })();
 
   return {
-    flatSwitch: config.get("flatSwitch") ?? false,
-    simplify: config.get("simplify") ?? false,
+    flatSwitch: config.get("flatSwitch") ?? true,
+    simplify: config.get("simplify") ?? true,
     highlightCurrentNode: config.get("highlightCurrentNode") ?? true,
     colorList: colorList,
   };

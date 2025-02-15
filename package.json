@@ -104,7 +104,7 @@
         },
         "functionGraphOverview.flatSwitch": {
           "type": "boolean",
-          "default": "false",
+          "default": "true",
           "description": "Flatten switches, so that all cases are direct descendants of the root."
         },
         "functionGraphOverview.highlightCurrentNode": {

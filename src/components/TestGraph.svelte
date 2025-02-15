@@ -11,7 +11,7 @@
   export let verbose: boolean = false;
   export let simplify: boolean = true;
   export let trim: boolean = true;
-  export let flatSwitch: boolean = false;
+  export let flatSwitch: boolean = true;
 
   function formatAST(ast: string): string {
     return ast
