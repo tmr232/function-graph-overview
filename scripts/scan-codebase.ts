@@ -52,12 +52,16 @@ async function* iterFunctionInfo(
     const language = getLanguage(filename);
     for (const func of iterFunctions(code, language)) {
       const cfg = buildCFG(func, language);
-      yield {
-        node_count: cfg.graph.order,
-        start_position: func.startPosition,
-        funcdef: getFuncDef(code, func),
-        filename: filename.replaceAll("\\", "/"),
-      };
+      try {
+        yield {
+          node_count: cfg.graph.order,
+          start_position: func.startPosition,
+          funcdef: getFuncDef(code, func),
+          filename: filename.replaceAll("\\", "/"),
+        };
+      } catch (_e) {
+        // Ignore the error.
+      }
     }
   }
 }
