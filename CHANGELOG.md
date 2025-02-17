@@ -20,6 +20,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Methods are now supported in TypeScript.
 - `continue label` is now supported in Go.
 - Exporting DOT files (in debug mode) no longer results in different-looking graphs
+- The web renderer now supports iOS browsers.
 
 ### Changed
 
