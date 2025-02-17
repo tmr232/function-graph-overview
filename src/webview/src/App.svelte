@@ -50,7 +50,7 @@
     typeof acquireVsCodeApi !== "undefined" ? acquireVsCodeApi() : undefined;
 
   let simplify = true;
-  let flatSwitch = false;
+  let flatSwitch = true;
   let highlight = true;
 
   // Set initial background color
@@ -92,7 +92,7 @@
 
   class StateHandler {
     private state: State = {
-      config: { simplify: true, flatSwitch: false, highlight: true },
+      config: { simplify: true, flatSwitch: true, highlight: true },
     };
     private navigateToHandlers: ((offset: number) => void)[] = [];
 
