@@ -527,11 +527,7 @@ function processWhileStatement(
 
   if (condBlock.exit) {
     builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
-    builder.addEdge(
-      condBlock.exit,
-      elseBlock.entry ?? exitNode,
-      "alternative",
-    );
+    builder.addEdge(condBlock.exit, elseBlock.entry ?? exitNode, "alternative");
   }
   if (elseBlock.exit) builder.addEdge(elseBlock.exit, exitNode);
 
