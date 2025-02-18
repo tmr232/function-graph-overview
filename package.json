@@ -3,7 +3,7 @@
   "module": "index.ts",
   "type": "module",
   "dependencies": {
-    "@hpcc-js/wasm-graphviz": "^1.6.1",
+    "@hpcc-js/wasm-graphviz": "^1.7.0",
     "@svgdotjs/svg.js": "^3.2.4",
     "@types/object-hash": "^3.0.6",
     "@types/vscode": "^1.94.0",
