@@ -1,4 +1,4 @@
-import type Parser from "web-tree-sitter";
+import type { Parser } from "web-tree-sitter";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
   cStyleDoWhileProcessor,

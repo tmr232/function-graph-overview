@@ -1,4 +1,4 @@
-import type Parser from "web-tree-sitter";
+import type { Parser } from "web-tree-sitter";
 import { type Language, functionNodeTypes } from "../control-flow/cfg.ts";
 
 type FileType = { ext: string; language: Language };

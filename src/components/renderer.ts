@@ -1,7 +1,7 @@
 import type { Graphviz } from "@hpcc-js/wasm-graphviz";
 import type { G, Polygon } from "@svgdotjs/svg.js";
 import objectHash from "object-hash";
-import type Parser from "web-tree-sitter";
+import type { Parser } from "web-tree-sitter";
 import { type Language, newCFGBuilder } from "../control-flow/cfg";
 import { mergeNodeAttrs, remapNodeTargets } from "../control-flow/cfg-defs";
 import { type ColorList, listToScheme } from "../control-flow/colors";

@@ -1,5 +1,5 @@
 import type { Container, Element, Svg } from "@svgdotjs/svg.js";
-import type Parser from "web-tree-sitter";
+import type { Parser } from "web-tree-sitter";
 import type { CFG, GraphNode } from "./cfg-defs.ts";
 import type { AttrMerger } from "./graph-ops.ts";
 import { Lookup } from "./ranges.ts";

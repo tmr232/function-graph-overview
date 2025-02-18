@@ -1,7 +1,7 @@
 import * as path from "node:path";
 import { parseArgs } from "node:util";
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
-import type Parser from "web-tree-sitter";
+import type { Parser } from "web-tree-sitter";
 import type { SyntaxNode } from "web-tree-sitter";
 import { type Language, supportedLanguages } from "../src/control-flow/cfg.ts";
 import {

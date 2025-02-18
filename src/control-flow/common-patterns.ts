@@ -1,4 +1,4 @@
-import type Parser from "web-tree-sitter";
+import type { Parser } from "web-tree-sitter";
 import type { Match } from "./block-matcher.ts";
 import type { BasicBlock } from "./cfg-defs.ts";
 import type { Context } from "./generic-cfg-builder.ts";

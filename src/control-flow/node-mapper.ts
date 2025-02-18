@@ -1,4 +1,4 @@
-import type Parser from "web-tree-sitter";
+import type { Parser } from "web-tree-sitter";
 import { Lookup } from "./ranges";
 /**
  * This module provides the facilities for matching code offsets to CFG nodes.

@@ -1,5 +1,5 @@
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
-import type Parser from "web-tree-sitter";
+import type { Parser } from "web-tree-sitter";
 import {
   type Language,
   functionNodeTypes,

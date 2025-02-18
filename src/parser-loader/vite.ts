@@ -1,4 +1,4 @@
-import Parser from "web-tree-sitter";
+import { Parser } from "web-tree-sitter";
 import treeSitterCore from "../../parsers/tree-sitter.wasm?url";
 import type { Language } from "../control-flow/cfg.ts";
 import { wasmMapping } from "./wasmMapping.ts";

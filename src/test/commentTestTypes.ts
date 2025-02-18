@@ -2,7 +2,7 @@
  * @category Testing
  * @module
  */
-import type Parser from "web-tree-sitter";
+import type { Parser } from "web-tree-sitter";
 import type { Language } from "../control-flow/cfg";
 
 export interface Requirements {

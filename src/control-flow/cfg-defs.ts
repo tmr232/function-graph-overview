@@ -1,5 +1,5 @@
 import type { MultiDirectedGraph } from "graphology";
-import type Parser from "web-tree-sitter";
+import type { Parser } from "web-tree-sitter";
 import type { Lookup } from "./ranges";
 
 export type NodeType =

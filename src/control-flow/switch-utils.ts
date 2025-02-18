@@ -1,4 +1,4 @@
-import type Parser from "web-tree-sitter";
+import type { Parser } from "web-tree-sitter";
 import type { Case, EdgeType } from "./cfg-defs";
 import type { Context } from "./generic-cfg-builder";
 import { pairwise } from "./itertools.ts";

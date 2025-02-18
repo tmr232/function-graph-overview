@@ -1,6 +1,6 @@
 import type { MultiDirectedGraph } from "graphology";
 import { bfsFromNode } from "graphology-traversal";
-import type Parser from "web-tree-sitter";
+import type { Parser } from "web-tree-sitter";
 import {
   type Language as CFGLanguage,
   newCFGBuilder,
