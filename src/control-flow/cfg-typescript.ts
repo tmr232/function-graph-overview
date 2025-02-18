@@ -281,17 +281,17 @@ function processTryStatement(
     // This is the exit we get to if we don't have an exception
     let happyExit: string | null = bodyBlock.exit;
 
-    if (finallyBlock.entry) {
+    if (finallyBlock?.entry) {
       // Connect `try` to `finally`
       const toFinally = bodyBlock.exit;
       if (toFinally) builder.addEdge(toFinally, finallyBlock.entry);
       happyExit = finallyBlock.exit;
       // Connect `except` to `finally`
-      if (exceptBlock.exit)
+      if (exceptBlock?.exit)
         builder.addEdge(exceptBlock.exit, finallyBlock.entry as string);
     } else {
       // We need to connect the `except` blocks to the merge node
-      if (exceptBlock.exit) builder.addEdge(exceptBlock.exit, mergeNode);
+      if (exceptBlock?.exit) builder.addEdge(exceptBlock.exit, mergeNode);
     }
 
     if (happyExit) builder.addEdge(happyExit, mergeNode);

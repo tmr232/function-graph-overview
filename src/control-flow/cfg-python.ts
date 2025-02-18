@@ -200,14 +200,14 @@ function processTryStatement(
     let happyExit: string | null = bodyBlock.exit;
 
     // Connect the body to the `else` block
-    if (bodyBlock.exit && elseBlock.entry) {
+    if (bodyBlock.exit && elseBlock?.entry) {
       builder.addEdge(bodyBlock.exit, elseBlock.entry);
       happyExit = elseBlock.exit;
     }
 
-    if (finallyBlock.entry) {
+    if (finallyBlock?.entry) {
       // Connect `try` to `finally`
-      const toFinally = elseBlock.exit ?? bodyBlock.exit;
+      const toFinally = elseBlock?.exit ?? bodyBlock.exit;
       if (toFinally) builder.addEdge(toFinally, finallyBlock.entry);
       happyExit = finallyBlock.exit;
       // Connect `except` to `finally`
@@ -527,9 +527,9 @@ function processWhileStatement(
 
   if (condBlock.exit) {
     builder.addEdge(condBlock.exit, bodyBlock.entry, "consequence");
-    builder.addEdge(condBlock.exit, elseBlock.entry ?? exitNode, "alternative");
+    builder.addEdge(condBlock.exit, elseBlock?.entry ?? exitNode, "alternative");
   }
-  if (elseBlock.exit) builder.addEdge(elseBlock.exit, exitNode);
+  if (elseBlock?.exit) builder.addEdge(elseBlock.exit, exitNode);
 
   if (bodyBlock.exit) builder.addEdge(bodyBlock.exit, condBlock.entry);
 
