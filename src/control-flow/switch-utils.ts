@@ -50,7 +50,7 @@ export function buildSwitch(
   ctx: Context,
 ) {
   // Fallthrough from the previous case
-  let activeFallthroughs: string[] = [];
+  let fallthrough: string | null = null;
   let hasDefaultCase = false;
   let previous: string | null = switchHeadNode;
   for (const thisCase of cases) {
@@ -58,33 +58,28 @@ export function buildSwitch(
       ctx.builder.addEdge(switchHeadNode, thisCase.conditionEntry);
       if (thisCase.isEmpty && thisCase.hasFallthrough) {
         // Since we're empty, we only care about the condition node
-        for (const fallthrough of activeFallthroughs) {
+        if (fallthrough) {
           ctx.builder.addEdge(fallthrough, thisCase.conditionEntry);
         }
-        activeFallthroughs = [];
-        activeFallthroughs.push(thisCase.conditionExit);
+        fallthrough = thisCase.conditionExit;
       } else {
         ctx.builder.addEdge(thisCase.conditionExit, thisCase.consequenceEntry);
 
-        for (const fallthrough of activeFallthroughs) {
+        if (fallthrough) {
           ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
         }
-        activeFallthroughs = [];
 
         if (!thisCase.hasFallthrough && thisCase.consequenceExit) {
           ctx.builder.addEdge(thisCase.consequenceExit, mergeNode, "regular");
         }
         // Update for next case
-        if (thisCase.hasFallthrough && thisCase.consequenceExit) {
-          activeFallthroughs.push(thisCase.consequenceExit);
-        }
+        fallthrough = thisCase.hasFallthrough ? thisCase.consequenceExit : null;
       }
     } else {
       /* Model the switch as an if-elif-else chain */
-      for (const fallthrough of activeFallthroughs) {
+      if (fallthrough) {
         ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
       }
-      activeFallthroughs = [];
 
       if (previous && thisCase.conditionEntry) {
         ctx.builder.addEdge(
@@ -108,21 +103,10 @@ export function buildSwitch(
         ctx.builder.addEdge(thisCase.consequenceExit, mergeNode, "regular");
       }
       // Update for next case
-      if (thisCase.hasFallthrough && thisCase.consequenceExit) {
-        activeFallthroughs.push(thisCase.consequenceExit);
-      }
+      fallthrough = thisCase.hasFallthrough ? thisCase.consequenceExit : null;
     }
 
     hasDefaultCase ||= thisCase.isDefault;
-
-    // Fallthrough is the same for both flat and non-flat layouts.
-    if (!thisCase.hasFallthrough && thisCase.consequenceExit) {
-      ctx.builder.addEdge(thisCase.consequenceExit, mergeNode, "regular");
-    }
-    // Update for next case
-    if (thisCase.hasFallthrough && thisCase.consequenceExit) {
-      activeFallthroughs.push(thisCase.consequenceExit);
-    }
   }
   // Connect the last node to the merge node.
   // No need to handle `fallthrough` here as it is not allowed for the last case.
@@ -130,7 +114,7 @@ export function buildSwitch(
     ctx.builder.addEdge(previous, mergeNode, "alternative");
   }
 
-  for (const fallthrough of activeFallthroughs) {
+  if (fallthrough) {
     ctx.builder.addEdge(fallthrough, mergeNode, "regular");
   }
 }
