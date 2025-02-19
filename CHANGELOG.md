@@ -6,6 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Fixed
+
+- Comment-tests now fail if an unsupported test type is present instead of passing silently.
+
 ## [0.0.14] - 2025-02-17
 
 ### Added
