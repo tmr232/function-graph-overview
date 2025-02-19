@@ -58,6 +58,10 @@ export function buildSwitch(
       ctx.builder.addEdge(switchHeadNode, thisCase.conditionEntry);
       if (thisCase.isEmpty && thisCase.hasFallthrough) {
         // Since we're empty, we only care about the condition node
+        for (const fallthrough of activeFallthroughs) {
+          ctx.builder.addEdge(fallthrough, thisCase.conditionEntry);
+        }
+        activeFallthroughs = [];
         activeFallthroughs.push(thisCase.conditionExit);
       } else {
         ctx.builder.addEdge(thisCase.conditionExit, thisCase.consequenceEntry);
