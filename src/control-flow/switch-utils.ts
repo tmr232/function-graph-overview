@@ -57,7 +57,10 @@ export function buildSwitch(
     if (ctx.options.flatSwitch) {
       ctx.builder.addEdge(switchHeadNode, thisCase.conditionEntry);
       if (thisCase.isEmpty && thisCase.hasFallthrough) {
-        // Since we're empty, we only care about the condition node
+        // When we have an empty fallthrough case, we ignore its consequence node.
+        // Instead, we link it directly to the condition node of the next case.
+        // This allows for nice chaining while avoiding the tree-like artifacts
+        // found in https://github.com/tmr232/function-graph-overview/issues/77
         if (fallthrough) {
           ctx.builder.addEdge(fallthrough, thisCase.conditionEntry);
         }

@@ -1,4 +1,8 @@
-/* exits: 1 */
+/*
+exits: 1,
+flatNodes: 7,
+nodes: 7
+*/
 func EmptyFallthroughCases() {
   switch x {
     case 1:
@@ -6,6 +10,5 @@ func EmptyFallthroughCases() {
     case 2:
         fallthrough
     case 3:
-      return;
   }
 }
