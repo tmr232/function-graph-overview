@@ -115,6 +115,54 @@ exports[`TypeScript: issue65-try-finally.ts!tryCatchFinally: DOT Snapshot 1`] = 
 }"
 `;
 
+exports[`Go: issue77-switch-empty-fallthrough-case.go!EmptyFallthroughCases: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.8999999999999999];
+    node2 [style="filled"; label=""; id="node2"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node4 [style="filled"; label=""; id="node4"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node5 [style="filled"; label=""; id="node5"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node6 [style="filled"; label=""; id="node6"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node9 [style="filled"; label=""; id="node9"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
+    node1 -> node2 [penwidth=1; color="#008000"; class="consequence"];
+    node2 -> node4 [penwidth=1; color="#0000ff"; class="regular"];
+    node1 -> node3 [penwidth=1; color="#ff0000"; class="alternative"];
+    node3 -> node4 [penwidth=1; color="#008000"; class="consequence"];
+    node4 -> node6 [penwidth=1; color="#0000ff"; class="regular"];
+    node3 -> node5 [penwidth=1; color="#ff0000"; class="alternative"];
+    node5 -> node6 [penwidth=1; color="#008000"; class="consequence"];
+    node6 -> node9 [penwidth=1; color="#0000ff"; class="regular"];
+    node5 -> node9 [penwidth=1; color="#ff0000"; class="alternative"];
+}"
+`;
+
+exports[`TypeScript: issue77-switch-empty-fallthrough-case.ts!EmptyFallthroughCases: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.8999999999999999];
+    node2 [style="filled"; label=""; id="node2"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node4 [style="filled"; label=""; id="node4"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node5 [style="filled"; label=""; id="node5"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node6 [style="filled"; label=""; id="node6"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node9 [style="filled"; label=""; id="node9"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
+    node1 -> node2 [penwidth=1; color="#008000"; class="consequence"];
+    node2 -> node4 [penwidth=1; color="#0000ff"; class="regular"];
+    node1 -> node3 [penwidth=1; color="#ff0000"; class="alternative"];
+    node3 -> node4 [penwidth=1; color="#008000"; class="consequence"];
+    node4 -> node6 [penwidth=1; color="#0000ff"; class="regular"];
+    node3 -> node5 [penwidth=1; color="#ff0000"; class="alternative"];
+    node5 -> node6 [penwidth=1; color="#008000"; class="consequence"];
+    node5 -> node9 [penwidth=1; color="#ff0000"; class="alternative"];
+    node6 -> node9 [penwidth=1; color="#0000ff"; class="regular"];
+}"
+`;
+
 exports[`Go: labledStatements.go!LabelledStatementFlow: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
@@ -2946,107 +2994,99 @@ Lookup {
       "value": "node2",
     },
     {
-      "start": 34,
+      "start": 36,
       "value": "node2",
     },
     {
-      "start": 59,
+      "start": 61,
       "value": "node2",
     },
     {
-      "start": 67,
+      "start": 69,
       "value": "node2",
     },
     {
-      "start": 71,
-      "value": "node2",
-    },
-    {
-      "start": 77,
-      "value": "node2",
-    },
-    {
-      "start": 78,
+      "start": 73,
       "value": "node2",
     },
     {
       "start": 79,
-      "value": "node3",
-    },
-    {
-      "start": 84,
-      "value": "node3",
-    },
-    {
-      "start": 85,
-      "value": "node3",
-    },
-    {
-      "start": 85,
       "value": "node2",
+    },
+    {
+      "start": 80,
+      "value": "node2",
+    },
+    {
+      "start": 81,
+      "value": "node3",
     },
     {
       "start": 86,
-      "value": "node4",
+      "value": "node3",
     },
     {
-      "start": 89,
+      "start": 87,
+      "value": "node3",
+    },
+    {
+      "start": 87,
       "value": "node2",
     },
     {
-      "start": 90,
+      "start": 88,
       "value": "node4",
     },
     {
-      "start": 113,
+      "start": 91,
+      "value": "node2",
+    },
+    {
+      "start": 92,
       "value": "node4",
     },
     {
-      "start": 127,
+      "start": 115,
+      "value": "node4",
+    },
+    {
+      "start": 129,
       "value": "Not found",
     },
     {
-      "start": 130,
+      "start": 132,
       "value": "node4",
     },
     {
-      "start": 134,
+      "start": 136,
       "value": "node4",
     },
     {
-      "start": 159,
+      "start": 161,
       "value": "node4",
     },
     {
-      "start": 173,
+      "start": 175,
       "value": "node4",
     },
     {
-      "start": 177,
+      "start": 179,
       "value": "node8",
     },
     {
-      "start": 180,
+      "start": 182,
       "value": "node4",
     },
     {
-      "start": 180,
+      "start": 182,
       "value": "node8",
     },
     {
-      "start": 201,
+      "start": 203,
       "value": "node4",
     },
     {
-      "start": 204,
-      "value": "node2",
-    },
-    {
-      "start": 204,
-      "value": "node2",
-    },
-    {
-      "start": 204,
+      "start": 206,
       "value": "node2",
     },
     {
@@ -3055,6 +3095,14 @@ Lookup {
     },
     {
       "start": 206,
+      "value": "node2",
+    },
+    {
+      "start": 208,
+      "value": "node2",
+    },
+    {
+      "start": 208,
       "value": "node2",
     },
   ],
@@ -3369,6 +3417,188 @@ Lookup {
 }
 `;
 
+exports[`Go: issue77-switch-empty-fallthrough-case.go!EmptyFallthroughCases: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 39,
+      "value": "node1",
+    },
+    {
+      "start": 72,
+      "value": "node1",
+    },
+    {
+      "start": 82,
+      "value": "node1",
+    },
+    {
+      "start": 87,
+      "value": "node1",
+    },
+    {
+      "start": 87,
+      "value": "node1",
+    },
+    {
+      "start": 94,
+      "value": "node2",
+    },
+    {
+      "start": 103,
+      "value": "node1",
+    },
+    {
+      "start": 103,
+      "value": "node2",
+    },
+    {
+      "start": 114,
+      "value": "node1",
+    },
+    {
+      "start": 115,
+      "value": "node3",
+    },
+    {
+      "start": 119,
+      "value": "node1",
+    },
+    {
+      "start": 119,
+      "value": "node3",
+    },
+    {
+      "start": 126,
+      "value": "node4",
+    },
+    {
+      "start": 135,
+      "value": "node3",
+    },
+    {
+      "start": 135,
+      "value": "node4",
+    },
+    {
+      "start": 146,
+      "value": "node3",
+    },
+    {
+      "start": 147,
+      "value": "node5",
+    },
+    {
+      "start": 151,
+      "value": "node1",
+    },
+    {
+      "start": 151,
+      "value": "node5",
+    },
+    {
+      "start": 158,
+      "value": "node5",
+    },
+    {
+      "start": 162,
+      "value": "node1",
+    },
+    {
+      "start": 162,
+      "value": "node1",
+    },
+    {
+      "start": 164,
+      "value": "node1",
+    },
+    {
+      "start": 164,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`TypeScript: issue77-switch-empty-fallthrough-case.ts!EmptyFallthroughCases: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 39,
+      "value": "node1",
+    },
+    {
+      "start": 76,
+      "value": "node1",
+    },
+    {
+      "start": 88,
+      "value": "node1",
+    },
+    {
+      "start": 93,
+      "value": "node1",
+    },
+    {
+      "start": 93,
+      "value": "node1",
+    },
+    {
+      "start": 100,
+      "value": "node3",
+    },
+    {
+      "start": 105,
+      "value": "node1",
+    },
+    {
+      "start": 105,
+      "value": "node3",
+    },
+    {
+      "start": 112,
+      "value": "node5",
+    },
+    {
+      "start": 117,
+      "value": "node1",
+    },
+    {
+      "start": 117,
+      "value": "node5",
+    },
+    {
+      "start": 124,
+      "value": "node5",
+    },
+    {
+      "start": 128,
+      "value": "node1",
+    },
+    {
+      "start": 128,
+      "value": "node1",
+    },
+    {
+      "start": 130,
+      "value": "node1",
+    },
+    {
+      "start": 130,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
 exports[`Go: labledStatements.go!LabelledStatementFlow: Segmentation 1`] = `
 Lookup {
   "ranges": [
@@ -3468,107 +3698,99 @@ Lookup {
       "value": "node2",
     },
     {
-      "start": 315,
+      "start": 317,
       "value": "node2",
     },
     {
-      "start": 340,
+      "start": 342,
       "value": "node2",
     },
     {
-      "start": 348,
+      "start": 350,
       "value": "node2",
     },
     {
-      "start": 352,
-      "value": "node2",
-    },
-    {
-      "start": 358,
-      "value": "node2",
-    },
-    {
-      "start": 359,
+      "start": 354,
       "value": "node2",
     },
     {
       "start": 360,
-      "value": "node3",
-    },
-    {
-      "start": 365,
-      "value": "node3",
-    },
-    {
-      "start": 366,
-      "value": "node3",
-    },
-    {
-      "start": 366,
       "value": "node2",
+    },
+    {
+      "start": 361,
+      "value": "node2",
+    },
+    {
+      "start": 362,
+      "value": "node3",
     },
     {
       "start": 367,
-      "value": "node4",
+      "value": "node3",
     },
     {
-      "start": 370,
+      "start": 368,
+      "value": "node3",
+    },
+    {
+      "start": 368,
       "value": "node2",
     },
     {
-      "start": 371,
+      "start": 369,
       "value": "node4",
     },
     {
-      "start": 394,
+      "start": 372,
+      "value": "node2",
+    },
+    {
+      "start": 373,
       "value": "node4",
     },
     {
-      "start": 408,
+      "start": 396,
+      "value": "node4",
+    },
+    {
+      "start": 410,
       "value": "Not found",
     },
     {
-      "start": 411,
+      "start": 413,
       "value": "node4",
     },
     {
-      "start": 415,
+      "start": 417,
       "value": "node4",
     },
     {
-      "start": 440,
+      "start": 442,
       "value": "node4",
     },
     {
-      "start": 454,
+      "start": 456,
       "value": "node4",
     },
     {
-      "start": 458,
+      "start": 460,
       "value": "node8",
     },
     {
-      "start": 461,
+      "start": 463,
       "value": "node4",
     },
     {
-      "start": 461,
+      "start": 463,
       "value": "node8",
     },
     {
-      "start": 482,
+      "start": 484,
       "value": "node4",
     },
     {
-      "start": 485,
-      "value": "node2",
-    },
-    {
-      "start": 485,
-      "value": "node2",
-    },
-    {
-      "start": 485,
+      "start": 487,
       "value": "node2",
     },
     {
@@ -3577,6 +3799,14 @@ Lookup {
     },
     {
       "start": 487,
+      "value": "node2",
+    },
+    {
+      "start": 489,
+      "value": "node2",
+    },
+    {
+      "start": 489,
       "value": "node2",
     },
   ],

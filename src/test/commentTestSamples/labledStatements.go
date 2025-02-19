@@ -15,7 +15,7 @@ func LabelledStatementFlow() {
 }
 
 /*
-reach: [["inner", "outer"]]
+reaches: [["inner", "outer"]]
 */
 func ContinueToLabel() {
 outer:

@@ -36,10 +36,12 @@ export class TestManager {
     for (const testFunc of this.testFunctions) {
       for (const [key, _value] of Object.entries(testFunc.reqs)) {
         const testName = `${testFunc.language}: ${testFunc.name}: ${key}`;
-        const reqHandler = requirementTests[key];
-        if (!reqHandler) {
-          continue;
+        if (!Object.keys(requirementTests).includes(key)) {
+          throw new Error(
+            `Invalid comment-test type "${key}" in "${testName}"`,
+          );
         }
+        const reqHandler = requirementTests[key as keyof typeof testFunc.reqs];
         tests.push([testName, testFunc, reqHandler]);
       }
     }
@@ -51,8 +53,7 @@ export class TestManager {
       const testName = `${testFunc.language}: ${testFunc.name}: DOT Snapshot`;
       const handler = () => {
         const cfg = buildSimpleCFG(testFunc.language, testFunc.function);
-        const dot = graphToDot(cfg);
-        return dot;
+        return graphToDot(cfg);
       };
       return [testName, handler];
     });
@@ -63,8 +64,7 @@ export class TestManager {
       const testName = `${testFunc.language}: ${testFunc.name}: Segmentation`;
       const handler = () => {
         const cfg = buildSimpleCFG(testFunc.language, testFunc.function);
-        const offsetToNode = remapNodeTargets(cfg).offsetToNode;
-        return offsetToNode;
+        return remapNodeTargets(cfg).offsetToNode;
       };
       return [testName, handler];
     });
