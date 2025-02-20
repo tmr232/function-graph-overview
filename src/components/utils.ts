@@ -69,10 +69,7 @@ export function runTest(record: TestFuncRecord): TestResults[] {
   };
   const testResults = [];
   for (const [key, value] of Object.entries(testFunc.reqs)) {
-    const reqHandler = requirementTests[key];
-    if (!reqHandler) {
-      continue;
-    }
+    const reqHandler = requirementTests[key as keyof typeof testFunc.reqs];
     testResults.push({
       reqName: key,
       reqValue: value,

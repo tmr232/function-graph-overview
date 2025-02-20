@@ -6,6 +6,15 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+
+### Fixed
+
+- Comment-tests now fail if an unsupported test type is present instead of passing silently.
+
+### Changed
+
+- Empty switch-cases with fallthrough now chain in a cleaner way in flat-switches.
+
 ## [0.0.14] - 2025-02-17
 
 ### Added
