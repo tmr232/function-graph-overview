@@ -10,7 +10,6 @@ export async function GraphvizDotPlugin() {
     // Override the fence renderer
     md.renderer.rules.fence = (tokens, idx, options, env, self) => {
       const token = tokens[idx];
-
       if (!token) {
         return "";
       }

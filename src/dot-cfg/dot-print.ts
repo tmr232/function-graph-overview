@@ -1,5 +1,4 @@
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
-// import * as LZString from "lz-string";
 import {
   type EdgeAttributesObject,
   type EdgeModel,
@@ -12,7 +11,7 @@ import {
 import {
   type ColorScheme,
   getDefaultColorScheme,
-} from "../src/control-flow/colors.ts";
+} from "../control-flow/colors.ts";
 
 function getNodeAttributes(colorScheme: ColorScheme) {
   const nodeAttributes: { [key: string]: NodeAttributesObject } = {
