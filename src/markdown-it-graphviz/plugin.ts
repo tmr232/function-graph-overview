@@ -1,9 +1,12 @@
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
+import type markdownit from "markdown-it";
+import {applyTheme} from "../dot-cfg/dot-print.ts";
+import { getDefaultColorScheme } from "../control-flow/colors.ts";
 
 export async function GraphvizDotPlugin() {
   const graphviz = await Graphviz.load();
 
-  return (md) => {
+  return (md:markdownit) => {
     // Save the original fence renderer
     const defaultFence = md.renderer.rules.fence;
 
@@ -18,6 +21,16 @@ export async function GraphvizDotPlugin() {
         const code = token.content.trim();
 
         const svg = graphviz.dot(code);
+
+        return `<div class="dot-graph">
+        ${svg}
+      </div>`;
+      }
+      if (token.info.trim() === "dot-cfg") {
+        const code = token.content.trim();
+
+        const themedDot = applyTheme(`digraph { ${code} }`, getDefaultColorScheme());
+        const svg = graphviz.dot(themedDot);
 
         return `<div class="dot-graph">
         ${svg}
