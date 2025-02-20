@@ -73,6 +73,9 @@ async function main() {
       colors: {
         type: "string",
       },
+      dot: {
+        type: "string",
+      },
     },
     strict: true,
     allowPositionals: true,
@@ -137,7 +140,13 @@ async function main() {
 
   const colorScheme = await getColorScheme(values.colors);
 
-  const svg = graphviz.dot(graphToDot(cfg, false, colorScheme));
+  const dot = graphToDot(cfg, false, colorScheme);
+
+  if (values.dot) {
+    await Bun.write(values.dot, dot);
+  }
+
+  const svg = graphviz.dot(dot);
 
   if (values.out) {
     await Bun.write(values.out, svg);
