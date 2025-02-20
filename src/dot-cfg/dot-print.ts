@@ -6,7 +6,7 @@ import {
   type NodeModel,
   attribute,
   fromDot,
-  toDot,
+  toDot, type RootGraphModel, type SubgraphModel
 } from "ts-graphviz";
 import {
   type ColorScheme,
@@ -86,7 +86,7 @@ export function applyTheme(dot: string, colorScheme: ColorScheme): string {
   });
 
   const allNodeAttributes = getNodeAttributes(colorScheme);
-  for (const node of G.nodes) {
+  for (const node of iterAllNodes(G)) {
     for (const cls of getClasses(node)) {
       const attrObj = allNodeAttributes[cls];
       if (attrObj) {
@@ -96,7 +96,7 @@ export function applyTheme(dot: string, colorScheme: ColorScheme): string {
   }
 
   const edgeClassAttributes = getEdgeClassAttributes(colorScheme);
-  for (const edge of G.edges) {
+  for (const edge of iterAllEdges(G)) {
     for (const cls of getClasses(edge)) {
       const attrObj = edgeClassAttributes[cls];
       if (attrObj) {
@@ -114,6 +114,30 @@ export function applyTheme(dot: string, colorScheme: ColorScheme): string {
   }
 
   return toDot(G);
+}
+
+function* iterAllNodes(G:RootGraphModel) {
+  const stack:Array<RootGraphModel|SubgraphModel> = [G];
+  for (;;) {
+    const graph = stack.pop();
+    if (!graph) {
+      break;
+    }
+    stack.push(...graph.subgraphs);
+    yield *graph.nodes
+  }
+}
+
+function* iterAllEdges(G:RootGraphModel) {
+  const stack:Array<RootGraphModel|SubgraphModel> = [G];
+  for (;;) {
+    const graph = stack.pop();
+    if (!graph) {
+      break;
+    }
+    stack.push(...graph.subgraphs);
+    yield *graph.edges
+  }
 }
 
 // function editDotLink(dot: string): string {

@@ -75,6 +75,29 @@ function collapseNode(
  *
  * Trivial nodes are nodes that do not contribute to the branching structure of
  * the CFG.
+ *
+ * Two linked nodes are considered "trivial" if and only if:
+ * - The source only has one outgoing edge
+ * - The destination only has one incoming edge
+ *
+ * ```dot-cfg
+ * subgraph cluster_0 { label="Trivial pair" color="none"
+ *    s1
+ *    d1
+ *    s1 -> d1
+ * }
+ *
+ * subgraph cluster_1 { label="Non-trivial pairs" color="none"
+ *    d3 [width=0.3; height=0.1]
+ *    s2 -> d3 [class="alternative"]
+ *    s2 -> d2 [class="consequence"]
+ *
+ *    s3 [width=0.3; height=0.1]
+ *    s3 -> d4
+ *    s4 -> d4
+ * }
+ * ```
+ *
  */
 export function simplifyCFG(cfg: CFG, mergeAttrs?: AttrMerger): CFG {
   const graph = cfg.graph.copy();
