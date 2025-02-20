@@ -1,5 +1,5 @@
-import * as LZString from "lz-string";
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
+// import * as LZString from "lz-string";
 import {
   type EdgeAttributesObject,
   type EdgeModel,
@@ -117,43 +117,43 @@ export function applyTheme(dot: string, colorScheme: ColorScheme): string {
   return toDot(G);
 }
 
-function editDotLink(dot: string): string {
-  return `https://dreampuf.github.io/GraphvizOnline/?compressed=${LZString.compressToEncodedURIComponent(dot)}`;
-}
+// function editDotLink(dot: string): string {
+//   return `https://dreampuf.github.io/GraphvizOnline/?compressed=${LZString.compressToEncodedURIComponent(dot)}`;
+// }
 
-const graphExamples = {
-  Condition: `
-  a -> b [class="consequence"]
-  a -> c [class="alternative"]
-  b [label="True"]
-  c [label="False"]
-  `,
-  Switch: `
-  a -> b
-  a -> c
-  a -> d
-  a -> e
-  a -> f
-  
-  a -> x [class="alternative"]
-  
-  b -> x
-  c -> x
-  d -> x
-  e -> x
-  f -> x
-  `,
-  Entry: `
-  a [class="entry"]
-  a -> b
-  b [style="invis"]
-  `,
-  Loop: `
-  head -> body [class="consequence"]
-  body -> head [dir=back]
-  head -> exit [class="alternative"]
-  `,
-};
+// const graphExamples = {
+//   Condition: `
+//   a -> b [class="consequence"]
+//   a -> c [class="alternative"]
+//   b [label="True"]
+//   c [label="False"]
+//   `,
+//   Switch: `
+//   a -> b
+//   a -> c
+//   a -> d
+//   a -> e
+//   a -> f
+//
+//   a -> x [class="alternative"]
+//
+//   b -> x
+//   c -> x
+//   d -> x
+//   e -> x
+//   f -> x
+//   `,
+//   Entry: `
+//   a [class="entry"]
+//   a -> b
+//   b [style="invis"]
+//   `,
+//   Loop: `
+//   head -> body [class="consequence"]
+//   body -> head [dir=back]
+//   head -> exit [class="alternative"]
+//   `,
+// };
 
 const gradual = [
   "body",
@@ -253,8 +253,8 @@ const gradual = [
   else4_2 -> stmt4_3
   stmt4_3 -> stmt4_4
   stmt4_4 -> stmt4_1 [dir="back"]
-  `
-]
+  `,
+];
 
 if (require.main === module) {
   // for (const [name, graphContent] of Object.entries(graphExamples)) {
@@ -266,10 +266,13 @@ if (require.main === module) {
   //   );
   // }
   const graphviz = await Graphviz.load();
-  for (let i=0; i<gradual.length; ++i){
-    const step = gradual[i]
-    const styledDot = applyTheme(`digraph { ${step} }`, getDefaultColorScheme());
+  for (let i = 0; i < gradual.length; ++i) {
+    const step = gradual[i];
+    const styledDot = applyTheme(
+      `digraph { ${step} }`,
+      getDefaultColorScheme(),
+    );
     const svg = graphviz.dot(styledDot);
-    await Bun.write(`step_${i}.svg`, svg)
+    await Bun.write(`step_${i}.svg`, svg);
   }
 }

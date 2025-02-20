@@ -59,7 +59,7 @@ async function* iterFunctionInfo(
           funcdef: getFuncDef(code, func),
           filename: filename.replaceAll("\\", "/"),
         };
-      } catch (_e) {
+      } catch {
         // Ignore the error.
       }
     }
