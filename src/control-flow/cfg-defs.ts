@@ -303,15 +303,6 @@ export function mergeNodeAttrs(
     startOffset: startOffset,
   };
 }
-export interface Case {
-  conditionEntry: string;
-  conditionExit: string;
-  consequenceEntry: string;
-  consequenceExit: string | null;
-  alternativeExit: string;
-  hasFallthrough: boolean;
-  isDefault: boolean;
-}
 
 export interface BuilderOptions {
   /**

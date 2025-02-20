@@ -45,7 +45,7 @@
   let simplify: boolean = true;
   let verbose: boolean = false;
   let trim: boolean = true;
-  let flatSwitch: boolean = false;
+  let flatSwitch: boolean = true;
   let showAll: boolean = false;
 </script>
 

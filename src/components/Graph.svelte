@@ -30,7 +30,7 @@
   export let verbose: boolean = false;
   export let simplify: boolean = true;
   export let trim: boolean = true;
-  export let flatSwitch: boolean = false;
+  export let flatSwitch: boolean = true;
   export let highlight: boolean = true;
   export let showRegions: boolean = false;
 

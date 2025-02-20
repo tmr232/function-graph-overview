@@ -22,6 +22,9 @@ async function main() {
       colors: {
         type: "string",
       },
+      dot: {
+        type: "string",
+      },
     },
   });
 
@@ -50,7 +53,13 @@ async function main() {
   const colorScheme = await getColorScheme(values.colors);
 
   const graphviz = await Graphviz.load();
-  const svg = graphviz.dot(graphToDot(cfg, false, colorScheme));
+  const dot = graphToDot(cfg, false, colorScheme);
+
+  if (values.dot) {
+    await Bun.write(values.dot, dot);
+  }
+
+  const svg = graphviz.dot(dot);
   console.log(svg);
 }
 

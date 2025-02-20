@@ -7,9 +7,13 @@ import type { Language } from "../control-flow/cfg";
 
 export interface Requirements {
   /**
-   * Number of nodes expected in the CFG
+   * Number of nodes expected in the CFG (simplified, if-chain switch)
    */
   nodes?: number;
+  /**
+   * Number of nodes expected in the CFG (simplified, flat switch)
+   */
+  flatNodes?: number;
   /**
    * Number of exit nodes expected in the CFG
    */

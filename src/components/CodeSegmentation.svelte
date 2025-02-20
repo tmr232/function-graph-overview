@@ -35,7 +35,7 @@
   type NodeColors = Map<string, string>;
 
   function createNodeColors(cfg: CFG): Map<string, string> {
-    const nodes = new Set(cfg.offsetToNode.iter().map(({ value }) => value));
+    const nodes = new Set(cfg.offsetToNode.values());
     const nodeColors = new Map(
       [...nodes.keys()].map((node, i, { length }) => [
         node,

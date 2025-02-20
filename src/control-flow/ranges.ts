@@ -99,11 +99,11 @@ export class Lookup<T> {
 
   public mapValues<U>(fn: (value: T) => U): Lookup<U> {
     const lookup = new Lookup(fn(this.get(0)));
-    lookup.ranges = Array.from(
-      this[Symbol.iterator]().map(({ start, value }) => ({
+    lookup.ranges = Array.from(iterRanges(this.ranges)).map(
+      ({ start, value }) => ({
         start,
         value: fn(value),
-      })),
+      }),
     );
     return lookup;
   }
@@ -112,8 +112,8 @@ export class Lookup<T> {
     return iterRanges(this.ranges);
   }
 
-  public iter() {
-    return this[Symbol.iterator]();
+  public values(): T[] {
+    return Array.from(iterRanges(this.ranges)).map(({ value }) => value);
   }
 
   public clone(): Lookup<T> {
