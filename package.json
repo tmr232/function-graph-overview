@@ -81,7 +81,8 @@
     "lint": "bunx biome check --fix && bun oxlint-fix  && bun prettier-format && bunx eslint --fix && bunx tsc --noEmit && bun typedoc",
     "ci": "bunx biome ci && bun oxlint-ci && bun prettier-check && bunx eslint && bunx tsc --noEmit && bun typedoc",
     "generate-parsers": "bun run ./scripts/generate-parsers.ts",
-    "typedoc": "bunx typedoc --treatWarningsAsErrors"
+    "typedoc": "bun build-markdown-it-plugin && bunx typedoc --treatWarningsAsErrors",
+    "build-markdown-it-plugin": "bun build ./src/markdown-it-graphviz/plugin.ts --outfile=./dist/markdown-it-plugin/plugin.js"
   },
   "//": "START EXTENSION ATTRIBUTES",
   "publisher": "tamir-bahar",
