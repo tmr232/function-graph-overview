@@ -1,4 +1,4 @@
-import { GraphvizDotPlugin } from "./src/markdown-it-graphviz/plugin.js";
+import { GraphvizDotPlugin } from "./dist/markdown-it-plugin/plugin.js";
 
 const graphvizDotPlugin = await GraphvizDotPlugin();
 
