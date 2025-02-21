@@ -35,22 +35,52 @@ export function isValidLanguage(language: string): language is Language {
 export type LanguageDefinition = {
   wasmPath: string;
   createCFGBuilder: (options: BuilderOptions) => CFGBuilder;
+  functionNodeTypes: string[];
 };
+
+const typeScriptFunctionNodeTypes = [
+  "function_declaration",
+  "arrow_function",
+  "method_definition",
+  "function_expression",
+  "generator_function",
+  "generator_function_declaration",
+];
+
 export const languageDefinitions: Record<Language, LanguageDefinition> = {
-  C: { wasmPath: treeSitterC, createCFGBuilder: createCCFGBuilder },
-  Go: { wasmPath: treeSitterGo, createCFGBuilder: createGoCFGBuilder },
+  C: {
+    wasmPath: treeSitterC,
+    createCFGBuilder: createCCFGBuilder,
+    functionNodeTypes: ["function_definition"],
+  },
+  Go: {
+    wasmPath: treeSitterGo,
+    createCFGBuilder: createGoCFGBuilder,
+    functionNodeTypes: [
+      "function_declaration",
+      "method_declaration",
+      "func_literal",
+    ],
+  },
   Python: {
     wasmPath: treeSitterPython,
     createCFGBuilder: createPythonCFGBuilder,
+    functionNodeTypes: ["function_definition"],
   },
-  "C++": { wasmPath: treeSitterCpp, createCFGBuilder: createCppCFGBuilder },
+  "C++": {
+    wasmPath: treeSitterCpp,
+    createCFGBuilder: createCppCFGBuilder,
+    functionNodeTypes: cppFunctionNodeNames,
+  },
   TypeScript: {
     wasmPath: treeSitterTypeScript,
     createCFGBuilder: createTypeScriptCFGBuilder,
+    functionNodeTypes: typeScriptFunctionNodeTypes,
   },
   TSX: {
     wasmPath: treeSitterTSX,
     createCFGBuilder: createTypeScriptCFGBuilder,
+    functionNodeTypes: typeScriptFunctionNodeTypes,
   },
 };
 
@@ -65,25 +95,3 @@ export function newCFGBuilder(
 ): CFGBuilder {
   return languageDefinitions[language].createCFGBuilder(options);
 }
-
-/**
- * The names of the AST nodes representing functions in each language
- */
-export const functionNodeTypes: { [language in Language]: string[] } = {
-  Go: ["function_declaration", "method_declaration", "func_literal"],
-  C: ["function_definition"],
-  "C++": cppFunctionNodeNames,
-  Python: ["function_definition"],
-  TypeScript: [
-    "function_declaration",
-    "arrow_function",
-    "method_definition",
-    "function_expression",
-    "generator_function",
-    "generator_function_declaration",
-  ],
-  // We copy the TypeScript values here
-  TSX: [],
-};
-
-functionNodeTypes.TSX = functionNodeTypes.TypeScript;

@@ -1,6 +1,6 @@
 <script lang="ts">
   import Parser, { type SyntaxNode } from "web-tree-sitter";
-  import { functionNodeTypes, type Language } from "../control-flow/cfg";
+  import { type Language, languageDefinitions } from "../control-flow/cfg";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
   import { initialize as initializeUtils, type Parsers } from "./utils";
   import { createEventDispatcher } from "svelte";
@@ -50,7 +50,9 @@
     let syntax: SyntaxNode | null = tree.rootNode.descendantForIndex(offset);
 
     while (syntax) {
-      if (functionNodeTypes[language].includes(syntax.type)) {
+      if (
+        languageDefinitions[language].functionNodeTypes.includes(syntax.type)
+      ) {
         break;
       }
       syntax = syntax.parent;
