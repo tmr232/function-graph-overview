@@ -32,15 +32,27 @@ export function isValidLanguage(language: string): language is Language {
   return (supportedLanguages as readonly string[]).includes(language);
 }
 
-export type LanguageDefinition = {wasmPath:string};
-export const languageDefinitions:Record<Language, LanguageDefinition> = {
-  "C":{wasmPath:treeSitterC},
-  "Go":{wasmPath:treeSitterGo},
-  "Python":{wasmPath:treeSitterPython},
-  "C++":{wasmPath:treeSitterCpp},
-  "TypeScript":{wasmPath:treeSitterTypeScript},
-  "TSX":{wasmPath:treeSitterTSX},
-}
+export type LanguageDefinition = {
+  wasmPath: string;
+  createCFGBuilder: (options: BuilderOptions) => CFGBuilder;
+};
+export const languageDefinitions: Record<Language, LanguageDefinition> = {
+  C: { wasmPath: treeSitterC, createCFGBuilder: createCCFGBuilder },
+  Go: { wasmPath: treeSitterGo, createCFGBuilder: createGoCFGBuilder },
+  Python: {
+    wasmPath: treeSitterPython,
+    createCFGBuilder: createPythonCFGBuilder,
+  },
+  "C++": { wasmPath: treeSitterCpp, createCFGBuilder: createCppCFGBuilder },
+  TypeScript: {
+    wasmPath: treeSitterTypeScript,
+    createCFGBuilder: createTypeScriptCFGBuilder,
+  },
+  TSX: {
+    wasmPath: treeSitterTSX,
+    createCFGBuilder: createTypeScriptCFGBuilder,
+  },
+};
 
 /**
  * Returns a CFG builder for the given language
@@ -51,20 +63,7 @@ export function newCFGBuilder(
   language: Language,
   options: BuilderOptions,
 ): CFGBuilder {
-  switch (language) {
-    case "C":
-      return createCCFGBuilder(options);
-    case "Go":
-      return createGoCFGBuilder(options);
-    case "Python":
-      return createPythonCFGBuilder(options);
-    case "C++":
-      return createCppCFGBuilder(options);
-    case "TypeScript":
-      return createTypeScriptCFGBuilder(options);
-    case "TSX":
-      return createTypeScriptCFGBuilder(options);
-  }
+  return languageDefinitions[language].createCFGBuilder(options);
 }
 
 /**
