@@ -3,7 +3,7 @@ import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import objectHash from "object-hash";
 import { createEventDispatcher } from "svelte";
 import { type Node as SyntaxNode, type Tree } from "web-tree-sitter";
-import { type Language, functionNodeTypes } from "../control-flow/cfg";
+import { type Language, languageDefinitions } from "../control-flow/cfg";
 import { type ColorList, getLightColorList } from "../control-flow/colors";
 import { memoizeFunction } from "./caching.ts";
 import { type RenderOptions, Renderer } from "./renderer.ts";
@@ -63,7 +63,9 @@ function getFunctionAtOffset(
   let syntax: SyntaxNode | null = tree.rootNode.descendantForIndex(offset);
 
   while (syntax) {
-    if (functionNodeTypes[language].includes(syntax.type)) {
+    if (
+        languageDefinitions[language].functionNodeTypes.includes(syntax.type)
+      ) {
       break;
     }
     syntax = syntax.parent;
