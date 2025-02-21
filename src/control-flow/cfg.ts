@@ -8,6 +8,13 @@ import { createCFGBuilder as createGoCFGBuilder } from "./cfg-go";
 import { createCFGBuilder as createPythonCFGBuilder } from "./cfg-python";
 import { createCFGBuilder as createTypeScriptCFGBuilder } from "./cfg-typescript.ts";
 
+import treeSitterC from "../../parsers/tree-sitter-c.wasm?url";
+import treeSitterCpp from "../../parsers/tree-sitter-cpp.wasm?url";
+import treeSitterGo from "../../parsers/tree-sitter-go.wasm?url";
+import treeSitterPython from "../../parsers/tree-sitter-python.wasm?url";
+import treeSitterTSX from "../../parsers/tree-sitter-tsx.wasm?url";
+import treeSitterTypeScript from "../../parsers/tree-sitter-typescript.wasm?url";
+
 // ADD-LANGUAGES-HERE
 /**
  * The languages we support
@@ -23,6 +30,16 @@ export const supportedLanguages = [
 export type Language = (typeof supportedLanguages)[number];
 export function isValidLanguage(language: string): language is Language {
   return (supportedLanguages as readonly string[]).includes(language);
+}
+
+export type LanguageDefinition = {wasmPath:string};
+export const languageDefinitions:Record<Language, LanguageDefinition> = {
+  "C":{wasmPath:treeSitterC},
+  "Go":{wasmPath:treeSitterGo},
+  "Python":{wasmPath:treeSitterPython},
+  "C++":{wasmPath:treeSitterCpp},
+  "TypeScript":{wasmPath:treeSitterTypeScript},
+  "TSX":{wasmPath:treeSitterTSX},
 }
 
 /**
