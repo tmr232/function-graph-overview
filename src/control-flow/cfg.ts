@@ -46,7 +46,14 @@ const typeScriptFunctionNodeTypes = [
   "generator_function",
   "generator_function_declaration",
 ];
-
+/*
+Some notes:
+- We can define the CFG stuff here. Demo, extension, & test code is not relevant.
+- After figuring out what belongs here - the code should be moved to the separate
+  CFG files. It will still make it much easier to add a new language.
+- Extensions & demo & tests should have their language-dependant code bunched
+  up in one place as much as possible to make adding languages easier.
+ */
 export const languageDefinitions: Record<Language, LanguageDefinition> = {
   C: {
     wasmPath: treeSitterC,
