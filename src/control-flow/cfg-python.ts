@@ -294,7 +294,12 @@ function processMatchStatement(
       (match_statement
         subject: (_) @subject
           body: (block 
-            alternative: (case_clause (":") @case-colon)+  @case
+            alternative: (
+              case_clause (
+                (case_pattern _) @case-pattern
+                ":" @case-colon
+              )
+            )+  @case
           )
       ) @match
       `,
