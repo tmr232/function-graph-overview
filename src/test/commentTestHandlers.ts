@@ -46,8 +46,11 @@ export function buildSimpleCFG(
 function buildMarkerCFG(
   language: CFGLanguage,
   functionNode: Parser.SyntaxNode,
+  options?: BuilderOptions,
 ): CFG {
-  const builder = newCFGBuilder(language, { markerPattern });
+  options = options ?? {};
+  options.markerPattern = markerPattern;
+  const builder = newCFGBuilder(language, options);
   return builder.buildCFG(functionNode);
 }
 
@@ -121,6 +124,27 @@ export const requirementTests: Record<keyof Requirements, RequirementHandler> =
           throw new Error(`No node found for marker ${marker}`);
         };
         for (const [source, target] of testFunc.reqs.reaches) {
+          if (!pathExists(cfg.graph, getNode(source), getNode(target))) {
+            return `expected path from ${source} to ${target} but none was found`;
+          }
+        }
+      }
+      return null;
+    },
+    flatReaches(testFunc: TestFunction) {
+      if (testFunc.reqs.flatReaches !== undefined) {
+        const cfg = buildMarkerCFG(testFunc.language, testFunc.function, {
+          flatSwitch: true,
+        });
+        const markerMap = getMarkerMap(cfg);
+        const getNode = (marker: string) => {
+          const node = markerMap.get(marker);
+          if (node) {
+            return node;
+          }
+          throw new Error(`No node found for marker ${marker}`);
+        };
+        for (const [source, target] of testFunc.reqs.flatReaches) {
           if (!pathExists(cfg.graph, getNode(source), getNode(target))) {
             return `expected path from ${source} to ${target} but none was found`;
           }

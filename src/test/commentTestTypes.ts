@@ -26,6 +26,13 @@ export interface Requirements {
    */
   reaches?: [string, string][];
   /**
+   * [source, target] pairs to assert reachability in the CFG (simplified, flat switch)
+   *
+   * Nodes need to be marked with a comment, containing `CFG: ` followed
+   * by the marker to use in the test.
+   */
+  flatReaches?: [string, string][];
+  /**
    * [source, target] pairs to assert un-reachability in the CFG
    *
    * Nodes need to be marked with a comment, containing `CFG: ` followed

@@ -53,10 +53,13 @@ export function buildSwitch(
   let fallthrough: string | null = null;
   let hasDefaultCase = false;
   let previous: string | null = switchHeadNode;
+  let wasEmpty = false;
   for (const thisCase of cases) {
     if (ctx.options.flatSwitch) {
       ctx.builder.addEdge(switchHeadNode, thisCase.conditionEntry);
+
       if (thisCase.isEmpty && thisCase.hasFallthrough) {
+        wasEmpty = true;
         // When we have an empty fallthrough case, we ignore its consequence node.
         // Instead, we link it directly to the condition node of the next case.
         // This allows for nice chaining while avoiding the tree-like artifacts
@@ -69,7 +72,11 @@ export function buildSwitch(
         ctx.builder.addEdge(thisCase.conditionExit, thisCase.consequenceEntry);
 
         if (fallthrough) {
-          ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
+          if (wasEmpty) {
+            ctx.builder.addEdge(fallthrough, thisCase.conditionEntry);
+          } else {
+            ctx.builder.addEdge(fallthrough, thisCase.consequenceEntry);
+          }
         }
 
         if (!thisCase.hasFallthrough && thisCase.consequenceExit) {
