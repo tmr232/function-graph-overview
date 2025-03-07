@@ -42,7 +42,8 @@ export type ClusterType =
   | "except"
   | "else"
   | "finally"
-  | "try-complex";
+  | "try-complex"
+  |"flatSwitch";
 export type ClusterId = number;
 export type Cluster = {
   /** A unique identifier for the cluster. */

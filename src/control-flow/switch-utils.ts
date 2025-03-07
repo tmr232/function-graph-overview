@@ -53,6 +53,11 @@ export function buildSwitch(
   let fallthrough: string | null = null;
   let hasDefaultCase = false;
   let previous: string | null = switchHeadNode;
+  ctx.builder.withCluster("flatSwitch",(cluster)=> {
+    for (const thisCase of cases) {
+      ctx.builder.getGraph().setNodeAttribute(thisCase.conditionEntry, "cluster", cluster);
+    }
+  } )
   for (const thisCase of cases) {
     if (ctx.options.flatSwitch) {
       ctx.builder.addEdge(switchHeadNode, thisCase.conditionEntry);
