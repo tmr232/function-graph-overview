@@ -12,6 +12,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   When a catch-all is found the "no-match-found" edge is removed,
   and cases after the catch-all are removed as dead code. 
 - C++ learned `co_yield` and `co_return`
+- Python learned `assert`
 
 ### Fixed
 
