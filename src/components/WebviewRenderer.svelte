@@ -3,18 +3,28 @@
   import { functionNodeTypes, type Language } from "../control-flow/cfg";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
   import { initialize as initializeUtils, type Parsers } from "./utils";
-  import { createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
   import { type ColorList, getLightColorList } from "../control-flow/colors";
   import { Renderer, type RenderOptions } from "./renderer.ts";
   import { memoizeFunction } from "./caching.ts";
   import objectHash from "object-hash";
+  import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
+
+  /*
+  TODO:
+    - [ ] Highlight as an SVG edit, not a re-render
+    - [ ] Remember position when returning to the same function (if the code didn't change)
+    - [ ] Change the pointer
+   */
 
   type CodeAndOffset = { code: string; offset: number; language: Language };
 
+  let resultHash: string = "";
   let parsers: Parsers;
   let graphviz: Graphviz;
   let dot: string;
   let getNodeOffset: (nodeId: string) => number | undefined = () => undefined;
+  let getOffsetNode: (offset: number) => string;
   let tree: Parser.Tree;
   let svg: string;
   export let colorList = getLightColorList();
@@ -79,6 +89,15 @@
     );
     dot = renderResult.dot;
     getNodeOffset = renderResult.getNodeOffset;
+    getOffsetNode = renderResult.offsetToNode;
+    // TODO: Only reset when we move between functions
+    const newHash = objectHash(functionSyntax.startPosition);
+    if (newHash !== resultHash) {
+      panzoom.reset({ animate: false });
+      resultHash = newHash;
+    } else {
+      panToNode(getOffsetNode(cursorOffset));
+    }
 
     return renderResult.svg;
   }
@@ -133,28 +152,80 @@
       node: target.id,
       offset: getNodeOffset(target.id),
     });
+    console.log(target.id);
+    // This sometimes clashes with cursor-driven panning
+    panToNode(target.id);
   }
+
+  let zoomable: Element;
+  let parent: Element;
+  let panzoom: PanzoomObject;
+  function initPanzoom() {
+    panzoom = Panzoom(zoomable, { maxScale: 100, minScale: 1 });
+    zoomable.parentElement.addEventListener("wheel", panzoom.zoomWithWheel);
+  }
+
+  function panToNode(nodeId: string) {
+    const node = zoomable.querySelector(`#${nodeId}`);
+    // Find the midpoint for the screen and the node to center on
+    const findMidpoint = (el: Element) => {
+      const boundingClientRect = el.getBoundingClientRect();
+      return {
+        x: boundingClientRect.x + boundingClientRect.width / 2,
+        y: boundingClientRect.y + boundingClientRect.height / 2,
+      };
+    };
+    const parentMidpoint = findMidpoint(parent);
+    const nodeMidpoint = findMidpoint(node);
+
+    // Find the diff between them - that is our relative pan
+    const panDiff = {
+      x: parentMidpoint.x - nodeMidpoint.x,
+      y: parentMidpoint.y - nodeMidpoint.y,
+    };
+    // Relative movement is scaled by the scale, so we need to undo that scaling.
+    const scale = panzoom.getScale();
+    /* TODO: Switch to absolute panning to avoid animation issues.
+             Currently, things can change mid-animation and result in really
+             strange positioning.
+             This is probably because clicking a node triggers a pan animation,
+             but also moves the cursor triggering another animation.
+     */
+    panzoom.pan(panDiff.x / scale, panDiff.y / scale, {
+      animate: true,
+      relative: true,
+    });
+    console.log(parentMidpoint, nodeMidpoint, panDiff, scale);
+  }
+
+  onMount(() => {
+    initPanzoom();
+  });
 </script>
 
-{#await initialize() then}
-  <!-- I don't know how to make this part accessible. PRs welcome! -->
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <!-- svelte-ignore a11y-no-static-element-interactions -->
-  <div class="graph" on:click={onClick}>
-    {@html renderWrapper(
-      codeAndOffset,
-      {
-        simplify,
-        verbose,
-        trim,
-        flatSwitch,
-        highlight,
-        showRegions,
-      },
-      colorList,
-    )}
+<div id="parent" bind:this={parent}>
+  <div id="zoomable" bind:this={zoomable}>
+    {#await initialize() then}
+      <!-- I don't know how to make this part accessible. PRs welcome! -->
+      <!-- svelte-ignore a11y-click-events-have-key-events -->
+      <!-- svelte-ignore a11y-no-static-element-interactions -->
+      <div class="graph" on:click={onClick}>
+        {@html renderWrapper(
+          codeAndOffset,
+          {
+            simplify,
+            verbose,
+            trim,
+            flatSwitch,
+            highlight,
+            showRegions,
+          },
+          colorList,
+        )}
+      </div>
+    {/await}
   </div>
-{/await}
+</div>
 
 <style>
   .graph {
