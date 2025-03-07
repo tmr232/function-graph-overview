@@ -17860,3 +17860,147 @@ Lookup {
   ],
 }
 `;
+
+exports[`Python: issue-104-assert.py!assert_without_message: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.6];
+    node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+    node4 [style="filled"; label=""; id="node4"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
+    node1 -> node2 [penwidth=1; color="#ff0000"; class="alternative"];
+    node1 -> node4 [penwidth=1; color="#008000"; class="consequence"];
+}"
+`;
+
+exports[`Python: issue-104-assert.py!assert_with_message: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.6];
+    node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+    node4 [style="filled"; label=""; id="node4"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
+    node1 -> node2 [penwidth=1; color="#ff0000"; class="alternative"];
+    node1 -> node4 [penwidth=1; color="#008000"; class="consequence"];
+}"
+`;
+
+exports[`Python: issue-104-assert.py!multiple_asserts: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.6];
+    node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+    node4 [style="filled"; label=""; id="node4"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.6];
+    node5 [style="filled"; label=""; id="node5"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+    node7 [style="filled"; label=""; id="node7"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.6];
+    node8 [style="filled"; label=""; id="node8"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+    node10 [style="filled"; label=""; id="node10"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.6];
+    node11 [style="filled"; label=""; id="node11"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+    node13 [style="filled"; label=""; id="node13"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
+    node1 -> node2 [penwidth=1; color="#ff0000"; class="alternative"];
+    node4 -> node5 [penwidth=1; color="#ff0000"; class="alternative"];
+    node7 -> node8 [penwidth=1; color="#ff0000"; class="alternative"];
+    node10 -> node11 [penwidth=1; color="#ff0000"; class="alternative"];
+    node1 -> node4 [penwidth=1; color="#008000"; class="consequence"];
+    node4 -> node7 [penwidth=1; color="#008000"; class="consequence"];
+    node7 -> node10 [penwidth=1; color="#008000"; class="consequence"];
+    node10 -> node13 [penwidth=1; color="#008000"; class="consequence"];
+}"
+`;
+
+exports[`Python: issue-104-assert.py!assert_without_message: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 23,
+      "value": "node1",
+    },
+    {
+      "start": 65,
+      "value": "Not found",
+    },
+    {
+      "start": 65,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`Python: issue-104-assert.py!assert_with_message: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 91,
+      "value": "node1",
+    },
+    {
+      "start": 130,
+      "value": "Not found",
+    },
+    {
+      "start": 130,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`Python: issue-104-assert.py!multiple_asserts: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 156,
+      "value": "node1",
+    },
+    {
+      "start": 192,
+      "value": "Not found",
+    },
+    {
+      "start": 197,
+      "value": "node1",
+    },
+    {
+      "start": 205,
+      "value": "Not found",
+    },
+    {
+      "start": 210,
+      "value": "node1",
+    },
+    {
+      "start": 218,
+      "value": "Not found",
+    },
+    {
+      "start": 223,
+      "value": "node1",
+    },
+    {
+      "start": 231,
+      "value": "Not found",
+    },
+    {
+      "start": 231,
+      "value": "node1",
+    },
+  ],
+}
+`;

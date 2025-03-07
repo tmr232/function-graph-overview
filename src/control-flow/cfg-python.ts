@@ -43,6 +43,7 @@ const statementHandlers: StatementHandlers = {
     try_statement: processTryStatement,
     raise_statement: processRaiseStatement,
     block: processStatementSequence,
+    assert_statement: processAssertStatement,
   },
   default: defaultProcessStatement,
 };
@@ -66,6 +67,35 @@ function defaultProcessStatement(
   ctx.link.syntaxToNode(syntax, newNode);
   return { entry: newNode, exit: newNode };
 }
+
+function processAssertStatement(
+  assertSyntax: Parser.SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const conditionSyntax = assertSyntax.child(1) as Parser.SyntaxNode;
+  const messageSyntax = assertSyntax.child(3);
+  const conditionNode = ctx.builder.addNode(
+    "ASSERT_CONDITION",
+    `Assert: ${conditionSyntax.text}`,
+    conditionSyntax.startIndex,
+  );
+  const raiseNode = ctx.builder.addNode(
+    "THROW",
+    `Assertion Message: ${messageSyntax?.text}`,
+    conditionSyntax.endIndex,
+  );
+  const happyNode = ctx.builder.addNode(
+    "MERGE",
+    "Assert successful",
+    assertSyntax.endIndex,
+  );
+
+  ctx.builder.addEdge(conditionNode, raiseNode, "alternative");
+  ctx.builder.addEdge(conditionNode, happyNode, "consequence");
+
+  return { entry: conditionNode, exit: happyNode };
+}
+
 function processRaiseStatement(
   raiseSyntax: Parser.SyntaxNode,
   ctx: Context,

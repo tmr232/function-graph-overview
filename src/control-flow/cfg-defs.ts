@@ -21,6 +21,7 @@ export type NodeType =
   | "START"
   | "END"
   | "CONDITION"
+  | "ASSERT_CONDITION"
   | "STATEMENT"
   | "RETURN"
   | "EMPTY"
