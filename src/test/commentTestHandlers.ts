@@ -25,13 +25,16 @@ function buildCFG(
   return trimFor(builder.buildCFG(functionNode));
 }
 
-const simpleCFGCache = new Map<Parser.SyntaxNode, CFG>();
+const simpleCFGCache = new Map<
+  { functionNode: Parser.SyntaxNode; options?: BuilderOptions },
+  CFG
+>();
 export function buildSimpleCFG(
   language: CFGLanguage,
   functionNode: Parser.SyntaxNode,
   options?: BuilderOptions,
 ): CFG {
-  const cachedCFG = simpleCFGCache.get(functionNode);
+  const cachedCFG = simpleCFGCache.get({ functionNode, options });
   if (cachedCFG) {
     return cachedCFG;
   }
@@ -39,7 +42,7 @@ export function buildSimpleCFG(
     buildCFG(language, functionNode, options),
     mergeNodeAttrs,
   );
-  simpleCFGCache.set(functionNode, cfg);
+  simpleCFGCache.set({ functionNode, options }, cfg);
   return cfg;
 }
 
@@ -90,12 +93,17 @@ export const requirementTests: Record<keyof Requirements, RequirementHandler> =
       return null;
     },
     flatNodes(testFunc: TestFunction) {
-      if (testFunc.reqs.nodes !== undefined) {
-        const cfg = buildSimpleCFG(testFunc.language, testFunc.function, {
+      if (testFunc.reqs.flatNodes !== undefined) {
+        const options = {
           flatSwitch: true,
-        });
-        if (cfg.graph.order !== testFunc.reqs.nodes) {
-          return `expected ${testFunc.reqs.nodes} nodes but found ${cfg.graph.order}`;
+        };
+        const cfg = buildSimpleCFG(
+          testFunc.language,
+          testFunc.function,
+          options,
+        );
+        if (cfg.graph.order !== testFunc.reqs.flatNodes) {
+          return `expected ${testFunc.reqs.flatNodes} nodes but found ${cfg.graph.order}`;
         }
       }
       return null;
