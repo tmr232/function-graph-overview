@@ -565,5 +565,5 @@ export function processThrowStatement(
     throwSyntax.startIndex,
   );
   ctx.link.syntaxToNode(throwSyntax, throwNode);
-  return { entry: throwNode, exit: null };
+  return { entry: throwNode, exit: null, functionExits: [throwNode] };
 }
