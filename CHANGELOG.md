@@ -6,10 +6,16 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Added
+
+- Python catch-all cases in match statements are now detected.
+  When a catch-all is found the "no-match-found" edge is removed,
+  and cases after the catch-all are removed as dead code. 
 
 ### Fixed
 
 - Comment-tests now fail if an unsupported test type is present instead of passing silently.
+- Python `match` statements no longer break when a comment is present at their top-level
 
 ### Changed
 
