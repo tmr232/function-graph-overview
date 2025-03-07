@@ -74,16 +74,21 @@ export class Renderer {
   }
 
   private highlightNode(svg: string, nodeId: string): string {
-    const dom = svgFromString(svg);
-    // We construct the SVG, so we know the node must exist.
-    const node: G = dom.findOne(`g#${nodeId}`) as G;
-    // Same applies to the polygon.
+    try {
+      const dom = svgFromString(svg);
+      // We construct the SVG, so we know the node must exist.
+      const node: G = dom.findOne(`g#${nodeId}`) as G;
+      // Same applies to the polygon.
 
-    const poly: Polygon = node.findOne("polygon") as Polygon;
-    // The highlight class is used when previewing colors in the demo.
-    node.addClass("highlight");
-    poly.fill(listToScheme(this.colorList)["node.highlight"]);
-    return dom.svg();
+      const poly: Polygon = node.findOne("polygon") as Polygon;
+      // The highlight class is used when previewing colors in the demo.
+      node.addClass("highlight");
+      poly.fill(listToScheme(this.colorList)["node.highlight"]);
+      return dom.svg();
+    } catch (e) {
+      console.error(`Failed to highlight node ${nodeId}:`, e);
+      return svg;
+    }
   }
 
   private renderStatic(functionSyntax: Parser.SyntaxNode, language: Language) {
