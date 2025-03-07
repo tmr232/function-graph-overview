@@ -93,7 +93,7 @@ function processAssertStatement(
   ctx.builder.addEdge(conditionNode, raiseNode, "alternative");
   ctx.builder.addEdge(conditionNode, happyNode, "consequence");
 
-  return { entry: conditionNode, exit: happyNode };
+  return { entry: conditionNode, exit: happyNode, functionExits: [raiseNode] };
 }
 
 function processRaiseStatement(
@@ -107,7 +107,7 @@ function processRaiseStatement(
     raiseSyntax.startIndex,
   );
   ctx.link.syntaxToNode(raiseSyntax, raiseNode);
-  return { entry: raiseNode, exit: null };
+  return { entry: raiseNode, exit: null, functionExits: [raiseNode] };
 }
 function processReturnStatement(
   returnSyntax: Parser.SyntaxNode,
@@ -120,7 +120,7 @@ function processReturnStatement(
     returnSyntax.startIndex,
   );
   ctx.link.syntaxToNode(returnSyntax, returnNode);
-  return { entry: returnNode, exit: null, returns: [returnNode] };
+  return { entry: returnNode, exit: null, functionExits: [returnNode] };
 }
 function processTryStatement(
   trySyntax: Parser.SyntaxNode,
@@ -128,8 +128,8 @@ function processTryStatement(
 ): BasicBlock {
   const { builder, matcher } = ctx;
   /*
-  Here's an idea - I can duplicate the finally blocks!
-  Then if there's a return, I stick the finally before it.
+  Here's an idea - I can duplicate the `finally` blocks!
+  Then, if there's a function-exit, I stick the `finally` before it.
   In other cases, the finally is after the end of the try-body.
   This is probably the best course of action.
   */
@@ -192,33 +192,33 @@ function processTryStatement(
     }
 
     const finallyBlock = builder.withCluster("finally", () => {
-      // Handle all the return statements from the try block
+      // Handle all the function-exit statements from the try block
       if (finallySyntax) {
         // This is only relevant if there's a finally block.
-        matcher.state.forEachReturn((returnNode) => {
-          // We create a new finally block for each return node,
+        matcher.state.forEachFunctionExit((functionExitNode) => {
+          // We create a new finally block for each function-exit node,
           // so that we can link them.
           const duplicateFinallyBlock = match.getBlock(finallySyntax);
-          // We also clone the return node, to place it _after_ the finally block
+          // We also clone the function-exit node, to place it _after_ the finally block
           // We also override the cluster node, pulling it up to the `try-complex`,
-          // as the return is neither in a `try`, `except`, or `finally` context.
-          const returnNodeClone = builder.cloneNode(returnNode, {
+          // as the function-exit is neither in a `try`, `except`, or `finally` context.
+          const functionExitCloneNode = builder.cloneNode(functionExitNode, {
             cluster: tryComplexCluster,
           });
 
-          builder.addEdge(returnNode, duplicateFinallyBlock.entry);
+          builder.addEdge(functionExitNode, duplicateFinallyBlock.entry);
           if (duplicateFinallyBlock.exit)
-            builder.addEdge(duplicateFinallyBlock.exit, returnNodeClone);
+            builder.addEdge(duplicateFinallyBlock.exit, functionExitCloneNode);
 
-          // We return the cloned return node as the new return node, in case we're nested
-          // in a scope that will process it.
-          return returnNodeClone;
+          // We return the cloned function-exit node as the new function-exit node,
+          // in case we're nested in a scope that will process it.
+          return functionExitCloneNode;
         });
       }
 
       // Handle the finally-block for the trivial case, where we just pass through the try block
-      // This must happen AFTER handling the return statements, as the finally block may add return
-      // statements of its own.
+      // This must happen AFTER handling the function-exit statements,
+      // as the finally block may add function-exit statements of its own.
       const finallyBlock = match.getBlock(finallySyntax);
       return finallyBlock;
     });

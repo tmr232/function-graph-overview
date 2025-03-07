@@ -18004,3 +18004,207 @@ Lookup {
   ],
 }
 `;
+
+exports[`Python: issue-111-throw-finally.py!raise_and_finally: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    subgraph cluster_0 {
+        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        node4 [style="filled"; label=""; id="node4"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+        subgraph cluster_1 {
+            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.3];
+        }
+        subgraph cluster_2 {
+            penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
+            node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+        }
+    }
+    node0 [style="filled"; label=""; id="node0"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.5];
+    node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.3];
+    node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node4 [style="filled"; label=""; id="node4"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+    node2 -> node3 [penwidth=1; color="#0000ff"; class="regular"];
+    node3 -> node4 [penwidth=1; color="#0000ff"; class="regular"];
+    node0 -> node2 [penwidth=1; color="#0000ff"; class="regular"];
+}"
+`;
+
+exports[`TypeScript: issue-111-throw-finally.ts!throwAndFinally: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    subgraph cluster_0 {
+        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        node4 [style="filled"; label=""; id="node4"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+        subgraph cluster_1 {
+            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.3];
+        }
+        subgraph cluster_3 {
+            penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
+            node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+        }
+    }
+    node0 [style="filled"; label=""; id="node0"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.5];
+    node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.3];
+    node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node4 [style="filled"; label=""; id="node4"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+    node2 -> node3 [penwidth=1; color="#0000ff"; class="regular"];
+    node3 -> node4 [penwidth=1; color="#0000ff"; class="regular"];
+    node0 -> node2 [penwidth=1; color="#0000ff"; class="regular"];
+}"
+`;
+
+exports[`Python: issue-111-throw-finally.py!raise_and_finally: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node0",
+    },
+    {
+      "start": 23,
+      "value": "node0",
+    },
+    {
+      "start": 52,
+      "value": "node4",
+    },
+    {
+      "start": 65,
+      "value": "node4",
+    },
+    {
+      "start": 85,
+      "value": "node4",
+    },
+    {
+      "start": 85,
+      "value": "node4",
+    },
+    {
+      "start": 90,
+      "value": "node5",
+    },
+    {
+      "start": 107,
+      "value": "node5",
+    },
+    {
+      "start": 122,
+      "value": "node5",
+    },
+    {
+      "start": 122,
+      "value": "node5",
+    },
+    {
+      "start": 122,
+      "value": "node5",
+    },
+    {
+      "start": 122,
+      "value": "node5",
+    },
+    {
+      "start": 122,
+      "value": "node4",
+    },
+    {
+      "start": 122,
+      "value": "node0",
+    },
+    {
+      "start": 122,
+      "value": "node4",
+    },
+    {
+      "start": 122,
+      "value": "node0",
+    },
+  ],
+}
+`;
+
+exports[`TypeScript: issue-111-throw-finally.ts!throwAndFinally: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node0",
+    },
+    {
+      "start": 26,
+      "value": "node0",
+    },
+    {
+      "start": 57,
+      "value": "node4",
+    },
+    {
+      "start": 61,
+      "value": "node4",
+    },
+    {
+      "start": 67,
+      "value": "node4",
+    },
+    {
+      "start": 84,
+      "value": "node4",
+    },
+    {
+      "start": 88,
+      "value": "node4",
+    },
+    {
+      "start": 89,
+      "value": "node5",
+    },
+    {
+      "start": 97,
+      "value": "node5",
+    },
+    {
+      "start": 103,
+      "value": "node5",
+    },
+    {
+      "start": 124,
+      "value": "node5",
+    },
+    {
+      "start": 124,
+      "value": "node5",
+    },
+    {
+      "start": 128,
+      "value": "node5",
+    },
+    {
+      "start": 128,
+      "value": "node5",
+    },
+    {
+      "start": 128,
+      "value": "node4",
+    },
+    {
+      "start": 128,
+      "value": "node4",
+    },
+    {
+      "start": 130,
+      "value": "node0",
+    },
+    {
+      "start": 130,
+      "value": "node0",
+    },
+  ],
+}
+`;

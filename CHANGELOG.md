@@ -18,6 +18,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Comment-tests now fail if an unsupported test type is present instead of passing silently.
 - Python `match` statements no longer break when a comment is present at their top-level
+- `throw` and `raise` statements now cause `finally` block duplication like `return` statements.
 
 ### Changed
 
