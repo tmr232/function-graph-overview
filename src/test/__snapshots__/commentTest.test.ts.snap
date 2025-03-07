@@ -240,6 +240,30 @@ exports[`TypeScript: issue77-switch-empty-fallthrough-case.ts!EmptyFallthroughCa
 }"
 `;
 
+exports[`TypeScript: issue77-switch-empty-fallthrough-case.ts!EmptyFallthroughToNonEmpty: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.8999999999999999];
+    node2 [style="filled"; label=""; id="node2"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node4 [style="filled"; label=""; id="node4"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node5 [style="filled"; label=""; id="node5"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node6 [style="filled"; label=""; id="node6"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node9 [style="filled"; label=""; id="node9"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
+    node1 -> node2 [penwidth=1; color="#008000"; class="consequence"];
+    node2 -> node4 [penwidth=1; color="#0000ff"; class="regular"];
+    node1 -> node3 [penwidth=1; color="#ff0000"; class="alternative"];
+    node3 -> node4 [penwidth=1; color="#008000"; class="consequence"];
+    node4 -> node6 [penwidth=1; color="#0000ff"; class="regular"];
+    node3 -> node5 [penwidth=1; color="#ff0000"; class="alternative"];
+    node5 -> node6 [penwidth=1; color="#008000"; class="consequence"];
+    node5 -> node9 [penwidth=1; color="#ff0000"; class="alternative"];
+    node6 -> node9 [penwidth=1; color="#0000ff"; class="regular"];
+}"
+`;
+
 exports[`Go: labledStatements.go!LabelledStatementFlow: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
@@ -4189,6 +4213,97 @@ Lookup {
     },
     {
       "start": 130,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`TypeScript: issue77-switch-empty-fallthrough-case.ts!EmptyFallthroughToNonEmpty: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 171,
+      "value": "node1",
+    },
+    {
+      "start": 213,
+      "value": "node1",
+    },
+    {
+      "start": 225,
+      "value": "node1",
+    },
+    {
+      "start": 230,
+      "value": "node1",
+    },
+    {
+      "start": 230,
+      "value": "node1",
+    },
+    {
+      "start": 237,
+      "value": "node3",
+    },
+    {
+      "start": 242,
+      "value": "node1",
+    },
+    {
+      "start": 242,
+      "value": "node3",
+    },
+    {
+      "start": 249,
+      "value": "node5",
+    },
+    {
+      "start": 254,
+      "value": "node1",
+    },
+    {
+      "start": 254,
+      "value": "node5",
+    },
+    {
+      "start": 261,
+      "value": "node6",
+    },
+    {
+      "start": 268,
+      "value": "node5",
+    },
+    {
+      "start": 268,
+      "value": "node6",
+    },
+    {
+      "start": 283,
+      "value": "node5",
+    },
+    {
+      "start": 283,
+      "value": "node5",
+    },
+    {
+      "start": 287,
+      "value": "node1",
+    },
+    {
+      "start": 287,
+      "value": "node1",
+    },
+    {
+      "start": 289,
+      "value": "node1",
+    },
+    {
+      "start": 289,
       "value": "node1",
     },
   ],
@@ -17377,121 +17492,6 @@ Lookup {
     },
     {
       "start": 3137,
-      "value": "node1",
-    },
-  ],
-}
-`;
-
-exports[`TypeScript: issue77-switch-empty-fallthrough-case.ts!EmptyFallthroughToNonEmpty: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.8999999999999999];
-    node2 [style="filled"; label=""; id="node2"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-    node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-    node4 [style="filled"; label=""; id="node4"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-    node5 [style="filled"; label=""; id="node5"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-    node6 [style="filled"; label=""; id="node6"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-    node9 [style="filled"; label=""; id="node9"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
-    node1 -> node2 [penwidth=1; color="#008000"; class="consequence"];
-    node2 -> node4 [penwidth=1; color="#0000ff"; class="regular"];
-    node1 -> node3 [penwidth=1; color="#ff0000"; class="alternative"];
-    node3 -> node4 [penwidth=1; color="#008000"; class="consequence"];
-    node4 -> node6 [penwidth=1; color="#0000ff"; class="regular"];
-    node3 -> node5 [penwidth=1; color="#ff0000"; class="alternative"];
-    node5 -> node6 [penwidth=1; color="#008000"; class="consequence"];
-    node5 -> node9 [penwidth=1; color="#ff0000"; class="alternative"];
-    node6 -> node9 [penwidth=1; color="#0000ff"; class="regular"];
-}"
-`;
-
-exports[`TypeScript: issue77-switch-empty-fallthrough-case.ts!EmptyFallthroughToNonEmpty: Segmentation 1`] = `
-Lookup {
-  "ranges": [
-    {
-      "start": 0,
-      "value": "node1",
-    },
-    {
-      "start": 199,
-      "value": "node1",
-    },
-    {
-      "start": 241,
-      "value": "node1",
-    },
-    {
-      "start": 253,
-      "value": "node1",
-    },
-    {
-      "start": 272,
-      "value": "node1",
-    },
-    {
-      "start": 279,
-      "value": "node1",
-    },
-    {
-      "start": 279,
-      "value": "node3",
-    },
-    {
-      "start": 298,
-      "value": "node3",
-    },
-    {
-      "start": 305,
-      "value": "node1",
-    },
-    {
-      "start": 305,
-      "value": "node5",
-    },
-    {
-      "start": 324,
-      "value": "node1",
-    },
-    {
-      "start": 324,
-      "value": "node5",
-    },
-    {
-      "start": 331,
-      "value": "node6",
-    },
-    {
-      "start": 338,
-      "value": "node5",
-    },
-    {
-      "start": 338,
-      "value": "node6",
-    },
-    {
-      "start": 353,
-      "value": "node5",
-    },
-    {
-      "start": 353,
-      "value": "node5",
-    },
-    {
-      "start": 357,
-      "value": "node1",
-    },
-    {
-      "start": 357,
-      "value": "node1",
-    },
-    {
-      "start": 359,
-      "value": "node1",
-    },
-    {
-      "start": 359,
       "value": "node1",
     },
   ],
