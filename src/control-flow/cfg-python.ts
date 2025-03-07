@@ -120,7 +120,7 @@ function processReturnStatement(
     returnSyntax.startIndex,
   );
   ctx.link.syntaxToNode(returnSyntax, returnNode);
-  return { entry: returnNode, exit: null, returns: [returnNode] };
+  return { entry: returnNode, exit: null, functionExits: [returnNode] };
 }
 function processTryStatement(
   trySyntax: Parser.SyntaxNode,
@@ -195,7 +195,7 @@ function processTryStatement(
       // Handle all the return statements from the try block
       if (finallySyntax) {
         // This is only relevant if there's a finally block.
-        matcher.state.forEachReturn((returnNode) => {
+        matcher.state.forEachFunctionExit((returnNode) => {
           // We create a new finally block for each return node,
           // so that we can link them.
           const duplicateFinallyBlock = match.getBlock(finallySyntax);
