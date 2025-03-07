@@ -1,5 +1,82 @@
 // Bun Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Python: issue-101-match-catchall.py!single_match_all_underscore: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node5 [style="filled"; label=""; id="node5"; shape="box"; class="default"; fillcolor="#d3d3d3"; minHeight=0.5; height=1.7999999999999998];
+}"
+`;
+
+exports[`Python: issue-101-match-catchall.py!single_match_all_named: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node5 [style="filled"; label=""; id="node5"; shape="box"; class="default"; fillcolor="#d3d3d3"; minHeight=0.5; height=1.7999999999999998];
+}"
+`;
+
+exports[`Python: issue-101-match-catchall.py!with_comment: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.6];
+    node4 [style="filled"; label=""; id="node4"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node6 [style="filled"; label=""; id="node6"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node7 [style="filled"; label=""; id="node7"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
+    node5 [style="filled"; label=""; id="node5"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node4 -> node3 [penwidth=1; color="#008000"; class="consequence"];
+    node1 -> node4 [penwidth=1; color="#ff0000"; class="alternative"];
+    node6 -> node5 [penwidth=1; color="#008000"; class="consequence"];
+    node4 -> node6 [penwidth=1; color="#ff0000"; class="alternative"];
+    node3 -> node7 [penwidth=1; color="#0000ff"; class="regular"];
+    node5 -> node7 [penwidth=1; color="#0000ff"; class="regular"];
+    node6 -> node7 [penwidth=1; color="#ff0000"; class="alternative"];
+    node1 -> node7 [penwidth=1; color="#ff0000"; class="alternative"];
+}"
+`;
+
+exports[`Python: issue-101-match-catchall.py!stop_after_catchall: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node4 [style="filled"; label=""; id="node4"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.8999999999999999];
+    node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node5 [style="filled"; label=""; id="node5"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.6];
+    node7 [style="filled"; label=""; id="node7"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
+    node4 -> node3 [penwidth=1; color="#008000"; class="consequence"];
+    node4 -> node5 [penwidth=1; color="#ff0000"; class="alternative"];
+    node3 -> node7 [penwidth=1; color="#0000ff"; class="regular"];
+    node5 -> node7 [penwidth=1; color="#0000ff"; class="regular"];
+}"
+`;
+
+exports[`Python: issue-101-match-catchall.py!cases_and_catchall: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node4 [style="filled"; label=""; id="node4"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.8999999999999999];
+    node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node6 [style="filled"; label=""; id="node6"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node5 [style="filled"; label=""; id="node5"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node9 [style="filled"; label=""; id="node9"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
+    node7 [style="filled"; label=""; id="node7"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.6];
+    node4 -> node3 [penwidth=1; color="#008000"; class="consequence"];
+    node6 -> node5 [penwidth=1; color="#008000"; class="consequence"];
+    node4 -> node6 [penwidth=1; color="#ff0000"; class="alternative"];
+    node6 -> node7 [penwidth=1; color="#ff0000"; class="alternative"];
+    node3 -> node9 [penwidth=1; color="#0000ff"; class="regular"];
+    node5 -> node9 [penwidth=1; color="#0000ff"; class="regular"];
+    node7 -> node9 [penwidth=1; color="#0000ff"; class="regular"];
+}"
+`;
+
 exports[`Go: issue-85-continue-with-label.go!ContinueToLabel: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
@@ -1913,18 +1990,18 @@ exports[`Python: sample.py!Match: DOT Snapshot 1`] = `
     bgcolor="#ffffff"
     node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.6];
     node4 [style="filled"; label=""; id="node4"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-    node7 [style="filled"; label=""; id="node7"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
     node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
     node6 [style="filled"; label=""; id="node6"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node7 [style="filled"; label=""; id="node7"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
     node5 [style="filled"; label=""; id="node5"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
     node4 -> node3 [penwidth=1; color="#008000"; class="consequence"];
     node1 -> node4 [penwidth=1; color="#ff0000"; class="alternative"];
     node6 -> node5 [penwidth=1; color="#008000"; class="consequence"];
     node4 -> node6 [penwidth=1; color="#ff0000"; class="alternative"];
-    node1 -> node7 [penwidth=1; color="#ff0000"; class="alternative"];
     node3 -> node7 [penwidth=1; color="#0000ff"; class="regular"];
     node5 -> node7 [penwidth=1; color="#0000ff"; class="regular"];
     node6 -> node7 [penwidth=1; color="#ff0000"; class="alternative"];
+    node1 -> node7 [penwidth=1; color="#ff0000"; class="alternative"];
 }"
 `;
 
@@ -1935,16 +2012,16 @@ exports[`Python: sample.py!MatchMultiPattern: DOT Snapshot 1`] = `
     bgcolor="#ffffff"
     node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.6];
     node4 [style="filled"; label=""; id="node4"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-    node7 [style="filled"; label=""; id="node7"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
     node3 [style="filled"; label=""; id="node3"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.5];
     node6 [style="filled"; label=""; id="node6"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node7 [style="filled"; label=""; id="node7"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
     node5 [style="filled"; label=""; id="node5"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.5];
     node4 -> node3 [penwidth=1; color="#008000"; class="consequence"];
     node1 -> node4 [penwidth=1; color="#ff0000"; class="alternative"];
     node6 -> node5 [penwidth=1; color="#008000"; class="consequence"];
     node4 -> node6 [penwidth=1; color="#ff0000"; class="alternative"];
-    node1 -> node7 [penwidth=1; color="#ff0000"; class="alternative"];
     node6 -> node7 [penwidth=1; color="#ff0000"; class="alternative"];
+    node1 -> node7 [penwidth=1; color="#ff0000"; class="alternative"];
 }"
 `;
 
@@ -2016,12 +2093,11 @@ exports[`Python: sample.py!WithNestedCluster: DOT Snapshot 1`] = `
         subgraph cluster_2 {
             penwidth=6; color="#ffffff"; bgcolor="#ffddff"; class="with"
             node10 [style="filled"; label=""; id="node10"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-            node11 [style="filled"; label=""; id="node11"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
             node13 [style="filled"; label=""; id="node13"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+            node11 [style="filled"; label=""; id="node11"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
             node12 [style="filled"; label=""; id="node12"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
             node15 [style="filled"; label=""; id="node15"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
             node14 [style="filled"; label=""; id="node14"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-            node10 -> node11 [penwidth=1; color="#ff0000"; class="alternative"];
             node13 -> node12 [penwidth=1; color="#008000"; class="consequence"];
             node12 -> node11 [penwidth=1; color="#0000ff"; class="regular"];
             node10 -> node13 [penwidth=1; color="#ff0000"; class="alternative"];
@@ -2029,6 +2105,7 @@ exports[`Python: sample.py!WithNestedCluster: DOT Snapshot 1`] = `
             node14 -> node11 [penwidth=1; color="#0000ff"; class="regular"];
             node13 -> node15 [penwidth=1; color="#ff0000"; class="alternative"];
             node15 -> node11 [penwidth=1; color="#ff0000"; class="alternative"];
+            node10 -> node11 [penwidth=1; color="#ff0000"; class="alternative"];
         }
         node8 -> node9 [penwidth=1; color="#008000"; class="consequence"];
         node8 -> node16 [penwidth=1; color="#ff0000"; class="alternative"];
@@ -2042,13 +2119,13 @@ exports[`Python: sample.py!WithNestedCluster: DOT Snapshot 1`] = `
     node9 [style="filled"; label=""; id="node9"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
     node16 [style="filled"; label=""; id="node16"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.5];
     node10 [style="filled"; label=""; id="node10"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-    node11 [style="filled"; label=""; id="node11"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
     node13 [style="filled"; label=""; id="node13"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-    node18 [style="filled"; label=""; id="node18"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node11 [style="filled"; label=""; id="node11"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
     node12 [style="filled"; label=""; id="node12"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
     node15 [style="filled"; label=""; id="node15"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-    node19 [style="filled"; label=""; id="node19"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.5];
+    node18 [style="filled"; label=""; id="node18"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
     node14 [style="filled"; label=""; id="node14"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node19 [style="filled"; label=""; id="node19"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.5];
     node9 -> node10 [penwidth=1; color="#0000ff"; class="regular"];
     node11 -> node18 [penwidth=1; color="#0000ff"; class="regular"];
     node6 -> node7 [penwidth=1; color="#0000ff"; class="regular"];
@@ -2984,6 +3061,525 @@ exports[`TypeScript: sample.ts!TrivialUnreach: DOT Snapshot 1`] = `
     node2 -> node5 [penwidth=1; color="#0000ff"; class="regular"];
     node1 -> node5 [penwidth=1; color="#ff0000"; class="alternative"];
 }"
+`;
+
+exports[`Python: issue-101-match-catchall.py!single_match_all_underscore: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node5",
+    },
+    {
+      "start": 27,
+      "value": "node5",
+    },
+    {
+      "start": 66,
+      "value": "node5",
+    },
+    {
+      "start": 72,
+      "value": "node5",
+    },
+    {
+      "start": 73,
+      "value": "node5",
+    },
+    {
+      "start": 83,
+      "value": "node5",
+    },
+    {
+      "start": 88,
+      "value": "node5",
+    },
+    {
+      "start": 89,
+      "value": "node5",
+    },
+    {
+      "start": 90,
+      "value": "node5",
+    },
+    {
+      "start": 91,
+      "value": "node5",
+    },
+    {
+      "start": 91,
+      "value": "node5",
+    },
+    {
+      "start": 95,
+      "value": "node5",
+    },
+    {
+      "start": 95,
+      "value": "node5",
+    },
+    {
+      "start": 95,
+      "value": "node5",
+    },
+    {
+      "start": 95,
+      "value": "node5",
+    },
+    {
+      "start": 95,
+      "value": "node5",
+    },
+    {
+      "start": 95,
+      "value": "node5",
+    },
+  ],
+}
+`;
+
+exports[`Python: issue-101-match-catchall.py!single_match_all_named: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node5",
+    },
+    {
+      "start": 124,
+      "value": "node5",
+    },
+    {
+      "start": 158,
+      "value": "node5",
+    },
+    {
+      "start": 164,
+      "value": "node5",
+    },
+    {
+      "start": 165,
+      "value": "node5",
+    },
+    {
+      "start": 175,
+      "value": "node5",
+    },
+    {
+      "start": 180,
+      "value": "node5",
+    },
+    {
+      "start": 189,
+      "value": "node5",
+    },
+    {
+      "start": 190,
+      "value": "node5",
+    },
+    {
+      "start": 191,
+      "value": "node5",
+    },
+    {
+      "start": 191,
+      "value": "node5",
+    },
+    {
+      "start": 195,
+      "value": "node5",
+    },
+    {
+      "start": 195,
+      "value": "node5",
+    },
+    {
+      "start": 195,
+      "value": "node5",
+    },
+    {
+      "start": 195,
+      "value": "node5",
+    },
+    {
+      "start": 195,
+      "value": "node5",
+    },
+    {
+      "start": 195,
+      "value": "node5",
+    },
+  ],
+}
+`;
+
+exports[`Python: issue-101-match-catchall.py!with_comment: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 224,
+      "value": "node1",
+    },
+    {
+      "start": 248,
+      "value": "node1",
+    },
+    {
+      "start": 254,
+      "value": "node1",
+    },
+    {
+      "start": 255,
+      "value": "node1",
+    },
+    {
+      "start": 265,
+      "value": "node4",
+    },
+    {
+      "start": 270,
+      "value": "node4",
+    },
+    {
+      "start": 271,
+      "value": "node4",
+    },
+    {
+      "start": 272,
+      "value": "node3",
+    },
+    {
+      "start": 273,
+      "value": "node4",
+    },
+    {
+      "start": 273,
+      "value": "node3",
+    },
+    {
+      "start": 277,
+      "value": "node3",
+    },
+    {
+      "start": 277,
+      "value": "node4",
+    },
+    {
+      "start": 277,
+      "value": "node1",
+    },
+    {
+      "start": 305,
+      "value": "node6",
+    },
+    {
+      "start": 310,
+      "value": "node6",
+    },
+    {
+      "start": 311,
+      "value": "node6",
+    },
+    {
+      "start": 312,
+      "value": "node5",
+    },
+    {
+      "start": 313,
+      "value": "node6",
+    },
+    {
+      "start": 313,
+      "value": "node5",
+    },
+    {
+      "start": 317,
+      "value": "node5",
+    },
+    {
+      "start": 317,
+      "value": "node6",
+    },
+    {
+      "start": 317,
+      "value": "node1",
+    },
+    {
+      "start": 317,
+      "value": "node1",
+    },
+    {
+      "start": 317,
+      "value": "node1",
+    },
+    {
+      "start": 317,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`Python: issue-101-match-catchall.py!stop_after_catchall: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node4",
+    },
+    {
+      "start": 346,
+      "value": "node4",
+    },
+    {
+      "start": 377,
+      "value": "node4",
+    },
+    {
+      "start": 383,
+      "value": "node4",
+    },
+    {
+      "start": 384,
+      "value": "node4",
+    },
+    {
+      "start": 394,
+      "value": "node4",
+    },
+    {
+      "start": 399,
+      "value": "node4",
+    },
+    {
+      "start": 400,
+      "value": "node4",
+    },
+    {
+      "start": 401,
+      "value": "node3",
+    },
+    {
+      "start": 402,
+      "value": "node4",
+    },
+    {
+      "start": 402,
+      "value": "node3",
+    },
+    {
+      "start": 406,
+      "value": "node3",
+    },
+    {
+      "start": 406,
+      "value": "node4",
+    },
+    {
+      "start": 406,
+      "value": "node4",
+    },
+    {
+      "start": 415,
+      "value": "node5",
+    },
+    {
+      "start": 420,
+      "value": "node5",
+    },
+    {
+      "start": 421,
+      "value": "node5",
+    },
+    {
+      "start": 422,
+      "value": "node5",
+    },
+    {
+      "start": 423,
+      "value": "node5",
+    },
+    {
+      "start": 423,
+      "value": "node5",
+    },
+    {
+      "start": 427,
+      "value": "node5",
+    },
+    {
+      "start": 427,
+      "value": "node5",
+    },
+    {
+      "start": 427,
+      "value": "node4",
+    },
+    {
+      "start": 448,
+      "value": "node4",
+    },
+    {
+      "start": 448,
+      "value": "node4",
+    },
+    {
+      "start": 448,
+      "value": "node4",
+    },
+  ],
+}
+`;
+
+exports[`Python: issue-101-match-catchall.py!cases_and_catchall: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node4",
+    },
+    {
+      "start": 477,
+      "value": "node4",
+    },
+    {
+      "start": 507,
+      "value": "node4",
+    },
+    {
+      "start": 513,
+      "value": "node4",
+    },
+    {
+      "start": 514,
+      "value": "node4",
+    },
+    {
+      "start": 524,
+      "value": "node4",
+    },
+    {
+      "start": 529,
+      "value": "node4",
+    },
+    {
+      "start": 530,
+      "value": "node4",
+    },
+    {
+      "start": 531,
+      "value": "node3",
+    },
+    {
+      "start": 532,
+      "value": "node4",
+    },
+    {
+      "start": 532,
+      "value": "node3",
+    },
+    {
+      "start": 536,
+      "value": "node3",
+    },
+    {
+      "start": 536,
+      "value": "node4",
+    },
+    {
+      "start": 536,
+      "value": "node4",
+    },
+    {
+      "start": 545,
+      "value": "node6",
+    },
+    {
+      "start": 550,
+      "value": "node6",
+    },
+    {
+      "start": 551,
+      "value": "node6",
+    },
+    {
+      "start": 552,
+      "value": "node5",
+    },
+    {
+      "start": 553,
+      "value": "node6",
+    },
+    {
+      "start": 553,
+      "value": "node5",
+    },
+    {
+      "start": 557,
+      "value": "node5",
+    },
+    {
+      "start": 557,
+      "value": "node6",
+    },
+    {
+      "start": 557,
+      "value": "node4",
+    },
+    {
+      "start": 566,
+      "value": "node7",
+    },
+    {
+      "start": 571,
+      "value": "node7",
+    },
+    {
+      "start": 572,
+      "value": "node7",
+    },
+    {
+      "start": 573,
+      "value": "node7",
+    },
+    {
+      "start": 574,
+      "value": "node7",
+    },
+    {
+      "start": 574,
+      "value": "node7",
+    },
+    {
+      "start": 578,
+      "value": "node7",
+    },
+    {
+      "start": 578,
+      "value": "node7",
+    },
+    {
+      "start": 578,
+      "value": "node4",
+    },
+    {
+      "start": 578,
+      "value": "node4",
+    },
+    {
+      "start": 578,
+      "value": "node4",
+    },
+    {
+      "start": 578,
+      "value": "node4",
+    },
+  ],
+}
 `;
 
 exports[`Go: issue-85-continue-with-label.go!ContinueToLabel: Segmentation 1`] = `
