@@ -11,6 +11,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Python catch-all cases in match statements are now detected.
   When a catch-all is found the "no-match-found" edge is removed,
   and cases after the catch-all are removed as dead code. 
+- C++ learned `co_yield` and `co_return`
 
 ### Fixed
 
@@ -19,7 +20,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### Changed
 
-- Empty switch-cases with fallthrough now chain in a cleaner way in flat-switches.
+- In flat-switch mode, fallthrough now goes to the case-node, not the consequence-node.
+  This produces cleaner, more readable graphs even if it is less correct.
 
 ## [0.0.14] - 2025-02-17
 

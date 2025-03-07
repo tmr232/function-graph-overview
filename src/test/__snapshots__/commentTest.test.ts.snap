@@ -17497,3 +17497,366 @@ Lookup {
   ],
 }
 `;
+
+exports[`C++: issue-106-co_yield.cpp!fibonacci_sequence: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.8999999999999999];
+    node2 [style="filled"; label=""; id="node2"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.5];
+    node5 [style="filled"; label=""; id="node5"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.8999999999999999];
+    node6 [style="filled"; label=""; id="node6"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+    node8 [style="filled"; label=""; id="node8"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node9 [style="filled"; label=""; id="node9"; shape="hexagon"; class="yield"; fillcolor="#00bfff"; orientation=90; height=0.3];
+    node10 [style="filled"; label=""; id="node10"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.6];
+    node11 [style="filled"; label=""; id="node11"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.5];
+    node13 [style="filled"; label=""; id="node13"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node14 [style="filled"; label=""; id="node14"; shape="hexagon"; class="yield"; fillcolor="#00bfff"; orientation=90; height=0.3];
+    node15 [style="filled"; label=""; id="node15"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.6];
+    node16 [style="filled"; label=""; id="node16"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.5];
+    node21 [style="filled"; label=""; id="node21"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=1.5];
+    node22 [style="filled"; label=""; id="node22"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node24 [style="filled"; label=""; id="node24"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node25 [style="filled"; label=""; id="node25"; shape="hexagon"; class="yield"; fillcolor="#00bfff"; orientation=90; height=0.3];
+    node31 [style="filled"; label=""; id="node31"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
+    node23 [style="filled"; label=""; id="node23"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=1.2];
+    node1 -> node2 [penwidth=1; color="#008000"; class="consequence"];
+    node5 -> node6 [penwidth=1; color="#008000"; class="consequence"];
+    node5 -> node8 [penwidth=1; color="#ff0000"; class="alternative"];
+    node10 -> node11 [penwidth=1; color="#008000"; class="consequence"];
+    node10 -> node13 [penwidth=1; color="#ff0000"; class="alternative"];
+    node15 -> node16 [penwidth=1; color="#008000"; class="consequence"];
+    node24 -> node25 [penwidth=1; color="#0000ff"; class="regular"];
+    node21 -> node22 [penwidth=1; color="#0000ff"; class="regular"];
+    node22 -> node24 [penwidth=1; color="#008000"; class="consequence"];
+    node22 -> node23 [penwidth=2; color="#0000ff"; class="regular"; dir="back"; headport="s"; tailport="n"];
+    node8 -> node9 [penwidth=1; color="#0000ff"; class="regular"];
+    node13 -> node14 [penwidth=1; color="#0000ff"; class="regular"];
+    node1 -> node5 [penwidth=1; color="#ff0000"; class="alternative"];
+    node9 -> node10 [penwidth=1; color="#0000ff"; class="regular"];
+    node14 -> node15 [penwidth=1; color="#0000ff"; class="regular"];
+    node15 -> node21 [penwidth=1; color="#ff0000"; class="alternative"];
+    node22 -> node31 [penwidth=1; color="#ff0000"; class="alternative"];
+    node25 -> node23 [penwidth=1; color="#0000ff"; class="regular"];
+}"
+`;
+
+exports[`C++: issue-106-co_yield.cpp!fibonacci_sequence: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 26,
+      "value": "node1",
+    },
+    {
+      "start": 159,
+      "value": "node1",
+    },
+    {
+      "start": 162,
+      "value": "node1",
+    },
+    {
+      "start": 170,
+      "value": "node1",
+    },
+    {
+      "start": 170,
+      "value": "node2",
+    },
+    {
+      "start": 179,
+      "value": "node1",
+    },
+    {
+      "start": 179,
+      "value": "node2",
+    },
+    {
+      "start": 189,
+      "value": "node1",
+    },
+    {
+      "start": 189,
+      "value": "node5",
+    },
+    {
+      "start": 195,
+      "value": "node1",
+    },
+    {
+      "start": 195,
+      "value": "node5",
+    },
+    {
+      "start": 198,
+      "value": "node5",
+    },
+    {
+      "start": 206,
+      "value": "node5",
+    },
+    {
+      "start": 206,
+      "value": "node6",
+    },
+    {
+      "start": 215,
+      "value": "node5",
+    },
+    {
+      "start": 215,
+      "value": "node6",
+    },
+    {
+      "start": 296,
+      "value": "node5",
+    },
+    {
+      "start": 296,
+      "value": "node9",
+    },
+    {
+      "start": 302,
+      "value": "node1",
+    },
+    {
+      "start": 302,
+      "value": "node9",
+    },
+    {
+      "start": 313,
+      "value": "node10",
+    },
+    {
+      "start": 319,
+      "value": "node1",
+    },
+    {
+      "start": 319,
+      "value": "node10",
+    },
+    {
+      "start": 322,
+      "value": "node10",
+    },
+    {
+      "start": 330,
+      "value": "node10",
+    },
+    {
+      "start": 330,
+      "value": "node11",
+    },
+    {
+      "start": 339,
+      "value": "node10",
+    },
+    {
+      "start": 339,
+      "value": "node11",
+    },
+    {
+      "start": 349,
+      "value": "node10",
+    },
+    {
+      "start": 349,
+      "value": "node14",
+    },
+    {
+      "start": 355,
+      "value": "node1",
+    },
+    {
+      "start": 355,
+      "value": "node14",
+    },
+    {
+      "start": 366,
+      "value": "node15",
+    },
+    {
+      "start": 372,
+      "value": "node1",
+    },
+    {
+      "start": 372,
+      "value": "node15",
+    },
+    {
+      "start": 375,
+      "value": "node15",
+    },
+    {
+      "start": 383,
+      "value": "node15",
+    },
+    {
+      "start": 383,
+      "value": "node16",
+    },
+    {
+      "start": 392,
+      "value": "node15",
+    },
+    {
+      "start": 392,
+      "value": "node16",
+    },
+    {
+      "start": 402,
+      "value": "node15",
+    },
+    {
+      "start": 402,
+      "value": "node21",
+    },
+    {
+      "start": 408,
+      "value": "node1",
+    },
+    {
+      "start": 408,
+      "value": "node21",
+    },
+    {
+      "start": 428,
+      "value": "node21",
+    },
+    {
+      "start": 433,
+      "value": "node1",
+    },
+    {
+      "start": 433,
+      "value": "node21",
+    },
+    {
+      "start": 453,
+      "value": "node21",
+    },
+    {
+      "start": 459,
+      "value": "node1",
+    },
+    {
+      "start": 459,
+      "value": "node21",
+    },
+    {
+      "start": 464,
+      "value": "node21",
+    },
+    {
+      "start": 479,
+      "value": "node21",
+    },
+    {
+      "start": 479,
+      "value": "node21",
+    },
+    {
+      "start": 480,
+      "value": "node22",
+    },
+    {
+      "start": 485,
+      "value": "node22",
+    },
+    {
+      "start": 486,
+      "value": "node22",
+    },
+    {
+      "start": 486,
+      "value": "node21",
+    },
+    {
+      "start": 487,
+      "value": "node23",
+    },
+    {
+      "start": 490,
+      "value": "node23",
+    },
+    {
+      "start": 491,
+      "value": "node21",
+    },
+    {
+      "start": 491,
+      "value": "node24",
+    },
+    {
+      "start": 496,
+      "value": "node21",
+    },
+    {
+      "start": 496,
+      "value": "node24",
+    },
+    {
+      "start": 506,
+      "value": "node24",
+    },
+    {
+      "start": 530,
+      "value": "node25",
+    },
+    {
+      "start": 539,
+      "value": "node24",
+    },
+    {
+      "start": 539,
+      "value": "node25",
+    },
+    {
+      "start": 550,
+      "value": "node23",
+    },
+    {
+      "start": 559,
+      "value": "node23",
+    },
+    {
+      "start": 565,
+      "value": "node24",
+    },
+    {
+      "start": 565,
+      "value": "node23",
+    },
+    {
+      "start": 574,
+      "value": "node23",
+    },
+    {
+      "start": 580,
+      "value": "node24",
+    },
+    {
+      "start": 586,
+      "value": "node21",
+    },
+    {
+      "start": 586,
+      "value": "node21",
+    },
+    {
+      "start": 588,
+      "value": "node1",
+    },
+    {
+      "start": 588,
+      "value": "node1",
+    },
+  ],
+}
+`;
