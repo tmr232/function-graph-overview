@@ -1,4 +1,4 @@
-import type { Parser } from "web-tree-sitter";
+import type { Node as SyntaxNode } from "web-tree-sitter";
 import type { Match } from "./block-matcher.ts";
 import type { BasicBlock } from "./cfg-defs.ts";
 import type { Context } from "./generic-cfg-builder.ts";
@@ -6,9 +6,9 @@ import { last, pairwise, zip } from "./itertools.ts";
 
 export function cStyleIfProcessor(
   queryString: string,
-): (ifSyntax: Parser.SyntaxNode, ctx: Context) => BasicBlock {
-  return (ifSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock => {
-    const getIfs = (currentSyntax: Parser.SyntaxNode): Match[] => {
+): (ifSyntax: SyntaxNode, ctx: Context) => BasicBlock {
+  return (ifSyntax: SyntaxNode, ctx: Context): BasicBlock => {
+    const getIfs = (currentSyntax: SyntaxNode): Match[] => {
       const match = ctx.matcher.tryMatch(currentSyntax, queryString);
       if (!match) return [];
       const elseifSyntax = match.getSyntax("else-if");
@@ -113,8 +113,8 @@ export type rangeForDefinition = {
  */
 export function forEachLoopProcessor(
   definition: rangeForDefinition,
-): (forNode: Parser.SyntaxNode, ctx: Context) => BasicBlock {
-  return (forNode: Parser.SyntaxNode, ctx: Context): BasicBlock => {
+): (forNode: SyntaxNode, ctx: Context) => BasicBlock {
+  return (forNode: SyntaxNode, ctx: Context): BasicBlock => {
     const { builder, matcher } = ctx;
     const match = matcher.match(forNode, definition.query);
 
@@ -169,8 +169,8 @@ export function forEachLoopProcessor(
 
 export function cStyleForStatementProcessor(
   queryString: string,
-): (forNode: Parser.SyntaxNode, ctx: Context) => BasicBlock {
-  return (forNode: Parser.SyntaxNode, ctx: Context): BasicBlock => {
+): (forNode: SyntaxNode, ctx: Context) => BasicBlock {
+  return (forNode: SyntaxNode, ctx: Context): BasicBlock => {
     const match = ctx.matcher.match(forNode, queryString);
 
     const initSyntax = match.getSyntax("init");
@@ -293,10 +293,10 @@ export function cStyleForStatementProcessor(
 }
 
 export function cStyleWhileProcessor(): (
-  whileSyntax: Parser.SyntaxNode,
+  whileSyntax: SyntaxNode,
   ctx: Context,
 ) => BasicBlock {
-  return (whileSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock => {
+  return (whileSyntax: SyntaxNode, ctx: Context): BasicBlock => {
     const queryString = `
   (while_statement
       condition: (_) @cond
@@ -342,10 +342,10 @@ export function cStyleWhileProcessor(): (
 }
 
 export function cStyleDoWhileProcessor(): (
-  doSyntax: Parser.SyntaxNode,
+  doSyntax: SyntaxNode,
   ctx: Context,
 ) => BasicBlock {
-  return (doSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock => {
+  return (doSyntax: SyntaxNode, ctx: Context): BasicBlock => {
     const queryString = `
   (do_statement
       body: (_) @body
@@ -391,16 +391,13 @@ export function cStyleDoWhileProcessor(): (
   };
 }
 
-export function getChildFieldText(
-  node: Parser.SyntaxNode,
-  fieldName: string,
-): string {
+export function getChildFieldText(node: SyntaxNode, fieldName: string): string {
   const child = node.childForFieldName(fieldName);
   return child ? child.text : "";
 }
 
 export function processGotoStatement(
-  gotoSyntax: Parser.SyntaxNode,
+  gotoSyntax: SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const name = gotoSyntax.firstNamedChild?.text as string;
@@ -414,7 +411,7 @@ export function processGotoStatement(
 }
 
 export function processLabeledStatement(
-  labelSyntax: Parser.SyntaxNode,
+  labelSyntax: SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const name = getChildFieldText(labelSyntax, "label");
@@ -441,7 +438,7 @@ export function processLabeledStatement(
 }
 
 export function processContinueStatement(
-  continueSyntax: Parser.SyntaxNode,
+  continueSyntax: SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const continueNode = ctx.builder.addNode(
@@ -458,7 +455,7 @@ export function processContinueStatement(
 }
 
 export function processBreakStatement(
-  breakSyntax: Parser.SyntaxNode,
+  breakSyntax: SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const breakNode = ctx.builder.addNode(
@@ -472,8 +469,8 @@ export function processBreakStatement(
 
 export function labeledContinueProcessor(
   queryString: string,
-): (continueSyntax: Parser.SyntaxNode, ctx: Context) => BasicBlock {
-  return (continueSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock => {
+): (continueSyntax: SyntaxNode, ctx: Context) => BasicBlock {
+  return (continueSyntax: SyntaxNode, ctx: Context): BasicBlock => {
     const match = ctx.matcher.match(continueSyntax, queryString);
     const labelSyntax = match.getSyntax("label");
     const label = labelSyntax?.text;
@@ -493,8 +490,8 @@ export function labeledContinueProcessor(
 
 export function labeledBreakProcessor(
   queryString: string,
-): (breakSyntax: Parser.SyntaxNode, ctx: Context) => BasicBlock {
-  return (breakSyntax: Parser.SyntaxNode, ctx: Context): BasicBlock => {
+): (breakSyntax: SyntaxNode, ctx: Context) => BasicBlock {
+  return (breakSyntax: SyntaxNode, ctx: Context): BasicBlock => {
     const match = ctx.matcher.match(breakSyntax, queryString);
     const labelSyntax = match.getSyntax("label");
     const label = labelSyntax?.text;
@@ -513,16 +510,19 @@ export function labeledBreakProcessor(
 }
 
 export function processStatementSequence(
-  syntax: Parser.SyntaxNode,
+  syntax: SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  const blockBlock = ctx.dispatch.many(syntax.namedChildren, syntax);
+  const blockBlock = ctx.dispatch.many(
+    syntax.namedChildren.filter((x) => x !== null),
+    syntax,
+  );
   ctx.link.syntaxToNode(syntax, blockBlock.entry);
   return blockBlock;
 }
 
 export function processReturnStatement(
-  syntax: Parser.SyntaxNode,
+  syntax: SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const returnNode = ctx.builder.addNode(
@@ -535,7 +535,7 @@ export function processReturnStatement(
 }
 
 export function processComment(
-  commentSyntax: Parser.SyntaxNode,
+  commentSyntax: SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   // We only ever ger here when marker comments are enabled,
@@ -555,7 +555,7 @@ export function processComment(
 }
 
 export function processThrowStatement(
-  throwSyntax: Parser.SyntaxNode,
+  throwSyntax: SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const { builder } = ctx;

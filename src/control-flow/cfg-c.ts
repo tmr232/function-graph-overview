@@ -1,4 +1,4 @@
-import type { Parser } from "web-tree-sitter";
+import type { Node as SyntaxNode } from "web-tree-sitter";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
   cStyleDoWhileProcessor,
@@ -20,7 +20,7 @@ import {
 } from "./generic-cfg-builder.ts";
 import { buildSwitch, collectCases } from "./switch-utils.ts";
 
-function getChildFieldText(node: Parser.SyntaxNode, fieldName: string): string {
+function getChildFieldText(node: SyntaxNode, fieldName: string): string {
   const child = node.childForFieldName(fieldName);
   return child ? child.text : "";
 }
@@ -80,10 +80,7 @@ export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
   return new GenericCFGBuilder(statementHandlers, options);
 }
 
-function defaultProcessStatement(
-  syntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
+function defaultProcessStatement(syntax: SyntaxNode, ctx: Context): BasicBlock {
   const newNode = ctx.builder.addNode(
     "STATEMENT",
     syntax.text,
@@ -95,26 +92,27 @@ function defaultProcessStatement(
 
 const caseTypes = new Set(["case_statement"]);
 
-function getCases(switchSyntax: Parser.SyntaxNode): Parser.SyntaxNode[] {
-  const switchBody = switchSyntax.namedChildren[1] as Parser.SyntaxNode;
-  return switchBody.namedChildren.filter((child) => caseTypes.has(child.type));
+function getCases(switchSyntax: SyntaxNode): SyntaxNode[] {
+  const switchBody = switchSyntax.namedChildren[1] as SyntaxNode;
+  return switchBody.namedChildren
+    .filter((x) => x !== null)
+    .filter((child) => caseTypes.has(child.type));
 }
 
-function parseCase(caseSyntax: Parser.SyntaxNode): {
+function parseCase(caseSyntax: SyntaxNode): {
   isDefault: boolean;
-  consequence: Parser.SyntaxNode[];
+  consequence: SyntaxNode[];
   hasFallthrough: boolean;
 } {
   const isDefault = !caseSyntax.childForFieldName("value");
-  const consequence = caseSyntax.namedChildren.slice(isDefault ? 0 : 1);
+  const consequence = caseSyntax.namedChildren
+    .filter((x) => x !== null)
+    .slice(isDefault ? 0 : 1);
   const hasFallthrough = true;
   return { isDefault, consequence, hasFallthrough };
 }
 
-function processSwitchlike(
-  switchSyntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
+function processSwitchlike(switchSyntax: SyntaxNode, ctx: Context): BasicBlock {
   const blockHandler = ctx.matcher.state;
 
   const cases = collectCases(switchSyntax, ctx, { getCases, parseCase });

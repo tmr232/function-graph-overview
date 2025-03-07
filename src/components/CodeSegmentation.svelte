@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Parser from "web-tree-sitter";
+  import { Node as SyntaxNode } from "web-tree-sitter";
   import { newCFGBuilder, type Language } from "../control-flow/cfg";
   import {
     mergeNodeAttrs,
@@ -47,7 +47,7 @@
 
   function renderRanges(
     cfg: CFG,
-    functionSyntax: Parser.SyntaxNode,
+    functionSyntax: SyntaxNode,
     sourceText: string,
     nodeColors: NodeColors,
   ): string {

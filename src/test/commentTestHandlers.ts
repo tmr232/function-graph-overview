@@ -1,6 +1,6 @@
 import type { MultiDirectedGraph } from "graphology";
 import { bfsFromNode } from "graphology-traversal";
-import type { Parser } from "web-tree-sitter";
+import type { Node as SyntaxNode } from "web-tree-sitter";
 import {
   type Language as CFGLanguage,
   newCFGBuilder,
@@ -12,15 +12,15 @@ import type { TestFunction } from "./commentTestTypes";
 
 const markerPattern: RegExp = /CFG: (\w+)/;
 
-function buildCFG(language: CFGLanguage, functionNode: Parser.SyntaxNode): CFG {
+function buildCFG(language: CFGLanguage, functionNode: SyntaxNode): CFG {
   const builder = newCFGBuilder(language, {});
   return trimFor(builder.buildCFG(functionNode));
 }
 
-const simpleCFGCache = new Map<Parser.SyntaxNode, CFG>();
+const simpleCFGCache = new Map<SyntaxNode, CFG>();
 export function buildSimpleCFG(
   language: CFGLanguage,
-  functionNode: Parser.SyntaxNode,
+  functionNode: SyntaxNode,
 ): CFG {
   const cachedCFG = simpleCFGCache.get(functionNode);
   if (cachedCFG) {
@@ -31,10 +31,7 @@ export function buildSimpleCFG(
   return cfg;
 }
 
-function buildMarkerCFG(
-  language: CFGLanguage,
-  functionNode: Parser.SyntaxNode,
-): CFG {
+function buildMarkerCFG(language: CFGLanguage, functionNode: SyntaxNode): CFG {
   const builder = newCFGBuilder(language, { markerPattern });
   return builder.buildCFG(functionNode);
 }

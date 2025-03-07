@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Parser from "web-tree-sitter";
+  import { Tree } from "web-tree-sitter";
   import { type Language } from "../control-flow/cfg";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
   import {
@@ -20,7 +20,7 @@
   let parsers: Parsers;
   let graphviz: Graphviz;
   let dot: string;
-  let tree: Parser.Tree;
+  let tree: Tree;
   let savedSvg: string;
   let getNodeOffset: (nodeId: string) => number | undefined = () => undefined;
   export let colorList = getLightColorList();

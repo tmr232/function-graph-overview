@@ -1,4 +1,4 @@
-import type { Parser } from "web-tree-sitter";
+import type { Parser, Node as SyntaxNode } from "web-tree-sitter";
 import { type Language, supportedLanguages } from "../control-flow/cfg.ts";
 import { initializeParser } from "../parser-loader/vite.ts";
 import { makeIterFunctions } from "./file-parsing.ts";
@@ -21,7 +21,7 @@ export async function initParsers() {
 export function iterFunctions(
   code: string,
   language: Language,
-): IterableIterator<Parser.SyntaxNode> {
+): IterableIterator<SyntaxNode> {
   if (!parsers) {
     throw new Error("Must initialize parsers by calling `initParsers()`");
   }

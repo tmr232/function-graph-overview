@@ -1,4 +1,4 @@
-import type { Parser } from "web-tree-sitter";
+import type { Node as SyntaxNode } from "web-tree-sitter";
 import { Lookup } from "./ranges";
 /**
  * This module provides the facilities for matching code offsets to CFG nodes.
@@ -35,11 +35,10 @@ import { Lookup } from "./ranges";
  */
 
 export class NodeMapper {
-  private syntaxToNode: Map<Parser.SyntaxNode, string> = new Map();
-  private ranges: { start: number; stop: number; value: Parser.SyntaxNode }[] =
-    [];
+  private syntaxToNode: Map<SyntaxNode, string> = new Map();
+  private ranges: { start: number; stop: number; value: SyntaxNode }[] = [];
 
-  public linkSyntaxToNode(syntax: Parser.SyntaxNode, node: string) {
+  public linkSyntaxToNode(syntax: SyntaxNode, node: string) {
     this.syntaxToNode.set(syntax, node);
 
     this.ranges.push({
@@ -50,8 +49,8 @@ export class NodeMapper {
   }
 
   public linkOffsetToSyntax(
-    from: Parser.SyntaxNode,
-    to: Parser.SyntaxNode,
+    from: SyntaxNode,
+    to: SyntaxNode,
     options?: { reverse?: boolean; includeTo?: boolean; includeFrom?: boolean },
   ) {
     const target = options?.reverse ? from : to;
@@ -60,7 +59,7 @@ export class NodeMapper {
     this.addRange(fromIndex, toIndex, target);
   }
 
-  private addRange(start: number, stop: number, syntax: Parser.SyntaxNode) {
+  private addRange(start: number, stop: number, syntax: SyntaxNode) {
     this.ranges.push({ start, stop, value: syntax });
   }
 
@@ -77,9 +76,7 @@ export class NodeMapper {
     );
   }
 
-  private buildRanges(
-    functionSyntax: Parser.SyntaxNode,
-  ): Lookup<Parser.SyntaxNode> {
+  private buildRanges(functionSyntax: SyntaxNode): Lookup<SyntaxNode> {
     const lookup = new Lookup(functionSyntax);
     for (const { start, stop, value } of this.ranges.toSorted(
       (b, a) => a.stop - a.start - (b.stop - b.start),
@@ -89,7 +86,7 @@ export class NodeMapper {
     return lookup;
   }
 
-  public getIndexMapping(functionSyntax: Parser.SyntaxNode): Lookup<string> {
+  public getIndexMapping(functionSyntax: SyntaxNode): Lookup<string> {
     const syntaxToNode = this.getMapping();
     const ranges = this.buildRanges(functionSyntax);
     return ranges.mapValues(

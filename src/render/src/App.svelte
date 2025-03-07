@@ -4,8 +4,7 @@
     initParsers,
     iterFunctions,
   } from "../../file-parsing/vite";
-  import type Parser from "web-tree-sitter";
-  import { type SyntaxNode } from "web-tree-sitter";
+  import { type Node as SyntaxNode } from "web-tree-sitter";
   import { type Language, newCFGBuilder } from "../../control-flow/cfg";
   import {
     type CFG,
@@ -68,7 +67,7 @@
    * @param func The function to generate a CFG for
    * @param language The code language
    */
-  function buildCFG(func: Parser.SyntaxNode, language: Language): CFG {
+  function buildCFG(func: SyntaxNode, language: Language): CFG {
     const builder = newCFGBuilder(language, { flatSwitch: true });
 
     let cfg = builder.buildCFG(func);

@@ -1,4 +1,4 @@
-import type { Parser } from "web-tree-sitter";
+import type { Node as SyntaxNode, Tree } from "web-tree-sitter";
 import type { TestFunction } from "./commentTestTypes";
 import { parseComment } from "./commentTestUtils";
 
@@ -6,12 +6,15 @@ import { initializeParser } from "../parser-loader/bun.ts";
 
 const { parser } = await initializeParser("Go");
 
-export function getTestFuncs(code: string): Generator<TestFunction> {
+export function* getTestFuncs(code: string): Generator<TestFunction> {
   const tree = parser.parse(code);
-  return iterTestFunctions(tree);
+  if (!tree) {
+    return;
+  }
+  yield* iterTestFunctions(tree);
 }
 
-function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
+function* iterTestFunctions(tree: Tree): Generator<TestFunction> {
   const funcTypes = new Set([
     "function_declaration",
     "method_declaration",
@@ -19,8 +22,8 @@ function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
   ]);
 
   for (let i = 0; i < tree.rootNode.childCount - 1; i++) {
-    const commentNode = tree.rootNode.children[i] as Parser.SyntaxNode;
-    const functionNode = tree.rootNode.children[i + 1] as Parser.SyntaxNode;
+    const commentNode = tree.rootNode.children[i] as SyntaxNode;
+    const functionNode = tree.rootNode.children[i + 1] as SyntaxNode;
 
     if (!funcTypes.has(functionNode.type)) {
       continue;

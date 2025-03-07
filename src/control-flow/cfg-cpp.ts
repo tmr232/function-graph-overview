@@ -1,4 +1,4 @@
-import type { Parser } from "web-tree-sitter";
+import type { Node as SyntaxNode } from "web-tree-sitter";
 import { getStatementHandlers } from "./cfg-c.ts";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
@@ -37,10 +37,7 @@ const cppSpecificHandlers = {
 };
 Object.assign(statementHandlers.named, cppSpecificHandlers);
 
-function processTryStatement(
-  trySyntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
+function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
   const { builder, matcher } = ctx;
   /*
   Here's an idea - I can duplicate the finally blocks!

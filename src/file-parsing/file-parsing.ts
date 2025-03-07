@@ -1,4 +1,4 @@
-import type { Parser } from "web-tree-sitter";
+import type { Parser, Node as SyntaxNode } from "web-tree-sitter";
 import { type Language, functionNodeTypes } from "../control-flow/cfg.ts";
 
 type FileType = { ext: string; language: Language };
@@ -38,16 +38,18 @@ export function getLanguage(filename: string): Language {
 
 export function makeIterFunctions(
   parsers: { [language in Language]: Parser },
-): (code: string, language: Language) => IterableIterator<Parser.SyntaxNode> {
+): (code: string, language: Language) => IterableIterator<SyntaxNode> {
   return function* (
     code: string,
     language: Language,
-  ): IterableIterator<Parser.SyntaxNode> {
+  ): IterableIterator<SyntaxNode> {
     const tree = parsers[language].parse(code);
-
+    if (!tree) {
+      return;
+    }
     const cursor = tree.walk();
 
-    function* visitNode(): IterableIterator<Parser.SyntaxNode> {
+    function* visitNode(): IterableIterator<SyntaxNode> {
       if (functionNodeTypes[language].includes(cursor.nodeType)) {
         yield cursor.currentNode;
       }

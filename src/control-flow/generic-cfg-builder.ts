@@ -1,4 +1,4 @@
-import type { Parser } from "web-tree-sitter";
+import type { Node as SyntaxNode } from "web-tree-sitter";
 import { BlockMatcher } from "./block-matcher";
 import { Builder } from "./builder";
 import {
@@ -15,7 +15,7 @@ export interface Dispatch {
    * Process a single AST node into a basic block
    * @param syntax
    */
-  single(syntax: Parser.SyntaxNode | null, extra?: Extra): BasicBlock;
+  single(syntax: SyntaxNode | null, extra?: Extra): BasicBlock;
 
   /**
    * Process an array of AST nodes into a basic clock
@@ -23,7 +23,7 @@ export interface Dispatch {
    * @param parent is the parent node for the statements, used for
    *        its positioning information if the statements array is empty.
    */
-  many(statements: Parser.SyntaxNode[], parent: Parser.SyntaxNode): BasicBlock;
+  many(statements: SyntaxNode[], parent: SyntaxNode): BasicBlock;
 }
 
 export interface Link {
@@ -58,10 +58,7 @@ export interface Extra {
  * @param ctx The context in which the statement is being handled
  * @returns A basic block representation of the AST node
  */
-export type StatementHandler = (
-  syntax: Parser.SyntaxNode,
-  ctx: Context,
-) => BasicBlock;
+export type StatementHandler = (syntax: SyntaxNode, ctx: Context) => BasicBlock;
 /**
  * Maps AST nodes to their matching `StatementHandler` functions.
  */
@@ -90,7 +87,7 @@ export class GenericCFGBuilder {
     this.handlers = handlers;
   }
 
-  public buildCFG(functionNode: Parser.SyntaxNode): CFG {
+  public buildCFG(functionNode: SyntaxNode): CFG {
     const startNode = this.builder.addNode(
       "START",
       "START",
@@ -101,7 +98,10 @@ export class GenericCFGBuilder {
     if (bodySyntax) {
       const blockHandler = new BlockHandler();
       const { entry, exit } = blockHandler.update(
-        this.dispatchMany(bodySyntax.namedChildren, bodySyntax),
+        this.dispatchMany(
+          bodySyntax.namedChildren.filter((x) => x !== null),
+          bodySyntax,
+        ),
       );
 
       blockHandler.processGotos((gotoNode, labelNode) =>
@@ -135,7 +135,7 @@ export class GenericCFGBuilder {
     };
   }
 
-  private dispatchSingle(syntax: Parser.SyntaxNode, extra?: Extra): BasicBlock {
+  private dispatchSingle(syntax: SyntaxNode, extra?: Extra): BasicBlock {
     const handler = this.handlers.named[syntax.type] ?? this.handlers.default;
     const matcher = new BlockMatcher(this.dispatchSingle.bind(this));
     return handler(syntax, {
@@ -158,8 +158,8 @@ export class GenericCFGBuilder {
   }
 
   private dispatchMany(
-    statements: Parser.SyntaxNode[],
-    parent: Parser.SyntaxNode,
+    statements: SyntaxNode[],
+    parent: SyntaxNode,
   ): BasicBlock {
     const blockHandler = new BlockHandler();
     // Ignore comments

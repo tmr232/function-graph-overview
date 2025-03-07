@@ -1,15 +1,19 @@
-import type { Parser, Node as SyntaxNode } from "web-tree-sitter";
+import type {
+  QueryMatch,
+  QueryOptions,
+  Node as SyntaxNode,
+} from "web-tree-sitter";
 import { Query } from "web-tree-sitter";
 import { type BasicBlock, BlockHandler } from "./cfg-defs.ts";
 import { evolve } from "./evolve.ts";
 
-const defaultQueryOptions: Parser.QueryOptions = { maxStartDepth: 0 };
+const defaultQueryOptions: QueryOptions = { maxStartDepth: 0 };
 
 function matchQuery(
   syntax: SyntaxNode,
   queryString: string,
-  options?: Parser.QueryOptions,
-): Parser.QueryMatch {
+  options?: QueryOptions,
+): QueryMatch {
   const language = syntax.tree.language;
   const query = new Query(language, queryString);
   options = evolve(defaultQueryOptions, options ?? {});
@@ -27,27 +31,24 @@ export function matchExistsIn(
   queryString: string,
 ): boolean {
   const language = syntax.tree.language;
-  const query = language.query(queryString);
+  const query = new Query(language, queryString);
   const matches = query.matches(syntax);
   return matches.length > 0;
 }
 
-function getSyntax(
-  match: Parser.QueryMatch,
-  name: string,
-): SyntaxNode | undefined {
+function getSyntax(match: QueryMatch, name: string): SyntaxNode | undefined {
   return getSyntaxMany(match, name)[0];
 }
 
 function getLastSyntax(
-  match: Parser.QueryMatch,
+  match: QueryMatch,
   name: string,
 ): SyntaxNode | undefined {
   const many = getSyntaxMany(match, name);
   return many[many.length - 1];
 }
 
-function requireSyntax(match: Parser.QueryMatch, name: string): SyntaxNode {
+function requireSyntax(match: QueryMatch, name: string): SyntaxNode {
   const syntax = getSyntax(match, name);
   if (!syntax) {
     throw new Error(`Failed getting syntax for ${name}`);
@@ -55,7 +56,7 @@ function requireSyntax(match: Parser.QueryMatch, name: string): SyntaxNode {
   return syntax;
 }
 
-function getSyntaxMany(match: Parser.QueryMatch, name: string): SyntaxNode[] {
+function getSyntaxMany(match: QueryMatch, name: string): SyntaxNode[] {
   return match.captures
     .filter((capture) => capture.name === name)
     .map((capture) => capture.node);
@@ -73,7 +74,7 @@ export class BlockMatcher {
   public match(
     syntax: SyntaxNode,
     queryString: string,
-    options?: Parser.QueryOptions,
+    options?: QueryOptions,
   ): Match {
     const match = matchQuery(syntax, queryString, options);
     return new Match(match, this.blockHandler, this.dispatchSingle);
@@ -98,12 +99,12 @@ export class BlockMatcher {
  * [tree-sitter query reference](https://tree-sitter.github.io/tree-sitter/using-parsers#pattern-matching-with-queries
  */
 export class Match {
-  private match: Parser.QueryMatch;
+  private match: QueryMatch;
   private blockHandler: BlockHandler;
   private dispatchSingle: BlockMatcher["dispatchSingle"];
 
   constructor(
-    match: Parser.QueryMatch,
+    match: QueryMatch,
     blockHandler: BlockHandler,
     dispatchSingle: BlockMatcher["dispatchSingle"],
   ) {

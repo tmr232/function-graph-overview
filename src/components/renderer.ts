@@ -1,7 +1,7 @@
 import type { Graphviz } from "@hpcc-js/wasm-graphviz";
 import type { G, Polygon } from "@svgdotjs/svg.js";
 import objectHash from "object-hash";
-import type { Parser } from "web-tree-sitter";
+import type { Node as SyntaxNode } from "web-tree-sitter";
 import { type Language, newCFGBuilder } from "../control-flow/cfg";
 import { mergeNodeAttrs, remapNodeTargets } from "../control-flow/cfg-defs";
 import { type ColorList, listToScheme } from "../control-flow/colors";
@@ -27,7 +27,7 @@ export interface RenderOptions {
 export class Renderer {
   private memoizedRenderStatic = memoizeFunction({
     func: this.renderStatic.bind(this),
-    hash: (functionSyntax: Parser.SyntaxNode, language: Language) =>
+    hash: (functionSyntax: SyntaxNode, language: Language) =>
       objectHash({ code: functionSyntax.text, language }),
     max: 100,
   });
@@ -38,7 +38,7 @@ export class Renderer {
   ) {}
 
   public render(
-    functionSyntax: Parser.SyntaxNode,
+    functionSyntax: SyntaxNode,
     language: Language,
     offsetToHighlight?: number,
   ): {
@@ -86,7 +86,7 @@ export class Renderer {
     return dom.svg();
   }
 
-  private renderStatic(functionSyntax: Parser.SyntaxNode, language: Language) {
+  private renderStatic(functionSyntax: SyntaxNode, language: Language) {
     const overlayBuilder = new OverlayBuilder(functionSyntax);
 
     const builder = newCFGBuilder(language, {
