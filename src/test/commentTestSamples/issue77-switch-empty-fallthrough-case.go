@@ -1,6 +1,6 @@
 /*
 exits: 1,
-flatNodes: 7,
+flatNodes: 5,
 nodes: 7
 */
 func EmptyFallthroughCases() {
