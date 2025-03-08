@@ -1,207 +1,207 @@
 <script lang="ts">
-  import { Graphviz } from "@hpcc-js/wasm-graphviz";
-  import objectHash from "object-hash";
-  import { createEventDispatcher } from "svelte";
-  import Parser from "web-tree-sitter";
-  import { type Language } from "../control-flow/cfg";
-  import {
-    type ColorList,
-    getLightColorList,
-    listToScheme,
-  } from "../control-flow/colors";
-  import { memoizeFunction } from "./caching.ts";
-  import { type RenderOptions, Renderer } from "./renderer.ts";
-  import {
-    type Parsers,
-    getFirstFunction,
-    initialize as initializeUtils,
-  } from "./utils";
+import { Graphviz } from "@hpcc-js/wasm-graphviz";
+import objectHash from "object-hash";
+import { createEventDispatcher } from "svelte";
+import Parser from "web-tree-sitter";
+import { type Language } from "../control-flow/cfg";
+import {
+  type ColorList,
+  getLightColorList,
+  listToScheme,
+} from "../control-flow/colors";
+import { memoizeFunction } from "./caching.ts";
+import { type RenderOptions, Renderer } from "./renderer.ts";
+import {
+  type Parsers,
+  getFirstFunction,
+  initialize as initializeUtils,
+} from "./utils";
 
-  let parsers: Parsers;
-  let graphviz: Graphviz;
-  let dot: string;
-  let tree: Parser.Tree;
-  let savedSvg: string;
-  let getNodeOffset: (nodeId: string) => number | undefined = () => undefined;
-  export let colorList = getLightColorList();
-  export let offsetToHighlight: number | undefined = undefined;
-  export let code: string;
-  export let language: Language;
-  export let verbose: boolean = false;
-  export let simplify: boolean = true;
-  export let trim: boolean = true;
-  export let flatSwitch: boolean = true;
-  export let highlight: boolean = true;
-  export let showRegions: boolean = false;
+let parsers: Parsers;
+let graphviz: Graphviz;
+let dot: string;
+let tree: Parser.Tree;
+let savedSvg: string;
+let getNodeOffset: (nodeId: string) => number | undefined = () => undefined;
+export let colorList = getLightColorList();
+export let offsetToHighlight: number | undefined = undefined;
+export let code: string;
+export let language: Language;
+export let verbose: boolean = false;
+export let simplify: boolean = true;
+export let trim: boolean = true;
+export let flatSwitch: boolean = true;
+export let highlight: boolean = true;
+export let showRegions: boolean = false;
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher();
 
-  const getRenderer = memoizeFunction({
-    func: (options: RenderOptions, colorList: ColorList, graphviz: Graphviz) =>
-      new Renderer(options, colorList, graphviz),
-    hash: (options: RenderOptions, colorList: ColorList, _graphviz: Graphviz) =>
-      objectHash({ options, colorList }),
-    max: 1,
+const getRenderer = memoizeFunction({
+  func: (options: RenderOptions, colorList: ColorList, graphviz: Graphviz) =>
+    new Renderer(options, colorList, graphviz),
+  hash: (options: RenderOptions, colorList: ColorList, _graphviz: Graphviz) =>
+    objectHash({ options, colorList }),
+  max: 1,
+});
+
+async function initialize() {
+  const utils = await initializeUtils();
+  parsers = utils.parsers;
+  graphviz = utils.graphviz;
+}
+
+function renderCode(
+  code: string,
+  language: Language,
+  highlightOffset: number | undefined,
+  options: RenderOptions,
+  colorList: ColorList,
+) {
+  tree = parsers[language].parse(code);
+  const functionSyntax = getFirstFunction(tree, language);
+  if (!functionSyntax) {
+    throw new Error("No function found!");
+  }
+
+  const renderer = getRenderer(options, colorList, graphviz);
+  const renderResult = renderer.render(
+    functionSyntax,
+    language,
+    highlightOffset,
+  );
+  savedSvg = renderResult.svg;
+  dot = renderResult.dot;
+  getNodeOffset = renderResult.getNodeOffset;
+  return savedSvg;
+}
+
+function renderWrapper(
+  code: string,
+  language: Language,
+  highlightOffset: number | undefined,
+  options: RenderOptions,
+  colorList: ColorList,
+) {
+  try {
+    return renderCode(code, language, highlightOffset, options, colorList);
+  } catch (error) {
+    console.trace(error);
+    return `<p style='border: 2px red solid;'>${error}</p>`;
+  }
+}
+
+export function getSVG() {
+  return savedSvg;
+}
+export function getDOT() {
+  return dot;
+}
+
+function onClick(event: MouseEvent) {
+  let target: Element = event.target as Element;
+  while (
+    target.tagName !== "div" &&
+    target.tagName !== "svg" &&
+    !target.classList.contains("node") &&
+    target.parentElement !== null
+  ) {
+    target = target.parentElement;
+  }
+  if (!target.classList.contains("node")) {
+    return;
+  }
+  dispatch("node-clicked", {
+    node: target.id,
+    offset: getNodeOffset(target.id),
   });
+}
 
-  async function initialize() {
-    const utils = await initializeUtils();
-    parsers = utils.parsers;
-    graphviz = utils.graphviz;
-  }
+function recolorNodes(cls: string, fill: string, stroke?: string): void {
+  const polygonsToRecolor = document.querySelectorAll(
+    `svg g.node.${cls} polygon`,
+  );
 
-  function renderCode(
-    code: string,
-    language: Language,
-    highlightOffset: number | undefined,
-    options: RenderOptions,
-    colorList: ColorList,
-  ) {
-    tree = parsers[language].parse(code);
-    const functionSyntax = getFirstFunction(tree, language);
-    if (!functionSyntax) {
-      throw new Error("No function found!");
-    }
+  const recolor = (el: Element) => {
+    el.setAttribute("fill", fill);
+    if (stroke !== undefined) el.setAttribute("stroke", stroke);
+  };
 
-    const renderer = getRenderer(options, colorList, graphviz);
-    const renderResult = renderer.render(
-      functionSyntax,
-      language,
-      highlightOffset,
-    );
-    savedSvg = renderResult.svg;
-    dot = renderResult.dot;
-    getNodeOffset = renderResult.getNodeOffset;
-    return savedSvg;
-  }
+  polygonsToRecolor.forEach(recolor);
+}
 
-  function renderWrapper(
-    code: string,
-    language: Language,
-    highlightOffset: number | undefined,
-    options: RenderOptions,
-    colorList: ColorList,
-  ) {
-    try {
-      return renderCode(code, language, highlightOffset, options, colorList);
-    } catch (error) {
-      console.trace(error);
-      return `<p style='border: 2px red solid;'>${error}</p>`;
-    }
-  }
+function recolorClusters(cls: string, fill: string, stroke?: string): void {
+  const polygonsToRecolor = document.querySelectorAll(
+    `svg g.cluster.${cls} polygon`,
+  );
 
-  export function getSVG() {
-    return savedSvg;
-  }
-  export function getDOT() {
-    return dot;
-  }
+  const recolor = (el: Element) => {
+    el.setAttribute("fill", fill);
+    if (stroke !== undefined) el.setAttribute("stroke", stroke);
+  };
 
-  function onClick(event: MouseEvent) {
-    let target: Element = event.target as Element;
-    while (
-      target.tagName !== "div" &&
-      target.tagName !== "svg" &&
-      !target.classList.contains("node") &&
-      target.parentElement !== null
-    ) {
-      target = target.parentElement;
-    }
-    if (!target.classList.contains("node")) {
-      return;
-    }
-    dispatch("node-clicked", {
-      node: target.id,
-      offset: getNodeOffset(target.id),
-    });
-  }
+  polygonsToRecolor.forEach(recolor);
+}
 
-  function recolorNodes(cls: string, fill: string, stroke?: string): void {
-    const polygonsToRecolor = document.querySelectorAll(
-      `svg g.node.${cls} polygon`,
-    );
+function recolorEdges(cls: string, color: string): void {
+  const polygonsToRecolor = document.querySelectorAll(
+    `svg g.edge.${cls} polygon`,
+  );
+  const pathsToRecolor = document.querySelectorAll(`svg g.edge.${cls} path`);
 
-    const recolor = (el: Element) => {
-      el.setAttribute("fill", fill);
-      if (stroke !== undefined) el.setAttribute("stroke", stroke);
-    };
-
-    polygonsToRecolor.forEach(recolor);
-  }
-
-  function recolorClusters(cls: string, fill: string, stroke?: string): void {
-    const polygonsToRecolor = document.querySelectorAll(
-      `svg g.cluster.${cls} polygon`,
-    );
-
-    const recolor = (el: Element) => {
-      el.setAttribute("fill", fill);
-      if (stroke !== undefined) el.setAttribute("stroke", stroke);
-    };
-
-    polygonsToRecolor.forEach(recolor);
-  }
-
-  function recolorEdges(cls: string, color: string): void {
-    const polygonsToRecolor = document.querySelectorAll(
-      `svg g.edge.${cls} polygon`,
-    );
-    const pathsToRecolor = document.querySelectorAll(`svg g.edge.${cls} path`);
-
-    const recolor = (el: Element) => {
-      for (const attr of ["fill", "stroke"]) {
-        if (el.getAttribute(attr) !== "none") {
-          el.setAttribute(attr, color);
-        }
-      }
-    };
-
-    polygonsToRecolor.forEach(recolor);
-    pathsToRecolor.forEach(recolor);
-  }
-
-  function recolorBackground(color: string): void {
-    const svg = document.querySelector("svg");
-    if (!svg) return;
-
-    svg.style.backgroundColor = color;
-    svg.parentElement.style.backgroundColor = color;
-    const backgroundRect = svg.querySelector("g.graph > polygon");
-    if (backgroundRect) {
-      backgroundRect.setAttribute("fill", color);
-    }
-  }
-
-  export function previewColors(colors: ColorList) {
-    const colorScheme = listToScheme(colors);
-    for (const { name, hex } of colors) {
-      const [type, cls] = name.split(".", 2);
-      switch (type) {
-        case "node":
-          recolorNodes(cls, hex, colorScheme["node.border"]);
-          break;
-        case "edge":
-          recolorEdges(cls, hex);
-          break;
-        case "cluster":
-          recolorClusters(cls, hex, colorScheme["cluster.border"]);
-          break;
-        case "graph":
-          recolorBackground(hex);
-          break;
-        default:
-          console.log(name);
+  const recolor = (el: Element) => {
+    for (const attr of ["fill", "stroke"]) {
+      if (el.getAttribute(attr) !== "none") {
+        el.setAttribute(attr, color);
       }
     }
-  }
+  };
 
-  export function resetPreview() {
-    previewColors(colorList);
-  }
+  polygonsToRecolor.forEach(recolor);
+  pathsToRecolor.forEach(recolor);
+}
 
-  export function applyColors(colors: ColorList) {
-    colorList = colors;
+function recolorBackground(color: string): void {
+  const svg = document.querySelector("svg");
+  if (!svg) return;
+
+  svg.style.backgroundColor = color;
+  svg.parentElement.style.backgroundColor = color;
+  const backgroundRect = svg.querySelector("g.graph > polygon");
+  if (backgroundRect) {
+    backgroundRect.setAttribute("fill", color);
   }
+}
+
+export function previewColors(colors: ColorList) {
+  const colorScheme = listToScheme(colors);
+  for (const { name, hex } of colors) {
+    const [type, cls] = name.split(".", 2);
+    switch (type) {
+      case "node":
+        recolorNodes(cls, hex, colorScheme["node.border"]);
+        break;
+      case "edge":
+        recolorEdges(cls, hex);
+        break;
+      case "cluster":
+        recolorClusters(cls, hex, colorScheme["cluster.border"]);
+        break;
+      case "graph":
+        recolorBackground(hex);
+        break;
+      default:
+        console.log(name);
+    }
+  }
+}
+
+export function resetPreview() {
+  previewColors(colorList);
+}
+
+export function applyColors(colors: ColorList) {
+  colorList = colors;
+}
 </script>
 
 <div class="results">

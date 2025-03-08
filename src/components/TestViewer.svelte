@@ -1,52 +1,52 @@
 <script lang="ts">
-  import testRecordsJson from "../../dist/tests/commentTests.json?json";
-  import type { TestFuncRecord } from "../test/commentTestUtils";
-  import TestGraph from "./TestGraph.svelte";
-  import {
-    type TestResults,
-    initialize as initializeUtils,
-    runTest,
-  } from "./utils";
+import testRecordsJson from "../../dist/tests/commentTests.json?json";
+import type { TestFuncRecord } from "../test/commentTestUtils";
+import TestGraph from "./TestGraph.svelte";
+import {
+  type TestResults,
+  initialize as initializeUtils,
+  runTest,
+} from "./utils";
 
-  const testRecords = testRecordsJson as TestFuncRecord[];
+const testRecords = testRecordsJson as TestFuncRecord[];
 
-  async function runAllTests() {
-    await initializeUtils();
+async function runAllTests() {
+  await initializeUtils();
 
-    const testResults = testRecords.map((record) => {
-      let results: TestResults[];
-      try {
-        results = runTest(record);
-      } catch (error) {
-        console.trace(
-          `\nFailed running tests for ${record.language}: ${record.name}\n`,
-          error,
-        );
-        results = [
-          {
-            reqName: "Tests",
-            reqValue: "Failed to complete",
-            failure: `${error}`,
-          },
-        ];
-      }
-      return {
-        record,
-        failed: !results.every((result) => result.failure === null),
-        results,
-      };
-    });
+  const testResults = testRecords.map((record) => {
+    let results: TestResults[];
+    try {
+      results = runTest(record);
+    } catch (error) {
+      console.trace(
+        `\nFailed running tests for ${record.language}: ${record.name}\n`,
+        error,
+      );
+      results = [
+        {
+          reqName: "Tests",
+          reqValue: "Failed to complete",
+          failure: `${error}`,
+        },
+      ];
+    }
+    return {
+      record,
+      failed: !results.every((result) => result.failure === null),
+      results,
+    };
+  });
 
-    const failCount = testResults.filter(({ failed }) => failed).length;
+  const failCount = testResults.filter(({ failed }) => failed).length;
 
-    return { testResults, failCount };
-  }
+  return { testResults, failCount };
+}
 
-  let simplify: boolean = true;
-  let verbose: boolean = false;
-  let trim: boolean = true;
-  let flatSwitch: boolean = true;
-  let showAll: boolean = false;
+let simplify: boolean = true;
+let verbose: boolean = false;
+let trim: boolean = true;
+let flatSwitch: boolean = true;
+let showAll: boolean = false;
 </script>
 
 <div class="controls">
