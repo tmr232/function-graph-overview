@@ -1,34 +1,34 @@
 <script lang="ts" context="module">
-  import type { MessageToVscode } from "../../vscode/messages.ts";
+import type { MessageToVscode } from "../../vscode/messages.ts";
 
-  declare const acquireVsCodeApi:
-    | void
-    | (() => {
-        postMessage<T extends MessageToVscode>(message: T): void;
-      });
+declare const acquireVsCodeApi:
+  | undefined
+  | (() => {
+      postMessage<T extends MessageToVscode>(message: T): void;
+    });
 
-  declare global {
-    interface Window {
-      JetBrains?: {
-        /**
-         * Calls going from the WebView to the JetBrains extension
-         */
-        ToExtension?: {
-          navigateTo: (offset: string) => void;
-        };
-        /**
-         * Functions the extension can use to call into the WebView
-         */
-        ToWebview?: {
-          setColors: (colors: string) => void;
-          setCode: (code: string, offset: number, language: string) => void;
-          setSimplify: (simplify: boolean) => void;
-          setFlatSwitch: (flatSwitch: boolean) => void;
-          setHighlight: (highlight: boolean) => void;
-        };
+declare global {
+  interface Window {
+    JetBrains?: {
+      /**
+       * Calls going from the WebView to the JetBrains extension
+       */
+      ToExtension?: {
+        navigateTo: (offset: string) => void;
       };
-    }
+      /**
+       * Functions the extension can use to call into the WebView
+       */
+      ToWebview?: {
+        setColors: (colors: string) => void;
+        setCode: (code: string, offset: number, language: string) => void;
+        setSimplify: (simplify: boolean) => void;
+        setFlatSwitch: (flatSwitch: boolean) => void;
+        setHighlight: (highlight: boolean) => void;
+      };
+    };
   }
+}
 </script>
 
 <script lang="ts">

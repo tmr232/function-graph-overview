@@ -1,5 +1,5 @@
 <script>
-  import TestViewer from "../../components/TestViewer.svelte";
+import TestViewer from "../../components/TestViewer.svelte";
 </script>
 
 <main>
