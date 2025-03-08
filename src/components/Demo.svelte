@@ -1,200 +1,195 @@
 <script lang="ts">
-  import { go } from "@codemirror/lang-go";
-  import { cpp } from "@codemirror/lang-cpp";
-  import { python } from "@codemirror/lang-python";
-  import { javascript } from "@codemirror/lang-javascript";
-  import Graph from "./Graph.svelte";
-  import type { Language } from "../control-flow/cfg";
-  import * as LZString from "lz-string";
-  import Editor from "./Editor.svelte";
-  import CodeSegmentation from "./CodeSegmentation.svelte";
-  import ColorScheme from "./ColorSchemeEditor.svelte";
-  import { getSystemColorList, toggleTheme, isDark } from "./lightdark.ts";
-  import type { LanguageSupport } from "@codemirror/language";
-  import { evolve } from "../control-flow/evolve.ts";
+import { cpp } from "@codemirror/lang-cpp";
+import { go } from "@codemirror/lang-go";
+import { javascript } from "@codemirror/lang-javascript";
+import { python } from "@codemirror/lang-python";
+import type { LanguageSupport } from "@codemirror/language";
+import * as LZString from "lz-string";
+import type { Language } from "../control-flow/cfg";
+import { evolve } from "../control-flow/evolve.ts";
+import CodeSegmentation from "./CodeSegmentation.svelte";
+import ColorScheme from "./ColorSchemeEditor.svelte";
+import Editor from "./Editor.svelte";
+import Graph from "./Graph.svelte";
+import { getSystemColorList, isDark, toggleTheme } from "./lightdark.ts";
 
-  // ADD-LANGUAGES-HERE
-  const defaultCodeSamples: { [language in Language]?: string } = {
-    Go: "func Example() {\n\tif x {\n\t\treturn\n\t}\n}",
-    C: "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
-    "C++": "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
-    Python: "def example():\n    if x:\n        return",
-    TypeScript: "function main() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
-    TSX:
-      "function getGreeting(user) {\n" +
-      "  if (user) {\n" +
-      "    return <h1>Hello, {formatName(user)}!</h1>;  }\n" +
-      "  return <h1>Hello, Stranger.</h1>;}",
-  };
+// ADD-LANGUAGES-HERE
+const defaultCodeSamples: { [language in Language]?: string } = {
+  Go: "func Example() {\n\tif x {\n\t\treturn\n\t}\n}",
+  C: "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
+  "C++": "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
+  Python: "def example():\n    if x:\n        return",
+  TypeScript: "function main() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
+  TSX:
+    "function getGreeting(user) {\n" +
+    "  if (user) {\n" +
+    "    return <h1>Hello, {formatName(user)}!</h1>;  }\n" +
+    "  return <h1>Hello, Stranger.</h1>;}",
+};
 
-  export let code: { [language in Language]?: string } = {};
+export let code: { [language in Language]?: string } = {};
 
-  const languageCode = evolve(defaultCodeSamples, code);
+const languageCode = evolve(defaultCodeSamples, code);
 
-  let offsetToHighlight: number | undefined = undefined;
-  let colorList = getSystemColorList();
-  // ADD-LANGUAGES-HERE
-  let languages: {
-    language: Language;
-    text: string;
-    codeMirror: () => LanguageSupport;
-  }[] = [
-    { language: "Go" as Language, text: "Go", codeMirror: go },
-    { language: "C" as Language, text: "C", codeMirror: cpp },
-    {
-      language: "Python" as Language,
-      text: "Python",
-      codeMirror: python,
-    },
-    {
-      language: "C++" as Language,
-      text: "C++",
-      codeMirror: cpp,
-    },
-    {
-      language: "TypeScript" as Language,
-      text: "TypeScript (experimental)",
-      codeMirror: () => javascript({ typescript: true }),
-    },
-    {
-      language: "TSX" as Language,
-      text: "TSX (experimental)",
-      codeMirror: () => javascript({ typescript: true, jsx: true }),
-    },
-  ] as const;
+let offsetToHighlight: number | undefined = undefined;
+let colorList = getSystemColorList();
+// ADD-LANGUAGES-HERE
+let languages: {
+  language: Language;
+  text: string;
+  codeMirror: () => LanguageSupport;
+}[] = [
+  { language: "Go" as Language, text: "Go", codeMirror: go },
+  { language: "C" as Language, text: "C", codeMirror: cpp },
+  {
+    language: "Python" as Language,
+    text: "Python",
+    codeMirror: python,
+  },
+  {
+    language: "C++" as Language,
+    text: "C++",
+    codeMirror: cpp,
+  },
+  {
+    language: "TypeScript" as Language,
+    text: "TypeScript (experimental)",
+    codeMirror: () => javascript({ typescript: true }),
+  },
+  {
+    language: "TSX" as Language,
+    text: "TSX (experimental)",
+    codeMirror: () => javascript({ typescript: true, jsx: true }),
+  },
+] as const;
 
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.has("go")) {
-    languageCode.Go = LZString.decompressFromEncodedURIComponent(
-      urlParams.get("go"),
-    );
-  }
-  if (urlParams.has("c")) {
-    languageCode.C = LZString.decompressFromEncodedURIComponent(
-      urlParams.get("c"),
-    );
-  }
-  if (urlParams.has("c++")) {
-    languageCode["C++"] = LZString.decompressFromEncodedURIComponent(
-      urlParams.get("c++"),
-    );
-  }
-  if (urlParams.has("python")) {
-    languageCode.Python = LZString.decompressFromEncodedURIComponent(
-      urlParams.get("python"),
-    );
-  }
-  if (urlParams.has("typescript")) {
-    languageCode.TypeScript = LZString.decompressFromEncodedURIComponent(
-      urlParams.get("typescript"),
-    );
-  }
-  if (urlParams.has("tsx")) {
-    languageCode.TSX = LZString.decompressFromEncodedURIComponent(
-      urlParams.get("tsx"),
-    );
-  }
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has("go")) {
+  languageCode.Go = LZString.decompressFromEncodedURIComponent(
+    urlParams.get("go"),
+  );
+}
+if (urlParams.has("c")) {
+  languageCode.C = LZString.decompressFromEncodedURIComponent(
+    urlParams.get("c"),
+  );
+}
+if (urlParams.has("c++")) {
+  languageCode["C++"] = LZString.decompressFromEncodedURIComponent(
+    urlParams.get("c++"),
+  );
+}
+if (urlParams.has("python")) {
+  languageCode.Python = LZString.decompressFromEncodedURIComponent(
+    urlParams.get("python"),
+  );
+}
+if (urlParams.has("typescript")) {
+  languageCode.TypeScript = LZString.decompressFromEncodedURIComponent(
+    urlParams.get("typescript"),
+  );
+}
+if (urlParams.has("tsx")) {
+  languageCode.TSX = LZString.decompressFromEncodedURIComponent(
+    urlParams.get("tsx"),
+  );
+}
 
-  let simplify = true;
-  let flatSwitch = true;
-  let highlight = true;
-  let colorPicker = false;
-  let verbose = urlParams.has("verbose");
-  let showSegmentation = urlParams.has("segmentation");
-  let showRegions = urlParams.has("showRegions");
-  let debugMode = urlParams.has("debug");
-  let fontSize = "1em";
-  const range = (start: number, end: number) =>
-    Array.from({ length: end - start }, (_v, k) => k + start);
-  const fontSizes: { label: string; value: string }[] = [
-    { label: "Default", value: "1em" },
-    ...range(8, 31).map((n) => ({ label: `${n}`, value: `${n}px` })),
-  ];
+let simplify = true;
+let flatSwitch = true;
+let highlight = true;
+let colorPicker = false;
+let verbose = urlParams.has("verbose");
+let showSegmentation = urlParams.has("segmentation");
+let showRegions = urlParams.has("showRegions");
+let debugMode = urlParams.has("debug");
+let fontSize = "1em";
+const range = (start: number, end: number) =>
+  Array.from({ length: end - start }, (_v, k) => k + start);
+const fontSizes: { label: string; value: string }[] = [
+  { label: "Default", value: "1em" },
+  ...range(8, 31).map((n) => ({ label: `${n}`, value: `${n}px` })),
+];
 
-  let selection =
-    languages[parseInt(urlParams.get("language"))] ?? languages[0];
+let selection =
+  languages[Number.parseInt(urlParams.get("language"))] ?? languages[0];
 
-  function share() {
-    const compressedCode = LZString.compressToEncodedURIComponent(
-      languageCode[selection.language],
-    );
-    const codeName = selection.language.toLowerCase();
-    const language = languages.findIndex((lang) => lang == selection);
-    const query = `?language=${language}&${codeName}=${compressedCode}`;
-    const newUrl =
-      window.location.protocol +
-      "//" +
-      window.location.host +
-      window.location.pathname +
-      query;
-    navigator.clipboard.writeText(newUrl);
-    window.open(newUrl, "_blank").focus();
-  }
+function share() {
+  const compressedCode = LZString.compressToEncodedURIComponent(
+    languageCode[selection.language],
+  );
+  const codeName = selection.language.toLowerCase();
+  const language = languages.findIndex((lang) => lang === selection);
+  const query = `?language=${language}&${codeName}=${compressedCode}`;
+  const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}${query}`;
+  navigator.clipboard.writeText(newUrl);
+  window.open(newUrl, "_blank").focus();
+}
 
-  let graph: Graph;
+let graph: Graph;
 
-  function downloadString(text: string, fileType: string, fileName: string) {
-    var blob = new Blob([text], { type: fileType });
+function downloadString(text: string, fileType: string, fileName: string) {
+  const blob = new Blob([text], { type: fileType });
 
-    var a = document.createElement("a");
-    a.download = fileName;
-    a.href = URL.createObjectURL(blob);
-    a.dataset.downloadurl = [fileType, a.download, a.href].join(":");
-    a.style.display = "none";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(function () {
-      URL.revokeObjectURL(a.href);
-    }, 1500);
-  }
+  const a = document.createElement("a");
+  a.download = fileName;
+  a.href = URL.createObjectURL(blob);
+  a.dataset.downloadurl = [fileType, a.download, a.href].join(":");
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => {
+    URL.revokeObjectURL(a.href);
+  }, 1500);
+}
 
-  function saveSVG() {
-    const svg = graph.getSVG();
-    downloadString(svg, "image/svg+xml", "function-graph-overview.svg");
-  }
+function saveSVG() {
+  const svg = graph.getSVG();
+  downloadString(svg, "image/svg+xml", "function-graph-overview.svg");
+}
 
-  function editDotLink(dot: string): string {
-    return `https://dreampuf.github.io/GraphvizOnline/?compressed=${LZString.compressToEncodedURIComponent(dot)}`;
-  }
+function editDotLink(dot: string): string {
+  return `https://dreampuf.github.io/GraphvizOnline/?compressed=${LZString.compressToEncodedURIComponent(dot)}`;
+}
 
-  function editDOT() {
-    const dot = graph.getDOT();
-    const url = editDotLink(dot);
-    window.open(url, "_blank", "noopener");
-  }
+function editDOT() {
+  const dot = graph.getDOT();
+  const url = editDotLink(dot);
+  window.open(url, "_blank", "noopener");
+}
 
-  function cursorMoved(event): void {
-    const { index } = event.detail.pos;
-    offsetToHighlight = index;
-  }
+function cursorMoved(event): void {
+  const { index } = event.detail.pos;
+  offsetToHighlight = index;
+}
 
-  let editor: Editor;
+let editor: Editor;
 
-  function onNodeClicked(
-    e: CustomEvent<{ node: string; offset: number | null }>,
-  ): void {
-    console.log("Node clicked!", e.detail.node, e.detail.offset);
-    const offset = e.detail.offset;
-    if (offset !== null && offset !== undefined) editor?.setCursor(offset);
-  }
+function onNodeClicked(
+  e: CustomEvent<{ node: string; offset: number | null }>,
+): void {
+  console.log("Node clicked!", e.detail.node, e.detail.offset);
+  const offset = e.detail.offset;
+  if (offset !== null && offset !== undefined) editor?.setCursor(offset);
+}
 
-  $: if (!colorPicker && graph) {
-    graph.applyColors(colorList);
-  }
+$: if (!colorPicker && graph) {
+  graph.applyColors(colorList);
+}
 
-  function onColorPreview(e) {
-    colorList = e.detail.colors;
-    graph.previewColors(colorList);
-  }
+function onColorPreview(e) {
+  colorList = e.detail.colors;
+  graph.previewColors(colorList);
+}
 
-  function onToggleClick(e) {
-    toggleTheme();
-  }
+function onToggleClick(e) {
+  toggleTheme();
+}
 
-  isDark.subscribe(() => {
-    colorList = getSystemColorList();
-  });
+isDark.subscribe(() => {
+  colorList = getSystemColorList();
+});
 </script>
 
 <main>
