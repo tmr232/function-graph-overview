@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { LanguageSupport } from "@codemirror/language";
-  import { EditorView } from "@codemirror/view";
   import type { Extension } from "@codemirror/state";
+  import { oneDark } from "@codemirror/theme-one-dark";
+  import { EditorView } from "@codemirror/view";
   import { createEventDispatcher } from "svelte";
   import CodeMirror from "svelte-codemirror-editor";
-  import { oneDark } from "@codemirror/theme-one-dark";
   import { isDark } from "./lightdark.ts";
   export let code: string;
   export let lang: LanguageSupport;

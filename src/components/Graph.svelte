@@ -1,21 +1,21 @@
 <script lang="ts">
+  import { Graphviz } from "@hpcc-js/wasm-graphviz";
+  import objectHash from "object-hash";
+  import { createEventDispatcher } from "svelte";
   import Parser from "web-tree-sitter";
   import { type Language } from "../control-flow/cfg";
-  import { Graphviz } from "@hpcc-js/wasm-graphviz";
-  import {
-    getFirstFunction,
-    initialize as initializeUtils,
-    type Parsers,
-  } from "./utils";
-  import { createEventDispatcher } from "svelte";
   import {
     type ColorList,
     getLightColorList,
     listToScheme,
   } from "../control-flow/colors";
-  import { Renderer, type RenderOptions } from "./renderer.ts";
-  import objectHash from "object-hash";
   import { memoizeFunction } from "./caching.ts";
+  import { type RenderOptions, Renderer } from "./renderer.ts";
+  import {
+    type Parsers,
+    getFirstFunction,
+    initialize as initializeUtils,
+  } from "./utils";
 
   let parsers: Parsers;
   let graphviz: Graphviz;

@@ -1,12 +1,12 @@
 <script lang="ts">
-  import ColorPicker from "svelte-awesome-color-picker";
   import { createEventDispatcher } from "svelte";
+  import ColorPicker from "svelte-awesome-color-picker";
   import {
+    type Color,
+    type ColorList,
+    deserializeColorList,
     getLightColorList,
     serializeColorList,
-    deserializeColorList,
-    type ColorList,
-    type Color,
   } from "../control-flow/colors";
   const dispatch = createEventDispatcher();
 

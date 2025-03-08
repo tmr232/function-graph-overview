@@ -1,17 +1,17 @@
 <script lang="ts">
-  import { go } from "@codemirror/lang-go";
   import { cpp } from "@codemirror/lang-cpp";
-  import { python } from "@codemirror/lang-python";
+  import { go } from "@codemirror/lang-go";
   import { javascript } from "@codemirror/lang-javascript";
-  import Graph from "./Graph.svelte";
-  import type { Language } from "../control-flow/cfg";
+  import { python } from "@codemirror/lang-python";
+  import type { LanguageSupport } from "@codemirror/language";
   import * as LZString from "lz-string";
-  import Editor from "./Editor.svelte";
+  import type { Language } from "../control-flow/cfg";
+  import { evolve } from "../control-flow/evolve.ts";
   import CodeSegmentation from "./CodeSegmentation.svelte";
   import ColorScheme from "./ColorSchemeEditor.svelte";
-  import { getSystemColorList, toggleTheme, isDark } from "./lightdark.ts";
-  import type { LanguageSupport } from "@codemirror/language";
-  import { evolve } from "../control-flow/evolve.ts";
+  import Editor from "./Editor.svelte";
+  import Graph from "./Graph.svelte";
+  import { getSystemColorList, isDark, toggleTheme } from "./lightdark.ts";
 
   // ADD-LANGUAGES-HERE
   const defaultCodeSamples: { [language in Language]?: string } = {
@@ -112,21 +112,16 @@
   ];
 
   let selection =
-    languages[parseInt(urlParams.get("language"))] ?? languages[0];
+    languages[Number.parseInt(urlParams.get("language"))] ?? languages[0];
 
   function share() {
     const compressedCode = LZString.compressToEncodedURIComponent(
       languageCode[selection.language],
     );
     const codeName = selection.language.toLowerCase();
-    const language = languages.findIndex((lang) => lang == selection);
+    const language = languages.findIndex((lang) => lang === selection);
     const query = `?language=${language}&${codeName}=${compressedCode}`;
-    const newUrl =
-      window.location.protocol +
-      "//" +
-      window.location.host +
-      window.location.pathname +
-      query;
+    const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}${query}`;
     navigator.clipboard.writeText(newUrl);
     window.open(newUrl, "_blank").focus();
   }
@@ -134,9 +129,9 @@
   let graph: Graph;
 
   function downloadString(text: string, fileType: string, fileName: string) {
-    var blob = new Blob([text], { type: fileType });
+    const blob = new Blob([text], { type: fileType });
 
-    var a = document.createElement("a");
+    const a = document.createElement("a");
     a.download = fileName;
     a.href = URL.createObjectURL(blob);
     a.dataset.downloadurl = [fileType, a.download, a.href].join(":");
@@ -144,7 +139,7 @@
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    setTimeout(function () {
+    setTimeout(() => {
       URL.revokeObjectURL(a.href);
     }, 1500);
   }

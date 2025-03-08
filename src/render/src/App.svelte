@@ -1,9 +1,8 @@
 <script lang="ts">
-  import {
-    getLanguage,
-    initParsers,
-    iterFunctions,
-  } from "../../file-parsing/vite";
+  import { Graphviz } from "@hpcc-js/wasm-graphviz";
+  import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
+  import { MultiDirectedGraph } from "graphology";
+  import { onMount } from "svelte";
   import type Parser from "web-tree-sitter";
   import { type SyntaxNode } from "web-tree-sitter";
   import { type Language, newCFGBuilder } from "../../control-flow/cfg";
@@ -13,19 +12,20 @@
     type GraphNode,
     mergeNodeAttrs,
   } from "../../control-flow/cfg-defs";
-  import { simplifyCFG, trimFor } from "../../control-flow/graph-ops";
-  import { Graphviz } from "@hpcc-js/wasm-graphviz";
-  import { graphToDot } from "../../control-flow/render";
   import {
     type ColorScheme,
     getDarkColorList,
     getLightColorList,
     listToScheme,
   } from "../../control-flow/colors";
-  import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
-  import { onMount } from "svelte";
-  import { MultiDirectedGraph } from "graphology";
+  import { simplifyCFG, trimFor } from "../../control-flow/graph-ops";
   import { Lookup } from "../../control-flow/ranges";
+  import { graphToDot } from "../../control-flow/render";
+  import {
+    getLanguage,
+    initParsers,
+    iterFunctions,
+  } from "../../file-parsing/vite";
 
   let codeUrl: string | undefined;
 
@@ -232,7 +232,7 @@
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    setTimeout(function () {
+    setTimeout(() => {
       URL.revokeObjectURL(a.href);
     }, 1500);
   }

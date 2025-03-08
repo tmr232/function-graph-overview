@@ -1,17 +1,17 @@
 <script lang="ts">
+  import { Graphviz } from "@hpcc-js/wasm-graphviz";
   import Parser from "web-tree-sitter";
-  import { newCFGBuilder, type Language } from "../control-flow/cfg";
+  import { type Language, newCFGBuilder } from "../control-flow/cfg";
   import {
+    type CFG,
     mergeNodeAttrs,
     remapNodeTargets,
-    type CFG,
   } from "../control-flow/cfg-defs";
   import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
-  import { Graphviz } from "@hpcc-js/wasm-graphviz";
   import {
+    type Parsers,
     getFirstFunction,
     initialize as initializeUtils,
-    type Parsers,
   } from "./utils";
 
   let parsers: Parsers;
@@ -70,7 +70,7 @@
     let legend = [...nodeColors.entries()]
       .map(([name, color]) => withBackground(name, color))
       .join("\n");
-    return result + "\n\n\n" + legend;
+    return `${result}\n\n\n${legend}`;
   }
 
   type Options = { simplify: boolean; trim: boolean };

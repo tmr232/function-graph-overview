@@ -3,9 +3,9 @@
   import type { TestFuncRecord } from "../test/commentTestUtils";
   import TestGraph from "./TestGraph.svelte";
   import {
-    runTest,
     type TestResults,
     initialize as initializeUtils,
+    runTest,
   } from "./utils";
 
   const testRecords = testRecordsJson as TestFuncRecord[];

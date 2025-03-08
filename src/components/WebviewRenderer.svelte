@@ -1,13 +1,13 @@
 <script lang="ts">
-  import Parser, { type SyntaxNode } from "web-tree-sitter";
-  import { functionNodeTypes, type Language } from "../control-flow/cfg";
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
-  import { initialize as initializeUtils, type Parsers } from "./utils";
-  import { createEventDispatcher } from "svelte";
-  import { type ColorList, getLightColorList } from "../control-flow/colors";
-  import { Renderer, type RenderOptions } from "./renderer.ts";
-  import { memoizeFunction } from "./caching.ts";
   import objectHash from "object-hash";
+  import { createEventDispatcher } from "svelte";
+  import Parser, { type SyntaxNode } from "web-tree-sitter";
+  import { type Language, functionNodeTypes } from "../control-flow/cfg";
+  import { type ColorList, getLightColorList } from "../control-flow/colors";
+  import { memoizeFunction } from "./caching.ts";
+  import { type RenderOptions, Renderer } from "./renderer.ts";
+  import { type Parsers, initialize as initializeUtils } from "./utils";
 
   type CodeAndOffset = { code: string; offset: number; language: Language };
 

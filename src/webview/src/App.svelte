@@ -2,7 +2,7 @@
   import type { MessageToVscode } from "../../vscode/messages.ts";
 
   declare const acquireVsCodeApi:
-    | void
+    | undefined
     | (() => {
         postMessage<T extends MessageToVscode>(message: T): void;
       });
