@@ -1,4 +1,4 @@
-import type Parser from "web-tree-sitter";
+import type { Node as SyntaxNode } from "web-tree-sitter";
 import { matchExistsIn } from "./block-matcher.ts";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
@@ -52,10 +52,7 @@ export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
   return new GenericCFGBuilder(statementHandlers, options);
 }
 
-function defaultProcessStatement(
-  syntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
+function defaultProcessStatement(syntax: SyntaxNode, ctx: Context): BasicBlock {
   const { builder } = ctx;
   const hasYield = matchExistsIn(syntax, "(yield) @yield");
   if (hasYield) {
@@ -69,10 +66,10 @@ function defaultProcessStatement(
 }
 
 function processAssertStatement(
-  assertSyntax: Parser.SyntaxNode,
+  assertSyntax: SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  const conditionSyntax = assertSyntax.child(1) as Parser.SyntaxNode;
+  const conditionSyntax = assertSyntax.child(1) as SyntaxNode;
   const messageSyntax = assertSyntax.child(3);
   const conditionNode = ctx.builder.addNode(
     "ASSERT_CONDITION",
@@ -97,7 +94,7 @@ function processAssertStatement(
 }
 
 function processRaiseStatement(
-  raiseSyntax: Parser.SyntaxNode,
+  raiseSyntax: SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const { builder } = ctx;
@@ -110,7 +107,7 @@ function processRaiseStatement(
   return { entry: raiseNode, exit: null, functionExits: [raiseNode] };
 }
 function processReturnStatement(
-  returnSyntax: Parser.SyntaxNode,
+  returnSyntax: SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const { builder } = ctx;
@@ -122,10 +119,7 @@ function processReturnStatement(
   ctx.link.syntaxToNode(returnSyntax, returnNode);
   return { entry: returnNode, exit: null, functionExits: [returnNode] };
 }
-function processTryStatement(
-  trySyntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
+function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
   const { builder, matcher } = ctx;
   /*
   Here's an idea - I can duplicate the `finally` blocks!
@@ -261,7 +255,7 @@ function processTryStatement(
   });
 }
 function processWithStatement(
-  withSyntax: Parser.SyntaxNode,
+  withSyntax: SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const { builder, matcher } = ctx;
@@ -293,10 +287,7 @@ function processWithStatement(
   });
 }
 
-function processComment(
-  commentSyntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
+function processComment(commentSyntax: SyntaxNode, ctx: Context): BasicBlock {
   const { builder, options } = ctx;
   // We only ever ger here when marker comments are enabled,
   // and only for marker comments as the rest are filtered out.
@@ -314,7 +305,7 @@ function processComment(
 }
 
 function processMatchStatement(
-  matchSyntax: Parser.SyntaxNode,
+  matchSyntax: SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const { builder, matcher, options } = ctx;
@@ -341,13 +332,13 @@ function processMatchStatement(
 
   const subjectSyntax = match.requireSyntax("subject");
 
-  const parseCase = (caseSyntax: Parser.SyntaxNode) => {
+  const parseCase = (caseSyntax: SyntaxNode) => {
     const patterns = caseSyntax.children.filter(
-      (c) => c.type === "case_pattern",
-    ) as Parser.SyntaxNode[];
+      (c) => c?.type === "case_pattern",
+    ) as SyntaxNode[];
     const consequence = caseSyntax.childForFieldName(
       "consequence",
-    ) as Parser.SyntaxNode;
+    ) as SyntaxNode;
     return { consequence, patterns };
   };
 
@@ -424,7 +415,7 @@ function processMatchStatement(
 }
 
 function processContinueStatement(
-  continueSyntax: Parser.SyntaxNode,
+  continueSyntax: SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const { builder } = ctx;
@@ -441,7 +432,7 @@ function processContinueStatement(
   };
 }
 function processBreakStatement(
-  breakSyntax: Parser.SyntaxNode,
+  breakSyntax: SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const { builder } = ctx;
@@ -450,10 +441,7 @@ function processBreakStatement(
   return { entry: breakNode, exit: null, breaks: [{ from: breakNode }] };
 }
 
-function processIfStatement(
-  ifNode: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
+function processIfStatement(ifNode: SyntaxNode, ctx: Context): BasicBlock {
   const { builder, matcher } = ctx;
   const match = matcher.match(
     ifNode,
@@ -558,7 +546,7 @@ function processIfStatement(
 }
 
 function processWhileStatement(
-  whileSyntax: Parser.SyntaxNode,
+  whileSyntax: SyntaxNode,
   ctx: Context,
 ): BasicBlock {
   const { builder, matcher } = ctx;

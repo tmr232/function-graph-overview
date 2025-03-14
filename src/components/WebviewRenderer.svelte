@@ -2,7 +2,7 @@
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import objectHash from "object-hash";
 import { createEventDispatcher } from "svelte";
-import Parser, { type SyntaxNode } from "web-tree-sitter";
+import { type Node as SyntaxNode, type Tree } from "web-tree-sitter";
 import { type Language, functionNodeTypes } from "../control-flow/cfg";
 import { type ColorList, getLightColorList } from "../control-flow/colors";
 import { memoizeFunction } from "./caching.ts";
@@ -15,7 +15,7 @@ let parsers: Parsers;
 let graphviz: Graphviz;
 let dot: string;
 let getNodeOffset: (nodeId: string) => number | undefined = () => undefined;
-let tree: Parser.Tree;
+let tree: Tree;
 let svg: string;
 export let colorList = getLightColorList();
 export let codeAndOffset: CodeAndOffset | null = null;
@@ -43,10 +43,10 @@ async function initialize() {
 }
 
 function getFunctionAtOffset(
-  tree: Parser.Tree,
+  tree: Tree,
   offset: number,
   language: Language,
-): Parser.SyntaxNode | null {
+): SyntaxNode | null {
   let syntax: SyntaxNode | null = tree.rootNode.descendantForIndex(offset);
 
   while (syntax) {

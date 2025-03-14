@@ -2,7 +2,7 @@
  * @category Testing
  * @module
  */
-import type Parser from "web-tree-sitter";
+import type { Node as SyntaxNode } from "web-tree-sitter";
 import type { Language } from "../control-flow/cfg";
 
 export interface Requirements {
@@ -55,7 +55,7 @@ export interface TestFunction {
   /**
    * The function's AST
    */
-  function: Parser.SyntaxNode;
+  function: SyntaxNode;
   /**
    * The requirements defined in the comment
    */

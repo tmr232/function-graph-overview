@@ -1,4 +1,4 @@
-import type Parser from "web-tree-sitter";
+import type { Parser } from "web-tree-sitter";
 import { type Language, supportedLanguages } from "../control-flow/cfg.ts";
 import { initializeParser } from "../parser-loader/bun.ts";
 import { makeIterFunctions } from "./file-parsing.ts";

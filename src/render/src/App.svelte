@@ -3,8 +3,7 @@ import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
 import { MultiDirectedGraph } from "graphology";
 import { onMount } from "svelte";
-import type Parser from "web-tree-sitter";
-import { type SyntaxNode } from "web-tree-sitter";
+import { type Node as SyntaxNode } from "web-tree-sitter";
 import { type Language, newCFGBuilder } from "../../control-flow/cfg";
 import {
   type CFG,
@@ -68,7 +67,7 @@ function parseGithubUrl(githubURL: string): GithubCodeRef {
  * @param func The function to generate a CFG for
  * @param language The code language
  */
-function buildCFG(func: Parser.SyntaxNode, language: Language): CFG {
+function buildCFG(func: SyntaxNode, language: Language): CFG {
   const builder = newCFGBuilder(language, { flatSwitch: true });
 
   let cfg = builder.buildCFG(func);

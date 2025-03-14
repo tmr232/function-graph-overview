@@ -1,4 +1,4 @@
-import type Parser from "web-tree-sitter";
+import type { Node as SyntaxNode } from "web-tree-sitter";
 import type { EdgeType } from "./cfg-defs";
 import type { Context } from "./generic-cfg-builder";
 import { pairwise } from "./itertools.ts";
@@ -124,15 +124,15 @@ export function buildSwitch(
 }
 
 export type CaseCollectionCallbacks = {
-  getCases(switchSyntax: Parser.SyntaxNode): Parser.SyntaxNode[];
-  parseCase(caseSyntax: Parser.SyntaxNode): {
+  getCases(switchSyntax: SyntaxNode): SyntaxNode[];
+  parseCase(caseSyntax: SyntaxNode): {
     isDefault: boolean;
-    consequence: Parser.SyntaxNode[];
+    consequence: SyntaxNode[];
     hasFallthrough: boolean;
   };
 };
 export function collectCases(
-  switchSyntax: Parser.SyntaxNode,
+  switchSyntax: SyntaxNode,
   ctx: Context,
   callbacks: CaseCollectionCallbacks,
 ): Case[] {

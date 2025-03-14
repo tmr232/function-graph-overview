@@ -1,6 +1,6 @@
 <script lang="ts">
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
-import Parser from "web-tree-sitter";
+import { Node as SyntaxNode } from "web-tree-sitter";
 import { type Language, newCFGBuilder } from "../control-flow/cfg";
 import {
   type CFG,
@@ -47,7 +47,7 @@ function createNodeColors(cfg: CFG): Map<string, string> {
 
 function renderRanges(
   cfg: CFG,
-  functionSyntax: Parser.SyntaxNode,
+  functionSyntax: SyntaxNode,
   sourceText: string,
   nodeColors: NodeColors,
 ): string {

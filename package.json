@@ -3,7 +3,7 @@
   "module": "index.ts",
   "type": "module",
   "dependencies": {
-    "@hpcc-js/wasm-graphviz": "^1.6.1",
+    "@hpcc-js/wasm-graphviz": "^1.7.0",
     "@svgdotjs/svg.js": "^3.2.4",
     "@types/object-hash": "^3.0.6",
     "@types/vscode": "^1.94.0",
@@ -16,7 +16,7 @@
     "lru-cache": "^11.0.2",
     "object-hash": "^3.0.0",
     "svgdom": "^0.1.19",
-    "web-tree-sitter": "^0.23.2"
+    "web-tree-sitter": "^0.25.3"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
@@ -47,6 +47,7 @@
     "tree-sitter-typescript": "^0.23.2",
     "typedoc": "^0.27.1",
     "typescript-eslint": "^8.16.0",
+    "typescript": "^5.7.3",
     "vite": "^5.4.8"
   },
   "peerDependencies": {

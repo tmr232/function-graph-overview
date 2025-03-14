@@ -1,4 +1,4 @@
-import type Parser from "web-tree-sitter";
+import type { Node as SyntaxNode } from "web-tree-sitter";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
   forEachLoopProcessor,
@@ -16,6 +16,7 @@ import {
   GenericCFGBuilder,
   type StatementHandlers,
 } from "./generic-cfg-builder";
+import { treeSitterNoNullNodes } from "./hacks.ts";
 import { type SwitchOptions, buildSwitch, collectCases } from "./switch-utils";
 
 const processBreakStatement = labeledBreakProcessor(`
@@ -52,24 +53,15 @@ export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
   return new GenericCFGBuilder(statementHandlers, options);
 }
 
-function processSwitchStatement(
-  syntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
+function processSwitchStatement(syntax: SyntaxNode, ctx: Context): BasicBlock {
   return processSwitchlike(syntax, { noImplicitDefault: false }, ctx);
 }
 
-function processSelectStatement(
-  syntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
+function processSelectStatement(syntax: SyntaxNode, ctx: Context): BasicBlock {
   return processSwitchlike(syntax, { noImplicitDefault: true }, ctx);
 }
 
-function defaultProcessStatement(
-  syntax: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
+function defaultProcessStatement(syntax: SyntaxNode, ctx: Context): BasicBlock {
   const newNode = ctx.builder.addNode(
     "STATEMENT",
     syntax.text,
@@ -79,10 +71,7 @@ function defaultProcessStatement(
   return { entry: newNode, exit: newNode };
 }
 
-function processForStatement(
-  forNode: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
+function processForStatement(forNode: SyntaxNode, ctx: Context): BasicBlock {
   const match = ctx.matcher.match(
     forNode,
     `
@@ -128,7 +117,7 @@ function processForStatement(
   return processInfiniteLoop(ctx, forNode);
 }
 
-function processInfiniteLoop(ctx: Context, forNode: Parser.SyntaxNode) {
+function processInfiniteLoop(ctx: Context, forNode: SyntaxNode) {
   const match = ctx.matcher.match(
     forNode,
     `
@@ -160,10 +149,7 @@ function processInfiniteLoop(ctx: Context, forNode: Parser.SyntaxNode) {
   return ctx.state.update({ entry: bodyBlock.entry, exit: exitNode });
 }
 
-function processForClauseLoop(
-  forNode: Parser.SyntaxNode,
-  ctx: Context,
-): BasicBlock {
+function processForClauseLoop(forNode: SyntaxNode, ctx: Context): BasicBlock {
   const match = ctx.matcher.match(
     forNode,
     `
@@ -279,7 +265,7 @@ function processForClauseLoop(
 }
 
 function processIfStatement(
-  ifNode: Parser.SyntaxNode,
+  ifNode: SyntaxNode,
   ctx: Context,
   mergeNode: string | null = null,
 ): BasicBlock {
@@ -295,7 +281,7 @@ function processIfStatement(
 
   const consequenceChild = ifNode.childForFieldName(
     "consequence",
-  ) as Parser.SyntaxNode;
+  ) as SyntaxNode;
 
   const { entry: thenEntry, exit: thenExit } = ctx.state.update(
     ctx.dispatch.single(consequenceChild),
@@ -336,19 +322,21 @@ const caseTypes = new Set([
   "expression_case",
 ]);
 
-function getCases(switchSyntax: Parser.SyntaxNode): Parser.SyntaxNode[] {
-  return switchSyntax.namedChildren.filter((child) =>
+function getCases(switchSyntax: SyntaxNode): SyntaxNode[] {
+  return treeSitterNoNullNodes(switchSyntax.namedChildren).filter((child) =>
     caseTypes.has(child.type),
   );
 }
 
-function parseCase(caseSyntax: Parser.SyntaxNode): {
+function parseCase(caseSyntax: SyntaxNode): {
   isDefault: boolean;
-  consequence: Parser.SyntaxNode[];
+  consequence: SyntaxNode[];
   hasFallthrough: boolean;
 } {
   const isDefault = caseSyntax.type === "default_case";
-  const consequence = caseSyntax.namedChildren.slice(isDefault ? 0 : 1);
+  const consequence = treeSitterNoNullNodes(caseSyntax.namedChildren).slice(
+    isDefault ? 0 : 1,
+  );
   const hasFallthrough = consequence
     .map((node) => node.type)
     .includes("fallthrough_statement");
@@ -356,7 +344,7 @@ function parseCase(caseSyntax: Parser.SyntaxNode): {
 }
 
 function processSwitchlike(
-  switchSyntax: Parser.SyntaxNode,
+  switchSyntax: SyntaxNode,
   options: SwitchOptions,
   ctx: Context,
 ): BasicBlock {
