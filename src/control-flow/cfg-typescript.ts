@@ -20,6 +20,7 @@ import {
   GenericCFGBuilder,
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
+import { treeSitterNoNullNodes } from "./hacks.ts";
 import { buildSwitch, collectCases } from "./switch-utils.ts";
 
 export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
@@ -115,9 +116,9 @@ const caseTypes = new Set(["switch_case", "switch_default"]);
 
 function getCases(switchSyntax: SyntaxNode): SyntaxNode[] {
   const switchBody = switchSyntax.namedChildren[1] as SyntaxNode;
-  return switchBody.namedChildren
-    .filter((x) => x !== null)
-    .filter((child) => caseTypes.has(child.type));
+  return treeSitterNoNullNodes(switchBody.namedChildren).filter((child) =>
+    caseTypes.has(child.type),
+  );
 }
 
 function parseCase(caseSyntax: SyntaxNode): {
@@ -126,9 +127,9 @@ function parseCase(caseSyntax: SyntaxNode): {
   hasFallthrough: boolean;
 } {
   const isDefault = caseSyntax.type === "switch_default";
-  const consequence = caseSyntax.namedChildren
-    .filter((x) => x !== null)
-    .slice(isDefault ? 0 : 1);
+  const consequence = treeSitterNoNullNodes(caseSyntax.namedChildren).slice(
+    isDefault ? 0 : 1,
+  );
   const hasFallthrough = true;
   return { isDefault, consequence, hasFallthrough };
 }

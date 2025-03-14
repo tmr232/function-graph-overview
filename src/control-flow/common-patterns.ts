@@ -2,6 +2,7 @@ import type { Node as SyntaxNode } from "web-tree-sitter";
 import type { Match } from "./block-matcher.ts";
 import type { BasicBlock } from "./cfg-defs.ts";
 import type { Context } from "./generic-cfg-builder.ts";
+import { treeSitterNoNullNodes } from "./hacks.ts";
 import { last, pairwise, zip } from "./itertools.ts";
 
 export function cStyleIfProcessor(
@@ -514,7 +515,7 @@ export function processStatementSequence(
   ctx: Context,
 ): BasicBlock {
   const blockBlock = ctx.dispatch.many(
-    syntax.namedChildren.filter((x) => x !== null),
+    treeSitterNoNullNodes(syntax.namedChildren),
     syntax,
   );
   ctx.link.syntaxToNode(syntax, blockBlock.entry);

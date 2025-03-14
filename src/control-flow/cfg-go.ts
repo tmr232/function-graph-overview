@@ -16,6 +16,7 @@ import {
   GenericCFGBuilder,
   type StatementHandlers,
 } from "./generic-cfg-builder";
+import { treeSitterNoNullNodes } from "./hacks.ts";
 import { type SwitchOptions, buildSwitch, collectCases } from "./switch-utils";
 
 const processBreakStatement = labeledBreakProcessor(`
@@ -322,9 +323,9 @@ const caseTypes = new Set([
 ]);
 
 function getCases(switchSyntax: SyntaxNode): SyntaxNode[] {
-  return switchSyntax.namedChildren
-    .filter((x) => x !== null)
-    .filter((child) => caseTypes.has(child.type));
+  return treeSitterNoNullNodes(switchSyntax.namedChildren).filter((child) =>
+    caseTypes.has(child.type),
+  );
 }
 
 function parseCase(caseSyntax: SyntaxNode): {
@@ -333,9 +334,9 @@ function parseCase(caseSyntax: SyntaxNode): {
   hasFallthrough: boolean;
 } {
   const isDefault = caseSyntax.type === "default_case";
-  const consequence = caseSyntax.namedChildren
-    .filter((x) => x !== null)
-    .slice(isDefault ? 0 : 1);
+  const consequence = treeSitterNoNullNodes(caseSyntax.namedChildren).slice(
+    isDefault ? 0 : 1,
+  );
   const hasFallthrough = consequence
     .map((node) => node.type)
     .includes("fallthrough_statement");

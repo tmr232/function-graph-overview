@@ -7,6 +7,7 @@ import {
   type BuilderOptions,
   type CFG,
 } from "./cfg-defs";
+import { treeSitterNoNullNodes } from "./hacks.ts";
 import { pairwise } from "./itertools.ts";
 import { NodeMapper } from "./node-mapper";
 
@@ -99,7 +100,7 @@ export class GenericCFGBuilder {
       const blockHandler = new BlockHandler();
       const { entry, exit } = blockHandler.update(
         this.dispatchMany(
-          bodySyntax.namedChildren.filter((x) => x !== null),
+          treeSitterNoNullNodes(bodySyntax.namedChildren),
           bodySyntax,
         ),
       );

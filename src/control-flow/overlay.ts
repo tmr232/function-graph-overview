@@ -2,6 +2,7 @@ import type { Container, Element, Svg } from "@svgdotjs/svg.js";
 import type { Node as SyntaxNode } from "web-tree-sitter";
 import type { CFG, GraphNode } from "./cfg-defs.ts";
 import type { AttrMerger } from "./graph-ops.ts";
+import { treeSitterNoNullNodes } from "./hacks.ts";
 import { Lookup } from "./ranges.ts";
 import { svgFromString } from "./svgFromString.ts";
 
@@ -236,7 +237,7 @@ type OverlayRange = {
 };
 
 function parseOverlay(func: SyntaxNode): OverlayRange[] {
-  const comments = func.descendantsOfType("comment").filter((x) => x !== null);
+  const comments = treeSitterNoNullNodes(func.descendantsOfType("comment"));
   const stack: { startOffset: number; text: string }[] = [];
   const overlays: OverlayRange[] = [];
   for (const comment of comments) {

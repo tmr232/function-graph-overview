@@ -18,6 +18,7 @@ import {
   GenericCFGBuilder,
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
+import { treeSitterNoNullNodes } from "./hacks.ts";
 import { buildSwitch, collectCases } from "./switch-utils.ts";
 
 function getChildFieldText(node: SyntaxNode, fieldName: string): string {
@@ -94,9 +95,9 @@ const caseTypes = new Set(["case_statement"]);
 
 function getCases(switchSyntax: SyntaxNode): SyntaxNode[] {
   const switchBody = switchSyntax.namedChildren[1] as SyntaxNode;
-  return switchBody.namedChildren
-    .filter((x) => x !== null)
-    .filter((child) => caseTypes.has(child.type));
+  return treeSitterNoNullNodes(switchBody.namedChildren).filter((child) =>
+    caseTypes.has(child.type),
+  );
 }
 
 function parseCase(caseSyntax: SyntaxNode): {
@@ -105,9 +106,9 @@ function parseCase(caseSyntax: SyntaxNode): {
   hasFallthrough: boolean;
 } {
   const isDefault = !caseSyntax.childForFieldName("value");
-  const consequence = caseSyntax.namedChildren
-    .filter((x) => x !== null)
-    .slice(isDefault ? 0 : 1);
+  const consequence = treeSitterNoNullNodes(caseSyntax.namedChildren).slice(
+    isDefault ? 0 : 1,
+  );
   const hasFallthrough = true;
   return { isDefault, consequence, hasFallthrough };
 }
