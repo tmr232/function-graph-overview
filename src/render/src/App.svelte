@@ -26,7 +26,7 @@ import {
   iterFunctions,
 } from "../../file-parsing/vite";
 
-let codeUrl: string | undefined = $state();
+let codeUrl: string | undefined;
 
 /**
  * A reference to a function on GitHub
@@ -207,17 +207,22 @@ async function createCFG(params: Params): Promise<CFG> {
 }
 
 async function render() {
-  const urlSearchParams = new URLSearchParams(window.location.search);
-  const params = parseUrlSearchParams(urlSearchParams);
-  setBackgroundColor(params.colors);
-  if (params.type === "GitHub") {
-    codeUrl = params.codeUrl;
-  }
+  try {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = parseUrlSearchParams(urlSearchParams);
+    setBackgroundColor(params.colors);
+    if (params.type === "GitHub") {
+      codeUrl = params.codeUrl;
+    }
 
-  const cfg = await createCFG(params);
-  const graphviz = await Graphviz.load();
-  rawSVG = graphviz.dot(graphToDot(cfg, false, params.colorScheme));
-  return rawSVG;
+    const cfg = await createCFG(params);
+    const graphviz = await Graphviz.load();
+    rawSVG = graphviz.dot(graphToDot(cfg, false, params.colorScheme));
+    return rawSVG;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 }
 
 function downloadString(text: string, fileType: string, fileName: string) {
