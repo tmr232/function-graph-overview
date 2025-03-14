@@ -39,6 +39,7 @@ export interface Context {
   state: BlockHandler;
   link: Link;
   extra?: Extra;
+  mayExit?: (call: Parser.SyntaxNode) => boolean;
 }
 
 /**
@@ -154,6 +155,7 @@ export class GenericCFGBuilder {
         ),
       },
       extra: extra,
+      mayExit: this.options.mayExit,
     });
   }
 

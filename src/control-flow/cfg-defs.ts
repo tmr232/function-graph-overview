@@ -32,7 +32,8 @@ export type NodeType =
   | "FOR_EXIT"
   | "SWITCH_CONDITION"
   | "SWITCH_MERGE"
-  | "CASE_CONDITION";
+  | "CASE_CONDITION"
+  | "EXIT_PROCESS";
 
 export type EdgeType = "regular" | "consequence" | "alternative" | "exception";
 
@@ -318,6 +319,7 @@ export interface BuilderOptions {
    * The first capture group will be used as the marker text.
    */
   markerPattern?: RegExp;
+  mayExit?: (call: Parser.SyntaxNode) => boolean;
 }
 
 export interface CFGBuilder {
