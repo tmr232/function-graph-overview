@@ -11,6 +11,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Documentation now renders `dot` and `dot-cfg` (CFG-styled DOT diagrams)
 - Documentation about our usage of Graphviz
 - Documentation about the representation of control flow in the graph
+- Added support for "special" function detection and process-terminating nodes in the graph.
+  This is currently only enabled in the `/render` page to slowly build up a collection of
+  functions to match and confidence in the representation before adding to the main tool.
 
 ### Fixed
 

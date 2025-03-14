@@ -56,6 +56,7 @@ const statementHandlers: StatementHandlers = {
     labeled_statement: processLabeledStatement,
     goto_statement: processGotoStatement,
     comment: processComment,
+    expression_statement: processExpressionStatement,
   },
   default: defaultProcessStatement,
 };
@@ -70,6 +71,23 @@ function processSwitchStatement(syntax: SyntaxNode, ctx: Context): BasicBlock {
 
 function processSelectStatement(syntax: SyntaxNode, ctx: Context): BasicBlock {
   return processSwitchlike(syntax, { noImplicitDefault: true }, ctx);
+}
+
+function processExpressionStatement(
+  syntax: SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  if (syntax.firstChild?.type === "call_expression") {
+    const functionName = syntax.firstChild.childForFieldName("function")?.text;
+    if (!functionName) {
+      throw new Error("Missing callee in call expression!");
+    }
+    const callBlock = ctx.callProcessor?.(syntax, functionName, ctx);
+    if (callBlock) {
+      return callBlock;
+    }
+  }
+  return defaultProcessStatement(syntax, ctx);
 }
 
 function defaultProcessStatement(syntax: SyntaxNode, ctx: Context): BasicBlock {

@@ -1,5 +1,6 @@
 import type { MultiDirectedGraph } from "graphology";
 import type { Node as SyntaxNode } from "web-tree-sitter";
+import type { Context } from "./generic-cfg-builder.ts";
 import type { Lookup } from "./ranges";
 
 export type NodeType =
@@ -32,7 +33,8 @@ export type NodeType =
   | "FOR_EXIT"
   | "SWITCH_CONDITION"
   | "SWITCH_MERGE"
-  | "CASE_CONDITION";
+  | "CASE_CONDITION"
+  | "EXIT_PROCESS";
 
 export type EdgeType = "regular" | "consequence" | "alternative" | "exception";
 
@@ -290,7 +292,11 @@ export function mergeNodeAttrs(
   if (from.cluster !== into.cluster) {
     return null;
   }
-  const noMergeTypes: Set<NodeType> = new Set(["YIELD", "THROW"]);
+  const noMergeTypes: Set<NodeType> = new Set([
+    "YIELD",
+    "THROW",
+    "EXIT_PROCESS",
+  ]);
   if (noMergeTypes.has(from.type) || noMergeTypes.has(into.type)) {
     return null;
   }
@@ -318,6 +324,11 @@ export interface BuilderOptions {
    * The first capture group will be used as the marker text.
    */
   markerPattern?: RegExp;
+  callProcessor?: (
+    call: SyntaxNode,
+    name: string,
+    ctx: Context,
+  ) => BasicBlock | undefined;
 }
 
 export interface CFGBuilder {
