@@ -8,13 +8,26 @@ on:
   release:
     types:
       - created
+
+permissions: {}
+
 jobs:
   test:
     name: "Test"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
+        with:
+          persist-credentials: false
+
+      - if: ${{ github.event_name == 'release' }}
+        uses: oven-sh/setup-bun@v2
+        with:
+          no-cache: true
+
+      - if: ${{ github.event_name != 'release' }}
+        uses: oven-sh/setup-bun@v2
+
 
       - run: bun install
 
@@ -31,7 +44,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
+        with:
+          persist-credentials: false
+
+      - if: ${{ github.event_name == 'release' }}
+        uses: oven-sh/setup-bun@v2
+        with:
+          no-cache: true
+
+      - if: ${{ github.event_name != 'release' }}
+        uses: oven-sh/setup-bun@v2
 
       - run: bun install
 
@@ -58,7 +80,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
+        with:
+          persist-credentials: false
+
+      - if: ${{ github.event_name == 'release' }}
+        uses: oven-sh/setup-bun@v2
+        with:
+          no-cache: true
+
+      - if: ${{ github.event_name != 'release' }}
+        uses: oven-sh/setup-bun@v2
 
       - run: bun install
       - run: bun build-webview

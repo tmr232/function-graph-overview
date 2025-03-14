@@ -1,0 +1,6 @@
+rules:
+  cache-poisoning:
+    ignore:
+      - build.yaml:29
+      - build.yaml:56
+      - build.yaml:92

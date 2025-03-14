@@ -4,13 +4,19 @@ on:
   push:
     branches: "main"
 
+permissions: {}
+
 jobs:
   build:
     name: "Build Demo site"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+            persist-credentials: false
       - uses: oven-sh/setup-bun@v2
+        with:
+          no-cache: true
 
       - run: bun install
 

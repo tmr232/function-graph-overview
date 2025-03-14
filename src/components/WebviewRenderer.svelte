@@ -1,139 +1,133 @@
 <script lang="ts">
-  import { type Node as SyntaxNode, type Tree } from "web-tree-sitter";
-  import { functionNodeTypes, type Language } from "../control-flow/cfg";
-  import { Graphviz } from "@hpcc-js/wasm-graphviz";
-  import { initialize as initializeUtils, type Parsers } from "./utils";
-  import { createEventDispatcher } from "svelte";
-  import { type ColorList, getLightColorList } from "../control-flow/colors";
-  import { Renderer, type RenderOptions } from "./renderer.ts";
-  import { memoizeFunction } from "./caching.ts";
-  import objectHash from "object-hash";
+import { Graphviz } from "@hpcc-js/wasm-graphviz";
+import objectHash from "object-hash";
+import { createEventDispatcher } from "svelte";
+import { type Node as SyntaxNode, type Tree } from "web-tree-sitter";
+import { type Language, functionNodeTypes } from "../control-flow/cfg";
+import { type ColorList, getLightColorList } from "../control-flow/colors";
+import { memoizeFunction } from "./caching.ts";
+import { type RenderOptions, Renderer } from "./renderer.ts";
+import { type Parsers, initialize as initializeUtils } from "./utils";
 
-  type CodeAndOffset = { code: string; offset: number; language: Language };
+type CodeAndOffset = { code: string; offset: number; language: Language };
 
-  let parsers: Parsers;
-  let graphviz: Graphviz;
-  let dot: string;
-  let getNodeOffset: (nodeId: string) => number | undefined = () => undefined;
-  let tree: Tree;
-  let svg: string;
-  export let colorList = getLightColorList();
-  export let codeAndOffset: CodeAndOffset | null = null;
-  export let verbose: boolean = false;
-  export let simplify: boolean = true;
-  export let trim: boolean = true;
-  export let flatSwitch: boolean = true;
-  export let highlight: boolean = true;
-  export let showRegions: boolean = false;
+let parsers: Parsers;
+let graphviz: Graphviz;
+let dot: string;
+let getNodeOffset: (nodeId: string) => number | undefined = () => undefined;
+let tree: Tree;
+let svg: string;
+export let colorList = getLightColorList();
+export let codeAndOffset: CodeAndOffset | null = null;
+export let verbose: boolean = false;
+export let simplify: boolean = true;
+export let trim: boolean = true;
+export let flatSwitch: boolean = true;
+export let highlight: boolean = true;
+export let showRegions: boolean = false;
 
-  const getRenderer = memoizeFunction({
-    func: (options: RenderOptions, colorList: ColorList, graphviz: Graphviz) =>
-      new Renderer(options, colorList, graphviz),
-    hash: (options: RenderOptions, colorList: ColorList, _graphviz: Graphviz) =>
-      objectHash({ options, colorList }),
-    max: 1,
-  });
+const getRenderer = memoizeFunction({
+  func: (options: RenderOptions, colorList: ColorList, graphviz: Graphviz) =>
+    new Renderer(options, colorList, graphviz),
+  hash: (options: RenderOptions, colorList: ColorList, _graphviz: Graphviz) =>
+    objectHash({ options, colorList }),
+  max: 1,
+});
 
-  const dispatch = createEventDispatcher();
+const dispatch = createEventDispatcher();
 
-  async function initialize() {
-    const utils = await initializeUtils();
-    parsers = utils.parsers;
-    graphviz = utils.graphviz;
-  }
+async function initialize() {
+  const utils = await initializeUtils();
+  parsers = utils.parsers;
+  graphviz = utils.graphviz;
+}
 
-  function getFunctionAtOffset(
-    tree: Tree,
-    offset: number,
-    language: Language,
-  ): SyntaxNode | null {
-    let syntax: SyntaxNode | null = tree.rootNode.descendantForIndex(offset);
+function getFunctionAtOffset(
+  tree: Tree,
+  offset: number,
+  language: Language,
+): SyntaxNode | null {
+  let syntax: SyntaxNode | null = tree.rootNode.descendantForIndex(offset);
 
-    while (syntax) {
-      if (functionNodeTypes[language].includes(syntax.type)) {
-        break;
-      }
-      syntax = syntax.parent;
+  while (syntax) {
+    if (functionNodeTypes[language].includes(syntax.type)) {
+      break;
     }
-    return syntax;
+    syntax = syntax.parent;
+  }
+  return syntax;
+}
+
+function renderCode(
+  code: string,
+  language: Language,
+  cursorOffset: number,
+  options: RenderOptions,
+  colorList: ColorList,
+) {
+  tree = parsers[language].parse(code);
+  const functionSyntax = getFunctionAtOffset(tree, cursorOffset, language);
+  if (!functionSyntax) {
+    throw new Error("No function found!");
   }
 
-  function renderCode(
-    code: string,
-    language: Language,
-    cursorOffset: number,
-    options: RenderOptions,
-    colorList: ColorList,
-  ) {
-    tree = parsers[language].parse(code);
-    const functionSyntax = getFunctionAtOffset(tree, cursorOffset, language);
-    if (!functionSyntax) {
-      throw new Error("No function found!");
-    }
+  const renderer = getRenderer(options, colorList, graphviz);
+  const renderResult = renderer.render(functionSyntax, language, cursorOffset);
+  dot = renderResult.dot;
+  getNodeOffset = renderResult.getNodeOffset;
 
-    const renderer = getRenderer(options, colorList, graphviz);
-    const renderResult = renderer.render(
-      functionSyntax,
-      language,
-      cursorOffset,
-    );
-    dot = renderResult.dot;
-    getNodeOffset = renderResult.getNodeOffset;
+  return renderResult.svg;
+}
 
-    return renderResult.svg;
-  }
-
-  function renderWrapper(
-    codeAndOffset: CodeAndOffset | null,
-    options: RenderOptions,
-    colorList: ColorList,
-  ) {
-    console.log("Rendering!", codeAndOffset, colorList);
-    const bgcolor = colorList.find(
-      ({ name }) => name === "graph.background",
-    ).hex;
-    const color = colorList.find(({ name }) => name === "node.highlight").hex;
-    try {
-      if (codeAndOffset === null) {
-        svg = graphviz.dot(/*DOT*/ `digraph G {
+function renderWrapper(
+  codeAndOffset: CodeAndOffset | null,
+  options: RenderOptions,
+  colorList: ColorList,
+) {
+  console.log("Rendering!", codeAndOffset, colorList);
+  const bgcolor = colorList.find(({ name }) => name === "graph.background").hex;
+  const color = colorList.find(({ name }) => name === "node.highlight").hex;
+  try {
+    if (codeAndOffset === null) {
+      svg = graphviz.dot(/*DOT*/ `digraph G {
     bgcolor="${bgcolor}"
     node [color="${color}", fontcolor="${color}"]
     edge [color="${color}"]
     Hello -> World 
 }`);
-      } else {
-        svg = renderCode(
-          codeAndOffset.code,
-          codeAndOffset.language,
-          codeAndOffset.offset,
-          options,
-          colorList,
-        );
-      }
-    } catch (error) {
-      console.trace(error);
+    } else {
+      svg = renderCode(
+        codeAndOffset.code,
+        codeAndOffset.language,
+        codeAndOffset.offset,
+        options,
+        colorList,
+      );
     }
-    return svg;
+  } catch (error) {
+    console.trace(error);
   }
+  return svg;
+}
 
-  function onClick(event: MouseEvent) {
-    let target: Element = event.target as Element;
-    while (
-      target.tagName !== "div" &&
-      target.tagName !== "svg" &&
-      !target.classList.contains("node") &&
-      target.parentElement !== null
-    ) {
-      target = target.parentElement;
-    }
-    if (!target.classList.contains("node")) {
-      return;
-    }
-    dispatch("node-clicked", {
-      node: target.id,
-      offset: getNodeOffset(target.id),
-    });
+function onClick(event: MouseEvent) {
+  let target: Element = event.target as Element;
+  while (
+    target.tagName !== "div" &&
+    target.tagName !== "svg" &&
+    !target.classList.contains("node") &&
+    target.parentElement !== null
+  ) {
+    target = target.parentElement;
   }
+  if (!target.classList.contains("node")) {
+    return;
+  }
+  dispatch("node-clicked", {
+    node: target.id,
+    offset: getNodeOffset(target.id),
+  });
+}
 </script>
 
 {#await initialize() then}

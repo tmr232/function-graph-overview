@@ -7,13 +7,25 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": [
-      "./dist",
-      "*.svelte",
-      "src/test/commentTestSamples",
-      "src/demo/src/assets"
-    ]
+    "ignore": ["./dist", "src/test/commentTestSamples", "src/demo/src/assets"]
   },
+  "overrides": [
+    {
+      "include": ["*.svelte"],
+      "linter": {
+        "rules": {
+          "style": {
+            // I want to keep variables typed explicitly in some cases, like Svelte exports.
+            "noInferrableTypes": "off",
+            // Disable some checks so biome doesn't crash.
+            // https://biomejs.dev/internals/language-support/#html-super-languages-support
+            "useConst": "off",
+            "useImportType": "off"
+          }
+        }
+      }
+    }
+  ],
   "formatter": {
     "enabled": true,
     "indentStyle": "space"

@@ -43,6 +43,7 @@ const statementHandlers: StatementHandlers = {
     try_statement: processTryStatement,
     raise_statement: processRaiseStatement,
     block: processStatementSequence,
+    assert_statement: processAssertStatement,
   },
   default: defaultProcessStatement,
 };
@@ -63,6 +64,35 @@ function defaultProcessStatement(syntax: SyntaxNode, ctx: Context): BasicBlock {
   ctx.link.syntaxToNode(syntax, newNode);
   return { entry: newNode, exit: newNode };
 }
+
+function processAssertStatement(
+  assertSyntax: SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const conditionSyntax = assertSyntax.child(1) as SyntaxNode;
+  const messageSyntax = assertSyntax.child(3);
+  const conditionNode = ctx.builder.addNode(
+    "ASSERT_CONDITION",
+    `Assert: ${conditionSyntax.text}`,
+    conditionSyntax.startIndex,
+  );
+  const raiseNode = ctx.builder.addNode(
+    "THROW",
+    `Assertion Message: ${messageSyntax?.text}`,
+    conditionSyntax.endIndex,
+  );
+  const happyNode = ctx.builder.addNode(
+    "MERGE",
+    "Assert successful",
+    assertSyntax.endIndex,
+  );
+
+  ctx.builder.addEdge(conditionNode, raiseNode, "alternative");
+  ctx.builder.addEdge(conditionNode, happyNode, "consequence");
+
+  return { entry: conditionNode, exit: happyNode, functionExits: [raiseNode] };
+}
+
 function processRaiseStatement(
   raiseSyntax: SyntaxNode,
   ctx: Context,
@@ -74,7 +104,7 @@ function processRaiseStatement(
     raiseSyntax.startIndex,
   );
   ctx.link.syntaxToNode(raiseSyntax, raiseNode);
-  return { entry: raiseNode, exit: null };
+  return { entry: raiseNode, exit: null, functionExits: [raiseNode] };
 }
 function processReturnStatement(
   returnSyntax: SyntaxNode,
@@ -87,13 +117,13 @@ function processReturnStatement(
     returnSyntax.startIndex,
   );
   ctx.link.syntaxToNode(returnSyntax, returnNode);
-  return { entry: returnNode, exit: null, returns: [returnNode] };
+  return { entry: returnNode, exit: null, functionExits: [returnNode] };
 }
 function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
   const { builder, matcher } = ctx;
   /*
-  Here's an idea - I can duplicate the finally blocks!
-  Then if there's a return, I stick the finally before it.
+  Here's an idea - I can duplicate the `finally` blocks!
+  Then, if there's a function-exit, I stick the `finally` before it.
   In other cases, the finally is after the end of the try-body.
   This is probably the best course of action.
   */
@@ -156,33 +186,33 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
     }
 
     const finallyBlock = builder.withCluster("finally", () => {
-      // Handle all the return statements from the try block
+      // Handle all the function-exit statements from the try block
       if (finallySyntax) {
         // This is only relevant if there's a finally block.
-        matcher.state.forEachReturn((returnNode) => {
-          // We create a new finally block for each return node,
+        matcher.state.forEachFunctionExit((functionExitNode) => {
+          // We create a new finally block for each function-exit node,
           // so that we can link them.
           const duplicateFinallyBlock = match.getBlock(finallySyntax);
-          // We also clone the return node, to place it _after_ the finally block
+          // We also clone the function-exit node, to place it _after_ the finally block
           // We also override the cluster node, pulling it up to the `try-complex`,
-          // as the return is neither in a `try`, `except`, or `finally` context.
-          const returnNodeClone = builder.cloneNode(returnNode, {
+          // as the function-exit is neither in a `try`, `except`, or `finally` context.
+          const functionExitCloneNode = builder.cloneNode(functionExitNode, {
             cluster: tryComplexCluster,
           });
 
-          builder.addEdge(returnNode, duplicateFinallyBlock.entry);
+          builder.addEdge(functionExitNode, duplicateFinallyBlock.entry);
           if (duplicateFinallyBlock.exit)
-            builder.addEdge(duplicateFinallyBlock.exit, returnNodeClone);
+            builder.addEdge(duplicateFinallyBlock.exit, functionExitCloneNode);
 
-          // We return the cloned return node as the new return node, in case we're nested
-          // in a scope that will process it.
-          return returnNodeClone;
+          // We return the cloned function-exit node as the new function-exit node,
+          // in case we're nested in a scope that will process it.
+          return functionExitCloneNode;
         });
       }
 
       // Handle the finally-block for the trivial case, where we just pass through the try block
-      // This must happen AFTER handling the return statements, as the finally block may add return
-      // statements of its own.
+      // This must happen AFTER handling the function-exit statements,
+      // as the finally block may add function-exit statements of its own.
       const finallyBlock = match.getBlock(finallySyntax);
       return finallyBlock;
     });
@@ -285,7 +315,16 @@ function processMatchStatement(
       (match_statement
         subject: (_) @subject
           body: (block 
-            alternative: (case_clause (":") @case-colon)+  @case
+            [
+              alternative: (
+                case_clause (
+                  (case_pattern _) @case-pattern
+                  ":" @case-colon
+                )
+                consequence: (_) @consequence
+              )  @case
+              (comment)
+            ]+
           )
       ) @match
       `,
@@ -311,10 +350,7 @@ function processMatchStatement(
   );
   ctx.link.syntaxToNode(matchSyntax, subjectBlock.entry);
 
-  // This is the case where case matches
-  if (subjectBlock.exit)
-    builder.addEdge(subjectBlock.exit, mergeNode, "alternative");
-
+  let foundCatchall = false;
   let previous = subjectBlock.exit as string;
   for (const [caseSyntax, caseColon] of zip(
     match.getSyntaxMany("case"),
@@ -322,6 +358,23 @@ function processMatchStatement(
   )) {
     const { consequence: consequenceSyntax, patterns: patternSyntaxMany } =
       parseCase(caseSyntax);
+
+    foundCatchall ||= patternSyntaxMany.some((patternSyntax) => {
+      const child = patternSyntax.firstChild;
+      switch (child?.type) {
+        case "dotted_name":
+          /* The children of a dotted name are the names and the dots.
+             So a single child means there's no dot and hence only one name.
+           */
+          return child.childCount === 1;
+        case "_":
+          /* `_` has a specific node type */
+          return true;
+        default:
+          return false;
+      }
+    });
+
     const consequenceBlock = match.getBlock(consequenceSyntax);
     const patternNode = builder.addNode(
       "CASE_CONDITION",
@@ -343,8 +396,20 @@ function processMatchStatement(
       if (previous) builder.addEdge(previous, patternNode, "alternative");
       previous = patternNode;
     }
+
+    if (foundCatchall) {
+      // A catch-all was found, ignore the rest of the cases.
+      break;
+    }
   }
-  if (previous) builder.addEdge(previous, mergeNode, "alternative");
+
+  if (previous && !foundCatchall) {
+    builder.addEdge(previous, mergeNode, "alternative");
+  }
+
+  // If no catch-all is found, add a "non-matched" edge.
+  if (subjectBlock.exit && !foundCatchall)
+    builder.addEdge(subjectBlock.exit, mergeNode, "alternative");
 
   return matcher.update({ entry: subjectBlock.entry, exit: mergeNode });
 }

@@ -3,6 +3,7 @@ import { getStatementHandlers } from "./cfg-c.ts";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
   forEachLoopProcessor,
+  processReturnStatement,
   processThrowStatement,
 } from "./common-patterns.ts";
 import {
@@ -30,12 +31,27 @@ const processForRangeStatement = forEachLoopProcessor({
 });
 
 const statementHandlers: StatementHandlers = getStatementHandlers();
-const cppSpecificHandlers = {
+const cppSpecificHandlers: StatementHandlers["named"] = {
   try_statement: processTryStatement,
   throw_statement: processThrowStatement,
+  co_return_statement: processReturnStatement,
+  co_yield_statement: processCoYieldStatement,
   for_range_loop: processForRangeStatement,
 };
 Object.assign(statementHandlers.named, cppSpecificHandlers);
+
+function processCoYieldStatement(
+  coYieldSyntax: SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const yieldNode = ctx.builder.addNode(
+    "YIELD",
+    coYieldSyntax.text,
+    coYieldSyntax.startIndex,
+  );
+  ctx.link.syntaxToNode(coYieldSyntax, yieldNode);
+  return { entry: yieldNode, exit: yieldNode };
+}
 
 function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
   const { builder, matcher } = ctx;

@@ -7,9 +7,13 @@ import type { Language } from "../control-flow/cfg";
 
 export interface Requirements {
   /**
-   * Number of nodes expected in the CFG
+   * Number of nodes expected in the CFG (simplified, if-chain switch)
    */
   nodes?: number;
+  /**
+   * Number of nodes expected in the CFG (simplified, flat switch)
+   */
+  flatNodes?: number;
   /**
    * Number of exit nodes expected in the CFG
    */
@@ -21,6 +25,13 @@ export interface Requirements {
    * by the marker to use in the test.
    */
   reaches?: [string, string][];
+  /**
+   * [source, target] pairs to assert reachability in the CFG (simplified, flat switch)
+   *
+   * Nodes need to be marked with a comment, containing `CFG: ` followed
+   * by the marker to use in the test.
+   */
+  flatReaches?: [string, string][];
   /**
    * [source, target] pairs to assert un-reachability in the CFG
    *

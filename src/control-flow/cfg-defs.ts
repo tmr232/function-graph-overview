@@ -21,6 +21,7 @@ export type NodeType =
   | "START"
   | "END"
   | "CONDITION"
+  | "ASSERT_CONDITION"
   | "STATEMENT"
   | "RETURN"
   | "EMPTY"
@@ -146,11 +147,12 @@ export interface BasicBlock {
    */
   gotos?: Goto[];
   /**
-   * All the `return` statements within the block.
-   * As the CFG is a single-function graph, `return` statements are never
+   * All the function-exit statements within the block.
+   * As the CFG is a single-function graph, function-exit statements are never
    * resolved within it.
+   * This includes things like `return` and `throw` and `raise`.
    */
-  returns?: string[];
+  functionExits?: string[];
 }
 
 export type CFGGraph = MultiDirectedGraph<GraphNode, GraphEdge>;
@@ -193,14 +195,16 @@ export class BlockHandler {
   private labels: Map<string, string> = new Map();
   private gotos: Array<Goto> = [];
   /**
-   * All the returns encountered so far.
+   * All the exits encountered so far.
+   *
+   * This includes: `return`, `throw`, `raise`, etc.
    *
    * This is needed for `finally` clauses in exception handling,
-   * as the return is moved/duplicated to the end of the finally-clause.
-   * This means that when processing returns, we expect to get a new set
-   * of returns.
+   * as the exit is moved/duplicated to the end of the finally-clause.
+   * This means that when processing exits, we expect to get a new set
+   * of exits.
    */
-  private returns: Array<string> = [];
+  private functionExits: Array<string> = [];
 
   private shouldHandle(label?: string): (stmt: ExitStatement) => boolean {
     return (stmt: ExitStatement) => {
@@ -245,8 +249,8 @@ export class BlockHandler {
     this.continues = unhandledContinues;
   }
 
-  public forEachReturn(callback: (returnNode: string) => string) {
-    this.returns = this.returns.map(callback);
+  public forEachFunctionExit(callback: (returnNode: string) => string) {
+    this.functionExits = this.functionExits.map(callback);
   }
 
   public processGotos(callback: (gotoNode: string, labelNode: string) => void) {
@@ -264,7 +268,7 @@ export class BlockHandler {
     this.breaks.push(...(block.breaks ?? []));
     this.continues.push(...(block.continues ?? []));
     this.gotos.push(...(block.gotos ?? []));
-    this.returns.push(...(block.returns ?? []));
+    this.functionExits.push(...(block.functionExits ?? []));
     block.labels?.forEach((value, key) => this.labels.set(key, value));
 
     return {
@@ -274,7 +278,7 @@ export class BlockHandler {
       continues: this.continues,
       gotos: this.gotos,
       labels: this.labels,
-      returns: this.returns,
+      functionExits: this.functionExits,
     };
   }
 }
@@ -302,15 +306,6 @@ export function mergeNodeAttrs(
     targets: [...from.targets, ...into.targets],
     startOffset: startOffset,
   };
-}
-export interface Case {
-  conditionEntry: string;
-  conditionExit: string;
-  consequenceEntry: string;
-  consequenceExit: string | null;
-  alternativeExit: string;
-  hasFallthrough: boolean;
-  isDefault: boolean;
 }
 
 export interface BuilderOptions {
