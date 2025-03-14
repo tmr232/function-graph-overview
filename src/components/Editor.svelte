@@ -6,9 +6,13 @@ import { EditorView } from "@codemirror/view";
 import { createEventDispatcher } from "svelte";
 import CodeMirror from "svelte-codemirror-editor";
 import { isDark } from "./lightdark.ts";
-export let code: string;
-export let lang: LanguageSupport;
-export let fontSize: string = "1em";
+interface Props {
+  code: string;
+  lang: LanguageSupport;
+  fontSize?: string;
+}
+
+let { code = $bindable(), lang, fontSize = "1em" }: Props = $props();
 
 let editorView: EditorView;
 let cursorPos: { row: number; column: number; index: number };

@@ -26,7 +26,7 @@ import {
   iterFunctions,
 } from "../../file-parsing/vite";
 
-let codeUrl: string | undefined;
+let codeUrl: string | undefined = $state();
 
 /**
  * A reference to a function on GitHub
@@ -271,14 +271,14 @@ onMount(() => {
 
 <div class="controlsContainer">
   <div class="controls">
-    <button on:click={resetView}>Reset View</button>
+    <button onclick={resetView}>Reset View</button>
     <button
-      on:click={openCode}
+      onclick={openCode}
       disabled={!Boolean(codeUrl)}
       title={Boolean(codeUrl) ? "" : "Only available for GitHub code"}
       >Open Code</button
     >
-    <button on:click={saveSVG}>Download SVG</button>
+    <button onclick={saveSVG}>Download SVG</button>
   </div>
 </div>
 <div class="svgContainer">

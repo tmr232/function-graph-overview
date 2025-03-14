@@ -17,14 +17,27 @@ let dot: string;
 let getNodeOffset: (nodeId: string) => number | undefined = () => undefined;
 let tree: Tree;
 let svg: string;
-export let colorList = getLightColorList();
-export let codeAndOffset: CodeAndOffset | null = null;
-export let verbose: boolean = false;
-export let simplify: boolean = true;
-export let trim: boolean = true;
-export let flatSwitch: boolean = true;
-export let highlight: boolean = true;
-export let showRegions: boolean = false;
+interface Props {
+  colorList?: ColorList;
+  codeAndOffset?: CodeAndOffset | null;
+  verbose?: boolean;
+  simplify?: boolean;
+  trim?: boolean;
+  flatSwitch?: boolean;
+  highlight?: boolean;
+  showRegions?: boolean;
+}
+
+let {
+  colorList = getLightColorList(),
+  codeAndOffset = null,
+  verbose = false,
+  simplify = true,
+  trim = true,
+  flatSwitch = true,
+  highlight = true,
+  showRegions = false,
+}: Props = $props();
 
 const getRenderer = memoizeFunction({
   func: (options: RenderOptions, colorList: ColorList, graphviz: Graphviz) =>
@@ -132,9 +145,9 @@ function onClick(event: MouseEvent) {
 
 {#await initialize() then}
   <!-- I don't know how to make this part accessible. PRs welcome! -->
-  <!-- svelte-ignore a11y-click-events-have-key-events -->
-  <!-- svelte-ignore a11y-no-static-element-interactions -->
-  <div class="graph" on:click={onClick}>
+  <!-- svelte-ignore a11y_click_events_have_key_events -->
+  <!-- svelte-ignore a11y_no_static_element_interactions -->
+  <div class="graph" onclick={onClick}>
     {@html renderWrapper(
       codeAndOffset,
       {

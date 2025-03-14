@@ -4,14 +4,24 @@ import { type TestFuncRecord } from "../test/commentTestUtils";
 import type { RenderOptions } from "./renderer.ts";
 import { processRecord } from "./utils";
 
-let ast: string = "";
-let dot: string = "";
+let ast: string = $state("");
+let dot: string = $state("");
 let visibleTestResults: string = "";
-export let record: TestFuncRecord;
-export let verbose: boolean = false;
-export let simplify: boolean = true;
-export let trim: boolean = true;
-export let flatSwitch: boolean = true;
+interface Props {
+  record: TestFuncRecord;
+  verbose?: boolean;
+  simplify?: boolean;
+  trim?: boolean;
+  flatSwitch?: boolean;
+}
+
+let {
+  record,
+  verbose = false,
+  simplify = true,
+  trim = true,
+  flatSwitch = true,
+}: Props = $props();
 
 function formatAST(ast: string): string {
   return ast
