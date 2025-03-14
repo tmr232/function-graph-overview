@@ -40,7 +40,7 @@
     "svelte-awesome-color-picker": "^3.1.4",
     "svelte-codemirror-editor": "^1.4.1",
     "tree-sitter-c": "^0.23.1",
-    "tree-sitter-cli": "^0.23.2",
+    "tree-sitter-cli": "^0.25.3",
     "tree-sitter-cpp": "^0.23.4",
     "tree-sitter-go": "^0.23.1",
     "tree-sitter-python": "^0.23.2",
