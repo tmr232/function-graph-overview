@@ -96,6 +96,10 @@ export class Renderer {
 
     const builder = newCFGBuilder(language, {
       flatSwitch: this.options.flatSwitch,
+      mayExit: (func) => {
+        console.log(func.text);
+        return func.text === "panic";
+      },
     });
 
     // Build the CFG
