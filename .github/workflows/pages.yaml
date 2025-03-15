@@ -18,7 +18,7 @@ jobs:
         with:
           no-cache: true
 
-      - run: bun install
+      - run: bun install --frozen-lockfile
 
       - name: "Build Demo Website"
         run: bun build-demo
