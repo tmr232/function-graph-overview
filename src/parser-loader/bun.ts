@@ -6,7 +6,6 @@ export async function initializeParser(
   language: Language,
 ): Promise<{ parser: Parser; language: TreeSitterLanguage }> {
   await Parser.init();
-
   const parserLanguage = await TreeSitterLanguage.load(wasmMapping[language]);
   const parser = new Parser();
   parser.setLanguage(parserLanguage);

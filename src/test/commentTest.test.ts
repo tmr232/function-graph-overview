@@ -1,6 +1,21 @@
-import { expect, test } from "vitest";
+import { expect, test, describe ,beforeAll, it} from "vitest";
 import { collectTests } from "./commentTestCollector";
 import { TestManager } from "./commentTestManager";
+import { Language, Parser } from "web-tree-sitter";
+import treeSitterC from "../../parsers/tree-sitter-c.wasm?url";
+
+let C;
+describe("bla", () =>{
+beforeAll(async () => {
+  ({C} = await Parser.init().then(async () => ({
+    C: await Language.load(treeSitterC),
+  })));
+})
+  it("should ", () => {
+    console.log(C);
+
+  });
+})
 
 const testManager = new TestManager({
   testFunctions: await collectTests(),

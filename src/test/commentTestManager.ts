@@ -16,6 +16,7 @@ export class TestManager {
 
   constructor(options: TestManagerOptions) {
     this.testFunctions = options.testFunctions;
+    console.log(this.testFunctions)
   }
 
   public invokeWith(failureCallback: (failure: string) => void) {

@@ -4,9 +4,10 @@ import { parseComment } from "./commentTestUtils";
 
 import { initializeParser } from "../parser-loader/bun.ts";
 
-const { parser, language } = await initializeParser("C");
 
-export function* getTestFuncs(code: string): Generator<TestFunction> {
+
+export async function* getTestFuncs(code: string): AsyncGenerator<TestFunction> {
+  const { parser} = await initializeParser("C");
   const tree = parser.parse(code);
   if (!tree) {
     return;
@@ -14,7 +15,8 @@ export function* getTestFuncs(code: string): Generator<TestFunction> {
   yield* iterTestFunctions(tree);
 }
 
-function* iterTestFunctions(tree: Tree): Generator<TestFunction> {
+async function* iterTestFunctions(tree: Tree): AsyncGenerator<TestFunction> {
+  const {  language } = await initializeParser("C");
   const testFuncQuery = new Query(
     language,
     `
