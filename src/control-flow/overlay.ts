@@ -1,7 +1,8 @@
 import type { Container, Element, Svg } from "@svgdotjs/svg.js";
-import type Parser from "web-tree-sitter";
+import type { Node as SyntaxNode } from "web-tree-sitter";
 import type { CFG, GraphNode } from "./cfg-defs.ts";
 import type { AttrMerger } from "./graph-ops.ts";
+import { treeSitterNoNullNodes } from "./hacks.ts";
 import { Lookup } from "./ranges.ts";
 import { svgFromString } from "./svgFromString.ts";
 
@@ -121,7 +122,7 @@ export class OverlayBuilder {
   private readonly overlays: OverlayRange[];
   private readonly overlayLookup: Lookup<OverlayRange | undefined>;
 
-  constructor(functionSyntax: Parser.SyntaxNode) {
+  constructor(functionSyntax: SyntaxNode) {
     this.overlays = parseOverlay(functionSyntax);
     this.overlayLookup = createOverlayRange(this.overlays);
   }
@@ -235,8 +236,8 @@ type OverlayRange = {
   depth: number;
 };
 
-function parseOverlay(func: Parser.SyntaxNode): OverlayRange[] {
-  const comments = func.descendantsOfType("comment");
+function parseOverlay(func: SyntaxNode): OverlayRange[] {
+  const comments = treeSitterNoNullNodes(func.descendantsOfType("comment"));
   const stack: { startOffset: number; text: string }[] = [];
   const overlays: OverlayRange[] = [];
   for (const comment of comments) {

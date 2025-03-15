@@ -10,7 +10,11 @@ import {
 } from "../control-flow/colors";
 const dispatch = createEventDispatcher();
 
-export let colorList = getLightColorList();
+interface Props {
+  colorList?: ColorList;
+}
+
+let { colorList = $bindable(getLightColorList()) }: Props = $props();
 
 const colorLabels = new Map([
   ["node.default", "Default"],
@@ -62,13 +66,13 @@ function resetList() {
     <fieldset>
       <legend>Controls</legend>
       <div class="controls">
-        <button on:click={copyList} title="Copy color scheme to clipboard"
+        <button onclick={copyList} title="Copy color scheme to clipboard"
           >Copy</button
         >
-        <button on:click={pasteList} title="Paste color scheme from clipboard"
+        <button onclick={pasteList} title="Paste color scheme from clipboard"
           >Paste</button
         >
-        <button on:click={resetList} title="Reset color scheme to defaults"
+        <button onclick={resetList} title="Reset color scheme to defaults"
           >Reset</button
         >
       </div>

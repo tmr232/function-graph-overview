@@ -1,8 +1,7 @@
 import * as path from "node:path";
 import { parseArgs } from "node:util";
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
-import type Parser from "web-tree-sitter";
-import type { SyntaxNode } from "web-tree-sitter";
+import type { Node as SyntaxNode } from "web-tree-sitter";
 import { type Language, supportedLanguages } from "../src/control-flow/cfg.ts";
 import {
   deserializeColorList,
@@ -95,7 +94,7 @@ async function main() {
 
   const language: Language = values.language ?? getLanguage(filepath);
 
-  const possibleMatches: { name: string; func: Parser.SyntaxNode }[] = [];
+  const possibleMatches: { name: string; func: SyntaxNode }[] = [];
   const sourceCode = await Bun.file(filepath).text();
   const startIndex = Number.parseInt(functionName);
   let startPosition: { row: number; column: number } | undefined;
@@ -134,7 +133,7 @@ async function main() {
   }
 
   // @ts-expect-error: possibleMatches will always have exactly one value.
-  const func: Parser.SyntaxNode = possibleMatches[0].func;
+  const func: SyntaxNode = possibleMatches[0].func;
   const graphviz = await Graphviz.load();
   const cfg = buildCFG(func, language);
 

@@ -1,16 +1,21 @@
-import type Parser from "web-tree-sitter";
+import type {
+  QueryMatch,
+  QueryOptions,
+  Node as SyntaxNode,
+} from "web-tree-sitter";
+import { Query } from "web-tree-sitter";
 import { type BasicBlock, BlockHandler } from "./cfg-defs.ts";
 import { evolve } from "./evolve.ts";
 
-const defaultQueryOptions: Parser.QueryOptions = { maxStartDepth: 0 };
+const defaultQueryOptions: QueryOptions = { maxStartDepth: 0 };
 
 function matchQuery(
-  syntax: Parser.SyntaxNode,
+  syntax: SyntaxNode,
   queryString: string,
-  options?: Parser.QueryOptions,
-): Parser.QueryMatch {
-  const language = syntax.tree.getLanguage();
-  const query = language.query(queryString);
+  options?: QueryOptions,
+): QueryMatch {
+  const language = syntax.tree.language;
+  const query = new Query(language, queryString);
   options = evolve(defaultQueryOptions, options ?? {});
   const matches = query.matches(syntax, options);
 
@@ -22,34 +27,28 @@ function matchQuery(
 }
 
 export function matchExistsIn(
-  syntax: Parser.SyntaxNode,
+  syntax: SyntaxNode,
   queryString: string,
 ): boolean {
-  const language = syntax.tree.getLanguage();
-  const query = language.query(queryString);
+  const language = syntax.tree.language;
+  const query = new Query(language, queryString);
   const matches = query.matches(syntax);
   return matches.length > 0;
 }
 
-function getSyntax(
-  match: Parser.QueryMatch,
-  name: string,
-): Parser.SyntaxNode | undefined {
+function getSyntax(match: QueryMatch, name: string): SyntaxNode | undefined {
   return getSyntaxMany(match, name)[0];
 }
 
 function getLastSyntax(
-  match: Parser.QueryMatch,
+  match: QueryMatch,
   name: string,
-): Parser.SyntaxNode | undefined {
+): SyntaxNode | undefined {
   const many = getSyntaxMany(match, name);
   return many[many.length - 1];
 }
 
-function requireSyntax(
-  match: Parser.QueryMatch,
-  name: string,
-): Parser.SyntaxNode {
+function requireSyntax(match: QueryMatch, name: string): SyntaxNode {
   const syntax = getSyntax(match, name);
   if (!syntax) {
     throw new Error(`Failed getting syntax for ${name}`);
@@ -57,10 +56,7 @@ function requireSyntax(
   return syntax;
 }
 
-function getSyntaxMany(
-  match: Parser.QueryMatch,
-  name: string,
-): Parser.SyntaxNode[] {
+function getSyntaxMany(match: QueryMatch, name: string): SyntaxNode[] {
   return match.captures
     .filter((capture) => capture.name === name)
     .map((capture) => capture.node);
@@ -68,7 +64,7 @@ function getSyntaxMany(
 
 export class BlockMatcher {
   private blockHandler: BlockHandler = new BlockHandler();
-  private dispatchSingle: (syntax: Parser.SyntaxNode) => BasicBlock;
+  private dispatchSingle: (syntax: SyntaxNode) => BasicBlock;
   public update = this.blockHandler.update.bind(this.blockHandler);
 
   constructor(dispatchSingle: BlockMatcher["dispatchSingle"]) {
@@ -76,18 +72,15 @@ export class BlockMatcher {
   }
 
   public match(
-    syntax: Parser.SyntaxNode,
+    syntax: SyntaxNode,
     queryString: string,
-    options?: Parser.QueryOptions,
+    options?: QueryOptions,
   ): Match {
     const match = matchQuery(syntax, queryString, options);
     return new Match(match, this.blockHandler, this.dispatchSingle);
   }
 
-  public tryMatch(
-    syntax: Parser.SyntaxNode,
-    queryString: string,
-  ): Match | null {
+  public tryMatch(syntax: SyntaxNode, queryString: string): Match | null {
     try {
       return this.match(syntax, queryString);
     } catch {
@@ -106,12 +99,12 @@ export class BlockMatcher {
  * [tree-sitter query reference](https://tree-sitter.github.io/tree-sitter/using-parsers#pattern-matching-with-queries
  */
 export class Match {
-  private match: Parser.QueryMatch;
+  private match: QueryMatch;
   private blockHandler: BlockHandler;
   private dispatchSingle: BlockMatcher["dispatchSingle"];
 
   constructor(
-    match: Parser.QueryMatch,
+    match: QueryMatch,
     blockHandler: BlockHandler,
     dispatchSingle: BlockMatcher["dispatchSingle"],
   ) {
@@ -123,7 +116,7 @@ export class Match {
   /**
    * Returns the first named syntax node from the query match, if present.
    * @param name Name of the capture
-   * @returns {Parser.SyntaxNode|undefined} The syntax matching the capture name, if captured.
+   * @returns {SyntaxNode|undefined} The syntax matching the capture name, if captured.
    */
   public getSyntax(name: string): ReturnType<typeof getSyntax> {
     return getSyntax(this.match, name);
@@ -153,19 +146,15 @@ export class Match {
     return getSyntaxMany(this.match, name);
   }
 
-  public getBlock(syntax: Parser.SyntaxNode): BasicBlock;
-  public getBlock(
-    syntax: Parser.SyntaxNode | null | undefined,
-  ): BasicBlock | null;
-  public getBlock(
-    syntax: Parser.SyntaxNode | null | undefined,
-  ): BasicBlock | null {
+  public getBlock(syntax: SyntaxNode): BasicBlock;
+  public getBlock(syntax: SyntaxNode | null | undefined): BasicBlock | null;
+  public getBlock(syntax: SyntaxNode | null | undefined): BasicBlock | null {
     return syntax
       ? this.blockHandler.update(this.dispatchSingle(syntax))
       : null;
   }
 
-  public getManyBlocks(syntaxMany: Parser.SyntaxNode[]): BasicBlock[] {
+  public getManyBlocks(syntaxMany: SyntaxNode[]): BasicBlock[] {
     return syntaxMany.map((syntax) => this.getBlock(syntax) as BasicBlock);
   }
 }

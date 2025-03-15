@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<script lang="ts" module>
 import type { MessageToVscode } from "../../vscode/messages.ts";
 
 declare const acquireVsCodeApi:
@@ -49,12 +49,12 @@ declare global {
   const vscode =
     typeof acquireVsCodeApi !== "undefined" ? acquireVsCodeApi() : undefined;
 
-  let simplify = true;
-  let flatSwitch = true;
-  let highlight = true;
+  let simplify = $state(true);
+  let flatSwitch = $state(true);
+  let highlight = $state(true);
 
   // Set initial background color
-  let colorList = (function () {
+  let colorList = $state((function () {
     function isDarkTheme(): boolean {
       return document.body.dataset.theme !== "light";
     }
@@ -73,7 +73,7 @@ declare global {
     ).hex;
 
     return colorList;
-  })();
+  })());
 
   // TODO: The StateHandler is overkill, we should remove it.
   //       All we need for now is the navigation handlers.
@@ -123,7 +123,7 @@ declare global {
     code: string;
     offset: number;
     language: Language;
-  } | null = null;
+  } | null = $state(null);
 
   function setCode(newCode: string, offset: number, language: string) {
     if (isValidLanguage(language)) {

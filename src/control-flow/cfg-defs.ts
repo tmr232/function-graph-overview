@@ -1,5 +1,5 @@
 import type { MultiDirectedGraph } from "graphology";
-import type Parser from "web-tree-sitter";
+import type { Node as SyntaxNode } from "web-tree-sitter";
 import type { Lookup } from "./ranges";
 
 export type NodeType =
@@ -319,11 +319,11 @@ export interface BuilderOptions {
    * The first capture group will be used as the marker text.
    */
   markerPattern?: RegExp;
-  mayExit?: (call: Parser.SyntaxNode) => boolean;
+  mayExit?: (call: SyntaxNode) => boolean;
 }
 
 export interface CFGBuilder {
-  buildCFG(functionSyntax: Parser.SyntaxNode): CFG;
+  buildCFG(functionSyntax: SyntaxNode): CFG;
 }
 
 export function getNodeRemapper(cfg: CFG): (node: string) => string {

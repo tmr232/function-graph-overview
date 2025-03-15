@@ -1,5 +1,5 @@
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
-import type Parser from "web-tree-sitter";
+import type { Parser, Node as SyntaxNode, Tree } from "web-tree-sitter";
 import {
   type Language,
   functionNodeTypes,
@@ -23,10 +23,10 @@ export async function initializeParsers(): Promise<Parsers> {
 }
 
 export function getFirstFunction(
-  tree: Parser.Tree,
+  tree: Tree,
   language: Language,
-): Parser.SyntaxNode | null {
-  let functionNode: Parser.SyntaxNode | null = null;
+): SyntaxNode | null {
+  let functionNode: SyntaxNode | null = null;
   const cursor = tree.walk();
   const visitNode = () => {
     if (functionNodeTypes[language].includes(cursor.nodeType)) {
@@ -61,8 +61,11 @@ export interface TestResults {
 
 export function runTest(record: TestFuncRecord): TestResults[] {
   const tree = parsers[record.language].parse(record.code);
+  if (!tree) {
+    throw new Error(`Failed to parse code from ${record}`);
+  }
   const testFunc: TestFunction = {
-    function: getFirstFunction(tree, record.language) as Parser.SyntaxNode,
+    function: getFirstFunction(tree, record.language) as SyntaxNode,
     language: record.language,
     name: record.name,
     reqs: record.reqs,
@@ -84,10 +87,10 @@ export function processRecord(
   options: RenderOptions,
 ): { dot?: string; ast: string; svg?: string; error?: Error } {
   const tree = parsers[record.language].parse(record.code);
-  const functionSyntax = getFirstFunction(
-    tree,
-    record.language,
-  ) as Parser.SyntaxNode;
+  if (!tree) {
+    throw new Error(`Failed to parse code from ${record}`);
+  }
+  const functionSyntax = getFirstFunction(tree, record.language) as SyntaxNode;
 
   const ast = functionSyntax.toString();
 
