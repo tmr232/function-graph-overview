@@ -17,10 +17,14 @@ import {
 let parsers: Parsers;
 let graphviz: Graphviz;
 let nodeColors: NodeColors;
-export let simplify: boolean = true;
-export let trim: boolean = true;
-export let code: string;
-export let language: Language;
+interface Props {
+  simplify?: boolean;
+  trim?: boolean;
+  code: string;
+  language: Language;
+}
+
+let { simplify = true, trim = true, code, language }: Props = $props();
 
 async function initialize() {
   const utils = await initializeUtils();
@@ -117,7 +121,7 @@ function recolorNodes() {
 
 {#await initialize() then _}
   <pre>{@html renderWrapper(code, language, { simplify, trim })}</pre>
-  <button on:click={recolorNodes}>Recolor Nodes</button>
+  <button onclick={recolorNodes}>Recolor Nodes</button>
 {/await}
 
 <style>

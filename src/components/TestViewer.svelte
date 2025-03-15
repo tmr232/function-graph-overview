@@ -42,11 +42,11 @@ async function runAllTests() {
   return { testResults, failCount };
 }
 
-let simplify: boolean = true;
-let verbose: boolean = false;
-let trim: boolean = true;
-let flatSwitch: boolean = true;
-let showAll: boolean = false;
+let simplify: boolean = $state(true);
+let verbose: boolean = $state(false);
+let trim: boolean = $state(true);
+let flatSwitch: boolean = $state(true);
+let showAll: boolean = $state(false);
 </script>
 
 <div class="controls">

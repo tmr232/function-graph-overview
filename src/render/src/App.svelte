@@ -207,17 +207,22 @@ async function createCFG(params: Params): Promise<CFG> {
 }
 
 async function render() {
-  const urlSearchParams = new URLSearchParams(window.location.search);
-  const params = parseUrlSearchParams(urlSearchParams);
-  setBackgroundColor(params.colors);
-  if (params.type === "GitHub") {
-    codeUrl = params.codeUrl;
-  }
+  try {
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = parseUrlSearchParams(urlSearchParams);
+    setBackgroundColor(params.colors);
+    if (params.type === "GitHub") {
+      codeUrl = params.codeUrl;
+    }
 
-  const cfg = await createCFG(params);
-  const graphviz = await Graphviz.load();
-  rawSVG = graphviz.dot(graphToDot(cfg, false, params.colorScheme));
-  return rawSVG;
+    const cfg = await createCFG(params);
+    const graphviz = await Graphviz.load();
+    rawSVG = graphviz.dot(graphToDot(cfg, false, params.colorScheme));
+    return rawSVG;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 }
 
 function downloadString(text: string, fileType: string, fileName: string) {
@@ -271,14 +276,14 @@ onMount(() => {
 
 <div class="controlsContainer">
   <div class="controls">
-    <button on:click={resetView}>Reset View</button>
+    <button onclick={resetView}>Reset View</button>
     <button
-      on:click={openCode}
+      onclick={openCode}
       disabled={!Boolean(codeUrl)}
       title={Boolean(codeUrl) ? "" : "Only available for GitHub code"}
       >Open Code</button
     >
-    <button on:click={saveSVG}>Download SVG</button>
+    <button onclick={saveSVG}>Download SVG</button>
   </div>
 </div>
 <div class="svgContainer">

@@ -1,4 +1,6 @@
 <script lang="ts">
+import { run } from "svelte/legacy";
+
 import { cpp } from "@codemirror/lang-cpp";
 import { go } from "@codemirror/lang-go";
 import { javascript } from "@codemirror/lang-javascript";
@@ -27,12 +29,16 @@ const defaultCodeSamples: { [language in Language]?: string } = {
     "  return <h1>Hello, Stranger.</h1>;}",
 };
 
-export let code: { [language in Language]?: string } = {};
+interface Props {
+  code?: { [language in Language]?: string };
+}
 
-const languageCode = evolve(defaultCodeSamples, code);
+let { code = {} }: Props = $props();
 
-let offsetToHighlight: number | undefined = undefined;
-let colorList = getSystemColorList();
+const languageCode = $state(evolve(defaultCodeSamples, code));
+
+let offsetToHighlight: number | undefined = $state(undefined);
+let colorList = $state(getSystemColorList());
 // ADD-LANGUAGES-HERE
 let languages: {
   language: Language;
@@ -95,15 +101,15 @@ if (urlParams.has("tsx")) {
   );
 }
 
-let simplify = true;
-let flatSwitch = true;
-let highlight = true;
-let colorPicker = false;
-let verbose = urlParams.has("verbose");
-let showSegmentation = urlParams.has("segmentation");
-let showRegions = urlParams.has("showRegions");
+let simplify = $state(true);
+let flatSwitch = $state(true);
+let highlight = $state(true);
+let colorPicker = $state(false);
+let verbose = $state(urlParams.has("verbose"));
+let showSegmentation = $state(urlParams.has("segmentation"));
+let showRegions = $state(urlParams.has("showRegions"));
 let debugMode = urlParams.has("debug");
-let fontSize = "1em";
+let fontSize = $state("1em");
 const range = (start: number, end: number) =>
   Array.from({ length: end - start }, (_v, k) => k + start);
 const fontSizes: { label: string; value: string }[] = [
@@ -111,8 +117,9 @@ const fontSizes: { label: string; value: string }[] = [
   ...range(8, 31).map((n) => ({ label: `${n}`, value: `${n}px` })),
 ];
 
-let selection =
-  languages[Number.parseInt(urlParams.get("language"))] ?? languages[0];
+let selection = $state(
+  languages[Number.parseInt(urlParams.get("language"))] ?? languages[0],
+);
 
 function share() {
   const compressedCode = LZString.compressToEncodedURIComponent(
@@ -126,7 +133,7 @@ function share() {
   window.open(newUrl, "_blank").focus();
 }
 
-let graph: Graph;
+let graph: Graph = $state();
 
 function downloadString(text: string, fileType: string, fileName: string) {
   const blob = new Blob([text], { type: fileType });
@@ -164,7 +171,7 @@ function cursorMoved(event): void {
   offsetToHighlight = index;
 }
 
-let editor: Editor;
+let editor: Editor = $state();
 
 function onNodeClicked(
   e: CustomEvent<{ node: string; offset: number | null }>,
@@ -174,9 +181,11 @@ function onNodeClicked(
   if (offset !== null && offset !== undefined) editor?.setCursor(offset);
 }
 
-$: if (!colorPicker && graph) {
-  graph.applyColors(colorList);
-}
+run(() => {
+  if (!colorPicker && graph) {
+    graph.applyColors(colorList);
+  }
+});
 
 function onColorPreview(e) {
   colorList = e.detail.colors;
@@ -209,7 +218,7 @@ isDark.subscribe(() => {
     <div class="themeToggleWrapper">
       <button
         class="themeToggle"
-        on:click={onToggleClick}
+        onclick={onToggleClick}
         title="Switch between the light and dark themes."
       ></button>
     </div>
@@ -223,7 +232,7 @@ isDark.subscribe(() => {
       <div class="controls">
         <select
           bind:value={selection}
-          on:change={(e) => console.log(selection)}
+          onchange={(e) => console.log(selection)}
         >
           {#each languages as language}
             <option value={language}>
@@ -238,7 +247,7 @@ isDark.subscribe(() => {
             </option>
           {/each}
         </select>
-        <button on:click={share}>Share (experimental)</button>
+        <button onclick={share}>Share (experimental)</button>
       </div>
       <div class="codemirror">
         <Editor
@@ -292,9 +301,9 @@ isDark.subscribe(() => {
         {/if}
       </div>
       <div class="download">
-        <button on:click={saveSVG}>Save SVG</button>
+        <button onclick={saveSVG}>Save SVG</button>
         {#if debugMode}
-          <button on:click={editDOT}>Edit DOT</button>
+          <button onclick={editDOT}>Edit DOT</button>
         {/if}
       </div>
     </div>

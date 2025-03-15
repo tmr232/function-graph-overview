@@ -23,16 +23,31 @@ let dot: string;
 let tree: Tree;
 let savedSvg: string;
 let getNodeOffset: (nodeId: string) => number | undefined = () => undefined;
-export let colorList = getLightColorList();
-export let offsetToHighlight: number | undefined = undefined;
-export let code: string;
-export let language: Language;
-export let verbose: boolean = false;
-export let simplify: boolean = true;
-export let trim: boolean = true;
-export let flatSwitch: boolean = true;
-export let highlight: boolean = true;
-export let showRegions: boolean = false;
+interface Props {
+  colorList?: ColorList;
+  offsetToHighlight?: number | undefined;
+  code: string;
+  language: Language;
+  verbose?: boolean;
+  simplify?: boolean;
+  trim?: boolean;
+  flatSwitch?: boolean;
+  highlight?: boolean;
+  showRegions?: boolean;
+}
+
+let {
+  colorList = $bindable(getLightColorList()),
+  offsetToHighlight = undefined,
+  code,
+  language,
+  verbose = false,
+  simplify = true,
+  trim = true,
+  flatSwitch = true,
+  highlight = true,
+  showRegions = false,
+}: Props = $props();
 
 const dispatch = createEventDispatcher();
 
@@ -207,9 +222,9 @@ export function applyColors(colors: ColorList) {
 <div class="results">
   {#await initialize() then}
     <!-- I don't know how to make this part accessible. PRs welcome! -->
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div class="graph" on:click={onClick}>
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div class="graph" onclick={onClick}>
       {@html renderWrapper(
         code,
         language,
