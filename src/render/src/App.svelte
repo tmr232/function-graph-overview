@@ -40,7 +40,9 @@ type GithubCodeRef = {
    * The line-number for the function
    */
   line: number;
+  
 };
+
 
 /**
  * Get the line number raw file URL from a GitHub URL
@@ -129,6 +131,17 @@ type Params = (GithubParams | GraphParams) & {
   colorScheme: ColorScheme;
   colors: "light" | "dark";
 };
+type FunctionAndCFGMetadata  = {
+  functionData: {
+    name: string;
+    lineCount: number;
+  } ,
+  cfgGraphData: {
+    nodeCount: number;
+    edgeCount: number;
+    cyclomaticComplexity: number;
+  };
+};
 
 function parseUrlSearchParams(urlSearchParams: URLSearchParams): Params {
   const githubUrl = urlSearchParams.get("github");
@@ -172,11 +185,15 @@ async function createGitHubCFG(ghParams: GithubParams): Promise<CFG> {
   const code = await response.text();
   // We assume that the raw URL always ends with the file extension
   const language = getLanguage(rawUrl);
+  const func = await getFunctionByLine(code, language, line); 
 
-  const func = await getFunctionByLine(code, language, line);
   if (!func) {
     throw new Error(`Unable to find function on line ${line}`);
   }
+  updateFunctionMetadata(func);
+
+  console.log(functionAndCFGMetadata.functionData.lineCount);
+  console.log(functionAndCFGMetadata.functionData.name);
 
   return buildCFG(func, language);
 }
@@ -206,6 +223,33 @@ async function createCFG(params: Params): Promise<CFG> {
   }
 }
 
+
+let functionAndCFGMetadata: FunctionAndCFGMetadata = {
+  functionData: { name: "", lineCount: 0 },
+  cfgGraphData: { nodeCount: 0, edgeCount: 0, cyclomaticComplexity: 0 },
+};
+
+
+function updateCFGMetadata(CFG: CFG) {
+  const nodeCount : number = CFG.graph.order;
+  const edgeCount : number = CFG.graph.size;
+  const cyclomaticComplexity : number = CFG.graph.size - nodeCount + 2;
+  functionAndCFGMetadata.cfgGraphData = {
+    nodeCount,
+    edgeCount,
+    cyclomaticComplexity,
+  };
+}
+
+function updateFunctionMetadata(func: SyntaxNode) {
+  const name : string = func.type;
+  const lineCount : number = func.endPosition.row - func.startPosition.row + 1;
+  functionAndCFGMetadata.functionData = {
+    name,
+    lineCount,
+  };
+}
+
 async function render() {
   try {
     const urlSearchParams = new URLSearchParams(window.location.search);
@@ -216,6 +260,9 @@ async function render() {
     }
 
     const cfg = await createCFG(params);
+
+    updateCFGMetadata(cfg);
+
     const graphviz = await Graphviz.load();
     rawSVG = graphviz.dot(graphToDot(cfg, false, params.colorScheme));
     return rawSVG;
