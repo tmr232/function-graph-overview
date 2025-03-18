@@ -191,13 +191,7 @@ async function createGitHubCFG(ghParams: GithubParams): Promise<CFG> {
   if (!func) {
     throw new Error(`Unable to find function on line ${line}`);
   }
-
   updateFunctionMetadata(func,language);
-
-  console.log(functionAndCFGMetadata.functionData.language);
-  console.log(functionAndCFGMetadata.functionData.lineCount);
-  console.log(functionAndCFGMetadata.functionData.name);
-
   return buildCFG(func, language);
 }
 
@@ -345,8 +339,8 @@ function makeZoomable() {
 onMount(() => {
   makeZoomable();
 });
-</script>
 
+</script>
 <div class="controlsContainer">
   <div class="controls">
     <button onclick={resetView}>Reset View</button>
@@ -354,11 +348,21 @@ onMount(() => {
       onclick={openCode}
       disabled={!Boolean(codeUrl)}
       title={Boolean(codeUrl) ? "" : "Only available for GitHub code"}
-      >Open Code</button
-    >
+    >Open Code</button>
     <button onclick={saveSVG}>Download SVG</button>
   </div>
+  {#if rawSVG}
+    <div class="metadata">
+      <span>Language:   {functionAndCFGMetadata.functionData.language}</span>
+      <span>Function Name:   {functionAndCFGMetadata.functionData.name}</span>
+      <span>Line Count:   {functionAndCFGMetadata.functionData.lineCount}</span>
+      <span>Node Count:   {functionAndCFGMetadata.cfgGraphData.nodeCount}</span>
+      <span>Edge Count:   {functionAndCFGMetadata.cfgGraphData.edgeCount}</span>
+      <span>Cyclomatic Complexity:   {functionAndCFGMetadata.cfgGraphData.cyclomaticComplexity}</span>
+    </div>
+  {/if}
 </div>
+
 <div class="svgContainer">
   {#await render()}
     <p style="color: green">Loading code...</p>
@@ -368,24 +372,3 @@ onMount(() => {
     <p style="color: red">{error.message}</p>
   {/await}
 </div>
-
-<style>
-  .controlsContainer {
-    position: fixed;
-    display: flex;
-    justify-content: right;
-    width: 100%;
-    z-index: 1000;
-  }
-  .controls {
-    margin: 1em;
-  }
-  .svgContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100dvw;
-    height: 100dvh;
-  }
-</style>
