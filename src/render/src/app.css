@@ -19,7 +19,6 @@ body {
   top: 10px;
   left: 1em; 
   right: auto;
-  color: white;
   z-index: 1000;
   font-size: 1em;
   font-weight: 500;
@@ -29,6 +28,7 @@ body {
 .metadata span {
   display: block;
   margin-bottom: 1em;
+  color: gray;
   white-space: pre-wrap;
 }
 

@@ -256,7 +256,7 @@ function extractFunctionName(func: SyntaxNode, language: Language): string {
       return func
         .descendantsOfType(["identifier", "field_identifier", "property_identifier"])
         .map(node => node.text)
-        .find(Boolean); // Return the first non-falsy text value
+        .find(Boolean);
   }
 }
 
@@ -354,11 +354,11 @@ onMount(() => {
   {#if rawSVG}
     <div class="metadata">
       <span>Language:   {functionAndCFGMetadata.functionData.language}</span>
-      <span>Function Name:   {functionAndCFGMetadata.functionData.name}</span>
+      <span>Function Name:    {functionAndCFGMetadata.functionData.name}</span>
       <span>Line Count:   {functionAndCFGMetadata.functionData.lineCount}</span>
       <span>Node Count:   {functionAndCFGMetadata.cfgGraphData.nodeCount}</span>
       <span>Edge Count:   {functionAndCFGMetadata.cfgGraphData.edgeCount}</span>
-      <span>Cyclomatic Complexity:   {functionAndCFGMetadata.cfgGraphData.cyclomaticComplexity}</span>
+      <span>Cyclomatic Complexity:    {functionAndCFGMetadata.cfgGraphData.cyclomaticComplexity}</span>
     </div>
   {/if}
 </div>
