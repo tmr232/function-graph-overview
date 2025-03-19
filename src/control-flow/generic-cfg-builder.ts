@@ -40,7 +40,7 @@ export interface Context {
   state: BlockHandler;
   link: Link;
   extra?: Extra;
-  mayExit?: (call: Parser.SyntaxNode) => boolean;
+  callProcessor?: (call: SyntaxNode) => BasicBlock | undefined;
 }
 
 /**
@@ -156,7 +156,7 @@ export class GenericCFGBuilder {
         ),
       },
       extra: extra,
-      mayExit: this.options.mayExit,
+      callProcessor: this.options.callProcessor,
     });
   }
 

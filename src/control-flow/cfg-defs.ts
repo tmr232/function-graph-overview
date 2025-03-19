@@ -319,7 +319,7 @@ export interface BuilderOptions {
    * The first capture group will be used as the marker text.
    */
   markerPattern?: RegExp;
-  mayExit?: (call: Parser.SyntaxNode) => boolean;
+  callProcessor?: (call: SyntaxNode) => BasicBlock | undefined;
 }
 
 export interface CFGBuilder {

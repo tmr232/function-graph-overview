@@ -74,22 +74,16 @@ function processSelectStatement(syntax: SyntaxNode, ctx: Context): BasicBlock {
 }
 
 function processExpressionStatement(
-  syntax: Parser.SyntaxNode,
+  syntax: SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  if (
-    syntax.firstChild?.type === "call_expression" &&
-    ctx.mayExit?.(
-      syntax.firstChild.childForFieldName("function") as Parser.SyntaxNode,
-    )
-  ) {
-    const node = ctx.builder.addNode(
-      "EXIT_PROCESS",
-      syntax.text,
-      syntax.startIndex,
+  if (syntax.firstChild?.type === "call_expression") {
+    const callBlock = ctx.callProcessor?.(
+      syntax.firstChild.childForFieldName("function") as SyntaxNode,
     );
-    ctx.link.syntaxToNode(syntax, node);
-    return { entry: node, exit: null };
+    if (callBlock) {
+      return callBlock;
+    }
   }
   return defaultProcessStatement(syntax, ctx);
 }

@@ -96,7 +96,7 @@ export class Renderer {
 
     const builder = newCFGBuilder(language, {
       flatSwitch: this.options.flatSwitch,
-      mayExit: (func) => {
+      callProcessor: (func) => {
         console.log(func.text);
         return func.text === "panic";
       },
