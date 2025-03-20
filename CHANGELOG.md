@@ -13,6 +13,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   and cases after the catch-all are removed as dead code. 
 - C++ learned `co_yield` and `co_return`
 - Python learned `assert`
+- Function info and stats to the /render page. 
 
 ### Fixed
 

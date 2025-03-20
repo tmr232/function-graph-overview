@@ -40,7 +40,9 @@ type GithubCodeRef = {
    * The line-number for the function
    */
   line: number;
+  
 };
+
 
 /**
  * Get the line number raw file URL from a GitHub URL
@@ -129,6 +131,18 @@ type Params = (GithubParams | GraphParams) & {
   colorScheme: ColorScheme;
   colors: "light" | "dark";
 };
+type FunctionAndCFGMetadata  = {
+  functionData: {
+    name: string;
+    lineCount: number;
+    language : Language;
+  } ,
+  cfgGraphData: {
+    nodeCount: number;
+    edgeCount: number;
+    cyclomaticComplexity: number;
+  };
+};
 
 function parseUrlSearchParams(urlSearchParams: URLSearchParams): Params {
   const githubUrl = urlSearchParams.get("github");
@@ -172,12 +186,12 @@ async function createGitHubCFG(ghParams: GithubParams): Promise<CFG> {
   const code = await response.text();
   // We assume that the raw URL always ends with the file extension
   const language = getLanguage(rawUrl);
+  const func = await getFunctionByLine(code, language, line); 
 
-  const func = await getFunctionByLine(code, language, line);
   if (!func) {
     throw new Error(`Unable to find function on line ${line}`);
   }
-
+  updateFunctionMetadata(func,language);
   return buildCFG(func, language);
 }
 
@@ -206,6 +220,56 @@ async function createCFG(params: Params): Promise<CFG> {
   }
 }
 
+let functionAndCFGMetadata: FunctionAndCFGMetadata = {
+  functionData: { name: "", lineCount: 0 , language : undefined},
+  cfgGraphData: { nodeCount: 0, edgeCount: 0, cyclomaticComplexity: 0 },
+};
+
+function updateCFGMetadata(CFG: CFG) {
+  const nodeCount : number = CFG.graph.order;
+  const edgeCount : number = CFG.graph.size;
+  const cyclomaticComplexity : number = CFG.graph.size - nodeCount + 2; 
+  functionAndCFGMetadata.cfgGraphData = {
+    nodeCount,
+    edgeCount,
+    cyclomaticComplexity,
+  };
+}
+
+function extractFunctionName(func: SyntaxNode, language: Language): string {
+  switch (language) {
+    case "TypeScript":
+    case "TSX":
+      if (func.type === "arrow_function") {
+        let parent = func.parent;
+        // Traverse the parent nodes to find the variable declarator for the arrow function
+        while (parent) {
+          if (parent.type === "variable_declarator") {
+            const identifier = parent.namedChildren.find(child => child.type === "identifier");
+            return identifier?.text; 
+          }
+          parent = parent.parent; 
+        }
+      } //else - The function is NOT an arrow function, fall through to default behavior.
+    
+    default: // For any function type (C/C++/Go/Python or other non-arrow function in TypeScript/TSX)
+      return func
+        .descendantsOfType(["identifier", "field_identifier", "property_identifier"])
+        .map(node => node.text)
+        .find(Boolean);
+  }
+}
+
+function updateFunctionMetadata(func: SyntaxNode, language: Language) {
+  const name : string = extractFunctionName(func,language);
+  const lineCount : number = func.endPosition.row - func.startPosition.row + 1;
+  functionAndCFGMetadata.functionData = {
+    name,
+    lineCount,
+    language,
+  };
+}
+
 async function render() {
   try {
     const urlSearchParams = new URLSearchParams(window.location.search);
@@ -216,6 +280,9 @@ async function render() {
     }
 
     const cfg = await createCFG(params);
+
+    updateCFGMetadata(cfg);
+
     const graphviz = await Graphviz.load();
     rawSVG = graphviz.dot(graphToDot(cfg, false, params.colorScheme));
     return rawSVG;
@@ -272,8 +339,8 @@ function makeZoomable() {
 onMount(() => {
   makeZoomable();
 });
-</script>
 
+</script>
 <div class="controlsContainer">
   <div class="controls">
     <button onclick={resetView}>Reset View</button>
@@ -281,11 +348,21 @@ onMount(() => {
       onclick={openCode}
       disabled={!Boolean(codeUrl)}
       title={Boolean(codeUrl) ? "" : "Only available for GitHub code"}
-      >Open Code</button
-    >
+    >Open Code</button>
     <button onclick={saveSVG}>Download SVG</button>
   </div>
+  {#if rawSVG}
+    <div class="metadata">
+      <span>Language:   {functionAndCFGMetadata.functionData.language}</span>
+      <span>Function Name:    {functionAndCFGMetadata.functionData.name}</span>
+      <span>Line Count:   {functionAndCFGMetadata.functionData.lineCount}</span>
+      <span>Node Count:   {functionAndCFGMetadata.cfgGraphData.nodeCount}</span>
+      <span>Edge Count:   {functionAndCFGMetadata.cfgGraphData.edgeCount}</span>
+      <span>Cyclomatic Complexity:    {functionAndCFGMetadata.cfgGraphData.cyclomaticComplexity}</span>
+    </div>
+  {/if}
 </div>
+
 <div class="svgContainer">
   {#await render()}
     <p style="color: green">Loading code...</p>
@@ -295,24 +372,3 @@ onMount(() => {
     <p style="color: red">{error.message}</p>
   {/await}
 </div>
-
-<style>
-  .controlsContainer {
-    position: fixed;
-    display: flex;
-    justify-content: right;
-    width: 100%;
-    z-index: 1000;
-  }
-  .controls {
-    margin: 1em;
-  }
-  .svgContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100dvw;
-    height: 100dvh;
-  }
-</style>
