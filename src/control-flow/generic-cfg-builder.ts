@@ -40,6 +40,7 @@ export interface Context {
   state: BlockHandler;
   link: Link;
   extra?: Extra;
+  mayExit?: (call: SyntaxNode) => boolean;
 }
 
 /**
@@ -155,6 +156,7 @@ export class GenericCFGBuilder {
         ),
       },
       extra: extra,
+      mayExit: this.options.mayExit,
     });
   }
 
