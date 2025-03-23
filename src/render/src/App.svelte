@@ -40,9 +40,7 @@ type GithubCodeRef = {
    * The line-number for the function
    */
   line: number;
-  
 };
-
 
 /**
  * Get the line number raw file URL from a GitHub URL
@@ -131,12 +129,12 @@ type Params = (GithubParams | GraphParams) & {
   colorScheme: ColorScheme;
   colors: "light" | "dark";
 };
-type FunctionAndCFGMetadata  = {
+type FunctionAndCFGMetadata = {
   functionData: {
     name: string;
     lineCount: number;
-    language : Language;
-  } ,
+    language: Language;
+  };
   cfgGraphData: {
     nodeCount: number;
     edgeCount: number;
@@ -186,12 +184,12 @@ async function createGitHubCFG(ghParams: GithubParams): Promise<CFG> {
   const code = await response.text();
   // We assume that the raw URL always ends with the file extension
   const language = getLanguage(rawUrl);
-  const func = await getFunctionByLine(code, language, line); 
+  const func = await getFunctionByLine(code, language, line);
 
   if (!func) {
     throw new Error(`Unable to find function on line ${line}`);
   }
-  updateFunctionMetadata(func,language);
+  updateFunctionMetadata(func, language);
   return buildCFG(func, language);
 }
 
@@ -221,14 +219,14 @@ async function createCFG(params: Params): Promise<CFG> {
 }
 
 let functionAndCFGMetadata: FunctionAndCFGMetadata = {
-  functionData: { name: "", lineCount: 0 , language : undefined},
+  functionData: { name: "", lineCount: 0, language: undefined },
   cfgGraphData: { nodeCount: 0, edgeCount: 0, cyclomaticComplexity: 0 },
 };
 
 function updateCFGMetadata(CFG: CFG) {
-  const nodeCount : number = CFG.graph.order;
-  const edgeCount : number = CFG.graph.size;
-  const cyclomaticComplexity : number = CFG.graph.size - nodeCount + 2; 
+  const nodeCount: number = CFG.graph.order;
+  const edgeCount: number = CFG.graph.size;
+  const cyclomaticComplexity: number = CFG.graph.size - nodeCount + 2;
   functionAndCFGMetadata.cfgGraphData = {
     nodeCount,
     edgeCount,
@@ -237,32 +235,35 @@ function updateCFGMetadata(CFG: CFG) {
 }
 
 function extractFunctionName(func: SyntaxNode, language: Language): string {
-  switch (language) {
-    case "TypeScript":
-    case "TSX":
-      if (func.type === "arrow_function") {
-        let parent = func.parent;
-        // Traverse the parent nodes to find the variable declarator for the arrow function
-        while (parent) {
-          if (parent.type === "variable_declarator") {
-            const identifier = parent.namedChildren.find(child => child.type === "identifier");
-            return identifier?.text; 
-          }
-          parent = parent.parent; 
+  if (language === "TypeScript" || language === "TSX") {
+    if (func.type === "arrow_function") {
+      let parent = func.parent;
+      // Traverse the parent nodes to find the variable declarator for the arrow function
+      while (parent) {
+        if (parent.type === "variable_declarator") {
+          const identifier = parent.namedChildren.find(
+            (child) => child.type === "identifier",
+          );
+          return identifier?.text;
         }
-      } //else - The function is NOT an arrow function, fall through to default behavior.
-    
-    default: // For any function type (C/C++/Go/Python or other non-arrow function in TypeScript/TSX)
-      return func
-        .descendantsOfType(["identifier", "field_identifier", "property_identifier"])
-        .map(node => node.text)
-        .find(Boolean);
+        parent = parent.parent;
+      }
+    } //else - The function is NOT an arrow function
   }
+  // For any function type (C/C++/Go/Python or other non-arrow function in TypeScript/TSX)
+  return func
+    .descendantsOfType([
+      "identifier",
+      "field_identifier",
+      "property_identifier",
+    ])
+    .map((node) => node.text)
+    .find(Boolean);
 }
 
 function updateFunctionMetadata(func: SyntaxNode, language: Language) {
-  const name : string = extractFunctionName(func,language);
-  const lineCount : number = func.endPosition.row - func.startPosition.row + 1;
+  const name: string = extractFunctionName(func, language);
+  const lineCount: number = func.endPosition.row - func.startPosition.row + 1;
   functionAndCFGMetadata.functionData = {
     name,
     lineCount,
@@ -339,7 +340,6 @@ function makeZoomable() {
 onMount(() => {
   makeZoomable();
 });
-
 </script>
 <div class="controlsContainer">
   <div class="controls">

@@ -17,12 +17,12 @@ body {
   padding: 0.5em;
   position: fixed;
   top: 10px;
-  left: 1em; 
+  left: 1em;
   right: auto;
   z-index: 1000;
   font-size: 1em;
   font-weight: 500;
-  text-align: left; 
+  text-align: left;
 }
 
 .metadata span {
@@ -31,7 +31,6 @@ body {
   color: gray;
   white-space: pre-wrap;
 }
-
 
 .controls {
   margin: 1em;
