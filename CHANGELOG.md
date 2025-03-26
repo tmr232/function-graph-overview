@@ -6,6 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.15] - 2025-03-26
+
 ### Added
 
 - Python catch-all cases in match statements are now detected.
