@@ -70,10 +70,21 @@ let languages: {
 ] as const;
 
 let fontSize = $state("1em");
+let simplify = $state(true);
+let flatSwitch = $state(true);
+let highlight = $state(true);
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.has("fontSize")) {
   fontSize = urlParams.get("fontSize");
-  console.log("fontSize from URL:", fontSize);
+}
+if (urlParams.has("simplify")) {
+  simplify = urlParams.get("simplify") === "true";
+}
+if (urlParams.has("flatSwitch")) {
+  flatSwitch = urlParams.get("flatSwitch") === "true";
+}
+if (urlParams.has("highlight")) {
+  highlight = urlParams.get("highlight") === "true";
 }
 if (urlParams.has("go")) {
   languageCode.Go = LZString.decompressFromEncodedURIComponent(
@@ -106,9 +117,6 @@ if (urlParams.has("tsx")) {
   );
 }
 
-let simplify = $state(true);
-let flatSwitch = $state(true);
-let highlight = $state(true);
 let colorPicker = $state(false);
 let verbose = $state(urlParams.has("verbose"));
 let showSegmentation = $state(urlParams.has("segmentation"));
@@ -131,7 +139,8 @@ function share() {
   );
   const codeName = selection.language.toLowerCase();
   const language = languages.findIndex((lang) => lang === selection);
-  const query = `?language=${language}&${codeName}=${compressedCode}&fontSize=${fontSize}`;
+  const query = `?language=${language}&${codeName}=${compressedCode}&fontSize=${fontSize}
+&simplify=${simplify}&flatSwitch=${flatSwitch}&highlight=${highlight}`;
   const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}${query}`;
   navigator.clipboard.writeText(newUrl);
   window.open(newUrl, "_blank").focus();
