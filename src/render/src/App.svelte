@@ -178,18 +178,24 @@ function parseUrlSearchParams(urlSearchParams: URLSearchParams): Params {
   };
 }
 
-async function createGitHubCFG(ghParams: GithubParams): Promise<CFG> {
+async function fetchFunctionAndLanguage(
+  ghParams: GithubParams,
+): Promise<{ func: SyntaxNode; language: Language }> {
   const { rawUrl, line } = ghParams;
   const response = await fetch(rawUrl);
   const code = await response.text();
   // We assume that the raw URL always ends with the file extension
   const language = getLanguage(rawUrl);
   const func = await getFunctionByLine(code, language, line);
-
   if (!func) {
     throw new Error(`Unable to find function on line ${line}`);
   }
-  updateFunctionMetadata(func, language);
+
+  return { func, language };
+}
+
+async function createGitHubCFG(ghParams: GithubParams): Promise<CFG> {
+  const { func, language } = await fetchFunctionAndLanguage(ghParams);
   return buildCFG(func, language);
 }
 
@@ -223,14 +229,27 @@ let functionAndCFGMetadata: FunctionAndCFGMetadata = {
   cfgGraphData: { nodeCount: 0, edgeCount: 0, cyclomaticComplexity: 0 },
 };
 
-function updateCFGMetadata(CFG: CFG) {
+function updateMetadata(func: SyntaxNode, language: Language, CFG: CFG) {
+  // Update function metadata
+  const name: string = extractFunctionName(func, language);
+  const lineCount: number = func.endPosition.row - func.startPosition.row + 1;
+
+  // Update CFG metadata
   const nodeCount: number = CFG.graph.order;
   const edgeCount: number = CFG.graph.size;
   const cyclomaticComplexity: number = CFG.graph.size - nodeCount + 2;
-  functionAndCFGMetadata.cfgGraphData = {
-    nodeCount,
-    edgeCount,
-    cyclomaticComplexity,
+
+  return {
+    functionData: {
+      name,
+      lineCount,
+      language,
+    },
+    cfgGraphData: {
+      nodeCount,
+      edgeCount,
+      cyclomaticComplexity,
+    },
   };
 }
 
@@ -261,28 +280,19 @@ function extractFunctionName(func: SyntaxNode, language: Language): string {
     .find(Boolean);
 }
 
-function updateFunctionMetadata(func: SyntaxNode, language: Language) {
-  const name: string = extractFunctionName(func, language);
-  const lineCount: number = func.endPosition.row - func.startPosition.row + 1;
-  functionAndCFGMetadata.functionData = {
-    name,
-    lineCount,
-    language,
-  };
-}
-
 async function render() {
   try {
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = parseUrlSearchParams(urlSearchParams);
     setBackgroundColor(params.colors);
-    if (params.type === "GitHub") {
-      codeUrl = params.codeUrl;
-    }
 
     const cfg = await createCFG(params);
 
-    updateCFGMetadata(cfg);
+    if (params.type === "GitHub") {
+      codeUrl = params.codeUrl;
+      const { func, language } = await fetchFunctionAndLanguage(params);
+      functionAndCFGMetadata = updateMetadata(func, language, cfg);
+    }
 
     const graphviz = await Graphviz.load();
     rawSVG = graphviz.dot(graphToDot(cfg, false, params.colorScheme));
@@ -372,3 +382,46 @@ onMount(() => {
     <p style="color: red">{error.message}</p>
   {/await}
 </div>
+
+<style>
+.controlsContainer {
+  position: fixed;
+  display: flex;
+  justify-content: right;
+  width: 100%;
+  z-index: 1000;
+}
+
+.metadata {
+  margin: 1em;
+  padding: 0.5em;
+  position: fixed;
+  top: 10px;
+  left: 1em;
+  right: auto;
+  z-index: 1000;
+  font-size: 1em;
+  font-weight: 500;
+  text-align: left;
+}
+
+.metadata span {
+  display: block;
+  margin-bottom: 1em;
+  color: gray;
+  white-space: pre-wrap;
+}
+
+.controls {
+  margin: 1em;
+}
+
+.svgContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100dvw;
+  height: 100dvh;
+}
+</style>
