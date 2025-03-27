@@ -69,7 +69,12 @@ let languages: {
   },
 ] as const;
 
+let fontSize = $state("1em");
 const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.has("fontSize")) {
+  fontSize = urlParams.get("fontSize");
+  console.log("fontSize from URL:", fontSize);
+}
 if (urlParams.has("go")) {
   languageCode.Go = LZString.decompressFromEncodedURIComponent(
     urlParams.get("go"),
@@ -109,7 +114,6 @@ let verbose = $state(urlParams.has("verbose"));
 let showSegmentation = $state(urlParams.has("segmentation"));
 let showRegions = $state(urlParams.has("showRegions"));
 let debugMode = urlParams.has("debug");
-let fontSize = $state("1em");
 const range = (start: number, end: number) =>
   Array.from({ length: end - start }, (_v, k) => k + start);
 const fontSizes: { label: string; value: string }[] = [
@@ -127,7 +131,7 @@ function share() {
   );
   const codeName = selection.language.toLowerCase();
   const language = languages.findIndex((lang) => lang === selection);
-  const query = `?language=${language}&${codeName}=${compressedCode}`;
+  const query = `?language=${language}&${codeName}=${compressedCode}&fontSize=${fontSize}`;
   const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}${query}`;
   navigator.clipboard.writeText(newUrl);
   window.open(newUrl, "_blank").focus();
