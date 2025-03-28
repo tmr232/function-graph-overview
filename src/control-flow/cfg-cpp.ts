@@ -53,6 +53,10 @@ function processCoYieldStatement(
   return { entry: yieldNode, exit: yieldNode };
 }
 
+function isCatchAll(catchSyntax:SyntaxNode):boolean {
+  return Boolean(catchSyntax.childForFieldName("parameters")?.children.some(child => child.text==="..."))
+}
+
 function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
   const { builder, matcher } = ctx;
   /*
@@ -106,11 +110,13 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
 
     // We attach the except-blocks to the top of the `try` body.
     // In the rendering, we will connect them to the side of the node, and use invisible lines for it.
-    if (bodyBlock.entry) {
-      const headNode = bodyBlock.entry;
-      for (const exceptBlock of exceptBlocks) {
-        // Yes, this is effectively a head-to-head link. But that's ok.
-        builder.addEdge(headNode, exceptBlock.entry, "exception");
+    const headNode = bodyBlock.entry;
+    for (const [exceptBlock, exceptSyntax] of zip(exceptBlocks, match.getSyntaxMany("except"))) {
+      // Yes, this is effectively a head-to-head link. But that's ok.
+      builder.addEdge(headNode, exceptBlock.entry, "exception")
+      if (isCatchAll(exceptSyntax)) {
+        // We reached a `catch (...)`, so the rest are unreachable.
+        break;
       }
     }
 
