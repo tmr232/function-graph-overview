@@ -72,10 +72,10 @@
     "build-webview": "bun run --cwd src/webview/ vite build",
     "oxlint-fix": "bunx oxlint --ignore-path=oxlint-ignore.txt --fix -D correctness -D perf -D suspicious -A no-await-in-loop",
     "oxlint-ci": "bunx oxlint --ignore-path=oxlint-ignore.txt  -D correctness -D perf -D suspicious -A no-await-in-loop",
-    "lint": "bunx biome check --fix && bun oxlint-fix && bunx eslint --fix && bunx tsc --noEmit && bun typedoc",
-    "ci": "bunx biome ci && bun oxlint-ci && bunx eslint && bunx tsc --noEmit && bun typedoc",
+    "lint": "bunx biome check --fix && bun oxlint-fix && bunx eslint --fix && bunx tsc --noEmit && bun docs",
+    "ci": "bunx biome ci && bun oxlint-ci && bunx eslint && bunx tsc --noEmit && bun docs",
     "generate-parsers": "bun run ./scripts/generate-parsers.ts",
-    "typedoc": "bunx typedoc --treatWarningsAsErrors"
+    "docs": "bunx typedoc --treatWarningsAsErrors"
   },
   "//": "START EXTENSION ATTRIBUTES",
   "publisher": "tamir-bahar",
