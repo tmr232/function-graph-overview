@@ -27,7 +27,7 @@ jobs:
         run: bun build-render
 
       - name: "Build docs"
-        run: bun typedoc --out ./dist/demo/docs
+        run: bun docs --out ./dist/demo/docs
 
       - uses: actions/upload-pages-artifact@v3
         with:
