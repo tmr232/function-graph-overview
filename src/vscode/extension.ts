@@ -9,6 +9,11 @@ import {
 import type { UpdateCode, UpdateSettings } from "./messages.ts";
 import { OverviewViewProvider } from "./overview-view";
 
+/* Disable a specific oxlint check until https://github.com/oxc-project/oxc/issues/10106
+   is resolved.
+ */
+/* oxlint-disable eslint-plugin-unicorn(require-post-message-target-origin) */
+
 // ADD-LANGUAGES-HERE
 const languageMapping: { [key: string]: Language } = {
   c: "C",

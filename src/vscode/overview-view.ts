@@ -7,6 +7,11 @@ import {
   type MessageToWebview,
 } from "./messages.ts";
 
+/* Disable a specific oxlint check until https://github.com/oxc-project/oxc/issues/10106
+   is resolved.
+ */
+/* oxlint-disable eslint-plugin-unicorn(require-post-message-target-origin) */
+
 export class OverviewViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "functionGraphOverview.overview";
   private _view?: vscode.WebviewView;
