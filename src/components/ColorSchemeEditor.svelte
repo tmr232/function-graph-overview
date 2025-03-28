@@ -44,7 +44,7 @@ function colorsFor(colors: ColorList, entity: (typeof groups)[number]) {
 
 function onColorChange(color: Color) {
   return (event) => {
-    color.hex = event.detail.hex ?? color.hex;
+    color.hex = event.hex ?? color.hex;
     dispatch("preview", { colors: colorList });
   };
 }
@@ -87,7 +87,7 @@ function resetList() {
               <ColorPicker
                 hex={color.hex}
                 isAlpha={false}
-                on:input={onColorChange(color)}
+                onInput={onColorChange(color)}
                 position="responsive"
                 label=""
                 name={color.name}
