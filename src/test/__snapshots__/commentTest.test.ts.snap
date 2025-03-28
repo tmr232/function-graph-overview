@@ -77,6 +77,155 @@ exports[`Python: issue-101-match-catchall.py!cases_and_catchall: DOT Snapshot 1`
 }"
 `;
 
+exports[`Python: issue-104-assert.py!assert_without_message: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.6];
+    node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+    node4 [style="filled"; label=""; id="node4"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
+    node1 -> node2 [penwidth=1; color="#ff0000"; class="alternative"];
+    node1 -> node4 [penwidth=1; color="#008000"; class="consequence"];
+}"
+`;
+
+exports[`Python: issue-104-assert.py!assert_with_message: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.6];
+    node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+    node4 [style="filled"; label=""; id="node4"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
+    node1 -> node2 [penwidth=1; color="#ff0000"; class="alternative"];
+    node1 -> node4 [penwidth=1; color="#008000"; class="consequence"];
+}"
+`;
+
+exports[`Python: issue-104-assert.py!multiple_asserts: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.6];
+    node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+    node4 [style="filled"; label=""; id="node4"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.6];
+    node5 [style="filled"; label=""; id="node5"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+    node7 [style="filled"; label=""; id="node7"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.6];
+    node8 [style="filled"; label=""; id="node8"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+    node10 [style="filled"; label=""; id="node10"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.6];
+    node11 [style="filled"; label=""; id="node11"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+    node13 [style="filled"; label=""; id="node13"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
+    node1 -> node2 [penwidth=1; color="#ff0000"; class="alternative"];
+    node4 -> node5 [penwidth=1; color="#ff0000"; class="alternative"];
+    node7 -> node8 [penwidth=1; color="#ff0000"; class="alternative"];
+    node10 -> node11 [penwidth=1; color="#ff0000"; class="alternative"];
+    node1 -> node4 [penwidth=1; color="#008000"; class="consequence"];
+    node4 -> node7 [penwidth=1; color="#008000"; class="consequence"];
+    node7 -> node10 [penwidth=1; color="#008000"; class="consequence"];
+    node10 -> node13 [penwidth=1; color="#008000"; class="consequence"];
+}"
+`;
+
+exports[`C++: issue-106-co_yield.cpp!fibonacci_sequence: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.8999999999999999];
+    node2 [style="filled"; label=""; id="node2"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.5];
+    node5 [style="filled"; label=""; id="node5"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.8999999999999999];
+    node6 [style="filled"; label=""; id="node6"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+    node8 [style="filled"; label=""; id="node8"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node9 [style="filled"; label=""; id="node9"; shape="hexagon"; class="yield"; fillcolor="#00bfff"; orientation=90; height=0.3];
+    node10 [style="filled"; label=""; id="node10"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.6];
+    node11 [style="filled"; label=""; id="node11"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.5];
+    node13 [style="filled"; label=""; id="node13"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node14 [style="filled"; label=""; id="node14"; shape="hexagon"; class="yield"; fillcolor="#00bfff"; orientation=90; height=0.3];
+    node15 [style="filled"; label=""; id="node15"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.6];
+    node16 [style="filled"; label=""; id="node16"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.5];
+    node21 [style="filled"; label=""; id="node21"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=1.5];
+    node22 [style="filled"; label=""; id="node22"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node24 [style="filled"; label=""; id="node24"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node25 [style="filled"; label=""; id="node25"; shape="hexagon"; class="yield"; fillcolor="#00bfff"; orientation=90; height=0.3];
+    node31 [style="filled"; label=""; id="node31"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
+    node23 [style="filled"; label=""; id="node23"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=1.2];
+    node1 -> node2 [penwidth=1; color="#008000"; class="consequence"];
+    node5 -> node6 [penwidth=1; color="#008000"; class="consequence"];
+    node5 -> node8 [penwidth=1; color="#ff0000"; class="alternative"];
+    node10 -> node11 [penwidth=1; color="#008000"; class="consequence"];
+    node10 -> node13 [penwidth=1; color="#ff0000"; class="alternative"];
+    node15 -> node16 [penwidth=1; color="#008000"; class="consequence"];
+    node24 -> node25 [penwidth=1; color="#0000ff"; class="regular"];
+    node21 -> node22 [penwidth=1; color="#0000ff"; class="regular"];
+    node22 -> node24 [penwidth=1; color="#008000"; class="consequence"];
+    node22 -> node23 [penwidth=2; color="#0000ff"; class="regular"; dir="back"; headport="s"; tailport="n"];
+    node8 -> node9 [penwidth=1; color="#0000ff"; class="regular"];
+    node13 -> node14 [penwidth=1; color="#0000ff"; class="regular"];
+    node1 -> node5 [penwidth=1; color="#ff0000"; class="alternative"];
+    node9 -> node10 [penwidth=1; color="#0000ff"; class="regular"];
+    node14 -> node15 [penwidth=1; color="#0000ff"; class="regular"];
+    node15 -> node21 [penwidth=1; color="#ff0000"; class="alternative"];
+    node22 -> node31 [penwidth=1; color="#ff0000"; class="alternative"];
+    node25 -> node23 [penwidth=1; color="#0000ff"; class="regular"];
+}"
+`;
+
+exports[`Python: issue-111-throw-finally.py!raise_and_finally: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    subgraph cluster_0 {
+        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        node4 [style="filled"; label=""; id="node4"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+        subgraph cluster_1 {
+            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.3];
+        }
+        subgraph cluster_2 {
+            penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
+            node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+        }
+    }
+    node0 [style="filled"; label=""; id="node0"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.5];
+    node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.3];
+    node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node4 [style="filled"; label=""; id="node4"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+    node2 -> node3 [penwidth=1; color="#0000ff"; class="regular"];
+    node3 -> node4 [penwidth=1; color="#0000ff"; class="regular"];
+    node0 -> node2 [penwidth=1; color="#0000ff"; class="regular"];
+}"
+`;
+
+exports[`TypeScript: issue-111-throw-finally.ts!throwAndFinally: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    subgraph cluster_0 {
+        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        node4 [style="filled"; label=""; id="node4"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+        subgraph cluster_1 {
+            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.3];
+        }
+        subgraph cluster_3 {
+            penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
+            node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+        }
+    }
+    node0 [style="filled"; label=""; id="node0"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.5];
+    node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.3];
+    node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node4 [style="filled"; label=""; id="node4"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
+    node2 -> node3 [penwidth=1; color="#0000ff"; class="regular"];
+    node3 -> node4 [penwidth=1; color="#0000ff"; class="regular"];
+    node0 -> node2 [penwidth=1; color="#0000ff"; class="regular"];
+}"
+`;
+
 exports[`Go: issue-85-continue-with-label.go!ContinueToLabel: DOT Snapshot 1`] = `
 "digraph "" {
     node [shape=box, color="#000000"];
@@ -90,6 +239,54 @@ exports[`Go: issue-85-continue-with-label.go!ContinueToLabel: DOT Snapshot 1`] =
     node3 -> node4 [penwidth=2; color="#0000ff"; class="regular"; dir="back"; headport="s"; tailport="n"];
     node3 -> node12 [penwidth=1; color="#ff0000"; class="alternative"];
     node3 -> node4 [penwidth=1; color="#008000"; class="consequence"];
+}"
+`;
+
+exports[`C++: issue145-multiple-catch-clause-cpp.cpp!MultipleCatchClauses: DOT Snapshot 1`] = `
+"digraph "" {
+    node [shape=box, color="#000000"];
+    edge [headport=n tailport=s]
+    bgcolor="#ffffff"
+    subgraph cluster_0 {
+        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        subgraph cluster_1 {
+            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            node2 [style="filled"; label=""; id="node2"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+        }
+        subgraph cluster_2 {
+            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+        }
+        subgraph cluster_3 {
+            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            node4 [style="filled"; label=""; id="node4"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+        }
+        subgraph cluster_4 {
+            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            node5 [style="filled"; label=""; id="node5"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+        }
+        subgraph cluster_5 {
+            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            node6 [style="filled"; label=""; id="node6"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+        }
+    }
+    node0 [style="filled"; label=""; id="node0"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.5];
+    node2 [style="filled"; label=""; id="node2"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node4 [style="filled"; label=""; id="node4"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node5 [style="filled"; label=""; id="node5"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node6 [style="filled"; label=""; id="node6"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
+    node7 [style="filled"; label=""; id="node7"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
+    node2 -> node3 [penwidth=1; color="#0000ff"; style="invis"; headport="e"; tailport="w"];
+    node2 -> node4 [penwidth=1; color="#0000ff"; style="invis"; headport="e"; tailport="w"];
+    node2 -> node5 [penwidth=1; color="#0000ff"; style="invis"; headport="e"; tailport="w"];
+    node2 -> node6 [penwidth=1; color="#0000ff"; style="invis"; headport="e"; tailport="w"];
+    node0 -> node2 [penwidth=1; color="#0000ff"; class="regular"];
+    node3 -> node7 [penwidth=1; color="#0000ff"; class="regular"];
+    node4 -> node7 [penwidth=1; color="#0000ff"; class="regular"];
+    node5 -> node7 [penwidth=1; color="#0000ff"; class="regular"];
+    node6 -> node7 [penwidth=1; color="#0000ff"; class="regular"];
+    node2 -> node7 [penwidth=1; color="#0000ff"; class="regular"];
 }"
 `;
 
@@ -3606,6 +3803,568 @@ Lookup {
 }
 `;
 
+exports[`Python: issue-104-assert.py!assert_without_message: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 23,
+      "value": "node1",
+    },
+    {
+      "start": 65,
+      "value": "Not found",
+    },
+    {
+      "start": 65,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`Python: issue-104-assert.py!assert_with_message: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 91,
+      "value": "node1",
+    },
+    {
+      "start": 130,
+      "value": "Not found",
+    },
+    {
+      "start": 130,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`Python: issue-104-assert.py!multiple_asserts: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 156,
+      "value": "node1",
+    },
+    {
+      "start": 192,
+      "value": "Not found",
+    },
+    {
+      "start": 197,
+      "value": "node1",
+    },
+    {
+      "start": 205,
+      "value": "Not found",
+    },
+    {
+      "start": 210,
+      "value": "node1",
+    },
+    {
+      "start": 218,
+      "value": "Not found",
+    },
+    {
+      "start": 223,
+      "value": "node1",
+    },
+    {
+      "start": 231,
+      "value": "Not found",
+    },
+    {
+      "start": 231,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`C++: issue-106-co_yield.cpp!fibonacci_sequence: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 26,
+      "value": "node1",
+    },
+    {
+      "start": 159,
+      "value": "node1",
+    },
+    {
+      "start": 162,
+      "value": "node1",
+    },
+    {
+      "start": 170,
+      "value": "node1",
+    },
+    {
+      "start": 170,
+      "value": "node2",
+    },
+    {
+      "start": 179,
+      "value": "node1",
+    },
+    {
+      "start": 179,
+      "value": "node2",
+    },
+    {
+      "start": 189,
+      "value": "node1",
+    },
+    {
+      "start": 189,
+      "value": "node5",
+    },
+    {
+      "start": 195,
+      "value": "node1",
+    },
+    {
+      "start": 195,
+      "value": "node5",
+    },
+    {
+      "start": 198,
+      "value": "node5",
+    },
+    {
+      "start": 206,
+      "value": "node5",
+    },
+    {
+      "start": 206,
+      "value": "node6",
+    },
+    {
+      "start": 215,
+      "value": "node5",
+    },
+    {
+      "start": 215,
+      "value": "node6",
+    },
+    {
+      "start": 296,
+      "value": "node5",
+    },
+    {
+      "start": 296,
+      "value": "node9",
+    },
+    {
+      "start": 302,
+      "value": "node1",
+    },
+    {
+      "start": 302,
+      "value": "node9",
+    },
+    {
+      "start": 313,
+      "value": "node10",
+    },
+    {
+      "start": 319,
+      "value": "node1",
+    },
+    {
+      "start": 319,
+      "value": "node10",
+    },
+    {
+      "start": 322,
+      "value": "node10",
+    },
+    {
+      "start": 330,
+      "value": "node10",
+    },
+    {
+      "start": 330,
+      "value": "node11",
+    },
+    {
+      "start": 339,
+      "value": "node10",
+    },
+    {
+      "start": 339,
+      "value": "node11",
+    },
+    {
+      "start": 349,
+      "value": "node10",
+    },
+    {
+      "start": 349,
+      "value": "node14",
+    },
+    {
+      "start": 355,
+      "value": "node1",
+    },
+    {
+      "start": 355,
+      "value": "node14",
+    },
+    {
+      "start": 366,
+      "value": "node15",
+    },
+    {
+      "start": 372,
+      "value": "node1",
+    },
+    {
+      "start": 372,
+      "value": "node15",
+    },
+    {
+      "start": 375,
+      "value": "node15",
+    },
+    {
+      "start": 383,
+      "value": "node15",
+    },
+    {
+      "start": 383,
+      "value": "node16",
+    },
+    {
+      "start": 392,
+      "value": "node15",
+    },
+    {
+      "start": 392,
+      "value": "node16",
+    },
+    {
+      "start": 402,
+      "value": "node15",
+    },
+    {
+      "start": 402,
+      "value": "node21",
+    },
+    {
+      "start": 408,
+      "value": "node1",
+    },
+    {
+      "start": 408,
+      "value": "node21",
+    },
+    {
+      "start": 428,
+      "value": "node21",
+    },
+    {
+      "start": 433,
+      "value": "node1",
+    },
+    {
+      "start": 433,
+      "value": "node21",
+    },
+    {
+      "start": 453,
+      "value": "node21",
+    },
+    {
+      "start": 459,
+      "value": "node1",
+    },
+    {
+      "start": 459,
+      "value": "node21",
+    },
+    {
+      "start": 464,
+      "value": "node21",
+    },
+    {
+      "start": 479,
+      "value": "node21",
+    },
+    {
+      "start": 479,
+      "value": "node21",
+    },
+    {
+      "start": 480,
+      "value": "node22",
+    },
+    {
+      "start": 485,
+      "value": "node22",
+    },
+    {
+      "start": 486,
+      "value": "node22",
+    },
+    {
+      "start": 486,
+      "value": "node21",
+    },
+    {
+      "start": 487,
+      "value": "node23",
+    },
+    {
+      "start": 490,
+      "value": "node23",
+    },
+    {
+      "start": 491,
+      "value": "node21",
+    },
+    {
+      "start": 491,
+      "value": "node24",
+    },
+    {
+      "start": 496,
+      "value": "node21",
+    },
+    {
+      "start": 496,
+      "value": "node24",
+    },
+    {
+      "start": 506,
+      "value": "node24",
+    },
+    {
+      "start": 530,
+      "value": "node25",
+    },
+    {
+      "start": 539,
+      "value": "node24",
+    },
+    {
+      "start": 539,
+      "value": "node25",
+    },
+    {
+      "start": 550,
+      "value": "node23",
+    },
+    {
+      "start": 559,
+      "value": "node23",
+    },
+    {
+      "start": 565,
+      "value": "node24",
+    },
+    {
+      "start": 565,
+      "value": "node23",
+    },
+    {
+      "start": 574,
+      "value": "node23",
+    },
+    {
+      "start": 580,
+      "value": "node24",
+    },
+    {
+      "start": 586,
+      "value": "node21",
+    },
+    {
+      "start": 586,
+      "value": "node21",
+    },
+    {
+      "start": 588,
+      "value": "node1",
+    },
+    {
+      "start": 588,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`Python: issue-111-throw-finally.py!raise_and_finally: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node0",
+    },
+    {
+      "start": 23,
+      "value": "node0",
+    },
+    {
+      "start": 52,
+      "value": "node4",
+    },
+    {
+      "start": 65,
+      "value": "node4",
+    },
+    {
+      "start": 85,
+      "value": "node4",
+    },
+    {
+      "start": 85,
+      "value": "node4",
+    },
+    {
+      "start": 90,
+      "value": "node5",
+    },
+    {
+      "start": 107,
+      "value": "node5",
+    },
+    {
+      "start": 122,
+      "value": "node5",
+    },
+    {
+      "start": 122,
+      "value": "node5",
+    },
+    {
+      "start": 122,
+      "value": "node5",
+    },
+    {
+      "start": 122,
+      "value": "node5",
+    },
+    {
+      "start": 122,
+      "value": "node4",
+    },
+    {
+      "start": 122,
+      "value": "node0",
+    },
+    {
+      "start": 122,
+      "value": "node4",
+    },
+    {
+      "start": 122,
+      "value": "node0",
+    },
+  ],
+}
+`;
+
+exports[`TypeScript: issue-111-throw-finally.ts!throwAndFinally: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node0",
+    },
+    {
+      "start": 26,
+      "value": "node0",
+    },
+    {
+      "start": 57,
+      "value": "node4",
+    },
+    {
+      "start": 61,
+      "value": "node4",
+    },
+    {
+      "start": 67,
+      "value": "node4",
+    },
+    {
+      "start": 84,
+      "value": "node4",
+    },
+    {
+      "start": 88,
+      "value": "node4",
+    },
+    {
+      "start": 89,
+      "value": "node5",
+    },
+    {
+      "start": 97,
+      "value": "node5",
+    },
+    {
+      "start": 103,
+      "value": "node5",
+    },
+    {
+      "start": 124,
+      "value": "node5",
+    },
+    {
+      "start": 124,
+      "value": "node5",
+    },
+    {
+      "start": 128,
+      "value": "node5",
+    },
+    {
+      "start": 128,
+      "value": "node5",
+    },
+    {
+      "start": 128,
+      "value": "node4",
+    },
+    {
+      "start": 128,
+      "value": "node4",
+    },
+    {
+      "start": 130,
+      "value": "node0",
+    },
+    {
+      "start": 130,
+      "value": "node0",
+    },
+  ],
+}
+`;
+
 exports[`Go: issue-85-continue-with-label.go!ContinueToLabel: Segmentation 1`] = `
 Lookup {
   "ranges": [
@@ -3724,6 +4483,133 @@ Lookup {
     {
       "start": 208,
       "value": "node2",
+    },
+  ],
+}
+`;
+
+exports[`C++: issue145-multiple-catch-clause-cpp.cpp!MultipleCatchClauses: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node0",
+    },
+    {
+      "start": 25,
+      "value": "node0",
+    },
+    {
+      "start": 59,
+      "value": "node2",
+    },
+    {
+      "start": 67,
+      "value": "node2",
+    },
+    {
+      "start": 77,
+      "value": "node2",
+    },
+    {
+      "start": 81,
+      "value": "node2",
+    },
+    {
+      "start": 87,
+      "value": "node2",
+    },
+    {
+      "start": 92,
+      "value": "node3",
+    },
+    {
+      "start": 133,
+      "value": "node3",
+    },
+    {
+      "start": 135,
+      "value": "node3",
+    },
+    {
+      "start": 135,
+      "value": "node2",
+    },
+    {
+      "start": 135,
+      "value": "node3",
+    },
+    {
+      "start": 208,
+      "value": "node4",
+    },
+    {
+      "start": 248,
+      "value": "node4",
+    },
+    {
+      "start": 250,
+      "value": "node4",
+    },
+    {
+      "start": 250,
+      "value": "node2",
+    },
+    {
+      "start": 250,
+      "value": "node4",
+    },
+    {
+      "start": 325,
+      "value": "node5",
+    },
+    {
+      "start": 361,
+      "value": "node5",
+    },
+    {
+      "start": 363,
+      "value": "node5",
+    },
+    {
+      "start": 363,
+      "value": "node2",
+    },
+    {
+      "start": 363,
+      "value": "node5",
+    },
+    {
+      "start": 434,
+      "value": "node6",
+    },
+    {
+      "start": 450,
+      "value": "node6",
+    },
+    {
+      "start": 452,
+      "value": "node6",
+    },
+    {
+      "start": 452,
+      "value": "node2",
+    },
+    {
+      "start": 452,
+      "value": "node0",
+    },
+    {
+      "start": 530,
+      "value": "Not found",
+    },
+    {
+      "start": 532,
+      "value": "node0",
+    },
+    {
+      "start": 532,
+      "value": "node0",
     },
   ],
 }
@@ -10357,7 +11243,15 @@ Lookup {
       "value": "node2",
     },
     {
+      "start": 2228,
+      "value": "node3",
+    },
+    {
       "start": 2240,
+      "value": "node3",
+    },
+    {
+      "start": 2247,
       "value": "node3",
     },
     {
@@ -17493,717 +18387,6 @@ Lookup {
     {
       "start": 3137,
       "value": "node1",
-    },
-  ],
-}
-`;
-
-exports[`C++: issue-106-co_yield.cpp!fibonacci_sequence: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.8999999999999999];
-    node2 [style="filled"; label=""; id="node2"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.5];
-    node5 [style="filled"; label=""; id="node5"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.8999999999999999];
-    node6 [style="filled"; label=""; id="node6"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
-    node8 [style="filled"; label=""; id="node8"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-    node9 [style="filled"; label=""; id="node9"; shape="hexagon"; class="yield"; fillcolor="#00bfff"; orientation=90; height=0.3];
-    node10 [style="filled"; label=""; id="node10"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.6];
-    node11 [style="filled"; label=""; id="node11"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.5];
-    node13 [style="filled"; label=""; id="node13"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-    node14 [style="filled"; label=""; id="node14"; shape="hexagon"; class="yield"; fillcolor="#00bfff"; orientation=90; height=0.3];
-    node15 [style="filled"; label=""; id="node15"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.6];
-    node16 [style="filled"; label=""; id="node16"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.5];
-    node21 [style="filled"; label=""; id="node21"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=1.5];
-    node22 [style="filled"; label=""; id="node22"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-    node24 [style="filled"; label=""; id="node24"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-    node25 [style="filled"; label=""; id="node25"; shape="hexagon"; class="yield"; fillcolor="#00bfff"; orientation=90; height=0.3];
-    node31 [style="filled"; label=""; id="node31"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
-    node23 [style="filled"; label=""; id="node23"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=1.2];
-    node1 -> node2 [penwidth=1; color="#008000"; class="consequence"];
-    node5 -> node6 [penwidth=1; color="#008000"; class="consequence"];
-    node5 -> node8 [penwidth=1; color="#ff0000"; class="alternative"];
-    node10 -> node11 [penwidth=1; color="#008000"; class="consequence"];
-    node10 -> node13 [penwidth=1; color="#ff0000"; class="alternative"];
-    node15 -> node16 [penwidth=1; color="#008000"; class="consequence"];
-    node24 -> node25 [penwidth=1; color="#0000ff"; class="regular"];
-    node21 -> node22 [penwidth=1; color="#0000ff"; class="regular"];
-    node22 -> node24 [penwidth=1; color="#008000"; class="consequence"];
-    node22 -> node23 [penwidth=2; color="#0000ff"; class="regular"; dir="back"; headport="s"; tailport="n"];
-    node8 -> node9 [penwidth=1; color="#0000ff"; class="regular"];
-    node13 -> node14 [penwidth=1; color="#0000ff"; class="regular"];
-    node1 -> node5 [penwidth=1; color="#ff0000"; class="alternative"];
-    node9 -> node10 [penwidth=1; color="#0000ff"; class="regular"];
-    node14 -> node15 [penwidth=1; color="#0000ff"; class="regular"];
-    node15 -> node21 [penwidth=1; color="#ff0000"; class="alternative"];
-    node22 -> node31 [penwidth=1; color="#ff0000"; class="alternative"];
-    node25 -> node23 [penwidth=1; color="#0000ff"; class="regular"];
-}"
-`;
-
-exports[`C++: issue-106-co_yield.cpp!fibonacci_sequence: Segmentation 1`] = `
-Lookup {
-  "ranges": [
-    {
-      "start": 0,
-      "value": "node1",
-    },
-    {
-      "start": 26,
-      "value": "node1",
-    },
-    {
-      "start": 159,
-      "value": "node1",
-    },
-    {
-      "start": 162,
-      "value": "node1",
-    },
-    {
-      "start": 170,
-      "value": "node1",
-    },
-    {
-      "start": 170,
-      "value": "node2",
-    },
-    {
-      "start": 179,
-      "value": "node1",
-    },
-    {
-      "start": 179,
-      "value": "node2",
-    },
-    {
-      "start": 189,
-      "value": "node1",
-    },
-    {
-      "start": 189,
-      "value": "node5",
-    },
-    {
-      "start": 195,
-      "value": "node1",
-    },
-    {
-      "start": 195,
-      "value": "node5",
-    },
-    {
-      "start": 198,
-      "value": "node5",
-    },
-    {
-      "start": 206,
-      "value": "node5",
-    },
-    {
-      "start": 206,
-      "value": "node6",
-    },
-    {
-      "start": 215,
-      "value": "node5",
-    },
-    {
-      "start": 215,
-      "value": "node6",
-    },
-    {
-      "start": 296,
-      "value": "node5",
-    },
-    {
-      "start": 296,
-      "value": "node9",
-    },
-    {
-      "start": 302,
-      "value": "node1",
-    },
-    {
-      "start": 302,
-      "value": "node9",
-    },
-    {
-      "start": 313,
-      "value": "node10",
-    },
-    {
-      "start": 319,
-      "value": "node1",
-    },
-    {
-      "start": 319,
-      "value": "node10",
-    },
-    {
-      "start": 322,
-      "value": "node10",
-    },
-    {
-      "start": 330,
-      "value": "node10",
-    },
-    {
-      "start": 330,
-      "value": "node11",
-    },
-    {
-      "start": 339,
-      "value": "node10",
-    },
-    {
-      "start": 339,
-      "value": "node11",
-    },
-    {
-      "start": 349,
-      "value": "node10",
-    },
-    {
-      "start": 349,
-      "value": "node14",
-    },
-    {
-      "start": 355,
-      "value": "node1",
-    },
-    {
-      "start": 355,
-      "value": "node14",
-    },
-    {
-      "start": 366,
-      "value": "node15",
-    },
-    {
-      "start": 372,
-      "value": "node1",
-    },
-    {
-      "start": 372,
-      "value": "node15",
-    },
-    {
-      "start": 375,
-      "value": "node15",
-    },
-    {
-      "start": 383,
-      "value": "node15",
-    },
-    {
-      "start": 383,
-      "value": "node16",
-    },
-    {
-      "start": 392,
-      "value": "node15",
-    },
-    {
-      "start": 392,
-      "value": "node16",
-    },
-    {
-      "start": 402,
-      "value": "node15",
-    },
-    {
-      "start": 402,
-      "value": "node21",
-    },
-    {
-      "start": 408,
-      "value": "node1",
-    },
-    {
-      "start": 408,
-      "value": "node21",
-    },
-    {
-      "start": 428,
-      "value": "node21",
-    },
-    {
-      "start": 433,
-      "value": "node1",
-    },
-    {
-      "start": 433,
-      "value": "node21",
-    },
-    {
-      "start": 453,
-      "value": "node21",
-    },
-    {
-      "start": 459,
-      "value": "node1",
-    },
-    {
-      "start": 459,
-      "value": "node21",
-    },
-    {
-      "start": 464,
-      "value": "node21",
-    },
-    {
-      "start": 479,
-      "value": "node21",
-    },
-    {
-      "start": 479,
-      "value": "node21",
-    },
-    {
-      "start": 480,
-      "value": "node22",
-    },
-    {
-      "start": 485,
-      "value": "node22",
-    },
-    {
-      "start": 486,
-      "value": "node22",
-    },
-    {
-      "start": 486,
-      "value": "node21",
-    },
-    {
-      "start": 487,
-      "value": "node23",
-    },
-    {
-      "start": 490,
-      "value": "node23",
-    },
-    {
-      "start": 491,
-      "value": "node21",
-    },
-    {
-      "start": 491,
-      "value": "node24",
-    },
-    {
-      "start": 496,
-      "value": "node21",
-    },
-    {
-      "start": 496,
-      "value": "node24",
-    },
-    {
-      "start": 506,
-      "value": "node24",
-    },
-    {
-      "start": 530,
-      "value": "node25",
-    },
-    {
-      "start": 539,
-      "value": "node24",
-    },
-    {
-      "start": 539,
-      "value": "node25",
-    },
-    {
-      "start": 550,
-      "value": "node23",
-    },
-    {
-      "start": 559,
-      "value": "node23",
-    },
-    {
-      "start": 565,
-      "value": "node24",
-    },
-    {
-      "start": 565,
-      "value": "node23",
-    },
-    {
-      "start": 574,
-      "value": "node23",
-    },
-    {
-      "start": 580,
-      "value": "node24",
-    },
-    {
-      "start": 586,
-      "value": "node21",
-    },
-    {
-      "start": 586,
-      "value": "node21",
-    },
-    {
-      "start": 588,
-      "value": "node1",
-    },
-    {
-      "start": 588,
-      "value": "node1",
-    },
-  ],
-}
-`;
-
-exports[`Python: issue-104-assert.py!assert_without_message: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.6];
-    node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
-    node4 [style="filled"; label=""; id="node4"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
-    node1 -> node2 [penwidth=1; color="#ff0000"; class="alternative"];
-    node1 -> node4 [penwidth=1; color="#008000"; class="consequence"];
-}"
-`;
-
-exports[`Python: issue-104-assert.py!assert_with_message: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.6];
-    node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
-    node4 [style="filled"; label=""; id="node4"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
-    node1 -> node2 [penwidth=1; color="#ff0000"; class="alternative"];
-    node1 -> node4 [penwidth=1; color="#008000"; class="consequence"];
-}"
-`;
-
-exports[`Python: issue-104-assert.py!multiple_asserts: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    node1 [style="filled"; label=""; id="node1"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.6];
-    node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
-    node4 [style="filled"; label=""; id="node4"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.6];
-    node5 [style="filled"; label=""; id="node5"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
-    node7 [style="filled"; label=""; id="node7"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.6];
-    node8 [style="filled"; label=""; id="node8"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
-    node10 [style="filled"; label=""; id="node10"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.6];
-    node11 [style="filled"; label=""; id="node11"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
-    node13 [style="filled"; label=""; id="node13"; shape="house"; class="exit"; fillcolor="#AB3030"; height=0.6];
-    node1 -> node2 [penwidth=1; color="#ff0000"; class="alternative"];
-    node4 -> node5 [penwidth=1; color="#ff0000"; class="alternative"];
-    node7 -> node8 [penwidth=1; color="#ff0000"; class="alternative"];
-    node10 -> node11 [penwidth=1; color="#ff0000"; class="alternative"];
-    node1 -> node4 [penwidth=1; color="#008000"; class="consequence"];
-    node4 -> node7 [penwidth=1; color="#008000"; class="consequence"];
-    node7 -> node10 [penwidth=1; color="#008000"; class="consequence"];
-    node10 -> node13 [penwidth=1; color="#008000"; class="consequence"];
-}"
-`;
-
-exports[`Python: issue-104-assert.py!assert_without_message: Segmentation 1`] = `
-Lookup {
-  "ranges": [
-    {
-      "start": 0,
-      "value": "node1",
-    },
-    {
-      "start": 23,
-      "value": "node1",
-    },
-    {
-      "start": 65,
-      "value": "Not found",
-    },
-    {
-      "start": 65,
-      "value": "node1",
-    },
-  ],
-}
-`;
-
-exports[`Python: issue-104-assert.py!assert_with_message: Segmentation 1`] = `
-Lookup {
-  "ranges": [
-    {
-      "start": 0,
-      "value": "node1",
-    },
-    {
-      "start": 91,
-      "value": "node1",
-    },
-    {
-      "start": 130,
-      "value": "Not found",
-    },
-    {
-      "start": 130,
-      "value": "node1",
-    },
-  ],
-}
-`;
-
-exports[`Python: issue-104-assert.py!multiple_asserts: Segmentation 1`] = `
-Lookup {
-  "ranges": [
-    {
-      "start": 0,
-      "value": "node1",
-    },
-    {
-      "start": 156,
-      "value": "node1",
-    },
-    {
-      "start": 192,
-      "value": "Not found",
-    },
-    {
-      "start": 197,
-      "value": "node1",
-    },
-    {
-      "start": 205,
-      "value": "Not found",
-    },
-    {
-      "start": 210,
-      "value": "node1",
-    },
-    {
-      "start": 218,
-      "value": "Not found",
-    },
-    {
-      "start": 223,
-      "value": "node1",
-    },
-    {
-      "start": 231,
-      "value": "Not found",
-    },
-    {
-      "start": 231,
-      "value": "node1",
-    },
-  ],
-}
-`;
-
-exports[`Python: issue-111-throw-finally.py!raise_and_finally: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
-        node4 [style="filled"; label=""; id="node4"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
-        subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
-            node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.3];
-        }
-        subgraph cluster_2 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
-            node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-        }
-    }
-    node0 [style="filled"; label=""; id="node0"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.5];
-    node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.3];
-    node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-    node4 [style="filled"; label=""; id="node4"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
-    node2 -> node3 [penwidth=1; color="#0000ff"; class="regular"];
-    node3 -> node4 [penwidth=1; color="#0000ff"; class="regular"];
-    node0 -> node2 [penwidth=1; color="#0000ff"; class="regular"];
-}"
-`;
-
-exports[`TypeScript: issue-111-throw-finally.ts!throwAndFinally: DOT Snapshot 1`] = `
-"digraph "" {
-    node [shape=box, color="#000000"];
-    edge [headport=n tailport=s]
-    bgcolor="#ffffff"
-    subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
-        node4 [style="filled"; label=""; id="node4"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
-        subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
-            node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.3];
-        }
-        subgraph cluster_3 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
-            node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-        }
-    }
-    node0 [style="filled"; label=""; id="node0"; shape="invhouse"; class="entry"; fillcolor="#48AB30"; height=0.5];
-    node2 [style="filled"; label=""; id="node2"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.3];
-    node3 [style="filled"; label=""; id="node3"; shape="box"; class="default"; fillcolor="#d3d3d3"; height=0.3];
-    node4 [style="filled"; label=""; id="node4"; shape="triangle"; class="throw"; fillcolor="#ffdddd"; height=0.5];
-    node2 -> node3 [penwidth=1; color="#0000ff"; class="regular"];
-    node3 -> node4 [penwidth=1; color="#0000ff"; class="regular"];
-    node0 -> node2 [penwidth=1; color="#0000ff"; class="regular"];
-}"
-`;
-
-exports[`Python: issue-111-throw-finally.py!raise_and_finally: Segmentation 1`] = `
-Lookup {
-  "ranges": [
-    {
-      "start": 0,
-      "value": "node0",
-    },
-    {
-      "start": 23,
-      "value": "node0",
-    },
-    {
-      "start": 52,
-      "value": "node4",
-    },
-    {
-      "start": 65,
-      "value": "node4",
-    },
-    {
-      "start": 85,
-      "value": "node4",
-    },
-    {
-      "start": 85,
-      "value": "node4",
-    },
-    {
-      "start": 90,
-      "value": "node5",
-    },
-    {
-      "start": 107,
-      "value": "node5",
-    },
-    {
-      "start": 122,
-      "value": "node5",
-    },
-    {
-      "start": 122,
-      "value": "node5",
-    },
-    {
-      "start": 122,
-      "value": "node5",
-    },
-    {
-      "start": 122,
-      "value": "node5",
-    },
-    {
-      "start": 122,
-      "value": "node4",
-    },
-    {
-      "start": 122,
-      "value": "node0",
-    },
-    {
-      "start": 122,
-      "value": "node4",
-    },
-    {
-      "start": 122,
-      "value": "node0",
-    },
-  ],
-}
-`;
-
-exports[`TypeScript: issue-111-throw-finally.ts!throwAndFinally: Segmentation 1`] = `
-Lookup {
-  "ranges": [
-    {
-      "start": 0,
-      "value": "node0",
-    },
-    {
-      "start": 26,
-      "value": "node0",
-    },
-    {
-      "start": 57,
-      "value": "node4",
-    },
-    {
-      "start": 61,
-      "value": "node4",
-    },
-    {
-      "start": 67,
-      "value": "node4",
-    },
-    {
-      "start": 84,
-      "value": "node4",
-    },
-    {
-      "start": 88,
-      "value": "node4",
-    },
-    {
-      "start": 89,
-      "value": "node5",
-    },
-    {
-      "start": 97,
-      "value": "node5",
-    },
-    {
-      "start": 103,
-      "value": "node5",
-    },
-    {
-      "start": 124,
-      "value": "node5",
-    },
-    {
-      "start": 124,
-      "value": "node5",
-    },
-    {
-      "start": 128,
-      "value": "node5",
-    },
-    {
-      "start": 128,
-      "value": "node5",
-    },
-    {
-      "start": 128,
-      "value": "node4",
-    },
-    {
-      "start": 128,
-      "value": "node4",
-    },
-    {
-      "start": 130,
-      "value": "node0",
-    },
-    {
-      "start": 130,
-      "value": "node0",
     },
   ],
 }

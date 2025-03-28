@@ -11,7 +11,7 @@ import {
   GenericCFGBuilder,
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
-import { zip } from "./itertools.ts";
+import { pairwise, zip } from "./itertools.ts";
 
 export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
   return new GenericCFGBuilder(statementHandlers, options);
@@ -66,13 +66,16 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
     `
       (try_statement
       body: (_) @try-body
-          (catch_clause body: (_) @catch-body)* @catch
+          (
+              (catch_clause body: (_) @except-body) @except
+              (comment)?
+          )*
       ) @try
       `,
   );
 
   const bodySyntax = match.requireSyntax("try-body");
-  const catchSyntaxMany = match.getSyntaxMany("catch-body");
+  const catchSyntaxMany = match.getSyntaxMany("except-body");
 
   const mergeNode = builder.addNode(
     "MERGE",
@@ -86,16 +89,21 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
     );
     ctx.link.syntaxToNode(trySyntax, bodyBlock.entry);
 
-    // We handle `except` blocks before the `finally` block to support `return` handling.
     const exceptBlocks = catchSyntaxMany.map((exceptSyntax) =>
       builder.withCluster("except", () => match.getBlock(exceptSyntax)),
     );
+
+    // Handle segmentation
     for (const [syntax, { entry }] of zip(
       match.getSyntaxMany("except"),
       exceptBlocks,
     )) {
       ctx.link.syntaxToNode(syntax, entry);
     }
+    for (const [first, second] of pairwise(match.getSyntaxMany("except"))) {
+      ctx.link.offsetToSyntax(first, second, {reverse:true})
+    }
+
     // We attach the except-blocks to the top of the `try` body.
     // In the rendering, we will connect them to the side of the node, and use invisible lines for it.
     if (bodyBlock.entry) {
