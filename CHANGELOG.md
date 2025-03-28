@@ -6,6 +6,11 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Fixed
+
+- Multiple `catch` clauses in C++ are now handled properly, even in case of comments between them.
+- Segmentation of `catch` clauses in C++ is now a lot better.
+
 ## [0.0.15] - 2025-03-26
 
 ### Added
