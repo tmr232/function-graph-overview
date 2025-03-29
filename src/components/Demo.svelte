@@ -137,8 +137,9 @@ function share() {
   const compressedCode = LZString.compressToEncodedURIComponent(
     languageCode[selection.language],
   );
+  console.log("sel", selection);
   const codeName = selection.language.toLowerCase();
-  const language = languages.findIndex((lang) => lang === selection);
+  const language = languages.findIndex((lang) => lang.language === selection.language);
   const query = `?language=${language}&${codeName}=${compressedCode}&fontSize=${fontSize}
 &simplify=${simplify}&flatSwitch=${flatSwitch}&highlight=${highlight}`;
   const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}${query}`;
