@@ -6,6 +6,18 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Fixed
+
+- Multiple `catch` clauses in C++ are now handled properly, even in case of comments between them.
+- Segmentation of `catch` clauses in C++ is now a lot better.
+
+### Changed
+
+- The `bun typedoc` command was renamed to `bun docs`, as some contributors had issues
+  with unexpected recursion in the command. It is also a nicer name.
+
+## [0.0.15] - 2025-03-26
+
 ### Added
 
 - Python catch-all cases in match statements are now detected.

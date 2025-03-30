@@ -35,10 +35,10 @@
     "eslint": "^9.12.0",
     "graphology-utils": "^2.5.2",
     "lz-string": "^1.5.0",
-    "oxlint": "0.15.13",
-    "sv": "^0.6.26",
+    "oxlint": "0.16.3",
+    "sv": "^0.7.1",
     "svelte": "^5.0.0",
-    "svelte-awesome-color-picker": "^3.1.4",
+    "svelte-awesome-color-picker": "^4.0.0",
     "svelte-codemirror-editor": "^1.4.1",
     "tree-sitter-c": "^0.23.1",
     "tree-sitter-cli": "^0.25.3",
@@ -46,10 +46,10 @@
     "tree-sitter-go": "^0.23.1",
     "tree-sitter-python": "^0.23.2",
     "tree-sitter-typescript": "^0.23.2",
-    "typedoc": "^0.27.1",
+    "typedoc": "^0.28.1",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.16.0",
-    "vite": "6.2.2"
+    "vite": "6.2.3"
   },
   "peerDependencies": {
     "typescript": "^5.6.2"
@@ -72,15 +72,15 @@
     "build-webview": "bun run --cwd src/webview/ vite build",
     "oxlint-fix": "bunx oxlint --ignore-path=oxlint-ignore.txt --fix -D correctness -D perf -D suspicious -A no-await-in-loop",
     "oxlint-ci": "bunx oxlint --ignore-path=oxlint-ignore.txt  -D correctness -D perf -D suspicious -A no-await-in-loop",
-    "lint": "bunx biome check --fix && bun oxlint-fix && bunx eslint --fix && bunx tsc --noEmit && bun typedoc",
-    "ci": "bunx biome ci && bun oxlint-ci && bunx eslint && bunx tsc --noEmit && bun typedoc",
+    "lint": "bunx biome check --fix && bun oxlint-fix && bunx eslint --fix && bunx tsc --noEmit && bun docs",
+    "ci": "bunx biome ci && bun oxlint-ci && bunx eslint && bunx tsc --noEmit && bun docs",
     "generate-parsers": "bun run ./scripts/generate-parsers.ts",
-    "typedoc": "bunx typedoc --treatWarningsAsErrors"
+    "docs": "bunx typedoc --treatWarningsAsErrors"
   },
   "//": "START EXTENSION ATTRIBUTES",
   "publisher": "tamir-bahar",
   "name": "function-graph-overview",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Function Graph Overview",
   "displayName": "Function Graph Overview",
   "icon": "./media/icon.png",
