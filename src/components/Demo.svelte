@@ -75,47 +75,52 @@ let flatSwitch = $state(true);
 let highlight = $state(true);
 let version = 1;
 const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.has("fontSize")) {
-  fontSize = urlParams.get("fontSize");
+if (urlParams.has("version")) {
+  version = urlParams.get("version");
 }
-if (urlParams.has("simplify")) {
-  simplify = urlParams.get("simplify") === "true";
-}
-if (urlParams.has("flatSwitch")) {
-  flatSwitch = urlParams.get("flatSwitch") === "true";
-}
-if (urlParams.has("highlight")) {
-  highlight = urlParams.get("highlight") === "true";
-}
-if (urlParams.has("go")) {
-  languageCode.Go = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("go"),
-  );
-}
-if (urlParams.has("c")) {
-  languageCode.C = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("c"),
-  );
-}
-if (urlParams.has("c++")) {
-  languageCode["C++"] = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("c++"),
-  );
-}
-if (urlParams.has("python")) {
-  languageCode.Python = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("python"),
-  );
-}
-if (urlParams.has("typescript")) {
-  languageCode.TypeScript = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("typescript"),
-  );
-}
-if (urlParams.has("tsx")) {
-  languageCode.TSX = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("tsx"),
-  );
+if (version === 1) {
+  if (urlParams.has("fontSize")) {
+    fontSize = urlParams.get("fontSize");
+  }
+  if (urlParams.has("simplify")) {
+    simplify = urlParams.get("simplify") === "true";
+  }
+  if (urlParams.has("flatSwitch")) {
+    flatSwitch = urlParams.get("flatSwitch") === "true";
+  }
+  if (urlParams.has("highlight")) {
+    highlight = urlParams.get("highlight") === "true";
+  }
+  if (urlParams.has("go")) {
+    languageCode.Go = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("go"),
+    );
+  }
+  if (urlParams.has("c")) {
+    languageCode.C = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("c"),
+    );
+  }
+  if (urlParams.has("c++")) {
+    languageCode["C++"] = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("c++"),
+    );
+  }
+  if (urlParams.has("python")) {
+    languageCode.Python = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("python"),
+    );
+  }
+  if (urlParams.has("typescript")) {
+    languageCode.TypeScript = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("typescript"),
+    );
+  }
+  if (urlParams.has("tsx")) {
+    languageCode.TSX = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("tsx"),
+    );
+  }
 }
 
 let colorPicker = $state(false);
@@ -147,7 +152,7 @@ function share() {
     JSON.stringify(colorList),
   );
   const query = `?language=${language}&${codeName}=${compressedCode}&fontSize=${fontSize}
-&simplify=${simplify}&flatSwitch=${flatSwitch}&highlight=${highlight}&colors=${colorConfig}`;
+&simplify=${simplify}&flatSwitch=${flatSwitch}&highlight=${highlight}&colors=${colorConfig}&version=${version}`;
   const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}${query}`;
   navigator.clipboard.writeText(newUrl);
   window.open(newUrl, "_blank").focus();
