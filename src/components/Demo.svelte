@@ -73,6 +73,7 @@ let fontSize = $state("1em");
 let simplify = $state(true);
 let flatSwitch = $state(true);
 let highlight = $state(true);
+let version = 1;
 const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.has("fontSize")) {
   fontSize = urlParams.get("fontSize");
@@ -139,9 +140,14 @@ function share() {
   );
   console.log("sel", selection);
   const codeName = selection.language.toLowerCase();
-  const language = languages.findIndex((lang) => lang.language === selection.language);
+  const language = languages.findIndex(
+    (lang) => lang.language === selection.language,
+  );
+  const colorConfig = LZString.compressToEncodedURIComponent(
+    JSON.stringify(colorList),
+  );
   const query = `?language=${language}&${codeName}=${compressedCode}&fontSize=${fontSize}
-&simplify=${simplify}&flatSwitch=${flatSwitch}&highlight=${highlight}`;
+&simplify=${simplify}&flatSwitch=${flatSwitch}&highlight=${highlight}&colors=${colorConfig}`;
   const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}${query}`;
   navigator.clipboard.writeText(newUrl);
   window.open(newUrl, "_blank").focus();
@@ -197,6 +203,11 @@ function onNodeClicked(
 
 run(() => {
   if (!colorPicker && graph) {
+    if (urlParams.has("colors")) {
+      colorList = JSON.parse(
+        LZString.decompressFromEncodedURIComponent(urlParams.get("colors")),
+      );
+    }
     graph.applyColors(colorList);
   }
 });
@@ -261,7 +272,7 @@ isDark.subscribe(() => {
             </option>
           {/each}
         </select>
-        <button onclick={share}>Share (experimental)</button>
+        <button onclick={share}>Share</button>
       </div>
       <div class="codemirror">
         <Editor
