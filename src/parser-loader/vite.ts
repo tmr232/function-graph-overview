@@ -1,7 +1,6 @@
 import { Parser, Language as ParserLanguage } from "web-tree-sitter";
 import treeSitterCore from "../../parsers/tree-sitter.wasm?url";
-import type { Language } from "../control-flow/cfg.ts";
-import { wasmMapping } from "./wasmMapping.ts";
+import { type Language, languageDefinitions } from "../control-flow/cfg.ts";
 
 export async function initializeParser(language: Language) {
   await Parser.init({
@@ -9,7 +8,7 @@ export async function initializeParser(language: Language) {
       return treeSitterCore;
     },
   });
-  const parserLanguage = await ParserLanguage.load(wasmMapping[language]);
+  const parserLanguage = await ParserLanguage.load(languageDefinitions[language].wasmPath);
   const parser = new Parser();
   parser.setLanguage(parserLanguage);
   return parser;
