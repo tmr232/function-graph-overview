@@ -1,4 +1,5 @@
 import type { Node as SyntaxNode } from "web-tree-sitter";
+import treeSitterPython from "../../parsers/tree-sitter-python.wasm?url";
 import { matchExistsIn } from "./block-matcher.ts";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
@@ -12,6 +13,11 @@ import {
 } from "./generic-cfg-builder.ts";
 import { maybe, zip } from "./itertools.ts";
 
+export const pythonLanguageDefinition = {
+  wasmPath: treeSitterPython,
+  createCFGBuilder: createCFGBuilder,
+  functionNodeTypes: ["function_definition"],
+};
 const processForStatement = forEachLoopProcessor({
   query: `
       [(for_statement

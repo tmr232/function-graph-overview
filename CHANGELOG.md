@@ -15,6 +15,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - The `bun typedoc` command was renamed to `bun docs`, as some contributors had issues
   with unexpected recursion in the command. It is also a nicer name.
+- Language definitions are now more unified, making it easier to add new languages.
 
 ## [0.0.15] - 2025-03-26
 
