@@ -1,4 +1,6 @@
 import type { Node as SyntaxNode } from "web-tree-sitter";
+import treeSitterTSX from "../../parsers/tree-sitter-tsx.wasm?url";
+import treeSitterTypeScript from "../../parsers/tree-sitter-typescript.wasm?url";
 import { matchExistsIn } from "./block-matcher.ts";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
@@ -22,6 +24,25 @@ import {
 } from "./generic-cfg-builder.ts";
 import { treeSitterNoNullNodes } from "./hacks.ts";
 import { buildSwitch, collectCases } from "./switch-utils.ts";
+
+const typeScriptFunctionNodeTypes = [
+  "function_declaration",
+  "arrow_function",
+  "method_definition",
+  "function_expression",
+  "generator_function",
+  "generator_function_declaration",
+];
+export const typeScriptLanguageDefinition = {
+  wasmPath: treeSitterTypeScript,
+  createCFGBuilder: createCFGBuilder,
+  functionNodeTypes: typeScriptFunctionNodeTypes,
+};
+export const tsxLanguageDefinition = {
+  wasmPath: treeSitterTSX,
+  createCFGBuilder: createCFGBuilder,
+  functionNodeTypes: typeScriptFunctionNodeTypes,
+};
 
 export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
   return new GenericCFGBuilder(statementHandlers, options);

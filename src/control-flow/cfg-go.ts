@@ -1,4 +1,5 @@
 import type { Node as SyntaxNode } from "web-tree-sitter";
+import treeSitterGo from "../../parsers/tree-sitter-go.wasm?url";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
   forEachLoopProcessor,
@@ -18,6 +19,16 @@ import {
 } from "./generic-cfg-builder";
 import { treeSitterNoNullNodes } from "./hacks.ts";
 import { type SwitchOptions, buildSwitch, collectCases } from "./switch-utils";
+
+export const goLanguageDefinition = {
+  wasmPath: treeSitterGo,
+  createCFGBuilder: createCFGBuilder,
+  functionNodeTypes: [
+    "function_declaration",
+    "method_declaration",
+    "func_literal",
+  ],
+};
 
 const processBreakStatement = labeledBreakProcessor(`
     (break_statement

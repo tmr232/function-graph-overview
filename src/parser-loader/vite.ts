@@ -8,7 +8,9 @@ export async function initializeParser(language: Language) {
       return treeSitterCore;
     },
   });
-  const parserLanguage = await ParserLanguage.load(languageDefinitions[language].wasmPath);
+  const parserLanguage = await ParserLanguage.load(
+    languageDefinitions[language].wasmPath,
+  );
   const parser = new Parser();
   parser.setLanguage(parserLanguage);
   return parser;

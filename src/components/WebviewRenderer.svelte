@@ -63,9 +63,7 @@ function getFunctionAtOffset(
   let syntax: SyntaxNode | null = tree.rootNode.descendantForIndex(offset);
 
   while (syntax) {
-    if (
-        languageDefinitions[language].functionNodeTypes.includes(syntax.type)
-      ) {
+    if (languageDefinitions[language].functionNodeTypes.includes(syntax.type)) {
       break;
     }
     syntax = syntax.parent;
