@@ -1,4 +1,5 @@
 import type { Node as SyntaxNode } from "web-tree-sitter";
+import treeSitterC from "../../parsers/tree-sitter-c.wasm?url";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
   cStyleDoWhileProcessor,
@@ -20,6 +21,12 @@ import {
 } from "./generic-cfg-builder.ts";
 import { treeSitterNoNullNodes } from "./hacks.ts";
 import { buildSwitch, collectCases } from "./switch-utils.ts";
+
+export const cLanguageDefinition = {
+  wasmPath: treeSitterC,
+  createCFGBuilder: createCFGBuilder,
+  functionNodeTypes: ["function_definition"],
+};
 
 function getChildFieldText(node: SyntaxNode, fieldName: string): string {
   const child = node.childForFieldName(fieldName);

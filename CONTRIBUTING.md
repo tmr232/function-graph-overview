@@ -83,13 +83,16 @@ We use multiple tools to format and lint our code, including automatic fixes by 
 To run the tools, use:
 
 ```shell
-bun check
+bun lint
 ```
 
 The command will run both formatting & linting, and stop when a tool detects issues it cannot resolve automatically.
 Follow the recommendation in the tool output, and re-run the command once you are done.
 
 We recommend running it frequently as you code to keep the output short and simple.
+
+If you see changes to files you did not edit - try running `bun install` again,
+as the linters and the configuration get updated from time to time.
 
 
 ### Update CHANGELOG and CONTRIBUTORS

@@ -1,4 +1,5 @@
 import type { Node as SyntaxNode } from "web-tree-sitter";
+import treeSitterCpp from "../../parsers/tree-sitter-cpp.wasm?url";
 import { getStatementHandlers } from "./cfg-c.ts";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
@@ -11,13 +12,17 @@ import {
   GenericCFGBuilder,
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
-import { zip } from "./itertools.ts";
+import { pairwise, zip } from "./itertools.ts";
+
+export const cppLanguageDefinition = {
+  wasmPath: treeSitterCpp,
+  createCFGBuilder: createCFGBuilder,
+  functionNodeTypes: ["function_definition", "lambda_expression"],
+};
 
 export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
   return new GenericCFGBuilder(statementHandlers, options);
 }
-
-export const functionNodeNames = ["function_definition", "lambda_expression"];
 
 const processForRangeStatement = forEachLoopProcessor({
   query: `
@@ -53,6 +58,14 @@ function processCoYieldStatement(
   return { entry: yieldNode, exit: yieldNode };
 }
 
+function isCatchAll(catchSyntax: SyntaxNode): boolean {
+  return Boolean(
+    catchSyntax
+      .childForFieldName("parameters")
+      ?.children.some((child) => child?.text === "..."),
+  );
+}
+
 function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
   const { builder, matcher } = ctx;
   /*
@@ -66,13 +79,16 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
     `
       (try_statement
       body: (_) @try-body
-          (catch_clause body: (_) @catch-body)* @catch
+          (
+              (catch_clause body: (_) @except-body) @except
+              (comment)?
+          )*
       ) @try
       `,
   );
 
   const bodySyntax = match.requireSyntax("try-body");
-  const catchSyntaxMany = match.getSyntaxMany("catch-body");
+  const catchSyntaxMany = match.getSyntaxMany("except-body");
 
   const mergeNode = builder.addNode(
     "MERGE",
@@ -86,23 +102,33 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
     );
     ctx.link.syntaxToNode(trySyntax, bodyBlock.entry);
 
-    // We handle `except` blocks before the `finally` block to support `return` handling.
     const exceptBlocks = catchSyntaxMany.map((exceptSyntax) =>
       builder.withCluster("except", () => match.getBlock(exceptSyntax)),
     );
+
+    // Handle segmentation
     for (const [syntax, { entry }] of zip(
       match.getSyntaxMany("except"),
       exceptBlocks,
     )) {
       ctx.link.syntaxToNode(syntax, entry);
     }
+    for (const [first, second] of pairwise(match.getSyntaxMany("except"))) {
+      ctx.link.offsetToSyntax(first, second, { reverse: true });
+    }
+
     // We attach the except-blocks to the top of the `try` body.
     // In the rendering, we will connect them to the side of the node, and use invisible lines for it.
-    if (bodyBlock.entry) {
-      const headNode = bodyBlock.entry;
-      for (const exceptBlock of exceptBlocks) {
-        // Yes, this is effectively a head-to-head link. But that's ok.
-        builder.addEdge(headNode, exceptBlock.entry, "exception");
+    const headNode = bodyBlock.entry;
+    for (const [exceptBlock, exceptSyntax] of zip(
+      exceptBlocks,
+      match.getSyntaxMany("except"),
+    )) {
+      // Yes, this is effectively a head-to-head link. But that's ok.
+      builder.addEdge(headNode, exceptBlock.entry, "exception");
+      if (isCatchAll(exceptSyntax)) {
+        // We reached a `catch (...)`, so the rest are unreachable.
+        break;
       }
     }
 
