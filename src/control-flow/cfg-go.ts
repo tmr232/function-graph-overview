@@ -56,6 +56,7 @@ const statementHandlers: StatementHandlers = {
     labeled_statement: processLabeledStatement,
     goto_statement: processGotoStatement,
     comment: processComment,
+    expression_statement: processExpressionStatement,
   },
   default: defaultProcessStatement,
 };
@@ -70,6 +71,25 @@ function processSwitchStatement(syntax: SyntaxNode, ctx: Context): BasicBlock {
 
 function processSelectStatement(syntax: SyntaxNode, ctx: Context): BasicBlock {
   return processSwitchlike(syntax, { noImplicitDefault: true }, ctx);
+}
+
+function processExpressionStatement(
+  syntax: SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  if (
+    syntax.firstChild?.type === "call_expression" &&
+    ctx.mayExit?.(syntax.firstChild.childForFieldName("function") as SyntaxNode)
+  ) {
+    const node = ctx.builder.addNode(
+      "EXIT_PROCESS",
+      syntax.text,
+      syntax.startIndex,
+    );
+    ctx.link.syntaxToNode(syntax, node);
+    return { entry: node, exit: null };
+  }
+  return defaultProcessStatement(syntax, ctx);
 }
 
 function defaultProcessStatement(syntax: SyntaxNode, ctx: Context): BasicBlock {
