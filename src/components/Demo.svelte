@@ -7,6 +7,7 @@ import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import type { LanguageSupport } from "@codemirror/language";
 import * as LZString from "lz-string";
+import { onMount } from "svelte";
 import type { Language } from "../control-flow/cfg";
 import { evolve } from "../control-flow/evolve.ts";
 import CodeSegmentation from "./CodeSegmentation.svelte";
@@ -14,7 +15,6 @@ import ColorScheme from "./ColorSchemeEditor.svelte";
 import Editor from "./Editor.svelte";
 import Graph from "./Graph.svelte";
 import { getSystemColorList, isDark, toggleTheme } from "./lightdark.ts";
-
 // ADD-LANGUAGES-HERE
 const defaultCodeSamples: { [language in Language]?: string } = {
   Go: "func Example() {\n\tif x {\n\t\treturn\n\t}\n}",
@@ -69,16 +69,25 @@ let languages: {
   },
 ] as const;
 
+let currentVersion: number = 1;
 let fontSize = $state("1em");
 let simplify = $state(true);
 let flatSwitch = $state(true);
 let highlight = $state(true);
-let version = 1;
 const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.has("version")) {
-  version = urlParams.get("version");
-}
-if (version === 1) {
+const urlVersion = urlParams.has("version")
+  ? Number(urlParams.get("version"))
+  : currentVersion;
+
+onMount(() => {
+  if (urlParams.has("colors")) {
+    colorList = JSON.parse(
+      LZString.decompressFromEncodedURIComponent(urlParams.get("colors")),
+    );
+  }
+});
+
+if (urlVersion === 1) {
   if (urlParams.has("fontSize")) {
     fontSize = urlParams.get("fontSize");
   }
@@ -91,36 +100,36 @@ if (version === 1) {
   if (urlParams.has("highlight")) {
     highlight = urlParams.get("highlight") === "true";
   }
-}
-if (urlParams.has("go")) {
-  languageCode.Go = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("go"),
-  );
-}
-if (urlParams.has("c")) {
-  languageCode.C = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("c"),
-  );
-}
-if (urlParams.has("c++")) {
-  languageCode["C++"] = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("c++"),
-  );
-}
-if (urlParams.has("python")) {
-  languageCode.Python = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("python"),
-  );
-}
-if (urlParams.has("typescript")) {
-  languageCode.TypeScript = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("typescript"),
-  );
-}
-if (urlParams.has("tsx")) {
-  languageCode.TSX = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("tsx"),
-  );
+  if (urlParams.has("go")) {
+    languageCode.Go = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("go"),
+    );
+  }
+  if (urlParams.has("c")) {
+    languageCode.C = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("c"),
+    );
+  }
+  if (urlParams.has("c++")) {
+    languageCode["C++"] = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("c++"),
+    );
+  }
+  if (urlParams.has("python")) {
+    languageCode.Python = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("python"),
+    );
+  }
+  if (urlParams.has("typescript")) {
+    languageCode.TypeScript = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("typescript"),
+    );
+  }
+  if (urlParams.has("tsx")) {
+    languageCode.TSX = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("tsx"),
+    );
+  }
 }
 
 let colorPicker = $state(false);
@@ -151,7 +160,7 @@ function share() {
     JSON.stringify(colorList),
   );
   const query = `?language=${language}&${codeName}=${compressedCode}&fontSize=${fontSize}
-&simplify=${simplify}&flatSwitch=${flatSwitch}&highlight=${highlight}&colors=${colorConfig}&version=${version}`;
+&simplify=${simplify}&flatSwitch=${flatSwitch}&highlight=${highlight}&colors=${colorConfig}&version=${currentVersion}`;
   const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}${query}`;
   navigator.clipboard.writeText(newUrl);
   window.open(newUrl, "_blank").focus();
@@ -207,11 +216,6 @@ function onNodeClicked(
 
 run(() => {
   if (!colorPicker && graph) {
-    if (urlParams.has("colors")) {
-      colorList = JSON.parse(
-        LZString.decompressFromEncodedURIComponent(urlParams.get("colors")),
-      );
-    }
     graph.applyColors(colorList);
   }
 });
