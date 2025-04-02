@@ -6,10 +6,16 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Added
+
+- Added support for reading the following parameters from the URL: `fontSize`, `simplify`, `flatSwitch`, `highlight`, color configuration (`colors`), and `version`.
+- When opening a shared link, these URL parameters are now correctly parsed and applied to the demo page.
+
 ### Fixed
 
 - Multiple `catch` clauses in C++ are now handled properly, even in case of comments between them.
 - Segmentation of `catch` clauses in C++ is now a lot better.
+- Fixed an issue where after sharing and reopening the page, clicking the "Share" button again would default the language back to Go instead of preserving the selected one.
 
 ### Changed
 

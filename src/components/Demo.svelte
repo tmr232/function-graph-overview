@@ -15,6 +15,7 @@ import ColorScheme from "./ColorSchemeEditor.svelte";
 import Editor from "./Editor.svelte";
 import Graph from "./Graph.svelte";
 import { getSystemColorList, isDark, toggleTheme } from "./lightdark.ts";
+
 // ADD-LANGUAGES-HERE
 const defaultCodeSamples: { [language in Language]?: string } = {
   Go: "func Example() {\n\tif x {\n\t\treturn\n\t}\n}",
