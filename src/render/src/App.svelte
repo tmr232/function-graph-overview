@@ -5,6 +5,7 @@ import { MultiDirectedGraph } from "graphology";
 import { onMount } from "svelte";
 import { type Node as SyntaxNode } from "web-tree-sitter";
 import { type Language, newCFGBuilder } from "../../control-flow/cfg";
+import { extractFunctionName } from "../../control-flow/function-utils";
 import {
   type CFG,
   type GraphEdge,
@@ -251,33 +252,6 @@ function updateMetadata(func: SyntaxNode, language: Language, CFG: CFG) {
       cyclomaticComplexity,
     },
   };
-}
-
-function extractFunctionName(func: SyntaxNode, language: Language): string {
-  if (language === "TypeScript" || language === "TSX") {
-    if (func.type === "arrow_function") {
-      let parent = func.parent;
-      // Traverse the parent nodes to find the variable declarator for the arrow function
-      while (parent) {
-        if (parent.type === "variable_declarator") {
-          const identifier = parent.namedChildren.find(
-            (child) => child.type === "identifier",
-          );
-          return identifier?.text;
-        }
-        parent = parent.parent;
-      }
-    } //else - The function is NOT an arrow function
-  }
-  // For any function type (C/C++/Go/Python or other non-arrow function in TypeScript/TSX)
-  return func
-    .descendantsOfType([
-      "identifier",
-      "field_identifier",
-      "property_identifier",
-    ])
-    .map((node) => node.text)
-    .find(Boolean);
 }
 
 async function render() {
