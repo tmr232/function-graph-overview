@@ -91,36 +91,36 @@ if (version === 1) {
   if (urlParams.has("highlight")) {
     highlight = urlParams.get("highlight") === "true";
   }
-  if (urlParams.has("go")) {
-    languageCode.Go = LZString.decompressFromEncodedURIComponent(
-      urlParams.get("go"),
-    );
-  }
-  if (urlParams.has("c")) {
-    languageCode.C = LZString.decompressFromEncodedURIComponent(
-      urlParams.get("c"),
-    );
-  }
-  if (urlParams.has("c++")) {
-    languageCode["C++"] = LZString.decompressFromEncodedURIComponent(
-      urlParams.get("c++"),
-    );
-  }
-  if (urlParams.has("python")) {
-    languageCode.Python = LZString.decompressFromEncodedURIComponent(
-      urlParams.get("python"),
-    );
-  }
-  if (urlParams.has("typescript")) {
-    languageCode.TypeScript = LZString.decompressFromEncodedURIComponent(
-      urlParams.get("typescript"),
-    );
-  }
-  if (urlParams.has("tsx")) {
-    languageCode.TSX = LZString.decompressFromEncodedURIComponent(
-      urlParams.get("tsx"),
-    );
-  }
+}
+if (urlParams.has("go")) {
+  languageCode.Go = LZString.decompressFromEncodedURIComponent(
+    urlParams.get("go"),
+  );
+}
+if (urlParams.has("c")) {
+  languageCode.C = LZString.decompressFromEncodedURIComponent(
+    urlParams.get("c"),
+  );
+}
+if (urlParams.has("c++")) {
+  languageCode["C++"] = LZString.decompressFromEncodedURIComponent(
+    urlParams.get("c++"),
+  );
+}
+if (urlParams.has("python")) {
+  languageCode.Python = LZString.decompressFromEncodedURIComponent(
+    urlParams.get("python"),
+  );
+}
+if (urlParams.has("typescript")) {
+  languageCode.TypeScript = LZString.decompressFromEncodedURIComponent(
+    urlParams.get("typescript"),
+  );
+}
+if (urlParams.has("tsx")) {
+  languageCode.TSX = LZString.decompressFromEncodedURIComponent(
+    urlParams.get("tsx"),
+  );
 }
 
 let colorPicker = $state(false);
@@ -143,7 +143,6 @@ function share() {
   const compressedCode = LZString.compressToEncodedURIComponent(
     languageCode[selection.language],
   );
-  console.log("sel", selection);
   const codeName = selection.language.toLowerCase();
   const language = languages.findIndex(
     (lang) => lang.language === selection.language,
