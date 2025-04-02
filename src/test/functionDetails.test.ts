@@ -1,5 +1,5 @@
 import { describe, it, expect } from "bun:test";
-import { extractFunctionName } from "../render/src/App.svelte";
+import { extractFunctionName } from "../control-flow/function-utils.ts";
 import type { Node as SyntaxNode } from "web-tree-sitter";
 
 describe("extractFunctionName - Go", () => {

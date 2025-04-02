@@ -64,6 +64,7 @@ export function extractFunctionName(
   func: SyntaxNode,
   language: Language,
 ): string | null {
+  console.log(func);
   switch (language) {
     case "TypeScript":
     case "TSX":
