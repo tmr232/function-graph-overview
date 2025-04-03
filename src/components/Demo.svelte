@@ -89,9 +89,9 @@ onMount(() => {
 });
 /**
  * Parses URL parameters according to version 1 format.
- * 
+ *
  * Currently support version 1 only but the urlVersion check allow to support future version if needed.
- * 
+ *
  * Version 1 parameters include:
  * - fontSize
  * - simplify
@@ -99,7 +99,7 @@ onMount(() => {
  * - highlight
  * - compressed source code
  * -
-*/
+ */
 if (urlVersion === 1) {
   if (urlParams.has("fontSize")) {
     fontSize = urlParams.get("fontSize");
