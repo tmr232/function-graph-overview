@@ -7,6 +7,7 @@ import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import type { LanguageSupport } from "@codemirror/language";
 import * as LZString from "lz-string";
+import { onMount } from "svelte";
 import type { Language } from "../control-flow/cfg";
 import { evolve } from "../control-flow/evolve.ts";
 import CodeSegmentation from "./CodeSegmentation.svelte";
@@ -69,47 +70,86 @@ let languages: {
   },
 ] as const;
 
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.has("go")) {
-  languageCode.Go = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("go"),
-  );
-}
-if (urlParams.has("c")) {
-  languageCode.C = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("c"),
-  );
-}
-if (urlParams.has("c++")) {
-  languageCode["C++"] = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("c++"),
-  );
-}
-if (urlParams.has("python")) {
-  languageCode.Python = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("python"),
-  );
-}
-if (urlParams.has("typescript")) {
-  languageCode.TypeScript = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("typescript"),
-  );
-}
-if (urlParams.has("tsx")) {
-  languageCode.TSX = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("tsx"),
-  );
-}
-
+let currentVersion: number = 1; // Needs to be updated when a new version is released.
+let fontSize = $state("1em");
 let simplify = $state(true);
 let flatSwitch = $state(true);
 let highlight = $state(true);
+const urlParams = new URLSearchParams(window.location.search);
+const urlVersion = urlParams.has("version")
+  ? Number(urlParams.get("version"))
+  : currentVersion;
+
+onMount(() => {
+  if (urlParams.has("colors")) {
+    colorList = JSON.parse(
+      LZString.decompressFromEncodedURIComponent(urlParams.get("colors")),
+    );
+  }
+});
+/**
+ * Parses URL parameters according to version 1 format.
+ *
+ * Currently support version 1 only but the urlVersion check allow to support future version if needed.
+ *
+ * Version 1 parameters include:
+ * - fontSize
+ * - simplify
+ * - flatSwitch
+ * - highlight
+ * - compressed source code
+ * -
+ */
+if (urlVersion === 1) {
+  if (urlParams.has("fontSize")) {
+    fontSize = urlParams.get("fontSize");
+  }
+  if (urlParams.has("simplify")) {
+    simplify = urlParams.get("simplify") === "true";
+  }
+  if (urlParams.has("flatSwitch")) {
+    flatSwitch = urlParams.get("flatSwitch") === "true";
+  }
+  if (urlParams.has("highlight")) {
+    highlight = urlParams.get("highlight") === "true";
+  }
+  if (urlParams.has("go")) {
+    languageCode.Go = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("go"),
+    );
+  }
+  if (urlParams.has("c")) {
+    languageCode.C = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("c"),
+    );
+  }
+  if (urlParams.has("c++")) {
+    languageCode["C++"] = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("c++"),
+    );
+  }
+  if (urlParams.has("python")) {
+    languageCode.Python = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("python"),
+    );
+  }
+  if (urlParams.has("typescript")) {
+    languageCode.TypeScript = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("typescript"),
+    );
+  }
+  if (urlParams.has("tsx")) {
+    languageCode.TSX = LZString.decompressFromEncodedURIComponent(
+      urlParams.get("tsx"),
+    );
+  }
+}
+
 let colorPicker = $state(false);
 let verbose = $state(urlParams.has("verbose"));
 let showSegmentation = $state(urlParams.has("segmentation"));
 let showRegions = $state(urlParams.has("showRegions"));
 let debugMode = urlParams.has("debug");
-let fontSize = $state("1em");
 const range = (start: number, end: number) =>
   Array.from({ length: end - start }, (_v, k) => k + start);
 const fontSizes: { label: string; value: string }[] = [
@@ -126,8 +166,14 @@ function share() {
     languageCode[selection.language],
   );
   const codeName = selection.language.toLowerCase();
-  const language = languages.findIndex((lang) => lang === selection);
-  const query = `?language=${language}&${codeName}=${compressedCode}`;
+  const language = languages.findIndex(
+    (lang) => lang.language === selection.language,
+  );
+  const colorConfig = LZString.compressToEncodedURIComponent(
+    JSON.stringify(colorList),
+  );
+  const query = `?language=${language}&${codeName}=${compressedCode}&fontSize=${fontSize}
+&simplify=${simplify}&flatSwitch=${flatSwitch}&highlight=${highlight}&colors=${colorConfig}&version=${currentVersion}`;
   const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}${query}`;
   navigator.clipboard.writeText(newUrl);
   window.open(newUrl, "_blank").focus();
@@ -247,7 +293,7 @@ isDark.subscribe(() => {
             </option>
           {/each}
         </select>
-        <button onclick={share}>Share (experimental)</button>
+        <button onclick={share}>Share</button>
       </div>
       <div class="codemirror">
         <Editor
