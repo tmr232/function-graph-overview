@@ -70,7 +70,7 @@ let languages: {
   },
 ] as const;
 
-let currentVersion: number = 1;
+let currentVersion: number = 1; // Needs to be updated when a new version is released.
 let fontSize = $state("1em");
 let simplify = $state(true);
 let flatSwitch = $state(true);
@@ -87,7 +87,19 @@ onMount(() => {
     );
   }
 });
-
+/**
+ * Parses URL parameters according to version 1 format.
+ * 
+ * Currently support version 1 only but the urlVersion check allow to support future version if needed.
+ * 
+ * Version 1 parameters include:
+ * - fontSize
+ * - simplify
+ * - flatSwitch
+ * - highlight
+ * - compressed source code
+ * -
+*/
 if (urlVersion === 1) {
   if (urlParams.has("fontSize")) {
     fontSize = urlParams.get("fontSize");
