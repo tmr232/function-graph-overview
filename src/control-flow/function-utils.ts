@@ -23,6 +23,7 @@ const nodeType = {
   lambdaExpression: "lambda_expression",
 };
 
+//Maps each supported programming language to its relevant function node types
 const functionType = {
   TypeScript: {
     functionDeclaration: languageDefinitions.TypeScript.functionNodeTypes[0],
@@ -50,6 +51,13 @@ const functionType = {
   },
 };
 
+/**
+ * Extracts the name of a node by searching for a child node with a specific type.
+ *
+ * @param {SyntaxNode} func - The syntax node to search within.
+ * @param {string} type - The type of the child node to extract the name from.
+ * @returns {string | undefined} The name of the node, or `undefined` if not found.
+ */
 function extractNameByNodeName(
   func: SyntaxNode,
   type: string,
@@ -60,6 +68,15 @@ function extractNameByNodeName(
   );
 }
 
+/**
+ * Extracts the name of a variable to which a function is assigned.
+ * This function traverses the syntax tree upwards to locate the variable name.
+ *
+ * @param {SyntaxNode} func - The syntax node representing the function.
+ * @param {string} parentType - The type of the parent node to search for.
+ * @param {string} childType - The type of the child node to extract the variable name from.
+ * @returns {string | undefined} The variable name, or `undefined` if not found.
+ */
 function extractVariableName(
   func: SyntaxNode,
   parentType: string,
@@ -75,6 +92,12 @@ function extractVariableName(
   return undefined;
 }
 
+/**
+ * Extracts the name of a Go function based on its syntax node type.
+ *
+ * @param {SyntaxNode} func - The syntax node representing the Go function.
+ * @returns {string | undefined} The function name, or `undefined` if not found.
+ */
 function extractGoFunctionName(func: SyntaxNode): string | undefined {
   switch (func.type) {
     case functionType.Go.functionDeclaration:
@@ -111,10 +134,13 @@ function extractGoFunctionName(func: SyntaxNode): string | undefined {
       return undefined;
   }
 }
-
+/**
+ * Extracts the name of a TypeScript function based on its syntax node type.
+ *
+ * @param {SyntaxNode} func - The syntax node representing the TypeScript function.
+ * @returns {string | undefined} The function name, or `undefined` if not found.
+ */
 function extractTypeScriptFunctionName(func: SyntaxNode): string | undefined {
-  console.log(func.type);
-  console.log(func);
   switch (func.type) {
     case functionType.TypeScript.functionDeclaration:
     case functionType.TypeScript.generatorFunctionDeclaration:
@@ -152,6 +178,20 @@ function extractTypeScriptFunctionName(func: SyntaxNode): string | undefined {
   }
 }
 
+/**
+ * Extracts the name of a function based on its syntax node and language.
+ *
+ * Supports:
+ * - TypeScript/TSX
+ * - C
+ * - C++
+ * - Python
+ * - Go
+ *
+ * @param {SyntaxNode} func - The syntax node (The function).
+ * @param {Language} language - The programming language of the function.
+ * @returns {string | undefined} The function name, or `undefined` if not found.
+ */
 export function extractFunctionName(
   func: SyntaxNode,
   language: Language,
