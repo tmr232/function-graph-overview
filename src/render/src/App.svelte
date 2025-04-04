@@ -5,7 +5,6 @@ import { MultiDirectedGraph } from "graphology";
 import { onMount } from "svelte";
 import { type Node as SyntaxNode } from "web-tree-sitter";
 import { type Language, newCFGBuilder } from "../../control-flow/cfg";
-import { extractFunctionName } from "../../control-flow/function-utils";
 import {
   type CFG,
   type GraphEdge,
@@ -18,6 +17,7 @@ import {
   getLightColorList,
   listToScheme,
 } from "../../control-flow/colors";
+import { extractFunctionName } from "../../control-flow/function-utils";
 import { simplifyCFG, trimFor } from "../../control-flow/graph-ops";
 import { Lookup } from "../../control-flow/ranges";
 import { graphToDot } from "../../control-flow/render";
@@ -232,7 +232,7 @@ let functionAndCFGMetadata: FunctionAndCFGMetadata = {
 
 function updateMetadata(func: SyntaxNode, language: Language, CFG: CFG) {
   // Update function metadata
-  const name: string = extractFunctionName(func, language);
+  const name: string | undefined = extractFunctionName(func, language);
   const lineCount: number = func.endPosition.row - func.startPosition.row + 1;
 
   // Update CFG metadata
