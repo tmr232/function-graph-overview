@@ -113,12 +113,14 @@ function extractGoFunctionName(func: SyntaxNode): string | undefined {
 }
 
 function extractTypeScriptFunctionName(func: SyntaxNode): string | undefined {
+  console.log(func.type);
+  console.log(func);
   switch (func.type) {
     case functionType.TypeScript.functionDeclaration:
-    case functionType.TypeScript.generatorFunction:
     case functionType.TypeScript.generatorFunctionDeclaration:
       return extractNameByNodeName(func, nodeType.identifier);
 
+    case functionType.TypeScript.generatorFunction:
     case functionType.TypeScript.arrowFunction:
       return extractVariableName(
         func,
