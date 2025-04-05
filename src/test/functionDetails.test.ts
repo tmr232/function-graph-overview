@@ -103,9 +103,9 @@ test("C++: lambda_expression - Anonymous", () => {
   const code = `[](int value) {
     std::cout << value << std::endl;
 };`;
-const funcIterator = iterFunctions(code, "C++");
-const func = funcIterator.next().value;
-expect(extractFunctionName(func, "C++")).toBe("Anonymous");
+  const funcIterator = iterFunctions(code, "C++");
+  const func = funcIterator.next().value;
+  expect(extractFunctionName(func, "C++")).toBe("Anonymous");
 });
 
 // Python Tests
@@ -113,9 +113,9 @@ test("Python: function_definition", () => {
   const code = `def now(tz: Optional[TZ_EXPR] = None) -> Arrow:
     """Calls the default :class:ArrowFactory <arrow.factory.ArrowFactory> now method."""
     return _factory.now(tz)`;
-const funcIterator = iterFunctions(code, "Python");
-const func = funcIterator.next().value;
-expect(extractFunctionName(func, "Python")).toBe("now");
+  const funcIterator = iterFunctions(code, "Python");
+  const func = funcIterator.next().value;
+  expect(extractFunctionName(func, "Python")).toBe("now");
 });
 test("Python: function_definition", () => {
   const code = `async def fetch_recent_messages(client):
@@ -142,9 +142,9 @@ test("Python: function_definition", () => {
         except Exception as e:
             logger.error(f"Failed to fetch messages from {channel}: {str(e)}")
 `;
-const funcIterator = iterFunctions(code, "Python");
-const func = funcIterator.next().value;
-expect(extractFunctionName(func, "Python")).toBe("fetch_recent_messages");
+  const funcIterator = iterFunctions(code, "Python");
+  const func = funcIterator.next().value;
+  expect(extractFunctionName(func, "Python")).toBe("fetch_recent_messages");
 });
 
 // test("Python: function_definition with no identifier", () => {
@@ -164,9 +164,9 @@ test("TypeScript: function_declaration", () => {
   };
 }
 `;
-const funcIterator = iterFunctions(code, "TypeScript");
-const func = funcIterator.next().value;
-expect(extractFunctionName(func, "TypeScript")).toBe("getStatementHandlers");
+  const funcIterator = iterFunctions(code, "TypeScript");
+  const func = funcIterator.next().value;
+  expect(extractFunctionName(func, "TypeScript")).toBe("getStatementHandlers");
 });
 
 test("TypeScript: arrow_function with variable", () => {
@@ -182,9 +182,9 @@ test("TypeScript: arrow_function with no parent", () => {
   const code = `<T,>(value: T): T[] => {
     return [value];
   };`;
-    const funcIterator = iterFunctions(code, "TypeScript");
-    const func = funcIterator.next().value;
-    expect(extractFunctionName(func, "TypeScript")).toBe("Anonymous");
+  const funcIterator = iterFunctions(code, "TypeScript");
+  const func = funcIterator.next().value;
+  expect(extractFunctionName(func, "TypeScript")).toBe("Anonymous");
 });
 
 test("TypeScript: method_definition", () => {
@@ -210,59 +210,70 @@ test("TypeScript: method_definition", () => {
   expect(extractFunctionName(func, "TypeScript")).toBe("setPrice");
 });
 
-// test("TypeScript: method_definition", () => {
-//   const node = makeNode({
-//     type: "method_definition",
-//     namedChildren: [makeNode({ type: "property_identifier", text: "methodName" })],
-//   });
-//   expect(extractFunctionName(node, "TypeScript")).toBe("methodName");
-// });
+test("TypeScript: function_expression with variable", () => {
+  const code = `const myFunction = function(name1: string): string {
+    return "Hello name1!";
+    };`;
+  const functIterator = iterFunctions(code, "TypeScript");
+  const func = functIterator.next().value;
+  expect(extractFunctionName(func, "TypeScript")).toBe("myFunction");
+});
+test("TypeScript: function_expression with no variable", () => {
+  const code = `function(name1: string): string {
+    return "Hello name1!";
+    };`;
+  const functIterator = iterFunctions(code, "TypeScript");
+  const func = functIterator.next().value;
+  expect(extractFunctionName(func, "TypeScript")).toBe("Anonymous");
+});
 
-// test("TypeScript: function_expression with identifier", () => {
-//   const namedExpr = makeNode({
-//     type: "function_expression",
-//     namedChildren: [makeNode({ type: "identifier", text: "namedExpr" })],
-//   });
-//   expect(extractFunctionName(namedExpr, "TypeScript")).toBe("namedExpr");
-// });
+test("TypeScript: generator_function with variable", () => {
+  const code = `const fn = function* <T>(input: T): Generator<number> {
+  yield 2;
+}`;
+  const functIterator = iterFunctions(code, "TypeScript");
+  const func = functIterator.next().value;
+  expect(extractFunctionName(func, "TypeScript")).toBe("fn");
+});
 
-// test("TypeScript: function_expression with variable", () => {
-//   const variableDecl = makeNode({
-//     type: "variable_declarator",
-//     namedChildren: [makeNode({ type: "identifier", text: "assignedExpr" })],
-//   });
-//   const anonFunc = makeNode({ type: "function_expression", parent: variableDecl });
-//   expect(extractFunctionName(anonFunc, "TypeScript")).toBe("assignedExpr");
-// });
+test("TypeScript: generator_function with no variable", () => {
+  const code = `function* <T>(input: T): Generator<number> {
+    yield 2;
+  }`;
+    const functIterator = iterFunctions(code, "TypeScript");
+    const func = functIterator.next().value;
+    expect(extractFunctionName(func, "TypeScript")).toBe("Anonymous");
+});
 
-// test("TypeScript: function_expression with no name or variable", () => {
-//   const node = makeNode({ type: "function_expression" });
-//   expect(extractFunctionName(node, "TypeScript")).toBeUndefined();
-// });
+test("TypeScript: generator_function_declaration", () => {
+  const code = `function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
+  const matches = testFuncQuery.matches(tree.rootNode, { maxStartDepth: 1 });
 
-// // TypeScript: generator_function assigned to a variable
-// test("TypeScript: generator_function with variable", () => {
-//   const variableDecl = makeNode({
-//     type: "variable_declarator",
-//     namedChildren: [makeNode({ type: "identifier", text: "genFuncVar" })],
-//   });
-//   const generatorFunc = makeNode({
-//     type: "generator_function",
-//     parent: variableDecl,
-//   });
-//   expect(extractFunctionName(generatorFunc, "TypeScript")).toBe("genFuncVar");
-// });
-
-// // TypeScript: generator_function with no variable assignment
-// test("TypeScript: generator_function with no variable", () => {
-//   const generatorFunc = makeNode({ type: "generator_function" });
-//   expect(extractFunctionName(generatorFunc, "TypeScript")).toBeUndefined();
-// });
-
-// test("TypeScript: generator_function_declaration", () => {
-//   const node = makeNode({
-//     type: "generator_function_declaration",
-//     namedChildren: [makeNode({ type: "identifier", text: "genFuncDecl" })],
-//   });
-//   expect(extractFunctionName(node, "TypeScript")).toBe("genFuncDecl");
-// });
+  for (const match of matches) {
+    for (
+      let i = 0;
+      i < match.captures.length;
+      i += testFuncQuery.captureNames.length - 1
+    ) {
+      const captures = match.captures;
+      const comments = [];
+      // @ts-expect-error: We know that the captures are OK
+      for (; captures[i].name === "comment"; ++i) {
+        // @ts-expect-error: We know that the captures are OK
+        comments.push(captures[i].node.text.slice(1).trim());
+      }
+      yield {
+        // @ts-expect-error: We know that the captures are OK
+        function: captures[i].node,
+        reqs: parseComment(comments.join("\n")),
+        // @ts-expect-error: We know that the captures are OK
+        name: captures[i + 1].node.text,
+        language: "Python",
+      };
+    }
+  }
+}`;
+  const functIterator = iterFunctions(code, "TypeScript");
+  const func = functIterator.next().value;
+  expect(extractFunctionName(func, "TypeScript")).toBe("iterTestFunctions");
+});
