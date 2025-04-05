@@ -120,17 +120,6 @@ T add(T a, T b) {
   const func = funcIterator.next().value;
   expect(extractFunctionName(func, "C++")).toBe("add");
 });
-// test("C++: overloaded operator", () => {
-//   const code = `class Complex {
-//   public:
-//     Complex operator+(const Complex& other) {
-//       return Complex();
-//     }
-// };`;
-//   const funcIterator = iterFunctions(code, "C++");
-//   const func = funcIterator.next().value;
-//   expect(extractFunctionName(func, "C++")).toBe("operator+");
-// });
 // Python Tests
 test("Python: function_definition", () => {
   const code = `def now(tz: Optional[TZ_EXPR] = None) -> Arrow:
@@ -169,12 +158,6 @@ test("Python: function_definition", () => {
   const func = funcIterator.next().value;
   expect(extractFunctionName(func, "Python")).toBe("fetch_recent_messages");
 });
-// test("Python: lambda function", () => {
-//   const code = `square = lambda x: x * x`;
-//   const funcIterator = iterFunctions(code, "Python");
-//   const func = funcIterator.next().value;
-//   expect(extractFunctionName(func, "Python")).toBe("square");
-// });
 // TypeScript Tests
 test("TypeScript: function_declaration", () => {
   const code = `export function getStatementHandlers(): StatementHandlers {
