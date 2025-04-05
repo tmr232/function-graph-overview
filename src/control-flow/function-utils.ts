@@ -128,7 +128,7 @@ function extractGoFunctionName(func: SyntaxNode): string | undefined {
       }
 
       // If no variable is found it is probably an anonymous function
-      return "Anonymous Function (func literal)";
+      return "Anonymous";
     }
     default:
       return undefined;
@@ -148,10 +148,12 @@ function extractTypeScriptFunctionName(func: SyntaxNode): string | undefined {
 
     case functionType.TypeScript.generatorFunction:
     case functionType.TypeScript.arrowFunction:
-      return extractVariableName(
-        func,
-        nodeType.variableDeclarator,
-        nodeType.identifier,
+      return (
+        extractVariableName(
+          func,
+          nodeType.variableDeclarator,
+          nodeType.identifier,
+        ) || "Anonymous"
       );
 
     case functionType.TypeScript.methodDefinition:
@@ -167,10 +169,12 @@ function extractTypeScriptFunctionName(func: SyntaxNode): string | undefined {
         return optionalIdentifier;
       }
       // If not, check if it's part of a variable declaration
-      return extractVariableName(
-        func,
-        nodeType.variableDeclarator,
-        nodeType.identifier,
+      return (
+        extractVariableName(
+          func,
+          nodeType.variableDeclarator,
+          nodeType.identifier,
+        ) || "Anonymous"
       );
     }
     default:
@@ -213,7 +217,7 @@ export function extractFunctionName(
         language === "C++"
       ) {
         // if the lambda is assigned to a variable, return the variable name
-        // otherwise return "Lambda Expression (Anonymous)"
+        // otherwise return "Anonymous"
         return (
           extractVariableName(
             func,
@@ -225,7 +229,7 @@ export function extractFunctionName(
             nodeType.initDeclarator,
             nodeType.identifier,
           ) ||
-          "Lambda Expression (Anonymous)"
+          "Anonymous"
         );
       }
       return undefined;
