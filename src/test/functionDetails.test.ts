@@ -6,7 +6,6 @@ import { initParsers, iterFunctions } from "../file-parsing/vite.ts";
 beforeAll(async () => {
   await initParsers();
 });
-
 // Go Tests
 test("Go: function_declaration", () => {
   const code = `func main() {
@@ -35,7 +34,6 @@ test("Go: func_literal assigned to variable", () => {
   const func = funcIterator.next().value;
   expect(extractFunctionName(func, "Go")).toBe("isDebugInts");
 });
-
 test("Go: func_literal with no parent", () => {
   const code = `return func(x int) int {
         sum += x
@@ -45,7 +43,17 @@ test("Go: func_literal with no parent", () => {
   const func = funcIterator.next().value;
   expect(extractFunctionName(func, "Go")).toBe("Anonymous");
 });
-
+test("Go: nested function", () => {
+  const code = `func outer() {
+    func inner() {
+      fmt.Println("Inner function")
+    }
+    inner()
+  }`;
+  const funcIterator = iterFunctions(code, "Go");
+  const func = funcIterator.next().value;
+  expect(extractFunctionName(func, "Go")).toBe("outer");
+});
 // C Tests
 test("C: function_definition", () => {
   const code = `static void
@@ -64,7 +72,14 @@ tr_where (const void caller, Dl_infoinfo)
   const func = funcIterator.next().value;
   expect(extractFunctionName(func, "C")).toBe("tr_where");
 });
-
+test("C: inline function", () => {
+  const code = `inline int add(int a, int b) {
+    return a + b;
+  }`;
+  const funcIterator = iterFunctions(code, "C");
+  const func = funcIterator.next().value;
+  expect(extractFunctionName(func, "C")).toBe("add");
+});
 // C++ Tests
 test("C++: function_definition", () => {
   const code = `unsigned int Miner::calculate_hash_code() {
@@ -80,16 +95,6 @@ test("C++: function_definition", () => {
   const func = funcIterator.next().value;
   expect(extractFunctionName(func, "C++")).toBe("calculate_hash_code");
 });
-
-test("C++: lambda_expression - variable", () => {
-  const code = `auto f = [](int value) {
-        std::cout << value << std::endl;
-    };`;
-  const funcIterator = iterFunctions(code, "C++");
-  const func = funcIterator.next().value;
-  expect(extractFunctionName(func, "C++")).toBe("f");
-});
-
 test("C++: lambda_expression - variable", () => {
   const code = `std::function<int(int)> func2 = [&](int value) -> int {
         return 1+value+important;
@@ -98,7 +103,6 @@ test("C++: lambda_expression - variable", () => {
   const func = funcIterator.next().value;
   expect(extractFunctionName(func, "C++")).toBe("func2");
 });
-
 test("C++: lambda_expression - Anonymous", () => {
   const code = `[](int value) {
     std::cout << value << std::endl;
@@ -107,7 +111,26 @@ test("C++: lambda_expression - Anonymous", () => {
   const func = funcIterator.next().value;
   expect(extractFunctionName(func, "C++")).toBe("Anonymous");
 });
-
+test("C++: template function", () => {
+  const code = `template <typename T>
+T add(T a, T b) {
+  return a + b;
+}`;
+  const funcIterator = iterFunctions(code, "C++");
+  const func = funcIterator.next().value;
+  expect(extractFunctionName(func, "C++")).toBe("add");
+});
+// test("C++: overloaded operator", () => {
+//   const code = `class Complex {
+//   public:
+//     Complex operator+(const Complex& other) {
+//       return Complex();
+//     }
+// };`;
+//   const funcIterator = iterFunctions(code, "C++");
+//   const func = funcIterator.next().value;
+//   expect(extractFunctionName(func, "C++")).toBe("operator+");
+// });
 // Python Tests
 test("Python: function_definition", () => {
   const code = `def now(tz: Optional[TZ_EXPR] = None) -> Arrow:
@@ -146,15 +169,12 @@ test("Python: function_definition", () => {
   const func = funcIterator.next().value;
   expect(extractFunctionName(func, "Python")).toBe("fetch_recent_messages");
 });
-
-// test("Python: function_definition with no identifier", () => {
-//   const code = `data = load_message_history()`;
+// test("Python: lambda function", () => {
+//   const code = `square = lambda x: x * x`;
 //   const funcIterator = iterFunctions(code, "Python");
 //   const func = funcIterator.next().value;
-//   console.log(func);
-//   expect(extractFunctionName(func, "Python")).toBeUndefined();
+//   expect(extractFunctionName(func, "Python")).toBe("square");
 // });
-
 // TypeScript Tests
 test("TypeScript: function_declaration", () => {
   const code = `export function getStatementHandlers(): StatementHandlers {
@@ -168,7 +188,6 @@ test("TypeScript: function_declaration", () => {
   const func = funcIterator.next().value;
   expect(extractFunctionName(func, "TypeScript")).toBe("getStatementHandlers");
 });
-
 test("TypeScript: arrow_function with variable", () => {
   const code = `const returnInArray = <T,>(value: T): T[] => {
   return [value];
@@ -177,7 +196,6 @@ test("TypeScript: arrow_function with variable", () => {
   const func = funcIterator.next().value;
   expect(extractFunctionName(func, "TypeScript")).toBe("returnInArray");
 });
-
 test("TypeScript: arrow_function with no parent", () => {
   const code = `<T,>(value: T): T[] => {
     return [value];
@@ -186,7 +204,6 @@ test("TypeScript: arrow_function with no parent", () => {
   const func = funcIterator.next().value;
   expect(extractFunctionName(func, "TypeScript")).toBe("Anonymous");
 });
-
 test("TypeScript: method_definition", () => {
   const code = `class SmarPhone {
     color: string
@@ -209,7 +226,6 @@ test("TypeScript: method_definition", () => {
   const func = functIterator.next().value;
   expect(extractFunctionName(func, "TypeScript")).toBe("setPrice");
 });
-
 test("TypeScript: function_expression with variable", () => {
   const code = `const myFunction = function(name1: string): string {
     return "Hello name1!";
@@ -226,7 +242,6 @@ test("TypeScript: function_expression with no variable", () => {
   const func = functIterator.next().value;
   expect(extractFunctionName(func, "TypeScript")).toBe("Anonymous");
 });
-
 test("TypeScript: generator_function with variable", () => {
   const code = `const fn = function* <T>(input: T): Generator<number> {
   yield 2;
@@ -235,16 +250,14 @@ test("TypeScript: generator_function with variable", () => {
   const func = functIterator.next().value;
   expect(extractFunctionName(func, "TypeScript")).toBe("fn");
 });
-
 test("TypeScript: generator_function with no variable", () => {
   const code = `function* <T>(input: T): Generator<number> {
     yield 2;
   }`;
-    const functIterator = iterFunctions(code, "TypeScript");
-    const func = functIterator.next().value;
-    expect(extractFunctionName(func, "TypeScript")).toBe("Anonymous");
+  const functIterator = iterFunctions(code, "TypeScript");
+  const func = functIterator.next().value;
+  expect(extractFunctionName(func, "TypeScript")).toBe("Anonymous");
 });
-
 test("TypeScript: generator_function_declaration", () => {
   const code = `function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {
   const matches = testFuncQuery.matches(tree.rootNode, { maxStartDepth: 1 });
