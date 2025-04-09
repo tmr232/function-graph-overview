@@ -37,7 +37,7 @@
         "graphology-utils": "^2.5.2",
         "lz-string": "^1.5.0",
         "oxlint": "0.16.5",
-        "sv": "^0.7.1",
+        "sv": "^0.8.0",
         "svelte": "^5.0.0",
         "svelte-awesome-color-picker": "^4.0.0",
         "svelte-codemirror-editor": "^1.4.1",
@@ -894,7 +894,7 @@
 
     "supports-color": ["supports-color@7.2.0", "", { "dependencies": { "has-flag": "^4.0.0" } }, "sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw=="],
 
-    "sv": ["sv@0.7.1", "", { "bin": { "sv": "dist/bin.js" } }, "sha512-kMA+Wbtx3L8mD+tlX+paRBnLeoRtVgwSp/smMJM14EE4l5EH1cBkXM7JgmScGdnsUtKaukA7/C1aFE+ut7nvDQ=="],
+    "sv": ["sv@0.8.0", "", { "bin": { "sv": "dist/bin.js" } }, "sha512-nWTFtF3Q8hDrQJB1wko50z1dwUgmjhXgyJFTV0Z6dkzGjSPTHM56evKoJaHar0VfF+ljCj5a8kpSC2uwxNT/Jw=="],
 
     "svelte": ["svelte@5.23.0", "", { "dependencies": { "@ampproject/remapping": "^2.3.0", "@jridgewell/sourcemap-codec": "^1.5.0", "@sveltejs/acorn-typescript": "^1.0.5", "@types/estree": "^1.0.5", "acorn": "^8.12.1", "aria-query": "^5.3.1", "axobject-query": "^4.1.0", "clsx": "^2.1.1", "esm-env": "^1.2.1", "esrap": "^1.4.3", "is-reference": "^3.0.3", "locate-character": "^3.0.0", "magic-string": "^0.30.11", "zimmerframe": "^1.1.2" } }, "sha512-v0lL3NuKontiCxholEiAXCB+BYbndlKbwlDMK0DS86WgGELMJSpyqCSbJeMEMBDwOglnS7Ar2Rq0wwa/z2L8Vg=="],
 
