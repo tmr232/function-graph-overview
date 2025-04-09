@@ -40,7 +40,11 @@ export interface Context {
   state: BlockHandler;
   link: Link;
   extra?: Extra;
-  callProcessor?: (call: SyntaxNode) => BasicBlock | undefined;
+  callProcessor?: (
+    call: SyntaxNode,
+    functionName: string,
+    ctx: Context,
+  ) => BasicBlock | undefined;
 }
 
 /**

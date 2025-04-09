@@ -78,9 +78,11 @@ function processExpressionStatement(
   ctx: Context,
 ): BasicBlock {
   if (syntax.firstChild?.type === "call_expression") {
-    const callBlock = ctx.callProcessor?.(
-      syntax.firstChild.childForFieldName("function") as SyntaxNode,
-    );
+    const functionName = syntax.firstChild.childForFieldName("function")?.text;
+    if (!functionName) {
+      throw new Error("Missing callee in call expression!");
+    }
+    const callBlock = ctx.callProcessor?.(syntax, functionName, ctx);
     if (callBlock) {
       return callBlock;
     }
