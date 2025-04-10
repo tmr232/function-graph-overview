@@ -8,7 +8,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### Added
 
-- Added support for reading the following parameters from the URL: `fontSize`, `simplify`, `flatSwitch`, `highlight`, color configuration (`colors`), and `version`.
+- Added support for reading configuration from a single compressed JSON URL parameter (`data`).
+This configuration is stored into one JSON query parameter.
+- Additionally, added support for a `language` query parameter when `data` is not present, to load the default code sample for that language.
 - When opening a shared link, these URL parameters are now correctly parsed and applied to the demo page.
 
 ### Fixed
