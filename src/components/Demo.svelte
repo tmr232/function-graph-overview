@@ -79,8 +79,9 @@ let parsedColorList = undefined;
 const urlParams = new URLSearchParams(window.location.search);
 let selection = $state(
   languages.find(
-    (lang) => lang.language.toLowerCase() === urlParams.get("language")?.toLowerCase()
-  ) ?? languages[0]
+    (lang) =>
+      lang.language.toLowerCase() === urlParams.get("language")?.toLowerCase(),
+  ) ?? languages[0],
 );
 /**
  * Parses URL parameters according to version 1 format.
@@ -106,37 +107,33 @@ let selection = $state(
  */
 
 if (urlParams.has("data")) {
-    const rawData = urlParams.get("data");
-    const parsedData = JSON.parse(LZString.decompressFromEncodedURIComponent(urlParams.get("data")));
-    if (parsedData.version === 1) {
-      fontSize = parsedData.fontSize;
-      simplify = parsedData.simplify;
-      flatSwitch = parsedData.flatSwitch;
-      highlight = parsedData.highlight;
-      parsedColorList = parsedData.colors;
-      selection = languages.find(
-        (lang) => lang.language.toLowerCase() === parsedData.language,
-      );
-      if (parsedData.language === "go") {
-        languageCode.Go = parsedData.code;
-      }
-      else if (parsedData.language === "c") {
-        languageCode.C = parsedData.code;
-      }
-      else if (parsedData.language === "c++") {
-        languageCode["C++"] = parsedData.code;
-      }
-      else if (parsedData.language === "python") {
-        languageCode.Python = parsedData.code;
-      }
-      else if (parsedData.language === "typescript") {
-        languageCode.TypeScript = parsedData.code;
-      }
-      else if (parsedData.language === "tsx") {
-        languageCode.TSX = parsedData.code;
-      }
+  const parsedData = JSON.parse(
+    LZString.decompressFromEncodedURIComponent(urlParams.get("data")),
+  );
+  if (parsedData.version === 1) {
+    fontSize = parsedData.fontSize;
+    simplify = parsedData.simplify;
+    flatSwitch = parsedData.flatSwitch;
+    highlight = parsedData.highlight;
+    parsedColorList = parsedData.colors;
+    selection = languages.find(
+      (lang) => lang.language.toLowerCase() === parsedData.language,
+    );
+    if (parsedData.language === "go") {
+      languageCode.Go = parsedData.code;
+    } else if (parsedData.language === "c") {
+      languageCode.C = parsedData.code;
+    } else if (parsedData.language === "c++") {
+      languageCode["C++"] = parsedData.code;
+    } else if (parsedData.language === "python") {
+      languageCode.Python = parsedData.code;
+    } else if (parsedData.language === "typescript") {
+      languageCode.TypeScript = parsedData.code;
+    } else if (parsedData.language === "tsx") {
+      languageCode.TSX = parsedData.code;
     }
   }
+}
 onMount(() => {
   if (parsedColorList) {
     colorList = colorListParam;
@@ -167,8 +164,8 @@ function share() {
     simplify,
     flatSwitch,
     highlight,
-    colors: colorConfig
-  }
+    colors: colorConfig,
+  };
   const compressed = LZString.compressToEncodedURIComponent(
     JSON.stringify(parameters),
   );
