@@ -3,6 +3,7 @@ import { subgraph } from "graphology-operators";
 import type { CFG, CFGGraph, Cluster, ClusterId } from "./cfg-defs";
 import { type ColorScheme, getDefaultColorScheme } from "./colors";
 import { detectBacklinks } from "./graph-ops";
+import { getEdgeStyle, getNodeStyle, type NodeStyleType } from "../dot-cfg/theme.ts";
 
 function indent(text: string): string {
   return (
@@ -219,7 +220,7 @@ export function graphToDot(
   );
 }
 
-type DotAttributes = { [attribute: string]: number | string | undefined };
+type DotAttributes = { [attribute: string]: number | string | undefined|boolean };
 function formatStyle(style: DotAttributes): string {
   return Object.entries(style)
     .map(([name, value]) => {
@@ -289,39 +290,11 @@ function renderEdge(
   context: RenderContext,
 ) {
   const attributes = topGraph.getEdgeAttributes(edge);
-  const dotAttrs: DotAttributes = {};
   const isBacklink = context.isBacklink(source, target);
-  dotAttrs.penwidth = isBacklink ? 2 : 1;
-  dotAttrs.color = context.colorScheme["edge.regular"];
-  switch (attributes.type) {
-    case "consequence":
-      dotAttrs.class = "consequence";
-      dotAttrs.color = context.colorScheme["edge.consequence"];
-      break;
-    case "alternative":
-      dotAttrs.class = "alternative";
-      dotAttrs.color = context.colorScheme["edge.alternative"];
-      break;
-    case "regular":
-      dotAttrs.class = "regular";
-      dotAttrs.color = context.colorScheme["edge.regular"];
-      break;
-    case "exception":
-      dotAttrs.style = "invis";
-      dotAttrs.headport = "e";
-      dotAttrs.tailport = "w";
-      break;
-    default:
-      dotAttrs.color = "fuchsia";
-  }
+ const dotAttrs = getEdgeStyle(attributes.type, isBacklink, context.colorScheme);
   if (isBacklink) {
-    // For backlinks, we use `dir=back` to improve the layout.
-    // This tells DOT that this is a backlink, and changes the ranking of nodes.
-    dotAttrs.dir = "back";
     // To accommodate that, we also flip the node order and the ports.
     [source, target] = [target, source];
-    dotAttrs.headport = "s";
-    dotAttrs.tailport = "n";
   }
   return `${source} -> ${target} [${formatStyle(dotAttrs)}];`;
 }
@@ -331,11 +304,23 @@ function renderNode(
   node: string,
   context: RenderContext,
 ): string {
-  const dotAttrs: DotAttributes = {};
   const nodeAttrs = graph.getNodeAttributes(node);
 
-  dotAttrs.style = "filled";
-  dotAttrs.label = "";
+
+  let nodeType:NodeStyleType = "DEFAULT";
+  if (nodeAttrs.type === "THROW") {
+    nodeType = "THROW"
+  } else if (nodeAttrs.type === "YIELD") {
+    nodeType = "YIELD";
+  } else if (graph.degree(node)===0) {
+    nodeType = "SINGLE";
+  } else if (graph.inDegree(node)===0) {
+    nodeType = "ENTRY";
+  } else if (graph.outDegree(node)===0) {
+    nodeType = "EXIT";
+  }
+  const dotAttrs = getNodeStyle(nodeType,graph.getNodeAttribute(node, "lines"), context.colorScheme );
+
   // This is needed to rename nodes for go-to-line
   dotAttrs.id = `${node}`;
   if (context.verbose) {
@@ -344,40 +329,5 @@ function renderNode(
     const clusterAttrs = graph.getNodeAttribute(node, "cluster");
     dotAttrs.label = `${clusterAttrs?.id} ${clusterAttrs?.type}\n${dotAttrs.label}`;
   }
-  dotAttrs.shape = "box";
-  dotAttrs.class = "default";
-  dotAttrs.fillcolor = context.colorScheme["node.default"];
-  let minHeight = 0.2;
-  if (graph.degree(node) === 0) {
-    dotAttrs.minHeight = 0.5;
-  } else if (graph.inDegree(node) === 0) {
-    dotAttrs.shape = "invhouse";
-    dotAttrs.class = "entry";
-    dotAttrs.fillcolor = context.colorScheme["node.entry"];
-    minHeight = 0.5;
-  } else if (graph.outDegree(node) === 0) {
-    dotAttrs.shape = "house";
-    dotAttrs.class = "exit";
-    dotAttrs.fillcolor = context.colorScheme["node.exit"];
-    minHeight = 0.5;
-  }
-  switch (nodeAttrs.type) {
-    case "THROW":
-      dotAttrs.shape = "triangle";
-      dotAttrs.class = "throw";
-      dotAttrs.fillcolor = context.colorScheme["node.throw"];
-      break;
-    case "YIELD":
-      dotAttrs.shape = "hexagon";
-      dotAttrs.orientation = 90;
-      dotAttrs.class = "yield";
-      dotAttrs.fillcolor = context.colorScheme["node.yield"];
-      break;
-  }
-
-  dotAttrs.height = Math.max(
-    graph.getNodeAttribute(node, "lines") * 0.3,
-    minHeight,
-  );
   return `${node} [${formatStyle(dotAttrs)}];`;
 }
