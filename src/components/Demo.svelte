@@ -136,7 +136,7 @@ if (urlParams.has("data")) {
 }
 onMount(() => {
   if (parsedColorList) {
-    colorList = colorListParam;
+    colorList = parsedColorList;
   }
 });
 
