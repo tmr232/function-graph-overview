@@ -2,6 +2,7 @@ import type { Node as SyntaxNode } from "web-tree-sitter";
 import type { BasicBlock } from "./cfg-defs.ts";
 import type { Context } from "./generic-cfg-builder.ts";
 import { matchWildcard } from "./wildcard.ts";
+import type { Language } from "./cfg.ts";
 export type Is = "TERMINATE" | "ASSERT";
 export type CallHandler = {
   pattern: string;
@@ -16,7 +17,35 @@ function matchHandler(
     ?.is;
 }
 
-export function callProcessorFactory(handlers: CallHandler[]) {
+const perLanguageHandlers :Partial<Record<Language, CallHandler[]>> = {
+  Python:[
+    {pattern:"self.assertEqual", is:"ASSERT"},
+    {pattern:"self.assertRaises", is:"ASSERT"},
+    {pattern:"self.assertIs", is:"ASSERT"},
+    {pattern:"self.assertTrue", is:"ASSERT"},
+    {pattern:"self.assertWarns", is:"ASSERT"},
+    {pattern:"self.assertFalse", is:"ASSERT"},
+    {pattern:"self.assertNotEqual", is:"ASSERT"},
+    {pattern:"self.assertGreater", is:"ASSERT"},
+    {pattern:"self.assertLess", is:"ASSERT"},
+    {pattern:"self.assertGreaterEqual", is:"ASSERT"},
+    {pattern:"self.assertLessEqual", is:"ASSERT"},
+    {pattern:"sys.exit",is:"TERMINATE"},
+    {pattern:"os.abort",is:"TERMINATE"},
+  ]
+}
+
+export function callProcessorFor(language:Language):CallProcessor|undefined {
+  const handlers = perLanguageHandlers[language];
+  if (!handlers) {
+    return undefined;
+  }
+  return callProcessorFactory(handlers);
+}
+
+type CallProcessor = (node: SyntaxNode, functionName: string, ctx: Context) => (BasicBlock | undefined);
+
+export function callProcessorFactory(handlers: CallHandler[]): CallProcessor {
   return (
     node: SyntaxNode,
     functionName: string,
