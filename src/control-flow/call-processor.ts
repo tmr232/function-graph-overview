@@ -19,19 +19,12 @@ function matchHandler(
 
 const perLanguageHandlers :Partial<Record<Language, CallHandler[]>> = {
   Python:[
-    {pattern:"self.assertEqual", is:"ASSERT"},
-    {pattern:"self.assertRaises", is:"ASSERT"},
-    {pattern:"self.assertIs", is:"ASSERT"},
-    {pattern:"self.assertTrue", is:"ASSERT"},
-    {pattern:"self.assertWarns", is:"ASSERT"},
-    {pattern:"self.assertFalse", is:"ASSERT"},
-    {pattern:"self.assertNotEqual", is:"ASSERT"},
-    {pattern:"self.assertGreater", is:"ASSERT"},
-    {pattern:"self.assertLess", is:"ASSERT"},
-    {pattern:"self.assertGreaterEqual", is:"ASSERT"},
-    {pattern:"self.assertLessEqual", is:"ASSERT"},
+    {pattern:"self.assert*", is:"ASSERT"},
     {pattern:"sys.exit",is:"TERMINATE"},
     {pattern:"os.abort",is:"TERMINATE"},
+  ],
+  Go: [
+    {pattern:"panic", is:"TERMINATE"},
   ]
 }
 
