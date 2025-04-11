@@ -2,7 +2,7 @@ import type { Graphviz } from "@hpcc-js/wasm-graphviz";
 import type { G, Polygon } from "@svgdotjs/svg.js";
 import objectHash from "object-hash";
 import type { Node as SyntaxNode } from "web-tree-sitter";
-import { callProcessorFactory, callProcessorFor } from "../control-flow/call-processor.ts";
+import { callProcessorFor } from "../control-flow/call-processor.ts";
 import { type Language, newCFGBuilder } from "../control-flow/cfg";
 import { mergeNodeAttrs, remapNodeTargets } from "../control-flow/cfg-defs";
 import { type ColorList, listToScheme } from "../control-flow/colors";
