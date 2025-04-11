@@ -40,6 +40,11 @@ export interface Context {
   state: BlockHandler;
   link: Link;
   extra?: Extra;
+  callProcessor?: (
+    call: SyntaxNode,
+    functionName: string,
+    ctx: Context,
+  ) => BasicBlock | undefined;
 }
 
 /**
@@ -155,6 +160,7 @@ export class GenericCFGBuilder {
         ),
       },
       extra: extra,
+      callProcessor: this.options.callProcessor,
     });
   }
 

@@ -373,6 +373,10 @@ function renderNode(
       dotAttrs.class = "yield";
       dotAttrs.fillcolor = context.colorScheme["node.yield"];
       break;
+    case "EXIT_PROCESS":
+      dotAttrs.shape = "doublecircle";
+      dotAttrs.class = "exit";
+      dotAttrs.fillcolor = context.colorScheme["node.exit"];
   }
 
   dotAttrs.height = Math.max(
