@@ -7,6 +7,7 @@ import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import type { LanguageSupport } from "@codemirror/language";
 import * as LZString from "lz-string";
+import { onMount } from "svelte";
 import type { Language } from "../control-flow/cfg";
 import { evolve } from "../control-flow/evolve.ts";
 import CodeSegmentation from "./CodeSegmentation.svelte";
@@ -69,47 +70,81 @@ let languages: {
   },
 ] as const;
 
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.has("go")) {
-  languageCode.Go = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("go"),
-  );
-}
-if (urlParams.has("c")) {
-  languageCode.C = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("c"),
-  );
-}
-if (urlParams.has("c++")) {
-  languageCode["C++"] = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("c++"),
-  );
-}
-if (urlParams.has("python")) {
-  languageCode.Python = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("python"),
-  );
-}
-if (urlParams.has("typescript")) {
-  languageCode.TypeScript = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("typescript"),
-  );
-}
-if (urlParams.has("tsx")) {
-  languageCode.TSX = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("tsx"),
-  );
-}
-
+let currentVersion: number = 1; // Needs to be updated when a new version is released.
+let fontSize = $state("1em");
 let simplify = $state(true);
 let flatSwitch = $state(true);
 let highlight = $state(true);
+let parsedColorList = undefined;
+const urlParams = new URLSearchParams(window.location.search);
+let selection = $state(
+  languages.find(
+    (lang) =>
+      lang.language.toLowerCase() === urlParams.get("language")?.toLowerCase(),
+  ) ?? languages[0],
+);
+/**
+ * Parses URL parameters according to version 1 format.
+ *
+ * This version expects a single `data` parameter containing a compressed JSON
+ * with all necessary configuration, including:
+ *
+ * - version
+ * - language
+ * - code
+ * - fontSize
+ * - simplify
+ * - flatSwitch
+ * - highlight
+ * - colors
+ *
+ * This format makes the URL more compact and easier to extend in the future.
+ *
+ * Notes:
+ * - If `data` is present, it overrides all other URL parameters.
+ * - If `language` is provided without `data`, the default code sample for that
+ *   language is used.
+ */
+
+if (urlParams.has("data")) {
+  const parsedData = JSON.parse(
+    LZString.decompressFromEncodedURIComponent(urlParams.get("data")),
+  );
+  if (parsedData.version === 1) {
+    fontSize = parsedData.fontSize;
+    simplify = parsedData.simplify;
+    flatSwitch = parsedData.flatSwitch;
+    highlight = parsedData.highlight;
+    parsedColorList = parsedData.colors;
+    selection = languages.find(
+      (lang) => lang.language.toLowerCase() === parsedData.language,
+    );
+    if (parsedData.language === "go") {
+      languageCode.Go = parsedData.code;
+    } else if (parsedData.language === "c") {
+      languageCode.C = parsedData.code;
+    } else if (parsedData.language === "c++") {
+      languageCode["C++"] = parsedData.code;
+    } else if (parsedData.language === "python") {
+      languageCode.Python = parsedData.code;
+    } else if (parsedData.language === "typescript") {
+      languageCode.TypeScript = parsedData.code;
+    } else if (parsedData.language === "tsx") {
+      languageCode.TSX = parsedData.code;
+    }
+  }
+}
+onMount(() => {
+  if (parsedColorList) {
+    colorList = parsedColorList;
+  }
+});
+
 let colorPicker = $state(false);
 let verbose = $state(urlParams.has("verbose"));
 let showSegmentation = $state(urlParams.has("segmentation"));
 let showRegions = $state(urlParams.has("showRegions"));
 let debugMode = urlParams.has("debug");
-let fontSize = $state("1em");
 const range = (start: number, end: number) =>
   Array.from({ length: end - start }, (_v, k) => k + start);
 const fontSizes: { label: string; value: string }[] = [
@@ -117,17 +152,24 @@ const fontSizes: { label: string; value: string }[] = [
   ...range(8, 31).map((n) => ({ label: `${n}`, value: `${n}px` })),
 ];
 
-let selection = $state(
-  languages[Number.parseInt(urlParams.get("language"))] ?? languages[0],
-);
-
 function share() {
-  const compressedCode = LZString.compressToEncodedURIComponent(
-    languageCode[selection.language],
-  );
+  const code = languageCode[selection.language];
   const codeName = selection.language.toLowerCase();
-  const language = languages.findIndex((lang) => lang === selection);
-  const query = `?language=${language}&${codeName}=${compressedCode}`;
+  const colorConfig = colorList;
+  const parameters = {
+    version: currentVersion,
+    language: codeName,
+    code,
+    fontSize,
+    simplify,
+    flatSwitch,
+    highlight,
+    colors: colorConfig,
+  };
+  const compressed = LZString.compressToEncodedURIComponent(
+    JSON.stringify(parameters),
+  );
+  const query = `?data=${compressed}`;
   const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}${query}`;
   navigator.clipboard.writeText(newUrl);
   window.open(newUrl, "_blank").focus();
@@ -247,7 +289,7 @@ isDark.subscribe(() => {
             </option>
           {/each}
         </select>
-        <button onclick={share}>Share (experimental)</button>
+        <button onclick={share}>Share</button>
       </div>
       <div class="codemirror">
         <Editor

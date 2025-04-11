@@ -6,10 +6,18 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Added
+
+- Added support for reading configuration from a single compressed JSON URL parameter (`data`).
+This configuration is stored into one JSON query parameter.
+- Additionally, added support for a `language` query parameter when `data` is not present, to load the default code sample for that language.
+- When opening a shared link, these URL parameters are now correctly parsed and applied to the demo page.
+
 ### Fixed
 
 - Multiple `catch` clauses in C++ are now handled properly, even in case of comments between them.
 - Segmentation of `catch` clauses in C++ is now a lot better.
+- Fixed an issue where after sharing and reopening the page, clicking the "Share" button again would default the language back to Go instead of preserving the selected one.
 
 ### Changed
 
