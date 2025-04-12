@@ -8,7 +8,9 @@ import type {
 } from "ts-graphviz";
 import {
   type NodeClass,
+  getEdgeDefaultStyle,
   getEdgeStyle,
+  getNodeHeight,
   getNodeStyle,
 } from "../dot-cfg/theme.ts";
 import type { CFG, CFGGraph, Cluster, ClusterId } from "./cfg-defs";
@@ -170,7 +172,7 @@ function renderHierarchy(
     [
       `digraph "" {`,
       `    node [${formatStyle(defaultNodeAttrs)}];`,
-      "    edge [headport=n tailport=s];",
+      `    edge [${formatStyle(getEdgeDefaultStyle(context.colorScheme))}];`,
       `    bgcolor="${context.colorScheme["graph.background"]}";`,
       "",
     ].join("\n"),
@@ -347,13 +349,9 @@ function renderNode(
   }
   const dotAttrs = getNodeStyle(nodeClass, context.colorScheme);
 
-  let minHeight = 0.2;
-  if (graph.inDegree(node) === 0 || graph.outDegree(node) === 0) {
-    minHeight = 0.5;
-  }
-  dotAttrs.height = Math.max(
-    graph.getNodeAttribute(node, "lines") * 0.3,
-    minHeight,
+  dotAttrs.height = getNodeHeight(
+    nodeClass,
+    graph.getNodeAttribute(node, "lines"),
   );
   // This is needed to rename nodes for go-to-line
   dotAttrs.id = `${node}`;

@@ -41,10 +41,28 @@ export function getNodeStyle(
   nodeClass: NodeClass,
   colorScheme: ColorScheme,
 ): NodeAttributesObject {
-  const dotAttrs: NodeAttributesObject = structuredClone(nodeStyles.default);
-  Object.assign(dotAttrs, nodeStyles[nodeClass]);
+  const dotAttrs: NodeAttributesObject = structuredClone(nodeStyles[nodeClass]);
   dotAttrs.fillcolor = colorScheme[`node.${nodeClass}`];
   dotAttrs.color = colorScheme["node.border"];
+  return dotAttrs;
+}
+
+export function getNodeHeight(nodeClass: NodeClass, lines: number): number {
+  let minHeight = 0.3;
+  if (["entry", "exit"].includes(nodeClass)) {
+    minHeight = 0.5;
+  }
+  return Math.max(lines * 0.3, minHeight);
+}
+
+export function getEdgeDefaultStyle(
+  colorScheme: ColorScheme,
+): EdgeAttributesObject {
+  const dotAttrs: EdgeAttributesObject = {};
+  dotAttrs.penwidth = 1;
+  dotAttrs.color = colorScheme["edge.regular"];
+  dotAttrs.headport = "n";
+  dotAttrs.tailport = "s";
   return dotAttrs;
 }
 
@@ -54,10 +72,6 @@ export function getEdgeStyle(
   colorScheme: ColorScheme,
 ): EdgeAttributesObject {
   const dotAttrs: EdgeAttributesObject = {};
-  dotAttrs.penwidth = isBacklink ? 2 : 1;
-  dotAttrs.color = colorScheme["edge.regular"];
-  dotAttrs.headport = "n";
-  dotAttrs.tailport = "s";
   switch (edgeClass) {
     case "consequence":
       dotAttrs.class = "consequence";
@@ -80,6 +94,7 @@ export function getEdgeStyle(
       dotAttrs.color = "fuchsia";
   }
   if (isBacklink) {
+    dotAttrs.penwidth = 2;
     // For backlinks, we use `dir=back` to improve the layout.
     // This tells DOT that this is a backlink, and changes the ranking of nodes.
     dotAttrs.dir = "back";

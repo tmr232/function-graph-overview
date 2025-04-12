@@ -13,7 +13,9 @@ import {
   getDefaultColorScheme,
 } from "../control-flow/colors.ts";
 import {
+  getEdgeDefaultStyle,
   getEdgeStyle,
+  getNodeHeight,
   getNodeStyle,
   isEdgeClass,
   isNodeClass,
@@ -33,14 +35,15 @@ export function applyTheme(dot: string, colorScheme: ColorScheme): string {
   });
   const nodeAttrs = getNodeStyle("default", colorScheme);
   nodeAttrs.fontname = "sans-serif";
-  nodeAttrs.height = 0.3;
+  nodeAttrs.height = getNodeHeight("default", 0);
   G.node(nodeAttrs);
-  G.edge(getEdgeStyle("regular", false, colorScheme));
+  G.edge(getEdgeDefaultStyle(colorScheme));
 
   for (const node of iterAllNodes(G)) {
     for (const cls of getClasses(node)) {
       if (isNodeClass(cls)) {
         node.attributes.apply(getNodeStyle(cls, colorScheme));
+        node.attributes.set("height", getNodeHeight(cls, 0));
       }
     }
   }
