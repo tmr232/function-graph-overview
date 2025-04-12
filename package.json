@@ -48,7 +48,7 @@
     "tree-sitter-typescript": "^0.23.2",
     "typedoc": "^0.28.1",
     "typescript": "^5.8.3",
-    "typescript-eslint": "^8.16.0",
+    "typescript-eslint": "^8.29.1",
     "vite": "6.2.6"
   },
   "peerDependencies": {
