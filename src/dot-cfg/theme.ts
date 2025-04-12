@@ -102,6 +102,5 @@ export function getEdgeStyle(
     dotAttrs.headport = "s";
     dotAttrs.tailport = "n";
   }
-
   return dotAttrs;
 }

@@ -1,3 +1,4 @@
+
 ```dot-cfg
 stmt1 -> stmt2
 stmt2 -> stmt3
@@ -94,4 +95,24 @@ stmt4_2 -> else4_2 [class="alternative"]
 else4_2 -> stmt4_3
 stmt4_3 -> stmt4_4
 stmt4_4 -> stmt4_1 [dir="back"]
+```
+
+```dot-cfg
+entry [class="entry"]
+return1 [class="exit"]
+return2 [class="exit"]
+return4_2 [class="exit"]
+stmt2 [height=2]
+stmt3 [height=2]
+entry -> stmt1
+stmt1 -> return1 [class="consequence"]
+stmt1 -> stmt2 [class="alternative"]
+stmt2 -> return2 [class="consequence"]
+stmt2 -> stmt3 [class="alternative"]
+stmt3 -> stmt4_1
+stmt4_1 -> stmt4_2
+stmt4_2 -> return4_2 [class="consequence"]
+stmt4_2 -> stmt4_4 [class="alternative"]
+stmt4_4 -> stmt4_1 [dir="back"]
+stmt4_4 [height=3]
 ```

@@ -12,6 +12,7 @@ const config = {
   readme: "CONTRIBUTING.md",
   name: "Function Graph Overview",
   sort: ["source-order"],
+  customCss: ["docs/custom.css"],
   exclude: ["src/test/commentTestSamples", "src/demo/src/assets"],
   markdownItLoader(parser) {
     parser.use(graphvizDotPlugin);
