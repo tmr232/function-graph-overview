@@ -1,61 +1,23 @@
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import {
-  type EdgeAttributesObject,
   type EdgeModel,
-  type NodeAttributesObject,
   type NodeModel,
+  type RootGraphModel,
+  type SubgraphModel,
   attribute,
   fromDot,
-  toDot, type RootGraphModel, type SubgraphModel
+  toDot,
 } from "ts-graphviz";
 import {
   type ColorScheme,
   getDefaultColorScheme,
 } from "../control-flow/colors.ts";
-
-function getNodeAttributes(colorScheme: ColorScheme) {
-  const nodeAttributes: { [key: string]: NodeAttributesObject } = {
-    entry: {
-      [attribute.fillcolor]: colorScheme["node.entry"],
-      [attribute.shape]: "invhouse",
-      [attribute.height]: 0.5,
-    },
-    exit: {
-      [attribute.fillcolor]: colorScheme["node.exit"],
-      [attribute.shape]: "house",
-      [attribute.height]: 0.5,
-    },
-    throw: {
-      [attribute.fillcolor]: colorScheme["node.throw"],
-      [attribute.shape]: "triangle",
-    },
-    yield: {
-      [attribute.fillcolor]: colorScheme["node.yield"],
-      [attribute.shape]: "hexagon",
-      [attribute.orientation]: "90",
-    },
-  };
-
-  return nodeAttributes;
-}
-
-function getEdgeClassAttributes(colorScheme: ColorScheme) {
-  const edgeAttributes: { [key: string]: EdgeAttributesObject } = {
-    consequence: {
-      [attribute.color]: colorScheme["edge.consequence"],
-    },
-    alternative: {
-      [attribute.color]: colorScheme["edge.alternative"],
-    },
-    exception: {
-      [attribute.style]: "invis",
-      [attribute.headport]: "e",
-      [attribute.tailport]: "w",
-    },
-  };
-
-  return edgeAttributes;
-}
+import {
+  getEdgeStyle,
+  getNodeStyle,
+  isEdgeClass,
+  isNodeClass,
+} from "./theme.ts";
 
 function getClasses(item: NodeModel | EdgeModel): string[] {
   type ClassGetter = (key: (typeof attribute)["class"]) => string | undefined;
@@ -69,46 +31,28 @@ export function applyTheme(dot: string, colorScheme: ColorScheme): string {
   G.apply({
     [attribute.bgcolor]: colorScheme["graph.background"],
   });
-  G.node({
-    [attribute.style]: "filled",
-    [attribute.label]: "",
-    [attribute.shape]: "box",
-    [attribute.fillcolor]: colorScheme["node.default"],
-    [attribute.color]: colorScheme["node.border"],
-    [attribute.fontname]: "sans-serif",
-    [attribute.height]: 0.3,
-  });
-  G.edge({
-    [attribute.color]: colorScheme["edge.regular"],
-    [attribute.headport]: "n",
-    [attribute.tailport]: "s",
-    [attribute.penwidth]: 1,
-  });
+  const nodeAttrs = getNodeStyle("default", colorScheme);
+  nodeAttrs.fontname = "sans-serif";
+  nodeAttrs.height = 0.3;
+  G.node(nodeAttrs);
+  G.edge(getEdgeStyle("regular", false, colorScheme));
 
-  const allNodeAttributes = getNodeAttributes(colorScheme);
   for (const node of iterAllNodes(G)) {
     for (const cls of getClasses(node)) {
-      const attrObj = allNodeAttributes[cls];
-      if (attrObj) {
-        node.attributes.apply(attrObj);
+      if (isNodeClass(cls)) {
+        node.attributes.apply(getNodeStyle(cls, colorScheme));
       }
     }
   }
 
-  const edgeClassAttributes = getEdgeClassAttributes(colorScheme);
   for (const edge of iterAllEdges(G)) {
+    const isBacklink = edge.attributes.get(attribute.dir) === "back";
     for (const cls of getClasses(edge)) {
-      const attrObj = edgeClassAttributes[cls];
-      if (attrObj) {
-        edge.attributes.apply(attrObj);
+      if (isEdgeClass(cls)) {
+        edge.attributes.apply(getEdgeStyle(cls, isBacklink, colorScheme));
       }
     }
-    if (edge.attributes.get(attribute.dir) === "back") {
-      edge.attributes.apply({
-        [attribute.penwidth]: 2,
-        [attribute.headport]: "s",
-        [attribute.tailport]: "n",
-      });
+    if (isBacklink) {
       edge.targets.reverse();
     }
   }
@@ -116,27 +60,27 @@ export function applyTheme(dot: string, colorScheme: ColorScheme): string {
   return toDot(G);
 }
 
-function* iterAllNodes(G:RootGraphModel) {
-  const stack:Array<RootGraphModel|SubgraphModel> = [G];
+function* iterAllNodes(G: RootGraphModel) {
+  const stack: Array<RootGraphModel | SubgraphModel> = [G];
   for (;;) {
     const graph = stack.pop();
     if (!graph) {
       break;
     }
     stack.push(...graph.subgraphs);
-    yield *graph.nodes
+    yield* graph.nodes;
   }
 }
 
-function* iterAllEdges(G:RootGraphModel) {
-  const stack:Array<RootGraphModel|SubgraphModel> = [G];
+function* iterAllEdges(G: RootGraphModel) {
+  const stack: Array<RootGraphModel | SubgraphModel> = [G];
   for (;;) {
     const graph = stack.pop();
     if (!graph) {
       break;
     }
     stack.push(...graph.subgraphs);
-    yield *graph.edges
+    yield* graph.edges;
   }
 }
 

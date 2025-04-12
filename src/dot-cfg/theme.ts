@@ -1,53 +1,64 @@
-import type { ColorScheme } from "../control-flow/colors.ts";
 import type { EdgeAttributesObject, NodeAttributesObject } from "ts-graphviz";
-import type { EdgeType } from "../control-flow/cfg-defs.ts";
+import type { ColorScheme } from "../control-flow/colors.ts";
 
-export type NodeStyleType = "DEFAULT"|"SINGLE"|"ENTRY"|"EXIT"|"YIELD"|"THROW";
-export function getNodeStyle(nodeType:NodeStyleType, lines:number, colorScheme:ColorScheme):NodeAttributesObject {
-  let minHeight = 0.2;
-  const dotAttrs :NodeAttributesObject = {}
-  dotAttrs.label="";
-  dotAttrs.style="filled";
-  dotAttrs.shape="box";
-  dotAttrs.class="default";
-  dotAttrs.fillcolor = colorScheme["node.default"];
-  switch (nodeType) {
-    case "SINGLE":
-      minHeight = 0.5;
-      break;
-    case "ENTRY":
-      dotAttrs.shape = "invhouse";
-      dotAttrs.class = "entry";
-      dotAttrs.fillcolor = colorScheme["node.entry"];
-      minHeight = 0.5;
-      break;
-      case "EXIT":
-        dotAttrs.shape = "house";
-        dotAttrs.class = "exit";
-        dotAttrs.fillcolor = colorScheme["node.exit"];
-        minHeight = 0.5;
-        break;
-    case "THROW":
-      dotAttrs.shape = "triangle";
-      dotAttrs.class = "throw";
-      dotAttrs.fillcolor = colorScheme["node.throw"];
-      break;
-    case "YIELD":
-      dotAttrs.shape = "hexagon";
-      dotAttrs.orientation = 90;
-      dotAttrs.class = "yield";
-      dotAttrs.fillcolor = colorScheme["node.yield"];
-      break;
-  }
-  dotAttrs.height = Math.max(lines * 0.3, minHeight);
+const NodeClasses = ["default", "entry", "exit", "yield", "throw"] as const;
+export type NodeClass = (typeof NodeClasses)[number];
+export function isNodeClass(name: string): name is NodeClass {
+  return NodeClasses.includes(name as NodeClass);
+}
+const EdgeClasses = ["consequence", "alternative", "regular", "exception"];
+export type EdgeClass = (typeof EdgeClasses)[number];
+export function isEdgeClass(name: string): name is EdgeClass {
+  return EdgeClasses.includes(name as EdgeClass);
+}
+const nodeStyles: Record<NodeClass, NodeAttributesObject> = {
+  default: {
+    label: "",
+    style: "filled",
+    shape: "box",
+    class: "default",
+  },
+  entry: {
+    shape: "invhouse",
+    class: "entry",
+  },
+  exit: {
+    shape: "house",
+    class: "exit",
+  },
+  throw: {
+    shape: "triangle",
+    class: "throw",
+  },
+  yield: {
+    shape: "hexagon",
+    orientation: 90,
+    class: "yield",
+  },
+};
+
+export function getNodeStyle(
+  nodeClass: NodeClass,
+  colorScheme: ColorScheme,
+): NodeAttributesObject {
+  const dotAttrs: NodeAttributesObject = structuredClone(nodeStyles.default);
+  Object.assign(dotAttrs, nodeStyles[nodeClass]);
+  dotAttrs.fillcolor = colorScheme[`node.${nodeClass}`];
+  dotAttrs.color = colorScheme["node.border"];
   return dotAttrs;
 }
 
-export function getEdgeStyle(edgeType:EdgeType, isBacklink:boolean,  colorScheme:ColorScheme):EdgeAttributesObject {
+export function getEdgeStyle(
+  edgeClass: EdgeClass,
+  isBacklink: boolean,
+  colorScheme: ColorScheme,
+): EdgeAttributesObject {
   const dotAttrs: EdgeAttributesObject = {};
   dotAttrs.penwidth = isBacklink ? 2 : 1;
   dotAttrs.color = colorScheme["edge.regular"];
-  switch (edgeType) {
+  dotAttrs.headport = "n";
+  dotAttrs.tailport = "s";
+  switch (edgeClass) {
     case "consequence":
       dotAttrs.class = "consequence";
       dotAttrs.color = colorScheme["edge.consequence"];

@@ -1,9 +1,19 @@
 import { MultiDirectedGraph } from "graphology";
 import { subgraph } from "graphology-operators";
+import type {
+  EdgeAttributesObject,
+  GraphAttributesObject,
+  NodeAttributesObject,
+  SubgraphAttributesObject,
+} from "ts-graphviz";
+import {
+  type NodeClass,
+  getEdgeStyle,
+  getNodeStyle,
+} from "../dot-cfg/theme.ts";
 import type { CFG, CFGGraph, Cluster, ClusterId } from "./cfg-defs";
 import { type ColorScheme, getDefaultColorScheme } from "./colors";
 import { detectBacklinks } from "./graph-ops";
-import { getEdgeStyle, getNodeStyle, type NodeStyleType } from "../dot-cfg/theme.ts";
 
 function indent(text: string): string {
   return (
@@ -155,8 +165,15 @@ function renderHierarchy(
   context: RenderContext,
 ) {
   const parts: string[] = [];
+  const defaultNodeAttrs = getNodeStyle("default", context.colorScheme);
   parts.push(
-    `digraph "" {\n    node [shape=box, color="${context.colorScheme["node.border"]}"];\n    edge [headport=n tailport=s]\n    bgcolor="${context.colorScheme["graph.background"]}"`,
+    [
+      `digraph "" {`,
+      `    node [${formatStyle(defaultNodeAttrs)}];`,
+      "    edge [headport=n tailport=s];",
+      `    bgcolor="${context.colorScheme["graph.background"]}";`,
+      "",
+    ].join("\n"),
   );
 
   const topGraph = cfg.graph;
@@ -220,8 +237,13 @@ export function graphToDot(
   );
 }
 
-type DotAttributes = { [attribute: string]: number | string | undefined|boolean };
-function formatStyle(style: DotAttributes): string {
+function formatStyle(
+  style:
+    | EdgeAttributesObject
+    | NodeAttributesObject
+    | GraphAttributesObject
+    | SubgraphAttributesObject,
+): string {
   return Object.entries(style)
     .map(([name, value]) => {
       switch (typeof value) {
@@ -291,7 +313,11 @@ function renderEdge(
 ) {
   const attributes = topGraph.getEdgeAttributes(edge);
   const isBacklink = context.isBacklink(source, target);
- const dotAttrs = getEdgeStyle(attributes.type, isBacklink, context.colorScheme);
+  const dotAttrs = getEdgeStyle(
+    attributes.type,
+    isBacklink,
+    context.colorScheme,
+  );
   if (isBacklink) {
     // To accommodate that, we also flip the node order and the ports.
     [source, target] = [target, source];
@@ -306,21 +332,29 @@ function renderNode(
 ): string {
   const nodeAttrs = graph.getNodeAttributes(node);
 
-
-  let nodeType:NodeStyleType = "DEFAULT";
+  let nodeClass: NodeClass = "default";
   if (nodeAttrs.type === "THROW") {
-    nodeType = "THROW"
+    nodeClass = "throw";
   } else if (nodeAttrs.type === "YIELD") {
-    nodeType = "YIELD";
-  } else if (graph.degree(node)===0) {
-    nodeType = "SINGLE";
-  } else if (graph.inDegree(node)===0) {
-    nodeType = "ENTRY";
-  } else if (graph.outDegree(node)===0) {
-    nodeType = "EXIT";
+    nodeClass = "yield";
+  } else if (graph.degree(node) === 0) {
+    // If we only have a single node, we draw it as a default block.
+    nodeClass = "default";
+  } else if (graph.inDegree(node) === 0) {
+    nodeClass = "entry";
+  } else if (graph.outDegree(node) === 0) {
+    nodeClass = "exit";
   }
-  const dotAttrs = getNodeStyle(nodeType,graph.getNodeAttribute(node, "lines"), context.colorScheme );
+  const dotAttrs = getNodeStyle(nodeClass, context.colorScheme);
 
+  let minHeight = 0.2;
+  if (graph.inDegree(node) === 0 || graph.outDegree(node) === 0) {
+    minHeight = 0.5;
+  }
+  dotAttrs.height = Math.max(
+    graph.getNodeAttribute(node, "lines") * 0.3,
+    minHeight,
+  );
   // This is needed to rename nodes for go-to-line
   dotAttrs.id = `${node}`;
   if (context.verbose) {

@@ -34,7 +34,11 @@ export type NodeType =
   | "SWITCH_MERGE"
   | "CASE_CONDITION";
 
-export type EdgeType = "regular" | "consequence" | "alternative" | "exception";
+export const EdgeTypes = ["consequence", "alternative", "regular", "exception"];
+export type EdgeType = (typeof EdgeTypes)[number];
+export function isEdgeType(name: string): name is EdgeType {
+  return EdgeTypes.includes(name as EdgeType);
+}
 
 export type ClusterType =
   | "with"
