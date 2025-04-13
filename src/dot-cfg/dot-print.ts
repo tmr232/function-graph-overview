@@ -9,6 +9,7 @@ import {
 } from "ts-graphviz";
 import type { ColorScheme } from "../control-flow/colors.ts";
 import {
+  type ClusterClass,
   getClusterStyle,
   getEdgeDefaultStyle,
   getEdgeStyle,
@@ -16,8 +17,9 @@ import {
   getNodeStyle,
   isClusterClass,
   isEdgeClass,
-  isNodeClass,
+  isNodeClass
 } from "./theme.ts";
+import * as cluster from "node:cluster";
 
 /**
  * Get the classes for a given edge or node
@@ -79,7 +81,7 @@ export function applyTheme(dot: string, colorScheme: ColorScheme): string {
   }
 
   for (const { subgraph, isSelfNested } of iterAllSubgraphs(G)) {
-    const classes = subgraph.attributes.graph.get("class");
+    const classes = subgraph.get("class");
     if (!classes) {
       continue;
     }
@@ -119,38 +121,16 @@ function* iterAllEdges(G: RootGraphModel) {
 }
 
 function* iterAllSubgraphs(G: RootGraphModel) {
-  const stack: Array<RootGraphModel | SubgraphModel> = [G];
+  const stack: Array<{graph:SubgraphModel, parentClass:ClusterClass|undefined}> = [...G.subgraphs.map((subgraph)=>({graph:subgraph, parentClass:undefined}))];
   for (;;) {
-    const graph = stack.pop();
-    if (!graph) {
+    const entry = stack.pop();
+    if (!entry) {
       break;
     }
-    stack.push(...graph.subgraphs);
-    yield* graph.subgraphs.map((subgraph) => ({
-      subgraph,
-      isSelfNested: hasSameClusterClass(graph, subgraph),
-    }));
+    const {graph, parentClass} = entry;
+    const clusterClass = (graph.get("class")??"").split(/\s/).filter(isClusterClass).pop();
+    stack.push(...graph.subgraphs.map((subgraph)=>({graph:subgraph, parentClass:clusterClass})));
+    yield {subgraph:graph, isSelfNested: clusterClass===parentClass};
   }
 }
 
-function hasSameClusterClass(
-  subgraphA: RootGraphModel | SubgraphModel,
-  subgraphB: RootGraphModel | SubgraphModel,
-): boolean {
-  const a_classes = subgraphA.attributes.graph.get("class");
-  if (!a_classes) {
-    return false;
-  }
-  const a_class = a_classes.split(/\s/).filter(isClusterClass).pop();
-  if (a_class) {
-    return (
-      a_class ===
-      subgraphB.attributes.graph
-        .get("class")
-        ?.split(/\s/)
-        .filter(isClusterClass)
-        .pop()
-    );
-  }
-  return false;
-}
