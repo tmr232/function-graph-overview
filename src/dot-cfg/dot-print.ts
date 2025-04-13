@@ -124,9 +124,9 @@ function* iterAllSubgraphs(G: RootGraphModel) {
     graph: SubgraphModel;
     parentClass: ClusterClass | undefined;
   }> = G.subgraphs.map((subgraph) => ({
-      graph: subgraph,
-      parentClass: undefined,
-    }));
+    graph: subgraph,
+    parentClass: undefined,
+  }));
   for (;;) {
     const entry = stack.pop();
     if (!entry) {

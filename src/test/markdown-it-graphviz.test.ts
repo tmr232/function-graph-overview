@@ -1,16 +1,14 @@
-import {test, describe, expect} from "bun:test";
+import { describe, expect, test } from "bun:test";
 
-import MarkdownIt from 'markdown-it'
-import {GraphvizDotPlugin} from "../markdown-it-graphviz/plugin.ts"
-
+import MarkdownIt from "markdown-it";
+import { GraphvizDotPlugin } from "../markdown-it-graphviz/plugin.ts";
 
 describe("Render DOT Samples", () => {
-  const md = new MarkdownIt()
-    .use(GraphvizDotPlugin);
+  const md = new MarkdownIt().use(GraphvizDotPlugin);
 
-  test("Render DOT", ()=>{
-    const result  = md.render(
-`
+  test("Render DOT", () => {
+    const result = md.render(
+      `
 Here's a DOT snippet!
 \`\`\`dot
 digraph G {
@@ -41,20 +39,17 @@ digraph G {
   end [shape=Msquare];
 }
 \`\`\`
-`
+`,
     );
     expect(result).toMatchSnapshot();
   });
-})
-
-
+});
 
 describe("Render DOT-CFG Samples", () => {
-  const md = new MarkdownIt()
-    .use(GraphvizDotPlugin);
+  const md = new MarkdownIt().use(GraphvizDotPlugin);
 
-  test("Render CFG", ()=>{
-    const result  = md.render(
+  test("Render CFG", () => {
+    const result = md.render(
       `
 \`\`\`dot-cfg
 entry [class="entry"]
@@ -75,13 +70,13 @@ stmt4_2 -> stmt4_4 [class="alternative"]
 stmt4_4 -> stmt4_1 [dir="back"]
 stmt4_4 [height=3]
 \`\`\`
-`
+`,
     );
     expect(result).toMatchSnapshot();
   });
 
-  test("Render CFG with clusters", ()=>{
-    const result  = md.render(
+  test("Render CFG with clusters", () => {
+    const result = md.render(
       `
 \`\`\`dot-cfg
 subgraph cluster_tryComplex {
@@ -109,8 +104,8 @@ ELSE -> FINALLY
 EXCEPT -> FINALLY
 FINALLY -> EXIT
 \`\`\`
-`
+`,
     );
     expect(result).toMatchSnapshot();
   });
-})
+});
