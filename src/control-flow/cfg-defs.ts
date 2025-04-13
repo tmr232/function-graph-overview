@@ -34,19 +34,29 @@ export type NodeType =
   | "SWITCH_MERGE"
   | "CASE_CONDITION";
 
-export const EdgeTypes = ["consequence", "alternative", "regular", "exception"];
+export const EdgeTypes = [
+  "consequence",
+  "alternative",
+  "regular",
+  "exception",
+] as const;
 export type EdgeType = (typeof EdgeTypes)[number];
 export function isEdgeType(name: string): name is EdgeType {
   return EdgeTypes.includes(name as EdgeType);
 }
 
-export type ClusterType =
-  | "with"
-  | "try"
-  | "except"
-  | "else"
-  | "finally"
-  | "try-complex";
+export const ClusterTypes = [
+  "with",
+  "try",
+  "except",
+  "else",
+  "finally",
+  "tryComplex",
+] as const;
+export type ClusterType = (typeof ClusterTypes)[number];
+export function isClusterType(name: string): name is ClusterType {
+  return ClusterTypes.includes(name as ClusterType);
+}
 export type ClusterId = number;
 export type Cluster = {
   /** A unique identifier for the cluster. */

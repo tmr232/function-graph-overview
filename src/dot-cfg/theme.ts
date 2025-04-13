@@ -1,4 +1,8 @@
-import type { EdgeAttributesObject, NodeAttributesObject } from "ts-graphviz";
+import type {
+  EdgeAttributesObject,
+  NodeAttributesObject,
+  SubgraphAttributesObject,
+} from "ts-graphviz";
 import type { ColorScheme } from "../control-flow/colors.ts";
 
 const NodeClasses = ["default", "entry", "exit", "yield", "throw"] as const;
@@ -10,6 +14,18 @@ const EdgeClasses = ["consequence", "alternative", "regular", "exception"];
 export type EdgeClass = (typeof EdgeClasses)[number];
 export function isEdgeClass(name: string): name is EdgeClass {
   return EdgeClasses.includes(name as EdgeClass);
+}
+
+export const ClusterClasses = [
+  "with",
+  "try",
+  "except",
+  "finally",
+  "tryComplex",
+] as const;
+export type ClusterClass = (typeof ClusterClasses)[number];
+export function isClusterClass(name: string): name is ClusterClass {
+  return ClusterClasses.includes(name as ClusterClass);
 }
 const nodeStyles: Record<NodeClass, NodeAttributesObject> = {
   default: {
@@ -102,5 +118,18 @@ export function getEdgeStyle(
     dotAttrs.headport = "s";
     dotAttrs.tailport = "n";
   }
+  return dotAttrs;
+}
+
+export function getClusterStyle(
+  clusterClass: ClusterClass,
+  isSelfNested: boolean,
+  colorScheme: ColorScheme,
+): SubgraphAttributesObject {
+  const dotAttrs: SubgraphAttributesObject = {};
+  dotAttrs.penwidth = isSelfNested ? 6 : 0;
+  dotAttrs.class = clusterClass;
+  dotAttrs.color = colorScheme["cluster.border"];
+  dotAttrs.bgcolor = colorScheme[`cluster.${clusterClass}`];
   return dotAttrs;
 }

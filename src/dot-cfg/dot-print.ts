@@ -9,10 +9,12 @@ import {
 } from "ts-graphviz";
 import type { ColorScheme } from "../control-flow/colors.ts";
 import {
+  getClusterStyle,
   getEdgeDefaultStyle,
   getEdgeStyle,
   getNodeHeight,
   getNodeStyle,
+  isClusterClass,
   isEdgeClass,
   isNodeClass,
 } from "./theme.ts";
@@ -44,6 +46,7 @@ export function applyTheme(dot: string, colorScheme: ColorScheme): string {
   G.edge(getEdgeDefaultStyle(colorScheme));
 
   for (const node of iterAllNodes(G)) {
+    const originalLabel = node.attributes.get("label");
     for (const cls of getClasses(node, "default")) {
       if (isNodeClass(cls)) {
         node.attributes.apply(getNodeStyle(cls, colorScheme));
@@ -52,10 +55,13 @@ export function applyTheme(dot: string, colorScheme: ColorScheme): string {
         if (typeof height === "number") {
           lines = height;
         } else if (typeof height === "string") {
-          lines = Number.parseInt(height);
+          lines = Number.parseFloat(height);
         }
         node.attributes.set("height", getNodeHeight(cls, lines));
       }
+    }
+    if (originalLabel) {
+      node.attributes.set("label", originalLabel);
     }
   }
 
@@ -71,6 +77,20 @@ export function applyTheme(dot: string, colorScheme: ColorScheme): string {
       }
     }
   }
+
+  for (const { subgraph, isSelfNested } of iterAllSubgraphs(G)) {
+    const classes = subgraph.attributes.graph.get("class");
+    if (!classes) {
+      continue;
+    }
+
+    for (const cls of classes.split(/\s/).filter(isClusterClass)) {
+      subgraph.attributes.graph.apply(
+        getClusterStyle(cls, isSelfNested, colorScheme),
+      );
+    }
+  }
+
   return toDot(G);
 }
 
@@ -96,4 +116,41 @@ function* iterAllEdges(G: RootGraphModel) {
     stack.push(...graph.subgraphs);
     yield* graph.edges;
   }
+}
+
+function* iterAllSubgraphs(G: RootGraphModel) {
+  const stack: Array<RootGraphModel | SubgraphModel> = [G];
+  for (;;) {
+    const graph = stack.pop();
+    if (!graph) {
+      break;
+    }
+    stack.push(...graph.subgraphs);
+    yield* graph.subgraphs.map((subgraph) => ({
+      subgraph,
+      isSelfNested: hasSameClusterClass(graph, subgraph),
+    }));
+  }
+}
+
+function hasSameClusterClass(
+  subgraphA: RootGraphModel | SubgraphModel,
+  subgraphB: RootGraphModel | SubgraphModel,
+): boolean {
+  const a_classes = subgraphA.attributes.graph.get("class");
+  if (!a_classes) {
+    return false;
+  }
+  const a_class = a_classes.split(/\s/).filter(isClusterClass).pop();
+  if (a_class) {
+    return (
+      a_class ===
+      subgraphB.attributes.graph
+        .get("class")
+        ?.split(/\s/)
+        .filter(isClusterClass)
+        .pop()
+    );
+  }
+  return false;
 }

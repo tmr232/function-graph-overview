@@ -8,10 +8,12 @@ import type {
 } from "ts-graphviz";
 import {
   type NodeClass,
+  getClusterStyle,
   getEdgeDefaultStyle,
   getEdgeStyle,
   getNodeHeight,
   getNodeStyle,
+  isClusterClass,
 } from "../dot-cfg/theme.ts";
 import type { CFG, CFGGraph, Cluster, ClusterId } from "./cfg-defs";
 import { type ColorScheme, getDefaultColorScheme } from "./colors";
@@ -263,47 +265,12 @@ function formatStyle(
 
 function clusterStyle(cluster: Cluster, context: RenderContext): string {
   const isSelfNested = cluster.type === cluster.parent?.type;
-  const penwidth = isSelfNested ? 6 : 0;
-  const color = context.colorScheme["cluster.border"];
-  switch (cluster.type) {
-    case "with":
-      return formatStyle({
-        penwidth,
-        color,
-        bgcolor: context.colorScheme["cluster.with"],
-        class: "with",
-      });
-    case "try-complex":
-      return formatStyle({
-        penwidth,
-        color,
-        bgcolor: context.colorScheme["cluster.tryComplex"],
-        class: "tryComplex",
-      });
-    case "try":
-      return formatStyle({
-        penwidth,
-        color,
-        bgcolor: context.colorScheme["cluster.try"],
-        class: "try",
-      });
-    case "finally":
-      return formatStyle({
-        penwidth,
-        color,
-        bgcolor: context.colorScheme["cluster.finally"],
-        class: "finally",
-      });
-    case "except":
-      return formatStyle({
-        penwidth,
-        color,
-        bgcolor: context.colorScheme["cluster.except"],
-        class: "except",
-      });
-    default:
-      return "";
+  if (isClusterClass(cluster.type)) {
+    return formatStyle(
+      getClusterStyle(cluster.type, isSelfNested, context.colorScheme),
+    );
   }
+  return "";
 }
 
 function renderEdge(

@@ -188,14 +188,14 @@ exports[`Python: issue-111-throw-finally.py!raise_and_finally: DOT Snapshot 1`] 
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
         node4 [shape="triangle"; class="throw"; fillcolor="#ffdddd"; color="#000000"; height=0.3; id="node4"];
         subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
             node2 [shape="triangle"; class="throw"; fillcolor="#ffdddd"; color="#000000"; height=0.3; id="node2"];
         }
         subgraph cluster_2 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
+            penwidth=0; class="finally"; color="#ffffff"; bgcolor="#ffffdd"
             node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
         }
     }
@@ -216,14 +216,14 @@ exports[`TypeScript: issue-111-throw-finally.ts!throwAndFinally: DOT Snapshot 1`
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
         node4 [shape="triangle"; class="throw"; fillcolor="#ffdddd"; color="#000000"; height=0.3; id="node4"];
         subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
             node2 [shape="triangle"; class="throw"; fillcolor="#ffdddd"; color="#000000"; height=0.3; id="node2"];
         }
         subgraph cluster_3 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
+            penwidth=0; class="finally"; color="#ffffff"; bgcolor="#ffffdd"
             node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
         }
     }
@@ -261,25 +261,25 @@ exports[`C++: issue145-multiple-catch-clause-cpp.cpp!MultipleCatchClauses: DOT S
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
         subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
             node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
         }
         subgraph cluster_2 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
         }
         subgraph cluster_3 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
         }
         subgraph cluster_4 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node5 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node5"];
         }
         subgraph cluster_5 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node6"];
         }
     }
@@ -310,25 +310,25 @@ exports[`C++: issue145-multiple-catch-clause-cpp.cpp!MultipleCatchClausesWithCom
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
         subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
             node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
         }
         subgraph cluster_2 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
         }
         subgraph cluster_3 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
         }
         subgraph cluster_4 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node5 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node5"];
         }
         subgraph cluster_5 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node6"];
         }
     }
@@ -359,13 +359,13 @@ exports[`C++: issue145-multiple-catch-clause-cpp.cpp!EarlyCatchAll: DOT Snapshot
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
         subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
             node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
         }
         subgraph cluster_2 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
         }
     }
@@ -387,13 +387,13 @@ exports[`C++: issue145-multiple-catch-clause-cpp.cpp!EarlyCatchAllWithComment: D
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
         subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
             node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
         }
         subgraph cluster_2 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
         }
     }
@@ -429,13 +429,13 @@ exports[`TypeScript: issue65-try-finally.ts!tryCatch: DOT Snapshot 1`] = `
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
         subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
             node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
         }
         subgraph cluster_2 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
         }
     }
@@ -457,13 +457,13 @@ exports[`TypeScript: issue65-try-finally.ts!tryFinaly: DOT Snapshot 1`] = `
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
         subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
             node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
         }
         subgraph cluster_3 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
+            penwidth=0; class="finally"; color="#ffffff"; bgcolor="#ffffdd"
             node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
         }
     }
@@ -484,17 +484,17 @@ exports[`TypeScript: issue65-try-finally.ts!tryCatchFinally: DOT Snapshot 1`] = 
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
         subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
             node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
         }
         subgraph cluster_2 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
         }
         subgraph cluster_3 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
+            penwidth=0; class="finally"; color="#ffffff"; bgcolor="#ffffdd"
             node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
         }
     }
@@ -1786,13 +1786,13 @@ exports[`C++: sample.cpp!Exception: DOT Snapshot 1`] = `
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
         subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
             node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
         }
         subgraph cluster_2 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
         }
     }
@@ -2471,7 +2471,7 @@ exports[`Python: sample.py!WithCluster: DOT Snapshot 1`] = `
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ffddff"; class="with"
+        penwidth=0; class="with"; color="#ffffff"; bgcolor="#ffddff"
         node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node3"];
         node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
         node7 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node7"];
@@ -2480,7 +2480,7 @@ exports[`Python: sample.py!WithCluster: DOT Snapshot 1`] = `
         node3 -> node7 [class="alternative"; color="#ff0000"];
     }
     subgraph cluster_1 {
-        penwidth=0; color="#ffffff"; bgcolor="#ffddff"; class="with"
+        penwidth=0; class="with"; color="#ffffff"; bgcolor="#ffddff"
         node9 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node9"];
     }
     node2 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.8999999999999999; id="node2"];
@@ -2504,7 +2504,7 @@ exports[`Python: sample.py!WithNestedCluster: DOT Snapshot 1`] = `
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ffddff"; class="with"
+        penwidth=0; class="with"; color="#ffffff"; bgcolor="#ffddff"
         node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node2"];
         node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
         node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node6"];
@@ -2513,13 +2513,13 @@ exports[`Python: sample.py!WithNestedCluster: DOT Snapshot 1`] = `
         node2 -> node6 [class="alternative"; color="#ff0000"];
     }
     subgraph cluster_1 {
-        penwidth=0; color="#ffffff"; bgcolor="#ffddff"; class="with"
+        penwidth=0; class="with"; color="#ffffff"; bgcolor="#ffddff"
         node8 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node8"];
         node9 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node9"];
         node16 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node16"];
         node18 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node18"];
         subgraph cluster_2 {
-            penwidth=6; color="#ffffff"; bgcolor="#ffddff"; class="with"
+            penwidth=6; class="with"; color="#ffffff"; bgcolor="#ffddff"
             node10 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node10"];
             node13 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node13"];
             node11 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node11"];
@@ -2582,13 +2582,13 @@ exports[`Python: sample.py!raise_again: DOT Snapshot 1`] = `
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
         subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
             node2 [shape="triangle"; class="throw"; fillcolor="#ffdddd"; color="#000000"; height=0.3; id="node2"];
         }
         subgraph cluster_2 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node3"];
             node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
             node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node6"];
@@ -2633,13 +2633,13 @@ exports[`Python: sample.py!try_except: DOT Snapshot 1`] = `
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
         subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
             node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
         }
         subgraph cluster_2 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
         }
     }
@@ -2661,17 +2661,17 @@ exports[`Python: sample.py!try_except_finally: DOT Snapshot 1`] = `
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
         subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
             node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
         }
         subgraph cluster_2 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
         }
         subgraph cluster_3 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
+            penwidth=0; class="finally"; color="#ffffff"; bgcolor="#ffffdd"
             node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
         }
     }
@@ -2695,26 +2695,26 @@ exports[`Python: sample.py!try_many_except_finally: DOT Snapshot 1`] = `
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
         node7 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node7"];
         subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
             node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
         }
         subgraph cluster_2 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
         }
         subgraph cluster_3 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
         }
         subgraph cluster_4 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node5 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node5"];
         }
         subgraph cluster_5 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
+            penwidth=0; class="finally"; color="#ffffff"; bgcolor="#ffffdd"
             node8 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node8"];
             node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node6"];
         }
@@ -2748,18 +2748,18 @@ exports[`Python: sample.py!try_except_else_finally: DOT Snapshot 1`] = `
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
         node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
         subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
             node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
         }
         subgraph cluster_2 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
         }
         subgraph cluster_3 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
+            penwidth=0; class="finally"; color="#ffffff"; bgcolor="#ffffdd"
             node5 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node5"];
         }
     }
@@ -2785,68 +2785,68 @@ exports[`Python: sample.py!massive_try_except_else_finally: DOT Snapshot 1`] = `
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
         node12 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node12"];
         node13 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node13"];
         node14 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node14"];
         node16 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node16"];
         node17 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node17"];
         subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
             node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
             subgraph cluster_2 {
-                penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+                penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
                 node5 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node5"];
                 subgraph cluster_3 {
-                    penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+                    penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
                     node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
                 }
                 subgraph cluster_4 {
-                    penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+                    penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
                     node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
                 }
                 subgraph cluster_5 {
-                    penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
+                    penwidth=0; class="finally"; color="#ffffff"; bgcolor="#ffffdd"
                     node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node6"];
                 }
             }
         }
         subgraph cluster_6 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
             node7 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node7"];
             subgraph cluster_7 {
-                penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+                penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
                 node10 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node10"];
                 subgraph cluster_8 {
-                    penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+                    penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
                     node8 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node8"];
                 }
                 subgraph cluster_9 {
-                    penwidth=0; color="#ffffff"; bgcolor="#ffdddd"; class="except"
+                    penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
                     node9 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node9"];
                 }
                 subgraph cluster_10 {
-                    penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
+                    penwidth=0; class="finally"; color="#ffffff"; bgcolor="#ffffdd"
                     node11 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node11"];
                 }
             }
         }
         subgraph cluster_11 {
-            penwidth=6; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+            penwidth=6; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
             subgraph cluster_12 {
-                penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+                penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
                 node18 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node18"];
             }
             subgraph cluster_13 {
-                penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
+                penwidth=0; class="finally"; color="#ffffff"; bgcolor="#ffffdd"
                 node19 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node19"];
             }
         }
         subgraph cluster_14 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
+            penwidth=0; class="finally"; color="#ffffff"; bgcolor="#ffffdd"
             node20 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node20"];
             subgraph cluster_15 {
-                penwidth=0; color="#ffffff"; bgcolor="#ffddff"; class="with"
+                penwidth=0; class="with"; color="#ffffff"; bgcolor="#ffddff"
                 node22 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node22"];
                 node21 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node21"];
                 node23 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node23"];
@@ -2913,10 +2913,10 @@ exports[`Python: sample.py!try_finally: DOT Snapshot 1`] = `
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
         node8 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node8"];
         subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
             node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node2"];
             node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
             node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node6"];
@@ -2924,7 +2924,7 @@ exports[`Python: sample.py!try_finally: DOT Snapshot 1`] = `
             node2 -> node6 [class="alternative"; color="#ff0000"];
         }
         subgraph cluster_2 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
+            penwidth=0; class="finally"; color="#ffffff"; bgcolor="#ffffdd"
             node7 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node7"];
             node9 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node9"];
         }
@@ -2952,18 +2952,18 @@ exports[`Python: sample.py!try_with_finally: DOT Snapshot 1`] = `
     bgcolor="#ffffff";
 
     subgraph cluster_0 {
-        penwidth=0; color="#ffffff"; bgcolor="#ddddff"; class="tryComplex"
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
         node6 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node6"];
         subgraph cluster_1 {
-            penwidth=0; color="#ffffff"; bgcolor="#ddffdd"; class="try"
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
             node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
             subgraph cluster_2 {
-                penwidth=0; color="#ffffff"; bgcolor="#ffddff"; class="with"
+                penwidth=0; class="with"; color="#ffffff"; bgcolor="#ffddff"
                 node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
             }
         }
         subgraph cluster_3 {
-            penwidth=0; color="#ffffff"; bgcolor="#ffffdd"; class="finally"
+            penwidth=0; class="finally"; color="#ffffff"; bgcolor="#ffffdd"
             node5 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node5"];
         }
     }
