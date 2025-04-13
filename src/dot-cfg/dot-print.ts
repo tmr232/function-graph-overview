@@ -17,9 +17,8 @@ import {
   getNodeStyle,
   isClusterClass,
   isEdgeClass,
-  isNodeClass
+  isNodeClass,
 } from "./theme.ts";
-import * as cluster from "node:cluster";
 
 /**
  * Get the classes for a given edge or node
@@ -121,16 +120,29 @@ function* iterAllEdges(G: RootGraphModel) {
 }
 
 function* iterAllSubgraphs(G: RootGraphModel) {
-  const stack: Array<{graph:SubgraphModel, parentClass:ClusterClass|undefined}> = [...G.subgraphs.map((subgraph)=>({graph:subgraph, parentClass:undefined}))];
+  const stack: Array<{
+    graph: SubgraphModel;
+    parentClass: ClusterClass | undefined;
+  }> = G.subgraphs.map((subgraph) => ({
+      graph: subgraph,
+      parentClass: undefined,
+    }));
   for (;;) {
     const entry = stack.pop();
     if (!entry) {
       break;
     }
-    const {graph, parentClass} = entry;
-    const clusterClass = (graph.get("class")??"").split(/\s/).filter(isClusterClass).pop();
-    stack.push(...graph.subgraphs.map((subgraph)=>({graph:subgraph, parentClass:clusterClass})));
-    yield {subgraph:graph, isSelfNested: clusterClass===parentClass};
+    const { graph, parentClass } = entry;
+    const clusterClass = (graph.get("class") ?? "")
+      .split(/\s/)
+      .filter(isClusterClass)
+      .pop();
+    stack.push(
+      ...graph.subgraphs.map((subgraph) => ({
+        graph: subgraph,
+        parentClass: clusterClass,
+      })),
+    );
+    yield { subgraph: graph, isSelfNested: clusterClass === parentClass };
   }
 }
-
