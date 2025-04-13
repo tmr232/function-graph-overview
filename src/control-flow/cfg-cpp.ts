@@ -92,11 +92,11 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
 
   const mergeNode = builder.addNode(
     "MERGE",
-    "merge try-complex",
+    "merge tryComplex",
     trySyntax.endIndex,
   );
 
-  return builder.withCluster("try-complex", (_tryComplexCluster) => {
+  return builder.withCluster("tryComplex", (_tryComplexCluster) => {
     const bodyBlock = builder.withCluster("try", () =>
       match.getBlock(bodySyntax),
     );

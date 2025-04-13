@@ -6,6 +6,12 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Added
+
+- Documentation now renders `dot` and `dot-cfg` (CFG-styled DOT diagrams)
+- Documentation about our usage of Graphviz
+- Documentation about the representation of control flow in the graph
+
 ### Fixed
 
 - Multiple `catch` clauses in C++ are now handled properly, even in case of comments between them.

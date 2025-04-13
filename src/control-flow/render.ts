@@ -1,5 +1,20 @@
 import { MultiDirectedGraph } from "graphology";
 import { subgraph } from "graphology-operators";
+import type {
+  EdgeAttributesObject,
+  GraphAttributesObject,
+  NodeAttributesObject,
+  SubgraphAttributesObject,
+} from "ts-graphviz";
+import {
+  type NodeClass,
+  getClusterStyle,
+  getEdgeDefaultStyle,
+  getEdgeStyle,
+  getNodeHeight,
+  getNodeStyle,
+  isClusterClass,
+} from "../dot-cfg/theme.ts";
 import type { CFG, CFGGraph, Cluster, ClusterId } from "./cfg-defs";
 import { type ColorScheme, getDefaultColorScheme } from "./colors";
 import { detectBacklinks } from "./graph-ops";
@@ -154,8 +169,15 @@ function renderHierarchy(
   context: RenderContext,
 ) {
   const parts: string[] = [];
+  const defaultNodeAttrs = getNodeStyle("default", context.colorScheme);
   parts.push(
-    `digraph "" {\n    node [shape=box, color="${context.colorScheme["node.border"]}"];\n    edge [headport=n tailport=s]\n    bgcolor="${context.colorScheme["graph.background"]}"`,
+    [
+      `digraph "" {`,
+      `    node [${formatStyle(defaultNodeAttrs)}];`,
+      `    edge [${formatStyle(getEdgeDefaultStyle(context.colorScheme))}];`,
+      `    bgcolor="${context.colorScheme["graph.background"]}";`,
+      "",
+    ].join("\n"),
   );
 
   const topGraph = cfg.graph;
@@ -219,8 +241,13 @@ export function graphToDot(
   );
 }
 
-type DotAttributes = { [attribute: string]: number | string | undefined };
-function formatStyle(style: DotAttributes): string {
+function formatStyle(
+  style:
+    | EdgeAttributesObject
+    | NodeAttributesObject
+    | GraphAttributesObject
+    | SubgraphAttributesObject,
+): string {
   return Object.entries(style)
     .map(([name, value]) => {
       switch (typeof value) {
@@ -238,47 +265,12 @@ function formatStyle(style: DotAttributes): string {
 
 function clusterStyle(cluster: Cluster, context: RenderContext): string {
   const isSelfNested = cluster.type === cluster.parent?.type;
-  const penwidth = isSelfNested ? 6 : 0;
-  const color = context.colorScheme["cluster.border"];
-  switch (cluster.type) {
-    case "with":
-      return formatStyle({
-        penwidth,
-        color,
-        bgcolor: context.colorScheme["cluster.with"],
-        class: "with",
-      });
-    case "try-complex":
-      return formatStyle({
-        penwidth,
-        color,
-        bgcolor: context.colorScheme["cluster.tryComplex"],
-        class: "tryComplex",
-      });
-    case "try":
-      return formatStyle({
-        penwidth,
-        color,
-        bgcolor: context.colorScheme["cluster.try"],
-        class: "try",
-      });
-    case "finally":
-      return formatStyle({
-        penwidth,
-        color,
-        bgcolor: context.colorScheme["cluster.finally"],
-        class: "finally",
-      });
-    case "except":
-      return formatStyle({
-        penwidth,
-        color,
-        bgcolor: context.colorScheme["cluster.except"],
-        class: "except",
-      });
-    default:
-      return "";
+  if (isClusterClass(cluster.type)) {
+    return formatStyle(
+      getClusterStyle(cluster.type, isSelfNested, context.colorScheme),
+    );
   }
+  return "";
 }
 
 function renderEdge(
@@ -289,39 +281,15 @@ function renderEdge(
   context: RenderContext,
 ) {
   const attributes = topGraph.getEdgeAttributes(edge);
-  const dotAttrs: DotAttributes = {};
   const isBacklink = context.isBacklink(source, target);
-  dotAttrs.penwidth = isBacklink ? 2 : 1;
-  dotAttrs.color = context.colorScheme["edge.regular"];
-  switch (attributes.type) {
-    case "consequence":
-      dotAttrs.class = "consequence";
-      dotAttrs.color = context.colorScheme["edge.consequence"];
-      break;
-    case "alternative":
-      dotAttrs.class = "alternative";
-      dotAttrs.color = context.colorScheme["edge.alternative"];
-      break;
-    case "regular":
-      dotAttrs.class = "regular";
-      dotAttrs.color = context.colorScheme["edge.regular"];
-      break;
-    case "exception":
-      dotAttrs.style = "invis";
-      dotAttrs.headport = "e";
-      dotAttrs.tailport = "w";
-      break;
-    default:
-      dotAttrs.color = "fuchsia";
-  }
+  const dotAttrs = getEdgeStyle(
+    attributes.type,
+    isBacklink,
+    context.colorScheme,
+  );
   if (isBacklink) {
-    // For backlinks, we use `dir=back` to improve the layout.
-    // This tells DOT that this is a backlink, and changes the ranking of nodes.
-    dotAttrs.dir = "back";
     // To accommodate that, we also flip the node order and the ports.
     [source, target] = [target, source];
-    dotAttrs.headport = "s";
-    dotAttrs.tailport = "n";
   }
   return `${source} -> ${target} [${formatStyle(dotAttrs)}];`;
 }
@@ -331,11 +299,27 @@ function renderNode(
   node: string,
   context: RenderContext,
 ): string {
-  const dotAttrs: DotAttributes = {};
   const nodeAttrs = graph.getNodeAttributes(node);
 
-  dotAttrs.style = "filled";
-  dotAttrs.label = "";
+  let nodeClass: NodeClass = "default";
+  if (nodeAttrs.type === "THROW") {
+    nodeClass = "throw";
+  } else if (nodeAttrs.type === "YIELD") {
+    nodeClass = "yield";
+  } else if (graph.degree(node) === 0) {
+    // If we only have a single node, we draw it as a default block.
+    nodeClass = "default";
+  } else if (graph.inDegree(node) === 0) {
+    nodeClass = "entry";
+  } else if (graph.outDegree(node) === 0) {
+    nodeClass = "exit";
+  }
+  const dotAttrs = getNodeStyle(nodeClass, context.colorScheme);
+
+  dotAttrs.height = getNodeHeight(
+    nodeClass,
+    graph.getNodeAttribute(node, "lines"),
+  );
   // This is needed to rename nodes for go-to-line
   dotAttrs.id = `${node}`;
   if (context.verbose) {
@@ -344,40 +328,5 @@ function renderNode(
     const clusterAttrs = graph.getNodeAttribute(node, "cluster");
     dotAttrs.label = `${clusterAttrs?.id} ${clusterAttrs?.type}\n${dotAttrs.label}`;
   }
-  dotAttrs.shape = "box";
-  dotAttrs.class = "default";
-  dotAttrs.fillcolor = context.colorScheme["node.default"];
-  let minHeight = 0.2;
-  if (graph.degree(node) === 0) {
-    dotAttrs.minHeight = 0.5;
-  } else if (graph.inDegree(node) === 0) {
-    dotAttrs.shape = "invhouse";
-    dotAttrs.class = "entry";
-    dotAttrs.fillcolor = context.colorScheme["node.entry"];
-    minHeight = 0.5;
-  } else if (graph.outDegree(node) === 0) {
-    dotAttrs.shape = "house";
-    dotAttrs.class = "exit";
-    dotAttrs.fillcolor = context.colorScheme["node.exit"];
-    minHeight = 0.5;
-  }
-  switch (nodeAttrs.type) {
-    case "THROW":
-      dotAttrs.shape = "triangle";
-      dotAttrs.class = "throw";
-      dotAttrs.fillcolor = context.colorScheme["node.throw"];
-      break;
-    case "YIELD":
-      dotAttrs.shape = "hexagon";
-      dotAttrs.orientation = 90;
-      dotAttrs.class = "yield";
-      dotAttrs.fillcolor = context.colorScheme["node.yield"];
-      break;
-  }
-
-  dotAttrs.height = Math.max(
-    graph.getNodeAttribute(node, "lines") * 0.3,
-    minHeight,
-  );
   return `${node} [${formatStyle(dotAttrs)}];`;
 }
