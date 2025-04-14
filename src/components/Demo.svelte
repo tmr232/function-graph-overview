@@ -113,9 +113,10 @@ if (urlParams.has("language")) {
     const languageMatched = languages.find(
       (lang) => lang.language === languageAlias,
     );
-
     if (languageMatched) {
       selection = languageMatched;
+    } else {
+      console.error(`Unsupported or unknown language alias: '${urlLanguage}'`);
     }
   } catch (error) {
     console.error("Failed to get language from URL:", error);
@@ -279,6 +280,15 @@ function onToggleClick(e) {
   toggleTheme();
 }
 
+function onSelectionChanged(e) {
+  console.log(selection);
+  const language = reverseLanguageAliases[selection.language];
+  const query = `?language=${language}`;
+  const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}${query}`;
+  window.history.replaceState(null, "", newUrl);
+  navigator.clipboard.writeText(newUrl);
+}
+
 isDark.subscribe(() => {
   colorList = getSystemColorList();
 });
@@ -315,7 +325,7 @@ isDark.subscribe(() => {
       <div class="controls">
         <select
           bind:value={selection}
-          onchange={(e) => console.log(selection)}
+          onchange={(e) => onSelectionChanged(e)}
         >
           {#each languages as language}
             <option value={language}>
