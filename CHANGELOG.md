@@ -8,9 +8,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### Added
 
-- Added support for reading configuration from a single compressed JSON URL parameter (`data`).
+- Added support for reading configuration from a single compressed JSON URL parameter (`compressed`).
 This configuration is stored into one JSON query parameter.
-- Additionally, added support for a `language` query parameter when `data` is not present, to load the default code sample for that language.
+- Additionally, added support for a `language` query parameter when `compressed` is not present, to load the default code sample for that language.
+- When the language selection changes in the UI, the selected language is now reflected in the URL using a `language` query parameter.
 - When opening a shared link, these URL parameters are now correctly parsed and applied to the demo page.
 
 ### Fixed
