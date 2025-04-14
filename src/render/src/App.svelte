@@ -27,6 +27,56 @@ import {
   iterFunctions,
 } from "../../file-parsing/vite";
 
+// Add state for panel and checkbox controls
+let isPanelOpen = false;
+let showMetadata = {
+  language: false,
+  functionName: false,
+  lineCount: false,
+  nodeCount: false,
+  edgeCount: false,
+  cyclomaticComplexity: false,
+};
+
+// Metadata field definitions
+const metadataFields = [
+  {
+    key: "language",
+    label: "Language",
+    value: () => functionAndCFGMetadata.functionData.language,
+  },
+  {
+    key: "functionName",
+    label: "Function Name",
+    value: () => functionAndCFGMetadata.functionData.name,
+  },
+  {
+    key: "lineCount",
+    label: "Line Count",
+    value: () => functionAndCFGMetadata.functionData.lineCount,
+  },
+  {
+    key: "nodeCount",
+    label: "Node Count",
+    value: () => functionAndCFGMetadata.cfgGraphData.nodeCount,
+  },
+  {
+    key: "edgeCount",
+    label: "Edge Count",
+    value: () => functionAndCFGMetadata.cfgGraphData.edgeCount,
+  },
+  {
+    key: "cyclomaticComplexity",
+    label: "Cyclomatic Complexity",
+    value: () => functionAndCFGMetadata.cfgGraphData.cyclomaticComplexity,
+  },
+];
+
+// Toggle panel open/closed
+function togglePanel() {
+  isPanelOpen = !isPanelOpen;
+}
+
 let codeUrl: string | undefined;
 
 /**
@@ -336,13 +386,28 @@ onMount(() => {
     <button onclick={saveSVG}>Download SVG</button>
   </div>
   {#if rawSVG}
-    <div class="metadata">
-      <span>Language:   {functionAndCFGMetadata.functionData.language}</span>
-      <span>Function Name:    {functionAndCFGMetadata.functionData.name}</span>
-      <span>Line Count:   {functionAndCFGMetadata.functionData.lineCount}</span>
-      <span>Node Count:   {functionAndCFGMetadata.cfgGraphData.nodeCount}</span>
-      <span>Edge Count:   {functionAndCFGMetadata.cfgGraphData.edgeCount}</span>
-      <span>Cyclomatic Complexity:    {functionAndCFGMetadata.cfgGraphData.cyclomaticComplexity}</span>
+   <!-- Metadata display -->
+{#if Object.values(showMetadata).some(value => value)}
+<div class="metadata" class:panel-open={isPanelOpen}>
+  {#each metadataFields as { key, label, value }}
+    {#if showMetadata[key]}
+      <span>{label}: {value()}</span>
+    {/if}
+  {/each}
+</div>
+{/if}
+    <button class="panel-toggle" onclick={togglePanel}>
+      {isPanelOpen ? '→' : '←'}
+    </button>
+    <!-- Control panel -->
+    <div class="control-panel" class:open={isPanelOpen}>
+      <h3>Display Options</h3>
+      {#each metadataFields as { key, label }}
+        <label>
+          <input type="checkbox" bind:checked={showMetadata[key]} />
+          {label}
+        </label>
+      {/each}
     </div>
   {/if}
 </div>
@@ -358,44 +423,125 @@ onMount(() => {
 </div>
 
 <style>
-.controlsContainer {
-  position: fixed;
-  display: flex;
-  justify-content: right;
-  width: 100%;
-  z-index: 1000;
-}
+  .controlsContainer {
+    position: fixed;
+    display: flex;
+    justify-content: right;
+    width: 100%;
+    z-index: 1000;
+  }
 
-.metadata {
-  margin: 1em;
-  padding: 0.5em;
-  position: fixed;
-  top: 10px;
-  left: 1em;
-  right: auto;
-  z-index: 1000;
-  font-size: 1em;
-  font-weight: 500;
-  text-align: left;
-}
+  .controls {
+    margin: 1em;
+  }
+  
+  .metadata {
+    margin: 0;
+    padding: 1em;
+    position: fixed;
+    top: 5%;
+    right: 235px; 
+    transition: right 0.2s ease;
+    text-align: left;
+    background-color: var(--metadata-bg, rgba(30, 30, 30, 0.7));
+    border-radius: 5px;
+    max-width: 300px;
+    z-index: 999;
+  }
+  
+  .metadata:not(.panel-open) {
+    right: 25px;
+  }
+  
+  .metadata span {
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    color: var(--text-color, gray);
+    white-space: nowrap;
+    font-size: 1em;
+    font-weight: 500;
+  }
+  
+  .panel-toggle {
+    position: fixed;
+    top: 5%;
+    right: 0;
+    z-index: 1001;
+    width: 25px;
+    height: 60px;
+    background-color: var(--toggle-bg);
+    color: var(--toggle-color, white);
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .control-panel {
+    position: fixed;
+    top: 5%;
+    right: -250px; 
+    width: 220px;
+    height: 30%; /* CHANGE THIS IF YOU ADD MORE METADATA OPTIONS */
+    background-color: var(--panel-bg, rgba(30, 30, 30, 0.7));
+    color: var(--panel-text, white);
+    z-index: 1000;
+    transition: right 0.2s ease;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .control-panel.open {
+    right: 0;
+  }
 
-.metadata span {
-  display: block;
-  margin-bottom: 1em;
-  color: gray;
-  white-space: pre-wrap;
-}
+  .control-panel h3 {
+    margin-top: 0px;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    color: var(--panel-heading, #fff);
+  }
+  
+  .control-panel label {
+    display: block;
+    margin-bottom: 15px;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .control-panel input[type="checkbox"] {
+    margin-right: 10px;
+  }
+  
+  .svgContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100dvw;
+    height: 100dvh;
+  }
+  
+  /* Dark/light mode variables */
+  :global(body) {
+    --text-color: white;
+    --panel-bg: rgba(30, 30, 30, 0.7);
+    --panel-text: #fff;
+    --panel-heading: #fff;
+    --toggle-bg: #555;
+    --toggle-color: #fff;
+    --metadata-bg: rgba(30, 30, 30, 0.7);
+  }
+  
+  :global(body[style*="light"]) {
+    --text-color: #333;
+    --panel-bg: #f5f5f5;
+    --panel-text: #333;
+    --panel-heading: #333;
+    --toggle-bg: #ddd;
+    --toggle-color: #333;
+    --metadata-bg: rgba(240, 240, 240, 0.8);
+  }
+  </style>
 
-.controls {
-  margin: 1em;
-}
-
-.svgContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100dvw;
-  height: 100dvh;
-}
-</style>
