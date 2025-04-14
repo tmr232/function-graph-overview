@@ -70,20 +70,59 @@ let languages: {
   },
 ] as const;
 
-let currentVersion: number = 1; // Needs to be updated when a new version is released.
+type ShareParameters = {
+  version: number;
+  language: string;
+  code: string;
+  fontSize: string;
+  simplify: boolean;
+  flatSwitch: boolean;
+  highlight: boolean;
+  colors: ColorList;
+};
+
+// ADD-LANGUAGES-HERE
+const languageAliases: Record<string, Language> = {
+  go: "Go",
+  c: "C",
+  cpp: "C++",
+  python: "Python",
+  typescript: "TypeScript",
+  tsx: "TSX",
+};
+
+const reverseLanguageAliases = Object.fromEntries(
+  Object.entries(languageAliases).map(([alias, lang]) => [lang, alias]),
+);
+
+const currentVersion: number = 1; // Needs to be updated when a new version is released.
 let fontSize = $state("1em");
 let simplify = $state(true);
 let flatSwitch = $state(true);
 let highlight = $state(true);
 let parsedColorList = undefined;
 const urlParams = new URLSearchParams(window.location.search);
-let selection = $state(
-  languages.find(
-    (lang) =>
-      lang.language.toLowerCase() === urlParams.get("language")?.toLowerCase(),
-  ) ?? languages[0],
-);
-/**
+let isLanguageInURL: boolean = false;
+let selection = $state(languages[0]);
+
+if (urlParams.has("language")) {
+  try {
+    isLanguageInURL = true;
+    const urlLanguage = urlParams.get("language");
+    const languageAlias = languageAliases[urlLanguage];
+    const languageMatched = languages.find(
+      (lang) => lang.language === languageAlias,
+    );
+
+    if (languageMatched) {
+      selection = languageMatched;
+    }
+  } catch (error) {
+    console.error("Failed to get language from URL:", error);
+  }
+}
+
+/*
  * Parses URL parameters according to version 1 format.
  *
  * This version expects a single `data` parameter containing a compressed JSON
@@ -106,31 +145,33 @@ let selection = $state(
  *   language is used.
  */
 
-if (urlParams.has("data")) {
-  const parsedData = JSON.parse(
-    LZString.decompressFromEncodedURIComponent(urlParams.get("data")),
-  );
-  if (parsedData.version === 1) {
-    fontSize = parsedData.fontSize;
-    simplify = parsedData.simplify;
-    flatSwitch = parsedData.flatSwitch;
-    highlight = parsedData.highlight;
-    parsedColorList = parsedData.colors;
-    selection = languages.find(
-      (lang) => lang.language.toLowerCase() === parsedData.language,
+if (urlParams.has("compressed")) {
+  if (isLanguageInURL) {
+    console.error(
+      "Cannot provide both `language` and `compressed` in the URL.",
     );
-    if (parsedData.language === "go") {
-      languageCode.Go = parsedData.code;
-    } else if (parsedData.language === "c") {
-      languageCode.C = parsedData.code;
-    } else if (parsedData.language === "c++") {
-      languageCode["C++"] = parsedData.code;
-    } else if (parsedData.language === "python") {
-      languageCode.Python = parsedData.code;
-    } else if (parsedData.language === "typescript") {
-      languageCode.TypeScript = parsedData.code;
-    } else if (parsedData.language === "tsx") {
-      languageCode.TSX = parsedData.code;
+  } else {
+    try {
+      const parsedData = JSON.parse(
+        LZString.decompressFromEncodedURIComponent(urlParams.get("compressed")),
+      );
+      if (parsedData.version === 1) {
+        fontSize = parsedData.fontSize;
+        simplify = parsedData.simplify;
+        flatSwitch = parsedData.flatSwitch;
+        highlight = parsedData.highlight;
+        parsedColorList = parsedData.colors;
+        const language = languageAliases[parsedData.language];
+        if (language) {
+          selection = languages.find((lang) => lang.language === language);
+          languageCode[language] = parsedData.code;
+        }
+      }
+    } catch (error) {
+      console.error(
+        "Failed to parse configuration compressed data from URL:",
+        error,
+      );
     }
   }
 }
@@ -154,11 +195,11 @@ const fontSizes: { label: string; value: string }[] = [
 
 function share() {
   const code = languageCode[selection.language];
-  const codeName = selection.language.toLowerCase();
+  const codeAlias = reverseLanguageAliases[selection.language];
   const colorConfig = colorList;
-  const parameters = {
+  const parameters: ShareParameters = {
     version: currentVersion,
-    language: codeName,
+    language: codeAlias,
     code,
     fontSize,
     simplify,
@@ -169,7 +210,7 @@ function share() {
   const compressed = LZString.compressToEncodedURIComponent(
     JSON.stringify(parameters),
   );
-  const query = `?data=${compressed}`;
+  const query = `?compressed=${compressed}`;
   const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}${query}`;
   navigator.clipboard.writeText(newUrl);
   window.open(newUrl, "_blank").focus();
