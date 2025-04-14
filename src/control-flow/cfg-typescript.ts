@@ -236,11 +236,11 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
 
   const mergeNode = builder.addNode(
     "MERGE",
-    "merge try-complex",
+    "merge tryComplex",
     trySyntax.endIndex,
   );
 
-  return builder.withCluster("try-complex", (tryComplexCluster) => {
+  return builder.withCluster("tryComplex", (tryComplexCluster) => {
     const bodyBlock = builder.withCluster("try", () =>
       match.getBlock(bodySyntax),
     );
@@ -269,7 +269,7 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
           // so that we can link them.
           const duplicateFinallyBlock = match.getBlock(finallySyntax);
           // We also clone the function-exit node, to place it _after_ the finally block
-          // We also override the cluster node, pulling it up to the `try-complex`,
+          // We also override the cluster node, pulling it up to the `tryComplex`,
           // as the function-exit is neither in a `try`, `except`, or `finally` context.
           const functionExitCloneNode = builder.cloneNode(returnNode, {
             cluster: tryComplexCluster,
