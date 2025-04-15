@@ -153,8 +153,10 @@ async function getFunctionByLine(
 function setBackgroundColor(colors: "light" | "dark") {
   if (colors === "dark") {
     document.body.style.backgroundColor = "black";
+    document.body.setAttribute("data-theme", "dark");
   } else {
     document.body.style.backgroundColor = "#ddd";
+    document.body.setAttribute("data-theme", "light");
   }
 }
 
@@ -440,13 +442,11 @@ onMount(() => {
     padding: 1em;
     position: fixed;
     top: 5%;
-    right: 235px; 
+    right: 300px; 
     transition: right 0.2s ease;
     text-align: left;
     background-color: var(--metadata-bg, rgba(30, 30, 30, 0.7));
-    border-radius: 5px;
-    max-width: 300px;
-    z-index: 999;
+    max-width: 500px;
   }
   
   .metadata:not(.panel-open) {
@@ -457,17 +457,18 @@ onMount(() => {
     display: block;
     margin-top: 0.5em;
     margin-bottom: 0.5em;
-    color: var(--text-color, gray);
     white-space: nowrap;
-    font-size: 1em;
-    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    color: var(--text-color, gray);
+    font-size: 16px;
   }
   
   .panel-toggle {
     position: fixed;
     top: 5%;
     right: 0;
-    z-index: 1001;
+    z-index: 1; /* IMPORTANT */
     width: 25px;
     height: 60px;
     background-color: var(--toggle-bg);
@@ -479,13 +480,13 @@ onMount(() => {
   
   .control-panel {
     position: fixed;
+    font-size: 16px;
     top: 5%;
-    right: -250px; 
-    width: 220px;
+    right: -310px; 
+    width: 280px;
     height: 30%; /* CHANGE THIS IF YOU ADD MORE METADATA OPTIONS */
     background-color: var(--panel-bg, rgba(30, 30, 30, 0.7));
     color: var(--panel-text, white);
-    z-index: 1000;
     transition: right 0.2s ease;
     padding: 20px;
     box-sizing: border-box;
@@ -523,25 +524,24 @@ onMount(() => {
     height: 100dvh;
   }
   
-  /* Dark/light mode variables */
-  :global(body) {
+  :global(body), :global(body[data-theme="dark"]) {
     --text-color: white;
     --panel-bg: rgba(30, 30, 30, 0.7);
     --panel-text: #fff;
     --panel-heading: #fff;
     --toggle-bg: #555;
     --toggle-color: #fff;
-    --metadata-bg: rgba(30, 30, 30, 0.7);
+    --metadata-bg: rgba(30, 30, 30, 0.7);  
   }
   
-  :global(body[style*="light"]) {
-    --text-color: #333;
-    --panel-bg: #f5f5f5;
-    --panel-text: #333;
-    --panel-heading: #333;
-    --toggle-bg: #ddd;
-    --toggle-color: #333;
-    --metadata-bg: rgba(240, 240, 240, 0.8);
+  :global(body[data-theme="light"]) {
+    --text-color: #000000;
+    --panel-bg: rgba(240, 240, 240, 0.9);
+    --panel-text: #000000;
+    --panel-heading: #000000;
+    --toggle-bg: rgb(170, 169, 169);
+    --toggle-color: #000000;
+    --metadata-bg: rgba(240, 240, 240, 0.9);
   }
   </style>
 
