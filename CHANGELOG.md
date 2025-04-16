@@ -8,6 +8,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### Added
 
+- Documentation now renders `dot` and `dot-cfg` (CFG-styled DOT diagrams)
+- Documentation about our usage of Graphviz
+- Documentation about the representation of control flow in the graph
 - Added support for reading configuration from a single compressed JSON URL parameter (`compressed`).
 This configuration is stored into one JSON query parameter.
 - Additionally, added support for a `language` query parameter when `compressed` is not present, to load the default code sample for that language.
@@ -24,6 +27,7 @@ This configuration is stored into one JSON query parameter.
 
 - The `bun typedoc` command was renamed to `bun docs`, as some contributors had issues
   with unexpected recursion in the command. It is also a nicer name.
+- Language definitions are now more unified, making it easier to add new languages.
 
 ## [0.0.15] - 2025-03-26
 
