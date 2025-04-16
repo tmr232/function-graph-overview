@@ -92,7 +92,7 @@ const languageAliases: Record<string, Language> = {
 };
 
 function languageToAlias(language: Language): string | undefined {
-  for (const [alias, lang] of Object.entries(languageAlias)) {
+  for (const [alias, lang] of Object.entries(languageAliases)) {
     if (lang === language) {
       return alias;
     }
@@ -111,7 +111,6 @@ let isLanguageInURL: boolean = false;
 let selection = $state(languages[0]);
 
 if (urlParams.has("language")) {
-  try {
     isLanguageInURL = true;
     const urlLanguage = urlParams.get("language");
     const language = languageAliases[urlLanguage];
@@ -121,11 +120,9 @@ if (urlParams.has("language")) {
     if (requestedLanguage) {
       selection = requestedLanguage;
     } else {
-      console.error(`Unsupported or unknown language alias: '${urlLanguage}'`);
+      console.error(`Unsupported language alias: '${urlLanguage}'`);
     }
-  } catch (error) {
-    console.error("Failed to get language from URL:", error);
-  }
+
 }
 
 /*
@@ -202,7 +199,7 @@ const fontSizes: { label: string; value: string }[] = [
 
 function share() {
   const code = languageCode[selection.language];
-  const codeAlias = reverseLanguageAliases[selection.language];
+  const codeAlias = languageToAlias(selection.language);
   const colorConfig = colorList;
   const parameters: ShareParameters = {
     version: currentVersion,
@@ -289,15 +286,18 @@ function onToggleClick(e) {
 function onSelectionChanged(e) {
   try {
     console.log(selection);
-  const languageAlias = languageToAlias(selection.language);
-  const query = `?language=${languageAlias}`;
-  const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}${query}`;
-  window.history.replaceState(null, "", newUrl);
+    const languageAlias = languageToAlias(selection.language);
+    const newUrl = new URL(window.location.href);
+    const parameters = newUrl.searchParams;
+    parameters.set("language", languageAlias);
+    parameters.delete("compressed"); 
+    newUrl.search = parameters.toString();
+    window.history.replaceState(null, "", newUrl);
   }
   catch (exception) {
     console.error(
-        "Could not update URL with selected language:",,
-        exception,
+        "Could not update URL with selected language:",
+        exception
       );
   }
 }
