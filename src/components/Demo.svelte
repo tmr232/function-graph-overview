@@ -111,18 +111,17 @@ let isLanguageInURL: boolean = false;
 let selection = $state(languages[0]);
 
 if (urlParams.has("language")) {
-    isLanguageInURL = true;
-    const urlLanguage = urlParams.get("language");
-    const language = languageAliases[urlLanguage];
-    const requestedLanguage = languages.find(
-      (lang) => lang.language === language,
-    );
-    if (requestedLanguage) {
-      selection = requestedLanguage;
-    } else {
-      console.error(`Unsupported language alias: '${urlLanguage}'`);
-    }
-
+  isLanguageInURL = true;
+  const urlLanguage = urlParams.get("language");
+  const language = languageAliases[urlLanguage];
+  const requestedLanguage = languages.find(
+    (lang) => lang.language === language,
+  );
+  if (requestedLanguage) {
+    selection = requestedLanguage;
+  } else {
+    console.error(`Unsupported language alias: '${urlLanguage}'`);
+  }
 }
 
 /*
@@ -290,15 +289,11 @@ function onSelectionChanged(e) {
     const newUrl = new URL(window.location.href);
     const parameters = newUrl.searchParams;
     parameters.set("language", languageAlias);
-    parameters.delete("compressed"); 
+    parameters.delete("compressed");
     newUrl.search = parameters.toString();
     window.history.replaceState(null, "", newUrl);
-  }
-  catch (exception) {
-    console.error(
-        "Could not update URL with selected language:",
-        exception
-      );
+  } catch (exception) {
+    console.error("Could not update URL with selected language:", exception);
   }
 }
 
