@@ -1,12 +1,12 @@
-import { createCFGBuilder as createCCFGBuilder } from "./cfg-c";
-import {
-  functionNodeNames as cppFunctionNodeNames,
-  createCFGBuilder as createCppCFGBuilder,
-} from "./cfg-cpp";
+import { cLanguageDefinition } from "./cfg-c";
+import { cppLanguageDefinition } from "./cfg-cpp";
 import type { BuilderOptions, CFGBuilder } from "./cfg-defs";
-import { createCFGBuilder as createGoCFGBuilder } from "./cfg-go";
-import { createCFGBuilder as createPythonCFGBuilder } from "./cfg-python";
-import { createCFGBuilder as createTypeScriptCFGBuilder } from "./cfg-typescript.ts";
+import { goLanguageDefinition } from "./cfg-go";
+import { pythonLanguageDefinition } from "./cfg-python";
+import {
+  tsxLanguageDefinition,
+  typeScriptLanguageDefinition,
+} from "./cfg-typescript.ts";
 
 // ADD-LANGUAGES-HERE
 /**
@@ -25,6 +25,24 @@ export function isValidLanguage(language: string): language is Language {
   return (supportedLanguages as readonly string[]).includes(language);
 }
 
+export type LanguageDefinition = {
+  /** Load path for the tree-sitter language WASM file */
+  wasmPath: string;
+  /** Language CFGBuilder factory */
+  createCFGBuilder: (options: BuilderOptions) => CFGBuilder;
+  /** All AST nodes types representing functions */
+  functionNodeTypes: string[];
+};
+
+export const languageDefinitions: Record<Language, LanguageDefinition> = {
+  C: cLanguageDefinition,
+  Go: goLanguageDefinition,
+  Python: pythonLanguageDefinition,
+  "C++": cppLanguageDefinition,
+  TypeScript: typeScriptLanguageDefinition,
+  TSX: tsxLanguageDefinition,
+};
+
 /**
  * Returns a CFG builder for the given language
  * @param language The language to build for
@@ -34,40 +52,5 @@ export function newCFGBuilder(
   language: Language,
   options: BuilderOptions,
 ): CFGBuilder {
-  switch (language) {
-    case "C":
-      return createCCFGBuilder(options);
-    case "Go":
-      return createGoCFGBuilder(options);
-    case "Python":
-      return createPythonCFGBuilder(options);
-    case "C++":
-      return createCppCFGBuilder(options);
-    case "TypeScript":
-      return createTypeScriptCFGBuilder(options);
-    case "TSX":
-      return createTypeScriptCFGBuilder(options);
-  }
+  return languageDefinitions[language].createCFGBuilder(options);
 }
-
-/**
- * The names of the AST nodes representing functions in each language
- */
-export const functionNodeTypes: { [language in Language]: string[] } = {
-  Go: ["function_declaration", "method_declaration", "func_literal"],
-  C: ["function_definition"],
-  "C++": cppFunctionNodeNames,
-  Python: ["function_definition"],
-  TypeScript: [
-    "function_declaration",
-    "arrow_function",
-    "method_definition",
-    "function_expression",
-    "generator_function",
-    "generator_function_declaration",
-  ],
-  // We copy the TypeScript values here
-  TSX: [],
-};
-
-functionNodeTypes.TSX = functionNodeTypes.TypeScript;

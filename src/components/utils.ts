@@ -2,7 +2,7 @@ import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import type { Parser, Node as SyntaxNode, Tree } from "web-tree-sitter";
 import {
   type Language,
-  functionNodeTypes,
+  languageDefinitions,
   supportedLanguages,
 } from "../control-flow/cfg";
 import { getDefaultColorList } from "../control-flow/colors.ts";
@@ -29,7 +29,9 @@ export function getFirstFunction(
   let functionNode: SyntaxNode | null = null;
   const cursor = tree.walk();
   const visitNode = () => {
-    if (functionNodeTypes[language].includes(cursor.nodeType)) {
+    if (
+      languageDefinitions[language].functionNodeTypes.includes(cursor.nodeType)
+    ) {
       functionNode = cursor.currentNode;
       return;
     }

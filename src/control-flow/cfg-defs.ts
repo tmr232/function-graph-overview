@@ -42,7 +42,7 @@ export type ClusterType =
   | "except"
   | "else"
   | "finally"
-  | "try-complex";
+  | "tryComplex";
 export type ClusterId = number;
 export type Cluster = {
   /** A unique identifier for the cluster. */

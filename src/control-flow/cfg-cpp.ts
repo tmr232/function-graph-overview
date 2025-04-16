@@ -1,4 +1,5 @@
 import type { Node as SyntaxNode } from "web-tree-sitter";
+import treeSitterCpp from "../../parsers/tree-sitter-cpp.wasm?url";
 import { getStatementHandlers } from "./cfg-c.ts";
 import type { BasicBlock, BuilderOptions, CFGBuilder } from "./cfg-defs";
 import {
@@ -13,11 +14,15 @@ import {
 } from "./generic-cfg-builder.ts";
 import { pairwise, zip } from "./itertools.ts";
 
+export const cppLanguageDefinition = {
+  wasmPath: treeSitterCpp,
+  createCFGBuilder: createCFGBuilder,
+  functionNodeTypes: ["function_definition", "lambda_expression"],
+};
+
 export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
   return new GenericCFGBuilder(statementHandlers, options);
 }
-
-export const functionNodeNames = ["function_definition", "lambda_expression"];
 
 const processForRangeStatement = forEachLoopProcessor({
   query: `
@@ -87,11 +92,11 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
 
   const mergeNode = builder.addNode(
     "MERGE",
-    "merge try-complex",
+    "merge tryComplex",
     trySyntax.endIndex,
   );
 
-  return builder.withCluster("try-complex", (_tryComplexCluster) => {
+  return builder.withCluster("tryComplex", (_tryComplexCluster) => {
     const bodyBlock = builder.withCluster("try", () =>
       match.getBlock(bodySyntax),
     );

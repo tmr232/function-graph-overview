@@ -1,0 +1,85 @@
+// Bun Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Render DOT Samples Render DOT 1`] = `
+"<p>Here's a DOT snippet!</p>
+<pre><code class="language-dot">digraph G {
+
+  subgraph cluster_0 {
+    style=filled;
+    color=lightgrey;
+    node [style=filled,color=white];
+    a0 -&gt; a1 -&gt; a2 -&gt; a3;
+    label = &quot;process #1&quot;;
+  }
+
+  subgraph cluster_1 {
+    node [style=filled];
+    b0 -&gt; b1 -&gt; b2 -&gt; b3;
+    label = &quot;process #2&quot;;
+    color=blue
+  }
+  start -&gt; a0;
+  start -&gt; b0;
+  a1 -&gt; b3;
+  b2 -&gt; a3;
+  a3 -&gt; a0;
+  a3 -&gt; end;
+  b3 -&gt; end;
+
+  start [shape=Mdiamond];
+  end [shape=Msquare];
+}
+</code></pre>
+"
+`;
+
+exports[`Render DOT-CFG Samples Render CFG 1`] = `
+"<pre><code class="language-dot-cfg">entry [class=&quot;entry&quot;]
+return1 [class=&quot;exit&quot;]
+return2 [class=&quot;exit&quot;]
+return4_2 [class=&quot;exit&quot;]
+stmt2 [height=2]
+stmt3 [height=2]
+entry -&gt; stmt1
+stmt1 -&gt; return1 [class=&quot;consequence&quot;]
+stmt1 -&gt; stmt2 [class=&quot;alternative&quot;]
+stmt2 -&gt; return2 [class=&quot;consequence&quot;]
+stmt2 -&gt; stmt3 [class=&quot;alternative&quot;]
+stmt3 -&gt; stmt4_1
+stmt4_1 -&gt; stmt4_2
+stmt4_2 -&gt; return4_2 [class=&quot;consequence&quot;]
+stmt4_2 -&gt; stmt4_4 [class=&quot;alternative&quot;]
+stmt4_4 -&gt; stmt4_1 [dir=&quot;back&quot;]
+stmt4_4 [height=3]
+</code></pre>
+"
+`;
+
+exports[`Render DOT-CFG Samples Render CFG with clusters 1`] = `
+"<pre><code class="language-dot-cfg">subgraph cluster_tryComplex {
+    class=tryComplex
+    subgraph cluster_try {
+        class=try
+        TRY [label=try]
+    }
+    subgraph cluster_except {
+        class=except
+        EXCEPT [label=&quot;except/catch&quot;]
+    }
+    subgraph cluster_else {
+        ELSE [label=else]
+    }
+    subgraph cluster_finally {
+        class=finally
+        FINALLY [label=finally]
+    }
+}
+ENTRY -&gt; TRY
+TRY -&gt; EXCEPT [class=exception]
+TRY -&gt; ELSE
+ELSE -&gt; FINALLY
+EXCEPT -&gt; FINALLY
+FINALLY -&gt; EXIT
+</code></pre>
+"
+`;
