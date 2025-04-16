@@ -91,9 +91,14 @@ const languageAliases: Record<string, Language> = {
   tsx: "TSX",
 };
 
-const reverseLanguageAliases = Object.fromEntries(
-  Object.entries(languageAliases).map(([alias, lang]) => [lang, alias]),
-);
+function languageToAlias(language: Language): string | undefined {
+  for (const [alias, lang] of Object.entries(languageAlias)) {
+    if (lang === language) {
+      return alias;
+    }
+  }
+  throw new Error(`No alias found for language "${language}"`);
+}
 
 const currentVersion: number = 1; // Needs to be updated when a new version is released.
 let fontSize = $state("1em");
@@ -109,12 +114,12 @@ if (urlParams.has("language")) {
   try {
     isLanguageInURL = true;
     const urlLanguage = urlParams.get("language");
-    const languageAlias = languageAliases[urlLanguage];
-    const languageMatched = languages.find(
-      (lang) => lang.language === languageAlias,
+    const language = languageAliases[urlLanguage];
+    const requestedLanguage = languages.find(
+      (lang) => lang.language === language,
     );
-    if (languageMatched) {
-      selection = languageMatched;
+    if (requestedLanguage) {
+      selection = requestedLanguage;
     } else {
       console.error(`Unsupported or unknown language alias: '${urlLanguage}'`);
     }
@@ -126,7 +131,7 @@ if (urlParams.has("language")) {
 /*
  * Parses URL parameters according to version 1 format.
  *
- * This version expects a single `data` parameter containing a compressed JSON
+ * This version expects a single `compressed` parameter containing a compressed JSON
  * with all necessary configuration, including:
  *
  * - version
@@ -141,8 +146,9 @@ if (urlParams.has("language")) {
  * This format makes the URL more compact and easier to extend in the future.
  *
  * Notes:
- * - If `data` is present, it overrides all other URL parameters.
- * - If `language` is provided without `data`, the default code sample for that
+ * - If both `language` and `compressed` are present,
+ *   `compressed` will be ignored and an error will be logged to the console.
+ * - If language is provided, the default code sample for that
  *   language is used.
  */
 
@@ -168,10 +174,10 @@ if (urlParams.has("compressed")) {
           languageCode[language] = parsedData.code;
         }
       }
-    } catch (error) {
+    } catch (exception) {
       console.error(
         "Failed to parse configuration compressed data from URL:",
-        error,
+        exception,
       );
     }
   }
@@ -281,12 +287,19 @@ function onToggleClick(e) {
 }
 
 function onSelectionChanged(e) {
-  console.log(selection);
-  const language = reverseLanguageAliases[selection.language];
-  const query = `?language=${language}`;
+  try {
+    console.log(selection);
+  const languageAlias = languageToAlias(selection.language);
+  const query = `?language=${languageAlias}`;
   const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}${query}`;
   window.history.replaceState(null, "", newUrl);
-  navigator.clipboard.writeText(newUrl);
+  }
+  catch (exception) {
+    console.error(
+        "Could not update URL with selected language:",,
+        exception,
+      );
+  }
 }
 
 isDark.subscribe(() => {
