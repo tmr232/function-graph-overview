@@ -91,7 +91,7 @@ const languageAliases: Record<string, Language> = {
   tsx: "TSX",
 };
 
-function languageToAlias(language: Language): string | undefined {
+function languageToAlias(language: Language): string {
   for (const [alias, lang] of Object.entries(languageAliases)) {
     if (lang === language) {
       return alias;
