@@ -22,6 +22,7 @@ const colorLabels = new Map([
   ["node.exit", "Exit"],
   ["node.throw", "Throw"],
   ["node.yield", "Yield"],
+  ["node.terminate", "Terminate"],
   ["node.border", "Border"],
   ["node.highlight", "Highlight"],
   ["edge.regular", "Regular"],
