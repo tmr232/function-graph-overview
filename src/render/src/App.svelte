@@ -18,6 +18,7 @@ import {
   getLightColorList,
   listToScheme,
 } from "../../control-flow/colors";
+import { extractFunctionName } from "../../control-flow/function-utils";
 import { simplifyCFG, trimFor } from "../../control-flow/graph-ops";
 import { Lookup } from "../../control-flow/ranges";
 import { graphToDot } from "../../control-flow/render";
@@ -26,6 +27,56 @@ import {
   initParsers,
   iterFunctions,
 } from "../../file-parsing/vite";
+
+// Add state for panel and checkbox controls
+let isPanelOpen = false;
+let showMetadata = {
+  language: false,
+  functionName: false,
+  lineCount: false,
+  nodeCount: false,
+  edgeCount: false,
+  cyclomaticComplexity: false,
+};
+
+// Metadata field definitions
+const metadataFields = [
+  {
+    key: "language",
+    label: "Language",
+    value: () => functionAndCFGMetadata.functionData.language,
+  },
+  {
+    key: "functionName",
+    label: "Function Name",
+    value: () => functionAndCFGMetadata.functionData.name,
+  },
+  {
+    key: "lineCount",
+    label: "Line Count",
+    value: () => functionAndCFGMetadata.functionData.lineCount,
+  },
+  {
+    key: "nodeCount",
+    label: "Node Count",
+    value: () => functionAndCFGMetadata.cfgGraphData.nodeCount,
+  },
+  {
+    key: "edgeCount",
+    label: "Edge Count",
+    value: () => functionAndCFGMetadata.cfgGraphData.edgeCount,
+  },
+  {
+    key: "cyclomaticComplexity",
+    label: "Cyclomatic Complexity",
+    value: () => functionAndCFGMetadata.cfgGraphData.cyclomaticComplexity,
+  },
+];
+
+// Toggle panel open/closed
+function togglePanel() {
+  isPanelOpen = !isPanelOpen;
+}
 
 let codeUrl: string | undefined;
 
@@ -106,8 +157,10 @@ async function getFunctionByLine(
 function setBackgroundColor(colors: "light" | "dark") {
   if (colors === "dark") {
     document.body.style.backgroundColor = "black";
+    document.body.setAttribute("data-theme", "dark");
   } else {
     document.body.style.backgroundColor = "#ddd";
+    document.body.setAttribute("data-theme", "light");
   }
 }
 
@@ -132,6 +185,18 @@ type GraphParams = {
 type Params = (GithubParams | GraphParams) & {
   colorScheme: ColorScheme;
   colors: "light" | "dark";
+};
+type FunctionAndCFGMetadata = {
+  functionData: {
+    name: string;
+    lineCount: number;
+    language: Language;
+  };
+  cfgGraphData: {
+    nodeCount: number;
+    edgeCount: number;
+    cyclomaticComplexity: number;
+  };
 };
 
 function parseUrlSearchParams(urlSearchParams: URLSearchParams): Params {
@@ -170,18 +235,24 @@ function parseUrlSearchParams(urlSearchParams: URLSearchParams): Params {
   };
 }
 
-async function createGitHubCFG(ghParams: GithubParams): Promise<CFG> {
+async function fetchFunctionAndLanguage(
+  ghParams: GithubParams,
+): Promise<{ func: SyntaxNode; language: Language }> {
   const { rawUrl, line } = ghParams;
   const response = await fetch(rawUrl);
   const code = await response.text();
   // We assume that the raw URL always ends with the file extension
   const language = getLanguage(rawUrl);
-
   const func = await getFunctionByLine(code, language, line);
   if (!func) {
     throw new Error(`Unable to find function on line ${line}`);
   }
 
+  return { func, language };
+}
+
+async function createGitHubCFG(ghParams: GithubParams): Promise<CFG> {
+  const { func, language } = await fetchFunctionAndLanguage(ghParams);
   return buildCFG(func, language);
 }
 
@@ -210,16 +281,49 @@ async function createCFG(params: Params): Promise<CFG> {
   }
 }
 
+let functionAndCFGMetadata: FunctionAndCFGMetadata = {
+  functionData: { name: "", lineCount: 0, language: undefined },
+  cfgGraphData: { nodeCount: 0, edgeCount: 0, cyclomaticComplexity: 0 },
+};
+
+function updateMetadata(func: SyntaxNode, language: Language, CFG: CFG) {
+  // Update function metadata
+  const name: string | undefined = extractFunctionName(func, language);
+  const lineCount: number = func.endPosition.row - func.startPosition.row + 1;
+
+  // Update CFG metadata
+  const nodeCount: number = CFG.graph.order;
+  const edgeCount: number = CFG.graph.size;
+  const cyclomaticComplexity: number = CFG.graph.size - nodeCount + 2;
+
+  return {
+    functionData: {
+      name,
+      lineCount,
+      language,
+    },
+    cfgGraphData: {
+      nodeCount,
+      edgeCount,
+      cyclomaticComplexity,
+    },
+  };
+}
+
 async function render() {
   try {
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = parseUrlSearchParams(urlSearchParams);
     setBackgroundColor(params.colors);
-    if (params.type === "GitHub") {
-      codeUrl = params.codeUrl;
-    }
 
     const cfg = await createCFG(params);
+
+    if (params.type === "GitHub") {
+      codeUrl = params.codeUrl;
+      const { func, language } = await fetchFunctionAndLanguage(params);
+      functionAndCFGMetadata = updateMetadata(func, language, cfg);
+    }
+
     const graphviz = await Graphviz.load();
     rawSVG = graphviz.dot(graphToDot(cfg, false, params.colorScheme));
     return rawSVG;
@@ -277,7 +381,6 @@ onMount(() => {
   makeZoomable();
 });
 </script>
-
 <div class="controlsContainer">
   <div class="controls">
     <button onclick={resetView}>Reset View</button>
@@ -285,11 +388,36 @@ onMount(() => {
       onclick={openCode}
       disabled={!Boolean(codeUrl)}
       title={Boolean(codeUrl) ? "" : "Only available for GitHub code"}
-      >Open Code</button
-    >
+    >Open Code</button>
     <button onclick={saveSVG}>Download SVG</button>
   </div>
+  {#if rawSVG}
+   <!-- Metadata display -->
+{#if Object.values(showMetadata).some(value => value)}
+<div class="metadata" class:panel-open={isPanelOpen}>
+  {#each metadataFields as { key, label, value }}
+    {#if showMetadata[key]}
+      <span>{label}: {value()}</span>
+    {/if}
+  {/each}
 </div>
+{/if}
+    <button class="panel-toggle" onclick={togglePanel}>
+      {isPanelOpen ? '→' : '←'}
+    </button>
+    <!-- Control panel -->
+    <div class="control-panel" class:open={isPanelOpen}>
+      <h3>Display Options</h3>
+      {#each metadataFields as { key, label }}
+        <label>
+          <input type="checkbox" bind:checked={showMetadata[key]} />
+          {label}
+        </label>
+      {/each}
+    </div>
+  {/if}
+</div>
+
 <div class="svgContainer">
   {#await render()}
     <p style="color: green">Loading code...</p>
@@ -308,9 +436,89 @@ onMount(() => {
     width: 100%;
     z-index: 1000;
   }
+
   .controls {
     margin: 1em;
   }
+  
+  .metadata {
+    margin: 0;
+    padding: 1em;
+    position: fixed;
+    top: 5%;
+    right: 300px; 
+    transition: right 0.2s ease;
+    text-align: left;
+    background-color: var(--metadata-bg, rgba(30, 30, 30, 0.7));
+    max-width: 500px;
+  }
+  
+  .metadata:not(.panel-open) {
+    right: 25px;
+  }
+  
+  .metadata span {
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    color: var(--text-color, gray);
+    font-size: 16px;
+  }
+  
+  .panel-toggle {
+    position: fixed;
+    top: 5%;
+    right: 0;
+    z-index: 1; /* IMPORTANT */
+    width: 25px;
+    height: 60px;
+    background-color: var(--toggle-bg);
+    color: var(--toggle-color, white);
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .control-panel {
+    position: fixed;
+    font-size: 1em; 
+    top: 5%;
+    right: -20em; 
+    width: 18em; 
+    height: 36%; 
+    background-color: var(--panel-bg, rgba(30, 30, 30, 0.7));
+    color: var(--panel-text, white);
+    transition: right 0.2s ease;
+    padding: 1.25em; 
+    box-sizing: border-box;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .control-panel.open {
+    right: 0;
+  }
+
+  .control-panel h3 {
+    margin-top: 0px;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    color: var(--panel-heading, #fff);
+  }
+  
+  .control-panel label {
+    display: block;
+    margin-bottom: 15px;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .control-panel input[type="checkbox"] {
+    margin-right: 10px;
+  }
+  
   .svgContainer {
     display: flex;
     flex-direction: column;
@@ -319,4 +527,25 @@ onMount(() => {
     width: 100dvw;
     height: 100dvh;
   }
-</style>
+  
+  :global(body), :global(body[data-theme="dark"]) {
+    --text-color: white;
+    --panel-bg: rgba(30, 30, 30, 0.7);
+    --panel-text: #fff;
+    --panel-heading: #fff;
+    --toggle-bg: #555;
+    --toggle-color: #fff;
+    --metadata-bg: rgba(30, 30, 30, 0.7);  
+  }
+  
+  :global(body[data-theme="light"]) {
+    --text-color: #000000;
+    --panel-bg: rgba(240, 240, 240, 0.9);
+    --panel-text: #000000;
+    --panel-heading: #000000;
+    --toggle-bg: rgb(170, 169, 169);
+    --toggle-color: #000000;
+    --metadata-bg: rgba(240, 240, 240, 0.9);
+  }
+  </style>
+
