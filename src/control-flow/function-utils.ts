@@ -128,7 +128,7 @@ function extractGoFunctionName(func: SyntaxNode): string | undefined {
       }
 
       // If no variable is found it is probably an anonymous function
-      return "Anonymous";
+      return "<Anonymous>";
     }
     default:
       return undefined;
@@ -153,7 +153,7 @@ function extractTypeScriptFunctionName(func: SyntaxNode): string | undefined {
           func,
           nodeType.variableDeclarator,
           nodeType.identifier,
-        ) || "Anonymous"
+        ) || "<Anonymous>"
       );
 
     case functionType.TypeScript.methodDefinition:
@@ -174,7 +174,7 @@ function extractTypeScriptFunctionName(func: SyntaxNode): string | undefined {
           func,
           nodeType.variableDeclarator,
           nodeType.identifier,
-        ) || "Anonymous"
+        ) || "<Anonymous>"
       );
     }
     default:
@@ -229,7 +229,7 @@ export function extractFunctionName(
             nodeType.initDeclarator,
             nodeType.identifier,
           ) ||
-          "Anonymous"
+          "<Anonymous>"
         );
       }
       return undefined;

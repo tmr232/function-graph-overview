@@ -480,15 +480,15 @@ onMount(() => {
   
   .control-panel {
     position: fixed;
-    font-size: 16px;
+    font-size: 1em; 
     top: 5%;
-    right: -310px; 
-    width: 280px;
-    height: 30%; /* CHANGE THIS IF YOU ADD MORE METADATA OPTIONS */
+    right: -20em; 
+    width: 18em; 
+    height: 36%; 
     background-color: var(--panel-bg, rgba(30, 30, 30, 0.7));
     color: var(--panel-text, white);
     transition: right 0.2s ease;
-    padding: 20px;
+    padding: 1.25em; 
     box-sizing: border-box;
     box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
   }
