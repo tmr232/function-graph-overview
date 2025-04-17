@@ -1,4 +1,4 @@
-import { expect, test } from "bun:test";
+import { expect, test } from "vitest";
 import { pairwise, structZip, zip } from "../control-flow/itertools.ts";
 
 test("zip", () => {

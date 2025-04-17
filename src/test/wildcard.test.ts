@@ -1,4 +1,4 @@
-import { expect, test } from "bun:test";
+import { expect, test } from "vitest";
 import { matchWildcard } from "../control-flow/wildcard.ts";
 
 test("Exact match", () => {

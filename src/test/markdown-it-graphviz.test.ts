@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 
 import MarkdownIt from "markdown-it";
 import { GraphvizDotPlugin } from "../markdown-it-graphviz/plugin.ts";
