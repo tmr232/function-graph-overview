@@ -43,7 +43,7 @@ You can change to a different preset via the settings:
 
 ### Custom Color Schemes
 
-Custom color schems are created via the [interactive demo](https://tmr232.github.io/function-graph-overview/).
+Custom color schemes are created via the [interactive demo](https://tmr232.github.io/function-graph-overview/).
 
 1. Enable the `Color Picker` above the graph
 2. Select the colors you want for your color scheme<br/>
@@ -54,9 +54,9 @@ Custom color schems are created via the [interactive demo](https://tmr232.github
 
 ## Supported Languages
 
-- [Go](https://tmr232.github.io/function-graph-overview/?language=0)
-- [C](https://tmr232.github.io/function-graph-overview/?language=1)
-- [C++](https://tmr232.github.io/function-graph-overview/?language=3)
-- [Python](https://tmr232.github.io/function-graph-overview/?language=2)
-- TypesScript & TSX
-- JavaScript & JSX
+- [Go](https://tmr232.github.io/function-graph-overview/?language=go)
+- [C](https://tmr232.github.io/function-graph-overview/?language=c)
+- [C++](https://tmr232.github.io/function-graph-overview/?language=cpp)
+- [Python](https://tmr232.github.io/function-graph-overview/?language=python)
+- [TypesScript](https://tmr232.github.io/function-graph-overview/?language=typescript) & [TSX]((https://tmr232.github.io/function-graph-overview/?language=tsx))
+- [JavaScript](https://tmr232.github.io/function-graph-overview/?language=typescript) & [JSX]((https://tmr232.github.io/function-graph-overview/?language=tsx))
