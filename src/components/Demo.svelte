@@ -286,12 +286,12 @@ function onSelectionChanged(e) {
   try {
     console.log(selection);
     const languageAlias = languageToAlias(selection.language);
-    const newUrl = new URL(window.location.href);
-    const parameters = newUrl.searchParams;
+    const url = new URL(window.location.href);
+    const parameters = url.searchParams;
     parameters.set("language", languageAlias);
     parameters.delete("compressed");
-    newUrl.search = parameters.toString();
-    window.history.replaceState(null, "", newUrl);
+    url.search = parameters.toString();
+    window.history.replaceState(null, "", url);
   } catch (exception) {
     console.error("Could not update URL with selected language:", exception);
   }
