@@ -14,11 +14,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Added support for "special" function detection and process-terminating nodes in the graph.
   This is currently only enabled in the `/render` page to slowly build up a collection of
   functions to match and confidence in the representation before adding to the main tool.
-- Added support for reading configuration from a single compressed JSON URL parameter (`compressed`).
-This configuration is stored into one JSON query parameter.
-- Additionally, added support for a `language` query parameter when `compressed` is not present, to load the default code sample for that language.
-- When the language selection changes in the UI, the selected language is now reflected in the URL using a `language` query parameter.
-- When opening a shared link, these URL parameters are now correctly parsed and applied to the demo page.
+- When changing the code language, the URL is updated to reflect that.
 
 ### Fixed
 
@@ -31,6 +27,9 @@ This configuration is stored into one JSON query parameter.
 - The `bun typedoc` command was renamed to `bun docs`, as some contributors had issues
   with unexpected recursion in the command. It is also a nicer name.
 - Language definitions are now more unified, making it easier to add new languages.
+- `language` URL query parameter now takes language name instead of index.
+- Sharing now shares full config in addition to code.
+- Sharing now uses the `compressed=` query parameter for all information.
 
 ## [0.0.15] - 2025-03-26
 
