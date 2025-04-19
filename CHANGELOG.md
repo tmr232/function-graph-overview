@@ -30,6 +30,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - `language` URL query parameter now takes language name instead of index.
 - Sharing now shares full config in addition to code.
 - Sharing now uses the `compressed=` query parameter for all information.
+- Migrated from Bun Test to Vitest. Tests are now run using `bun vitest`.
 
 ## [0.0.15] - 2025-03-26
 
