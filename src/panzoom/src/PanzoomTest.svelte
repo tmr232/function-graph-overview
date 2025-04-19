@@ -1,7 +1,6 @@
 <script lang="ts">
   import { Graphviz } from "@hpcc-js/wasm-graphviz";
   import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
-  import { onMount } from "svelte";
   import { calculatePanToCenter, registerPanzoomOnclick } from "./panzoom-utils.ts";
   import type { Action } from "svelte/action";
 
@@ -20,13 +19,14 @@ let panzoom: PanzoomObject | undefined;
 
 
 type ZoomConfig = {
-  onClick:(event:MouseEvent|TouchEvent|PointerEvent) => void;
+  onclickFactory:(panzoom:PanzoomObject, elem:HTMLElement)=> (event:MouseEvent|TouchEvent|PointerEvent) => void;
   dragThreshold: number;
 }
 const zoomable:Action<HTMLElement, ZoomConfig> = (node:HTMLElement, data:ZoomConfig)=> {
   panzoom = Panzoom(node, { maxScale: 100, minScale: 1 });
   node.parentElement?.addEventListener("wheel", panzoom.zoomWithWheel);
-  registerPanzoomOnclick(node, (e)=>data.onClick(e.detail.originalEvent), data.dragThreshold);
+  const onclick = data.onclickFactory(panzoom, node);
+  registerPanzoomOnclick(node, (e)=>onclick(e.detail.originalEvent), data.dragThreshold);
 }
 
 
@@ -55,21 +55,23 @@ function getBaseClientRect() {
   return baseElement.getBoundingClientRect();
 }
 
-function panToEventTarget(event: MouseEvent|TouchEvent|PointerEvent) {
-  if (!panzoom) {return;}
-  let target: Element |undefined = event.target as Element;
-  target = getClickedNode(target);
-  if (!target) {
-    return;
+
+function makeClickHandler(panzoom:PanzoomObject, panzoomElement:HTMLElement):(event:MouseEvent|TouchEvent|PointerEvent)=>void {
+  return (event: MouseEvent|TouchEvent|PointerEvent) => {
+    let target: Element |undefined = event.target as Element;
+    target = getClickedNode(target);
+    if (!target) {
+      return;
+    }
+    /*
+      We get the position of the target relative to the `panzoom` element.
+      This allows us to pan with absolute coordinates, which is important
+      if the user clicks mid-move.
+      We scale the distances by the zoom scale, as the pan is relative to the
+      original size, not the scaled size.
+       */
+    panzoom.pan(...calculatePanToCenter(target.getBoundingClientRect(), panzoomElement.getBoundingClientRect(), panzoom.getScale()), {animate:true});
   }
-  /*
-    We get the position of the target relative to the `panzoom` element.
-    This allows us to pan with absolute coordinates, which is important
-    if the user clicks mid-move.
-    We scale the distances by the zoom scale, as the pan is relative to the
-    original size, not the scaled size.
-     */
-  panzoom.pan(...calculatePanToCenter(target.getBoundingClientRect(), getBaseClientRect(), panzoom.getScale()), {animate:true});
 }
 
 function onKeyDown(event: KeyboardEvent) {
@@ -82,7 +84,7 @@ function onKeyDown(event: KeyboardEvent) {
 
 <div class="main">
   <div class="graph">
-    <div class="panzoom" use:zoomable={{onClick:panToEventTarget, dragThreshold:5}}>
+    <div class="panzoom" use:zoomable={{onclickFactory:makeClickHandler, dragThreshold:5}}>
     {#await Graphviz.load()}
       Loading...
     {:then graphviz }
