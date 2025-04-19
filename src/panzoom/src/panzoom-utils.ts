@@ -1,7 +1,10 @@
 import type { PanzoomEventDetail } from "@panzoom/panzoom";
 
-export function registerPanzoomOnclick(panzoomElement: Element, callback: (e: CustomEvent<PanzoomEventDetail>) => void, dragThreshold: number) {
-
+export function registerPanzoomOnclick(
+  panzoomElement: Element,
+  callback: (e: CustomEvent<PanzoomEventDetail>) => void,
+  dragThreshold: number,
+) {
   let startX = 0;
   let startY = 0;
   let movedSignificantly = false;
@@ -34,8 +37,20 @@ export function registerPanzoomOnclick(panzoomElement: Element, callback: (e: Cu
   panzoomElement.addEventListener("panzoomend", onPanzoomEnd);
 }
 
-export function calculatePanToCenter(targetRect: DOMRect, panzoomRect: DOMRect, scale: number): [number, number] {
-  const x = ((panzoomRect.x + (panzoomRect.width / 2)) - (targetRect.x + (targetRect.width / 2))) / scale;
-  const y = ((panzoomRect.y + (panzoomRect.height / 2)) - (targetRect.y + (targetRect.height / 2))) / scale;
+export function calculatePanToCenter(
+  targetRect: DOMRect,
+  panzoomRect: DOMRect,
+  scale: number,
+): [number, number] {
+  const x =
+    (panzoomRect.x +
+      panzoomRect.width / 2 -
+      (targetRect.x + targetRect.width / 2)) /
+    scale;
+  const y =
+    (panzoomRect.y +
+      panzoomRect.height / 2 -
+      (targetRect.y + targetRect.height / 2)) /
+    scale;
   return [x, y];
 }
