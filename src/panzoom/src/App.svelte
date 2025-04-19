@@ -1,5 +1,5 @@
 <script lang="ts" module>
-import Panzoom from "./Panzoom.svelte";
+import PanzoomTest from "./PanzoomTest.svelte";
 </script>
 
-<Panzoom></Panzoom>
+<PanzoomTest></PanzoomTest>
