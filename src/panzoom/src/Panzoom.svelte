@@ -1,9 +1,10 @@
 <script lang="ts">
-import { Graphviz } from "@hpcc-js/wasm-graphviz";
-import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
-import { onMount } from "svelte";
+  import { Graphviz } from "@hpcc-js/wasm-graphviz";
+  import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
+  import { onMount } from "svelte";
+  import { calculatePanToCenter, registerPanzoomOnclick } from "./panzoom-utils.ts";
 
-const demoDot = `
+  const demoDot = `
 digraph G {
     node [style=filled bgcolor=gray]
     A -> B0
@@ -19,8 +20,10 @@ let panzoom: PanzoomObject | undefined;
 function makeZoomable() {
   const elem = document.querySelector(".panzoom") as HTMLElement;
   panzoom = Panzoom(elem, { maxScale: 100, minScale: 1 });
-  elem.parentElement.addEventListener("wheel", panzoom.zoomWithWheel);
+  elem.parentElement?.addEventListener("wheel", panzoom.zoomWithWheel);
+  registerPanzoomOnclick(elem, (e)=>panToEventTarget(e.detail.originalEvent), 5);
 }
+
 
 onMount(() => {
   makeZoomable();
@@ -50,8 +53,9 @@ function getBaseClientRect() {
   return baseElement.getBoundingClientRect();
 }
 
-function onClick(event: MouseEvent) {
-  let target: Element = event.target as Element;
+function panToEventTarget(event: MouseEvent|TouchEvent|PointerEvent) {
+  if (!panzoom) {return;}
+  let target: Element |undefined = event.target as Element;
   target = getClickedNode(target);
   if (!target) {
     return;
@@ -63,23 +67,10 @@ function onClick(event: MouseEvent) {
     We scale the distances by the zoom scale, as the pan is relative to the
     original size, not the scaled size.
      */
-  const nodeClientRect = target.getBoundingClientRect();
-  const baseClientRect = getBaseClientRect();
-  const relativeX = nodeClientRect.x - baseClientRect.x;
-  const relativeY = nodeClientRect.y - baseClientRect.y;
-  const midX = baseClientRect.width / 2;
-  const midY = baseClientRect.height / 2;
-  const scale = panzoom.getScale();
-  // TODO: Only pan if the target is far enough from the center.
-  panzoom.pan(
-    (midX - relativeX - nodeClientRect.width / 2) / scale,
-    (midY - relativeY - nodeClientRect.height / 2) / scale,
-    { animate: true },
-  );
+  panzoom.pan(...calculatePanToCenter(target.getBoundingClientRect(), getBaseClientRect(), panzoom.getScale()), {animate:true});
 }
 
 function onKeyDown(event: KeyboardEvent) {
-  console.log("onKeyDown", event);
   switch (event.key) {
     case "r":
       panzoom?.pan(0, 0, { animate: true });
@@ -88,7 +79,7 @@ function onKeyDown(event: KeyboardEvent) {
 </script>
 
 <div class="main">
-  <div class="graph" onclick={onClick}>
+  <div class="graph">
     <div class="panzoom">
     {#await Graphviz.load()}
       Loading...
