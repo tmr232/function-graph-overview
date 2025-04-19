@@ -1,0 +1,244 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Theme DOT-CFG Samples > Theme CFG 1`] = `
+"digraph {
+  bgcolor = "#ffffff";
+  edge [
+    penwidth = 1;
+    color = "#0000ff";
+    headport = "n";
+    tailport = "s";
+  ];
+  node [
+    label = "";
+    style = "filled";
+    shape = "box";
+    class = "default";
+    fillcolor = "#d3d3d3";
+    color = "#000000";
+    fontname = "sans-serif";
+    height = 0.3;
+  ];
+  "entry" [
+    class = "entry";
+    shape = "invhouse";
+    fillcolor = "#48AB30";
+    color = "#000000";
+    height = 0.5;
+  ];
+  "return1" [
+    class = "exit";
+    shape = "house";
+    fillcolor = "#AB3030";
+    color = "#000000";
+    height = 0.5;
+  ];
+  "return2" [
+    class = "exit";
+    shape = "house";
+    fillcolor = "#AB3030";
+    color = "#000000";
+    height = 0.5;
+  ];
+  "return4_2" [
+    class = "exit";
+    shape = "house";
+    fillcolor = "#AB3030";
+    color = "#000000";
+    height = 0.5;
+  ];
+  "stmt2" [
+    height = 0.6;
+    label = "";
+    style = "filled";
+    shape = "box";
+    class = "default";
+    fillcolor = "#d3d3d3";
+    color = "#000000";
+  ];
+  "stmt3" [
+    height = 0.6;
+    label = "";
+    style = "filled";
+    shape = "box";
+    class = "default";
+    fillcolor = "#d3d3d3";
+    color = "#000000";
+  ];
+  "stmt4_4" [
+    height = 0.8999999999999999;
+    label = "";
+    style = "filled";
+    shape = "box";
+    class = "default";
+    fillcolor = "#d3d3d3";
+    color = "#000000";
+  ];
+  "entry" -> "stmt1" [
+    class = "regular";
+    color = "#0000ff";
+  ];
+  "stmt1" -> "return1" [
+    class = "consequence";
+    color = "#008000";
+  ];
+  "stmt1" -> "stmt2" [
+    class = "alternative";
+    color = "#ff0000";
+  ];
+  "stmt2" -> "return2" [
+    class = "consequence";
+    color = "#008000";
+  ];
+  "stmt2" -> "stmt3" [
+    class = "alternative";
+    color = "#ff0000";
+  ];
+  "stmt3" -> "stmt4_1" [
+    class = "regular";
+    color = "#0000ff";
+  ];
+  "stmt4_1" -> "stmt4_2" [
+    class = "regular";
+    color = "#0000ff";
+  ];
+  "stmt4_2" -> "return4_2" [
+    class = "consequence";
+    color = "#008000";
+  ];
+  "stmt4_2" -> "stmt4_4" [
+    class = "alternative";
+    color = "#ff0000";
+  ];
+  "stmt4_1" -> "stmt4_4" [
+    dir = "back";
+    class = "regular";
+    color = "#0000ff";
+    penwidth = 2;
+    headport = "s";
+    tailport = "n";
+  ];
+}"
+`;
+
+exports[`Theme DOT-CFG Samples > Theme CFG with clusters 1`] = `
+"digraph {
+  bgcolor = "#ffffff";
+  edge [
+    penwidth = 1;
+    color = "#0000ff";
+    headport = "n";
+    tailport = "s";
+  ];
+  node [
+    label = "";
+    style = "filled";
+    shape = "box";
+    class = "default";
+    fillcolor = "#d3d3d3";
+    color = "#000000";
+    fontname = "sans-serif";
+    height = 0.3;
+  ];
+  subgraph "cluster_tryComplex" {
+    class = "tryComplex";
+    graph [
+      penwidth = 0;
+      class = "tryComplex";
+      color = "#ffffff";
+      bgcolor = "#ddddff";
+    ];
+    subgraph "cluster_try" {
+      class = "try";
+      graph [
+        penwidth = 0;
+        class = "try";
+        color = "#ffffff";
+        bgcolor = "#ddffdd";
+      ];
+      "TRY" [
+        label = "try";
+        style = "filled";
+        shape = "box";
+        class = "default";
+        fillcolor = "#d3d3d3";
+        color = "#000000";
+        height = 0.3;
+      ];
+    }
+    subgraph "cluster_except" {
+      class = "except";
+      graph [
+        penwidth = 0;
+        class = "except";
+        color = "#ffffff";
+        bgcolor = "#ffdddd";
+      ];
+      "EXCEPT" [
+        label = "except/catch";
+        style = "filled";
+        shape = "box";
+        class = "default";
+        fillcolor = "#d3d3d3";
+        color = "#000000";
+        height = 0.3;
+      ];
+    }
+    subgraph "cluster_else" {
+      "ELSE" [
+        label = "else";
+        style = "filled";
+        shape = "box";
+        class = "default";
+        fillcolor = "#d3d3d3";
+        color = "#000000";
+        height = 0.3;
+      ];
+    }
+    subgraph "cluster_finally" {
+      class = "finally";
+      graph [
+        penwidth = 0;
+        class = "finally";
+        color = "#ffffff";
+        bgcolor = "#ffffdd";
+      ];
+      "FINALLY" [
+        label = "finally";
+        style = "filled";
+        shape = "box";
+        class = "default";
+        fillcolor = "#d3d3d3";
+        color = "#000000";
+        height = 0.3;
+      ];
+    }
+  }
+  "ENTRY" -> "TRY" [
+    class = "regular";
+    color = "#0000ff";
+  ];
+  "TRY" -> "EXCEPT" [
+    class = "exception";
+    style = "invis";
+    headport = "e";
+    tailport = "w";
+  ];
+  "TRY" -> "ELSE" [
+    class = "regular";
+    color = "#0000ff";
+  ];
+  "ELSE" -> "FINALLY" [
+    class = "regular";
+    color = "#0000ff";
+  ];
+  "EXCEPT" -> "FINALLY" [
+    class = "regular";
+    color = "#0000ff";
+  ];
+  "FINALLY" -> "EXIT" [
+    class = "regular";
+    color = "#0000ff";
+  ];
+}"
+`;

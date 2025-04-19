@@ -3,9 +3,9 @@ import { describe, expect, test } from "vitest";
 import MarkdownIt from "markdown-it";
 import { GraphvizDotPlugin } from "../markdown-it-graphviz/plugin.ts";
 
-describe("Render DOT Samples", () => {
-  const md = new MarkdownIt().use(GraphvizDotPlugin);
+const md = new MarkdownIt().use(await GraphvizDotPlugin(), { darkMode: true });
 
+describe("Render DOT Samples", () => {
   test("Render DOT", () => {
     const result = md.render(
       `
@@ -45,11 +45,7 @@ digraph G {
   });
 });
 
-describe("Render DOT-CFG Samples", async () => {
-  const md = new MarkdownIt().use(await GraphvizDotPlugin(), {
-    darkMode: true,
-  });
-
+describe("Render DOT-CFG Samples", () => {
   test("Render CFG", () => {
     const result = md.render(
       `
