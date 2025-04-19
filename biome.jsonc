@@ -7,7 +7,12 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["./dist", "src/test/commentTestSamples", "src/demo/src/assets"]
+    "ignore": [
+      "./dist",
+      "src/test/commentTestSamples",
+      "src/demo/src/assets",
+      "coverage"
+    ]
   },
   "overrides": [
     {

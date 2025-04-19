@@ -17,6 +17,7 @@ export default tseslint.config(
       "src/components",
       ".vscode-test.mjs",
       "src/test/commentTestSamples",
+      "coverage",
     ],
   },
   {

@@ -11,7 +11,7 @@ This makes test-writing easier, as we don't need to include code as strings in o
 
 ## Running Tests
 
-Use `bun test` to run all the tests.
+Use `bun vitest run` to run all the tests.
 
 ### Visualizing Failures
 

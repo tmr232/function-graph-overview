@@ -70,7 +70,7 @@ These steps are described in the following sections.
 Run tests with the following command:
 
 ```
-bun test
+bun vitest run
 ```
 
 New code should ideally have tests and not break existing tests.

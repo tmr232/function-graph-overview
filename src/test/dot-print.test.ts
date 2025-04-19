@@ -1,9 +1,9 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 
 import { getLightColorScheme } from "../control-flow/colors.ts";
 import { applyTheme } from "../dot-cfg/dot-print.ts";
 
-describe("Theme DOT-CFG Samples", async () => {
+describe("Theme DOT-CFG Samples", () => {
   test("Theme CFG", () => {
     const result = applyTheme(
       `

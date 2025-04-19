@@ -1,0 +1,17 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "error",
+    "perf": "error",
+    "suspicious": "error"
+  },
+  "rules": {
+    "no-await-in-loop": "allow",
+    "valid-title": "allow"
+  },
+  "ignorePatterns": [
+    "src/test/commentTestSamples/**",
+    "src/demo/src/assets/**"
+  ],
+  "plugins": ["typescript", "unicorn", "oxc", "vitest", "promise"]
+}

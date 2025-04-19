@@ -1,6 +1,6 @@
-import { expect, test } from "bun:test";
 import { MultiDirectedGraph } from "graphology";
 import { mergePath } from "graphology-utils";
+import { expect, test } from "vitest";
 import { detectBacklinks } from "../control-flow/graph-ops";
 
 const testCases: [string, string[][], { from: string; to: string }[]][] = [
