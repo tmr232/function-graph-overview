@@ -99,6 +99,14 @@ export function getDefaultColorScheme(): ColorScheme {
   return structuredClone(defaultColorScheme);
 }
 
+export function getDarkColorScheme(): ColorScheme {
+  return listToScheme(darkColorList);
+}
+
+export function getLightColorScheme(): ColorScheme {
+  return listToScheme(getLightColorList());
+}
+
 export function serializeColorList(colorList: ColorList): string {
   return JSON.stringify({ version: 1, scheme: colorList });
 }

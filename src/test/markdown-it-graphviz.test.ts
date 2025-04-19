@@ -45,8 +45,10 @@ digraph G {
   });
 });
 
-describe("Render DOT-CFG Samples", () => {
-  const md = new MarkdownIt().use(GraphvizDotPlugin);
+describe("Render DOT-CFG Samples", async () => {
+  const md = new MarkdownIt().use(await GraphvizDotPlugin(), {
+    darkMode: true,
+  });
 
   test("Render CFG", () => {
     const result = md.render(

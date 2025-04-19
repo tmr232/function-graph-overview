@@ -2,3 +2,38 @@ div.dot-graph {
   display: flex;
   justify-content: center;
 }
+
+:root[data-theme="dark"] {
+  .light {
+    display: none;
+  }
+  .dark {
+    display: block;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .light {
+    display: none;
+  }
+  .dark {
+    display: block;
+  }
+}
+
+:root[data-theme="light"] {
+  .dark {
+    display: none;
+  }
+  .light {
+    display: block;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .dark {
+    display: none;
+  }
+  .light {
+    display: block;
+  }
+}

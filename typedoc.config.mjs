@@ -15,7 +15,9 @@ const config = {
   customCss: ["docs/custom.css"],
   exclude: ["src/test/commentTestSamples", "src/demo/src/assets"],
   markdownItLoader(parser) {
-    parser.use(graphvizDotPlugin);
+    parser.use(graphvizDotPlugin, {
+      customCss: { darkClass: "dark", lightClass: "light" },
+    });
   },
 };
 
