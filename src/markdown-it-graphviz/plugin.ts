@@ -1,12 +1,34 @@
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import type markdownit from "markdown-it";
-import { getDefaultColorScheme } from "../control-flow/colors.ts";
+import {
+  type ColorScheme,
+  getDarkColorScheme,
+  getLightColorScheme,
+} from "../control-flow/colors.ts";
 import { applyTheme } from "../dot-cfg/dot-print.ts";
+
+export type Config = {
+  customCss?: {
+    darkClass: string;
+    lightClass: string;
+  };
+
+  darkMode?: boolean;
+};
 
 export async function GraphvizDotPlugin() {
   const graphviz = await Graphviz.load();
+  function renderCfg(
+    code: string,
+    colorScheme: ColorScheme,
+    cssClass?: string,
+  ) {
+    const themedDot = applyTheme(`digraph { ${code} }`, colorScheme);
+    const svg = graphviz.dot(themedDot);
+    return `<div class="${cssClass}">${svg}</div>`;
+  }
 
-  return (md: markdownit) => {
+  return (md: markdownit, config?: Config) => {
     // Save the original fence renderer
     const defaultFence = md.renderer.rules.fence;
 
@@ -23,21 +45,36 @@ export async function GraphvizDotPlugin() {
         const svg = graphviz.dot(code);
 
         return `<div class="dot-graph">
-        ${svg}
-      </div>`;
+                  ${svg}
+                </div>`;
       }
+
       if (token.info.trim() === "dot-cfg") {
         const code = token.content.trim();
 
-        const themedDot = applyTheme(
-          `digraph { ${code} }`,
-          getDefaultColorScheme(),
-        );
-        const svg = graphviz.dot(themedDot);
+        if (config?.customCss) {
+          const darkSvg = renderCfg(
+            code,
+            getDarkColorScheme(),
+            config.customCss.darkClass,
+          );
+          const lightSvg = renderCfg(
+            code,
+            getLightColorScheme(),
+            config.customCss.lightClass,
+          );
 
-        return `<div class="dot-graph">
-        ${svg}
-      </div>`;
+          return `<div class="dot-graph">
+                    ${darkSvg}
+                    ${lightSvg}
+                  </div>`;
+        }
+
+        if (config?.darkMode) {
+          return renderCfg(code, getDarkColorScheme());
+        }
+
+        return renderCfg(code, getLightColorScheme());
       }
 
       // For other languages, use the default renderer
