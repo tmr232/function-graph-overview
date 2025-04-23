@@ -7,6 +7,7 @@ import {
   processReturnStatement,
   processThrowStatement,
 } from "./common-patterns.ts";
+import { findNameInParentHierarchy } from "./function-utils.ts";
 import {
   type Context,
   GenericCFGBuilder,
@@ -147,4 +148,43 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
       exit: mergeNode,
     });
   });
+}
+
+const nodeType = {
+  functionDefinition: "function_definition",
+  lambdaExpression: "lambda_expression",
+
+  // inline/function‑assignment cases
+  variableDeclaration: "variable_declaration",
+  initDeclarator: "init_declarator",
+
+  // identifier lookups
+  identifier: "identifier",
+
+  //Unnamed functions
+  anonymous: "<Anonymous>",
+};
+
+export function extractCppFunctionName(func: SyntaxNode): string | undefined {
+  if (func.type === nodeType.functionDefinition) {
+    return func.descendantsOfType(nodeType.identifier)[0]?.text;
+  }
+  if (func.type === nodeType.lambdaExpression) {
+    // if the lambda is assigned to a variable, return the variable name
+    // otherwise return "<Anonymous>"
+    return (
+      findNameInParentHierarchy(
+        func,
+        nodeType.variableDeclaration,
+        nodeType.identifier,
+      ) ||
+      findNameInParentHierarchy(
+        func,
+        nodeType.initDeclarator,
+        nodeType.identifier,
+      ) ||
+      nodeType.anonymous
+    );
+  }
+  return undefined;
 }

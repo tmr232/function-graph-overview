@@ -18,6 +18,10 @@ import {
   processThrowStatement,
 } from "./common-patterns.ts";
 import {
+  extractNameByNodeName,
+  findNameInParentHierarchy,
+} from "./function-utils.ts";
+import {
   type Context,
   GenericCFGBuilder,
   type StatementHandlers,
@@ -318,4 +322,75 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
       exit: mergeNode,
     });
   });
+}
+
+const nodeType = {
+  // function‑declaration cases
+  functionDeclaration: "function_declaration",
+  generatorFunctionDeclaration: "generator_function_declaration",
+
+  // inline/function‑expression cases
+  generatorFunction: "generator_function",
+  arrowFunction: "arrow_function",
+  functionExpression: "function_expression",
+
+  // methods
+  methodDefinition: "method_definition",
+
+  // identifier lookups
+  identifier: "identifier",
+  variableDeclarator: "variable_declarator",
+  propertyIdentifier: "property_identifier",
+
+  // Unnamed functions
+  anonymous: "<Anonymous>",
+};
+
+/**
+ * Extracts the name of a TypeScript function based on its syntax node type.
+ *
+ * @param {SyntaxNode} func - The syntax node representing the TypeScript function.
+ * @returns {string | undefined} The function name, or `undefined` if not found.
+ */
+export function extractTypeScriptFunctionName(
+  func: SyntaxNode,
+): string | undefined {
+  switch (func.type) {
+    case nodeType.functionDeclaration:
+    case nodeType.generatorFunctionDeclaration:
+      return extractNameByNodeName(func, nodeType.identifier);
+
+    case nodeType.generatorFunction:
+    case nodeType.arrowFunction:
+      return (
+        findNameInParentHierarchy(
+          func,
+          nodeType.variableDeclarator,
+          nodeType.identifier,
+        ) || nodeType.anonymous
+      );
+
+    case nodeType.methodDefinition:
+      return extractNameByNodeName(func, nodeType.propertyIdentifier);
+
+    case nodeType.functionExpression: {
+      // first check for a direct name
+      const optionalIdentifier = extractNameByNodeName(
+        func,
+        nodeType.identifier,
+      );
+      if (optionalIdentifier) return optionalIdentifier;
+
+      // otherwise fall back to a variable‑assignment name
+      return (
+        findNameInParentHierarchy(
+          func,
+          nodeType.variableDeclarator,
+          nodeType.identifier,
+        ) || nodeType.anonymous
+      );
+    }
+    default:
+      return undefined;
+  }
 }

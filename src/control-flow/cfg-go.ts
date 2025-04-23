@@ -13,6 +13,10 @@ import {
   processStatementSequence,
 } from "./common-patterns.ts";
 import {
+  extractNameByNodeName,
+  findNameInParentHierarchy,
+} from "./function-utils.ts";
+import {
   type Context,
   GenericCFGBuilder,
   type StatementHandlers,
@@ -400,4 +404,64 @@ function processSwitchlike(
   }
 
   return blockHandler.update({ entry: headNode, exit: mergeNode });
+}
+
+const nodeType = {
+  // Function-related node types
+  functionDeclaration: "function_declaration",
+  methodDeclaration: "method_declaration",
+  funcLiteral: "func_literal",
+
+  // variable‑binding contexts
+  shortVarDeclaration: "short_var_declaration", // `x := func() {}`
+  assignment: "assignment", // `x = func() {}`
+  declaration: "declaration", // `var x = func() {}`
+
+  // list contexts for finding assigned names
+  expressionList: "expression_list",
+  identifierList: "identifier_list",
+
+  // identifier lookups
+  identifier: "identifier",
+  fieldIdentifier: "field_identifier",
+
+  // Unnamed functions
+  anonymous: "<Anonymous>",
+};
+
+export function extractGoFunctionName(func: SyntaxNode): string | undefined {
+  switch (func.type) {
+    case nodeType.functionDeclaration:
+      return extractNameByNodeName(func, nodeType.identifier);
+    case nodeType.methodDeclaration:
+      return extractNameByNodeName(func, nodeType.fieldIdentifier);
+    case nodeType.funcLiteral: {
+      // Check if the func_literal is assigned to a variable
+      const variable =
+        findNameInParentHierarchy(
+          func,
+          nodeType.shortVarDeclaration,
+          nodeType.expressionList,
+        ) || // x := func() {}
+        findNameInParentHierarchy(
+          func,
+          nodeType.assignment,
+          nodeType.expressionList,
+        ) || // x = func() {}
+        findNameInParentHierarchy(
+          func,
+          nodeType.declaration,
+          nodeType.identifierList,
+        ); // var x = func() {}
+
+      if (variable) {
+        return variable;
+      }
+
+      // If no variable is found it is probably an anonymous function
+      return nodeType.anonymous;
+    }
+    default:
+      return undefined;
+  }
 }
