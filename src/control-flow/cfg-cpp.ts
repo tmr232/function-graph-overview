@@ -163,11 +163,26 @@ const nodeType = {
 
   //Unnamed functions
   anonymous: "<Anonymous>",
+
+  //Special cases , operator-name and destructor-name
+  operatorName: "operator_name",
+  destructorName: "destructor_name",
 };
 
 export function extractCppFunctionName(func: SyntaxNode): string | undefined {
   if (func.type === nodeType.functionDefinition) {
-    return func.descendantsOfType(nodeType.identifier)[0]?.text;
+    // Look for an operator overload (This should happen before the identifier/destructor).
+    const operatorNode = func.descendantsOfType(nodeType.operatorName)[0];
+    if (operatorNode) return operatorNode.text;
+
+    // else, look for the destructor name, which is a special case because identifier returns without the ~
+    const destructorNode = func.descendantsOfType(nodeType.destructorName)[0];
+    if (destructorNode) {
+      return destructorNode.text;
+    }
+    //if neither of those, look for the identifier
+    const idNode = func.descendantsOfType(nodeType.identifier)[0];
+    if (idNode) return idNode.text;
   }
   if (func.type === nodeType.lambdaExpression) {
     // if the lambda is assigned to a variable, return the variable name

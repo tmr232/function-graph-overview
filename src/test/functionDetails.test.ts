@@ -92,6 +92,31 @@ describe("C++", () => {
     const func = funcIterator.next().value;
     expect(extractFunctionName(func, "C++")).toBe("add");
   });
+
+  test("operator overloading", () => {
+    const code = "MyType operator+(const MyType& other) const {}";
+    const funcIterator = iterFunctions(code, "C++");
+    const func = funcIterator.next().value;
+    expect(extractFunctionName(func, "C++")).toBe("operator+");
+  });
+
+  test("constructor and destructor functions", () => {
+    const constructorCode = "MyClass() {}";
+    const destructorCode = "~MyClass() {}";
+    const funcIteratorConstructor = iterFunctions(constructorCode, "C++");
+    const funcIteratorDestructor = iterFunctions(destructorCode, "C++");
+    const constructorFunc = funcIteratorConstructor.next().value;
+    const destructorFunc = funcIteratorDestructor.next().value;
+    expect(extractFunctionName(constructorFunc, "C++")).toBe("MyClass");
+    expect(extractFunctionName(destructorFunc, "C++")).toBe("~MyClass");
+  });
+
+  test("virtual function", () => {
+    const code = "virtual void speak() {}";
+    const funcIterator = iterFunctions(code, "C++");
+    const func = funcIterator.next().value;
+    expect(extractFunctionName(func, "C++")).toBe("speak");
+  });
 });
 
 // Python Tests
@@ -138,45 +163,45 @@ describe("TypeScript", () => {
 
   test("method_definition", () => {
     const code =
-      "class SmarPhone { setPrice(smartPhonePrice: number) : void {} }";
-    const functIterator = iterFunctions(code, "TypeScript");
-    const func = functIterator.next().value;
+      "class SmartPhone { setPrice(smartPhonePrice: number) : void {} }";
+    const funcIterator = iterFunctions(code, "TypeScript");
+    const func = funcIterator.next().value;
     expect(extractFunctionName(func, "TypeScript")).toBe("setPrice");
   });
 
   test("function_expression with variable", () => {
     const code = "const myFunction = function(name1: string): string {};";
-    const functIterator = iterFunctions(code, "TypeScript");
-    const func = functIterator.next().value;
+    const funcIterator = iterFunctions(code, "TypeScript");
+    const func = funcIterator.next().value;
     expect(extractFunctionName(func, "TypeScript")).toBe("myFunction");
   });
 
   test("function_expression with no variable", () => {
     const code = "function(name1: string): string {};";
-    const functIterator = iterFunctions(code, "TypeScript");
-    const func = functIterator.next().value;
+    const funcIterator = iterFunctions(code, "TypeScript");
+    const func = funcIterator.next().value;
     expect(extractFunctionName(func, "TypeScript")).toBe("<Anonymous>");
   });
 
   test("generator_function with variable", () => {
     const code = "const fn = function* <T>(input: T): Generator<number> {}";
-    const functIterator = iterFunctions(code, "TypeScript");
-    const func = functIterator.next().value;
+    const funcIterator = iterFunctions(code, "TypeScript");
+    const func = funcIterator.next().value;
     expect(extractFunctionName(func, "TypeScript")).toBe("fn");
   });
 
   test("generator_function with no variable", () => {
     const code = "function* <T>(input: T): Generator<number> {}";
-    const functIterator = iterFunctions(code, "TypeScript");
-    const func = functIterator.next().value;
+    const funcIterator = iterFunctions(code, "TypeScript");
+    const func = funcIterator.next().value;
     expect(extractFunctionName(func, "TypeScript")).toBe("<Anonymous>");
   });
 
   test("generator_function_declaration", () => {
     const code =
       "function* iterTestFunctions(tree: Parser.Tree): Generator<TestFunction> {}";
-    const functIterator = iterFunctions(code, "TypeScript");
-    const func = functIterator.next().value;
+    const funcIterator = iterFunctions(code, "TypeScript");
+    const func = funcIterator.next().value;
     expect(extractFunctionName(func, "TypeScript")).toBe("iterTestFunctions");
   });
 });
