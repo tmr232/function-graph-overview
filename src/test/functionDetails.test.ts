@@ -24,6 +24,13 @@ describe("Go", () => {
     expect(extractFunctionName(func, "Go")).toBe("Execute");
   });
 
+  test("func_literal with no parent", () => {
+    const code = "return func(x int) int {}";
+    const funcIterator = iterFunctions(code, "Go");
+    const func = funcIterator.next().value;
+    expect(extractFunctionName(func, "Go")).toBe("<Anonymous>");
+  });
+
   test("func_literal assigned to variable", () => {
     const code = "isDebugInts := func(s string) bool {}";
     const funcIterator = iterFunctions(code, "Go");
@@ -31,11 +38,20 @@ describe("Go", () => {
     expect(extractFunctionName(func, "Go")).toBe("isDebugInts");
   });
 
-  test("func_literal with no parent", () => {
-    const code = "return func(x int) int {}";
+  test("extracts multiple variable names from short var declaration", () => {
+    const code = "y, x := func() {}, func() {}";
     const funcIterator = iterFunctions(code, "Go");
-    const func = funcIterator.next().value;
-    expect(extractFunctionName(func, "Go")).toBe("<Anonymous>");
+    const func = funcIterator.next().value; // first function node
+    console.log(extractFunctionName(func, "Go"));
+    expect(extractFunctionName(func, "Go")).toBe("y, x");
+  });
+
+  test("extracts variable and blank identifier in short var declaration", () => {
+    const code = "x, _ := func() {} , func() {}";
+    const funcIterator = iterFunctions(code, "Go");
+    const func = funcIterator.next().value; // first function node
+    console.log(extractFunctionName(func, "Go"));
+    expect(extractFunctionName(func, "Go")).toBe("x, _");
   });
 
   test("nested function", () => {
