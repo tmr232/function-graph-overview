@@ -1,0 +1,13 @@
+diff --git a/tree-sitter.js b/tree-sitter.js
+index 95b93b910143fffa9a5dc9512b38aeab1a22c6c8..24d860acaad258e0c8762270805c2ffd1e6c3d6c 100644
+--- a/tree-sitter.js
++++ b/tree-sitter.js
+@@ -2035,7 +2035,7 @@ var Language = class _Language {
+       bytes = Promise.resolve(input);
+     } else {
+       if (globalThis.process?.versions.node) {
+-        const fs2 = __require("fs/promises");
++        const fs2 = await import("fs/promises");
+         bytes = fs2.readFile(input);
+       } else {
+         bytes = fetch(input).then((response) => response.arrayBuffer().then((buffer) => {

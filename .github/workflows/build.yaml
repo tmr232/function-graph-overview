@@ -37,7 +37,7 @@ jobs:
       - run: bunx tsc --noEmit
 
       - name: Test
-        run: bun test
+        run: bun vitest
 
   package:
     name: "Package"

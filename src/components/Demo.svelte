@@ -7,6 +7,7 @@ import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import type { LanguageSupport } from "@codemirror/language";
 import * as LZString from "lz-string";
+import { onMount } from "svelte";
 import type { Language } from "../control-flow/cfg";
 import { evolve } from "../control-flow/evolve.ts";
 import CodeSegmentation from "./CodeSegmentation.svelte";
@@ -69,47 +70,125 @@ let languages: {
   },
 ] as const;
 
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.has("go")) {
-  languageCode.Go = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("go"),
-  );
-}
-if (urlParams.has("c")) {
-  languageCode.C = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("c"),
-  );
-}
-if (urlParams.has("c++")) {
-  languageCode["C++"] = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("c++"),
-  );
-}
-if (urlParams.has("python")) {
-  languageCode.Python = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("python"),
-  );
-}
-if (urlParams.has("typescript")) {
-  languageCode.TypeScript = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("typescript"),
-  );
-}
-if (urlParams.has("tsx")) {
-  languageCode.TSX = LZString.decompressFromEncodedURIComponent(
-    urlParams.get("tsx"),
-  );
+type ShareParameters = {
+  version: number;
+  language: string;
+  code: string;
+  fontSize: string;
+  simplify: boolean;
+  flatSwitch: boolean;
+  highlight: boolean;
+  colors: ColorList;
+};
+
+// ADD-LANGUAGES-HERE
+const languageAliases: Record<string, Language> = {
+  go: "Go",
+  c: "C",
+  cpp: "C++",
+  python: "Python",
+  typescript: "TypeScript",
+  tsx: "TSX",
+};
+
+function languageToAlias(language: Language): string {
+  for (const [alias, lang] of Object.entries(languageAliases)) {
+    if (lang === language) {
+      return alias;
+    }
+  }
+  throw new Error(`No alias found for language "${language}"`);
 }
 
+const currentVersion: number = 1; // Needs to be updated when a new version is released.
+let fontSize = $state("1em");
 let simplify = $state(true);
 let flatSwitch = $state(true);
 let highlight = $state(true);
+let parsedColorList = undefined;
+const urlParams = new URLSearchParams(window.location.search);
+let isLanguageInURL: boolean = false;
+let selection = $state(languages[0]);
+
+if (urlParams.has("language")) {
+  isLanguageInURL = true;
+  const urlLanguage = urlParams.get("language");
+  const language = languageAliases[urlLanguage];
+  const requestedLanguage = languages.find(
+    (lang) => lang.language === language,
+  );
+  if (requestedLanguage) {
+    selection = requestedLanguage;
+  } else {
+    console.error(`Unsupported language alias: '${urlLanguage}'`);
+  }
+}
+
+/*
+ * Parses URL parameters according to version 1 format.
+ *
+ * This version expects a single `compressed` parameter containing a compressed JSON
+ * with all necessary configuration, including:
+ *
+ * - version
+ * - language
+ * - code
+ * - fontSize
+ * - simplify
+ * - flatSwitch
+ * - highlight
+ * - colors
+ *
+ * This format makes the URL more compact and easier to extend in the future.
+ *
+ * Notes:
+ * - If both `language` and `compressed` are present,
+ *   `compressed` will be ignored and an error will be logged to the console.
+ * - If language is provided, the default code sample for that
+ *   language is used.
+ */
+
+if (urlParams.has("compressed")) {
+  if (isLanguageInURL) {
+    console.error(
+      "Cannot provide both `language` and `compressed` in the URL.",
+    );
+  } else {
+    try {
+      const parsedData = JSON.parse(
+        LZString.decompressFromEncodedURIComponent(urlParams.get("compressed")),
+      );
+      if (parsedData.version === 1) {
+        fontSize = parsedData.fontSize;
+        simplify = parsedData.simplify;
+        flatSwitch = parsedData.flatSwitch;
+        highlight = parsedData.highlight;
+        parsedColorList = parsedData.colors;
+        const language = languageAliases[parsedData.language];
+        if (language) {
+          selection = languages.find((lang) => lang.language === language);
+          languageCode[language] = parsedData.code;
+        }
+      }
+    } catch (exception) {
+      console.error(
+        "Failed to parse configuration compressed data from URL:",
+        exception,
+      );
+    }
+  }
+}
+onMount(() => {
+  if (parsedColorList) {
+    colorList = parsedColorList;
+  }
+});
+
 let colorPicker = $state(false);
 let verbose = $state(urlParams.has("verbose"));
 let showSegmentation = $state(urlParams.has("segmentation"));
 let showRegions = $state(urlParams.has("showRegions"));
 let debugMode = urlParams.has("debug");
-let fontSize = $state("1em");
 const range = (start: number, end: number) =>
   Array.from({ length: end - start }, (_v, k) => k + start);
 const fontSizes: { label: string; value: string }[] = [
@@ -117,17 +196,24 @@ const fontSizes: { label: string; value: string }[] = [
   ...range(8, 31).map((n) => ({ label: `${n}`, value: `${n}px` })),
 ];
 
-let selection = $state(
-  languages[Number.parseInt(urlParams.get("language"))] ?? languages[0],
-);
-
 function share() {
-  const compressedCode = LZString.compressToEncodedURIComponent(
-    languageCode[selection.language],
+  const code = languageCode[selection.language];
+  const codeAlias = languageToAlias(selection.language);
+  const colorConfig = colorList;
+  const parameters: ShareParameters = {
+    version: currentVersion,
+    language: codeAlias,
+    code,
+    fontSize,
+    simplify,
+    flatSwitch,
+    highlight,
+    colors: colorConfig,
+  };
+  const compressed = LZString.compressToEncodedURIComponent(
+    JSON.stringify(parameters),
   );
-  const codeName = selection.language.toLowerCase();
-  const language = languages.findIndex((lang) => lang === selection);
-  const query = `?language=${language}&${codeName}=${compressedCode}`;
+  const query = `?compressed=${compressed}`;
   const newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}${query}`;
   navigator.clipboard.writeText(newUrl);
   window.open(newUrl, "_blank").focus();
@@ -196,6 +282,21 @@ function onToggleClick(e) {
   toggleTheme();
 }
 
+function onSelectionChanged(e) {
+  try {
+    console.log(selection);
+    const languageAlias = languageToAlias(selection.language);
+    const url = new URL(window.location.href);
+    const parameters = url.searchParams;
+    parameters.set("language", languageAlias);
+    parameters.delete("compressed");
+    url.search = parameters.toString();
+    window.history.replaceState(null, "", url);
+  } catch (exception) {
+    console.error("Could not update URL with selected language:", exception);
+  }
+}
+
 isDark.subscribe(() => {
   colorList = getSystemColorList();
 });
@@ -232,7 +333,7 @@ isDark.subscribe(() => {
       <div class="controls">
         <select
           bind:value={selection}
-          onchange={(e) => console.log(selection)}
+          onchange={(e) => onSelectionChanged(e)}
         >
           {#each languages as language}
             <option value={language}>
@@ -247,7 +348,7 @@ isDark.subscribe(() => {
             </option>
           {/each}
         </select>
-        <button onclick={share}>Share (experimental)</button>
+        <button onclick={share}>Share</button>
       </div>
       <div class="codemirror">
         <Editor

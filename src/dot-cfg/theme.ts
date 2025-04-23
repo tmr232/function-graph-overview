@@ -5,7 +5,14 @@ import type {
 } from "ts-graphviz";
 import type { ColorScheme } from "../control-flow/colors.ts";
 
-const NodeClasses = ["default", "entry", "exit", "yield", "throw"] as const;
+const NodeClasses = [
+  "default",
+  "entry",
+  "exit",
+  "yield",
+  "throw",
+  "terminate",
+] as const;
 export type NodeClass = (typeof NodeClasses)[number];
 export function isNodeClass(name: string): name is NodeClass {
   return NodeClasses.includes(name as NodeClass);
@@ -50,6 +57,10 @@ const nodeStyles: Record<NodeClass, NodeAttributesObject> = {
     shape: "hexagon",
     orientation: 90,
     class: "yield",
+  },
+  terminate: {
+    shape: "doublecircle",
+    class: "terminate",
   },
 };
 

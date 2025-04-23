@@ -11,17 +11,26 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Documentation now renders `dot` and `dot-cfg` (CFG-styled DOT diagrams)
 - Documentation about our usage of Graphviz
 - Documentation about the representation of control flow in the graph
+- Added support for "special" function detection and process-terminating nodes in the graph.
+  This is currently only enabled in the `/render` page to slowly build up a collection of
+  functions to match and confidence in the representation before adding to the main tool.
+- When changing the code language, the URL is updated to reflect that.
 
 ### Fixed
 
 - Multiple `catch` clauses in C++ are now handled properly, even in case of comments between them.
 - Segmentation of `catch` clauses in C++ is now a lot better.
+- Fixed an issue where after sharing and reopening the page, clicking the "Share" button again would default the language back to Go instead of preserving the selected one.
 
 ### Changed
 
 - The `bun typedoc` command was renamed to `bun docs`, as some contributors had issues
   with unexpected recursion in the command. It is also a nicer name.
 - Language definitions are now more unified, making it easier to add new languages.
+- `language` URL query parameter now takes language name instead of index.
+- Sharing now shares full config in addition to code.
+- Sharing now uses the `compressed=` query parameter for all information.
+- Migrated from Bun Test to Vitest. Tests are now run using `bun vitest`.
 
 ## [0.0.15] - 2025-03-26
 

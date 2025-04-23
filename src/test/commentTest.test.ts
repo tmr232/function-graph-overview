@@ -1,4 +1,4 @@
-import { expect, test } from "bun:test";
+import { assert, expect, test } from "vitest";
 import { collectTests } from "./commentTestCollector";
 import { TestManager } from "./commentTestManager";
 
@@ -9,7 +9,9 @@ const testManager = new TestManager({
 test.each(testManager.allTests)(
   testManager.nameFormat,
   // @ts-expect-error: Mismatch between function types
-  testManager.invokeWith((failure: string) => expect().fail(failure)),
+  testManager.invokeWith((failure: string) => {
+    assert.fail(failure);
+  }),
 );
 
 test.each(testManager.snapshotTests)(

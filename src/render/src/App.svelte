@@ -4,6 +4,7 @@ import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
 import { MultiDirectedGraph } from "graphology";
 import { onMount } from "svelte";
 import { type Node as SyntaxNode } from "web-tree-sitter";
+import { callProcessorFor } from "../../control-flow/call-processor";
 import { type Language, newCFGBuilder } from "../../control-flow/cfg";
 import {
   type CFG,
@@ -119,7 +120,10 @@ function parseGithubUrl(githubURL: string): GithubCodeRef {
  * @param language The code language
  */
 function buildCFG(func: SyntaxNode, language: Language): CFG {
-  const builder = newCFGBuilder(language, { flatSwitch: true });
+  const builder = newCFGBuilder(language, {
+    flatSwitch: true,
+    callProcessor: callProcessorFor(language),
+  });
 
   let cfg = builder.buildCFG(func);
 

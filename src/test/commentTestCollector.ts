@@ -1,10 +1,11 @@
+import fs from "node:fs";
 /**
  * Responsible for collecting all the comment-tests.
  *
  * @category Testing
  * @module
  */
-import { Glob } from "bun";
+import { glob } from "glob";
 import { getTestFuncs as getTestFuncsForC } from "./collect-c";
 import { getTestFuncs as getTestsForCpp } from "./collect-cpp.ts";
 import { getTestFuncs as getTestFuncsForGo } from "./collect-go";
@@ -13,7 +14,7 @@ import { getTestFuncs as getTestsForTSX } from "./collect-tsx";
 import { getTestFuncs as getTestsForTypeScript } from "./collect-typescript";
 import type { TestFunction } from "./commentTestTypes";
 
-export const testsDir = `${import.meta.dir}/commentTestSamples`;
+export const testsDir = `${import.meta.dirname}/commentTestSamples`;
 
 const languages: {
   /**
@@ -35,10 +36,6 @@ const languages: {
   { ext: "tsx", getTestFuncs: getTestsForTSX },
 ];
 
-const sampleGlob = new Glob(
-  `**/*.{${languages.map(({ ext }) => ext).join(",")}}`,
-);
-
 const extToFuncs = new Map(
   languages.map(({ ext, getTestFuncs: iterTestFuncs }) => [ext, iterTestFuncs]),
 );
@@ -59,13 +56,19 @@ function prefixFuncNames(
   return newTestFuncs;
 }
 
+const globPattern = `**/*.{${languages.map(({ ext }) => ext).join(",")},}`;
+
+async function findSamples() {
+  return await glob(globPattern, { cwd: testsDir });
+}
+
 export async function collectTests(): Promise<TestFunction[]> {
   const allTestFuncs = [];
-  for await (const file of sampleGlob.scan(testsDir)) {
+  for await (const file of await findSamples()) {
     const ext = file.split(".").slice(-1)[0] as string;
     const getTestFuncs = extToFuncs.get(ext);
     if (!getTestFuncs) continue;
-    let code = await Bun.file(`${testsDir}/${file}`).text();
+    let code = fs.readFileSync(`${testsDir}/${file}`).toString();
     // Make sure line-endings are consistent!
     code = code.replaceAll("\r", "");
     const testFuncs = getTestFuncs(code);

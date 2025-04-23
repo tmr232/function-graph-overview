@@ -5,6 +5,7 @@ export type ColorList = [
   { name: "node.exit"; hex: string },
   { name: "node.throw"; hex: string },
   { name: "node.yield"; hex: string },
+  { name: "node.terminate"; hex: string },
   { name: "node.border"; hex: string },
   { name: "node.highlight"; hex: string },
   // Edge Colors
@@ -30,6 +31,7 @@ const defaultColorList: ColorList = [
   { name: "node.exit", hex: "#AB3030" },
   { name: "node.throw", hex: "#ffdddd" },
   { name: "node.yield", hex: "#00bfff" },
+  { name: "node.terminate", hex: "#7256c6" },
   { name: "node.border", hex: "#000000" },
   { name: "node.highlight", hex: "#000000" },
 
@@ -55,6 +57,7 @@ const darkColorList: ColorList = [
   { name: "node.exit", hex: "#AB3030" },
   { name: "node.throw", hex: "#590c0c" },
   { name: "node.yield", hex: "#0a9aca" },
+  { name: "node.terminate", hex: "#7256c6" },
   { name: "node.border", hex: "#000000" },
   { name: "node.highlight", hex: "#dddddd" },
   { name: "edge.regular", hex: "#2592a1" },
@@ -94,6 +97,14 @@ export function getDefaultColorList(): ColorList {
 
 export function getDefaultColorScheme(): ColorScheme {
   return structuredClone(defaultColorScheme);
+}
+
+export function getDarkColorScheme(): ColorScheme {
+  return listToScheme(darkColorList);
+}
+
+export function getLightColorScheme(): ColorScheme {
+  return listToScheme(getLightColorList());
 }
 
 export function serializeColorList(colorList: ColorList): string {

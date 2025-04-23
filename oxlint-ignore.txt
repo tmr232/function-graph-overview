@@ -1,3 +1,0 @@
-*.svelte
-src/test/commentTestSamples
-src/demo/src/assets
