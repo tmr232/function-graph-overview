@@ -1,11 +1,6 @@
-import { beforeAll, describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { extractFunctionName } from "../control-flow/function-utils.ts";
-import { initParsers, iterFunctions } from "../file-parsing/vite.ts";
-
-// Initialize parsers once before all tests
-beforeAll(async () => {
-  await initParsers();
-});
+import { iterFunctions } from "../file-parsing/bun.ts";
 
 // Go Tests
 describe("Go", () => {
