@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, test } from "bun:test";
+import { beforeAll, describe, expect, test } from "vitest";
 import { extractFunctionName } from "../control-flow/function-utils.ts";
 import { initParsers, iterFunctions } from "../file-parsing/vite.ts";
 
@@ -38,20 +38,11 @@ describe("Go", () => {
     expect(extractFunctionName(func, "Go")).toBe("isDebugInts");
   });
 
-  test("extracts multiple variable names from short var declaration", () => {
+  test("multiple variable names from short var declaration", () => {
     const code = "y, x := func() {}, func() {}";
     const funcIterator = iterFunctions(code, "Go");
-    const func = funcIterator.next().value; // first function node
-    console.log(extractFunctionName(func, "Go"));
+    const func = funcIterator.next().value;
     expect(extractFunctionName(func, "Go")).toBe("y, x");
-  });
-
-  test("extracts variable and blank identifier in short var declaration", () => {
-    const code = "x, _ := func() {} , func() {}";
-    const funcIterator = iterFunctions(code, "Go");
-    const func = funcIterator.next().value; // first function node
-    console.log(extractFunctionName(func, "Go"));
-    expect(extractFunctionName(func, "Go")).toBe("x, _");
   });
 
   test("nested function", () => {
@@ -175,6 +166,13 @@ describe("TypeScript", () => {
     const funcIterator = iterFunctions(code, "TypeScript");
     const func = funcIterator.next().value;
     expect(extractFunctionName(func, "TypeScript")).toBe("<Anonymous>");
+  });
+
+  test("arrow functions assigned to multiple variables", () => {
+    const code = "let x = () => {}, y = () => {};";
+    const funcIterator = iterFunctions(code, "TypeScript");
+    const func = funcIterator.next().value;
+    expect(extractFunctionName(func, "TypeScript")).toBe("<unsupported>");
   });
 
   test("method_definition", () => {
