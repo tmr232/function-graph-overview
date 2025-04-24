@@ -17,7 +17,7 @@ import {
   processStatementSequence,
   processThrowStatement,
 } from "./common-patterns.ts";
-import { extractNameByNodeName } from "./function-utils.ts";
+import { extractNameByNodeType } from "./function-utils.ts";
 import {
   type Context,
   GenericCFGBuilder,
@@ -386,18 +386,18 @@ export function extractTypeScriptFunctionName(
   switch (func.type) {
     case nodeType.functionDeclaration:
     case nodeType.generatorFunctionDeclaration:
-      return extractNameByNodeName(func, nodeType.identifier);
+      return extractNameByNodeType(func, nodeType.identifier);
 
     case nodeType.generatorFunction:
     case nodeType.arrowFunction:
       return extractVariableDeclaratorAssignment(func);
 
     case nodeType.methodDefinition:
-      return extractNameByNodeName(func, nodeType.propertyIdentifier);
+      return extractNameByNodeType(func, nodeType.propertyIdentifier);
 
     case nodeType.functionExpression: {
       // first check for a direct name
-      const optionalIdentifier = extractNameByNodeName(
+      const optionalIdentifier = extractNameByNodeType(
         func,
         nodeType.identifier,
       );

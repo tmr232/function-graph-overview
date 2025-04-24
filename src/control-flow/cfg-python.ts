@@ -6,7 +6,7 @@ import {
   forEachLoopProcessor,
   processStatementSequence,
 } from "./common-patterns.ts";
-import { extractNameByNodeName } from "./function-utils.ts";
+import { extractNameByNodeType } from "./function-utils.ts";
 import {
   type Context,
   GenericCFGBuilder,
@@ -637,7 +637,7 @@ export function extractPythonFunctionName(
   func: SyntaxNode,
 ): string | undefined {
   if (func.type === nodeType.functionDefinition) {
-    return extractNameByNodeName(func, nodeType.identifier);
+    return extractNameByNodeType(func, nodeType.identifier);
   }
   return undefined;
 }

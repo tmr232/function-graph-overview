@@ -13,7 +13,7 @@ import {
   processStatementSequence,
 } from "./common-patterns.ts";
 import {
-  extractNameByNodeName,
+  extractNameByNodeType,
   findNameInParentHierarchy,
 } from "./function-utils.ts";
 import {
@@ -450,9 +450,9 @@ const nodeType = {
 export function extractGoFunctionName(func: SyntaxNode): string | undefined {
   switch (func.type) {
     case nodeType.functionDeclaration:
-      return extractNameByNodeName(func, nodeType.identifier);
+      return extractNameByNodeType(func, nodeType.identifier);
     case nodeType.methodDeclaration:
-      return extractNameByNodeName(func, nodeType.fieldIdentifier);
+      return extractNameByNodeType(func, nodeType.fieldIdentifier);
     case nodeType.funcLiteral: {
       // Check if the func_literal is assigned to a variable
       const variable =

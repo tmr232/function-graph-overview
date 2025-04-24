@@ -12,7 +12,7 @@ import { extractTypeScriptFunctionName } from "./cfg-typescript.ts";
  * @param func - The syntax node to search within.
  * @param type - The type of the child node to extract the name from.
  */
-export function extractNameByNodeName(
+export function extractNameByNodeType(
   func: SyntaxNode,
   type: string,
 ): string | undefined {
@@ -35,7 +35,7 @@ export function findNameInParentHierarchy(
   let parent = func.parent;
   while (parent) {
     if (parent.type === parentType) {
-      return extractNameByNodeName(parent, childType);
+      return extractNameByNodeType(parent, childType);
     }
     parent = parent.parent;
   }

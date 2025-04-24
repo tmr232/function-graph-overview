@@ -185,6 +185,13 @@ describe("TypeScript", () => {
     expect(extractFunctionName(func, "TypeScript")).toBe("myFunction");
   });
 
+  test("function_expression with direct name", () => {
+    const code = "const sum = function add(): number {};";
+    const funcIterator = iterFunctions(code, "TypeScript");
+    const func = funcIterator.next().value;
+    expect(extractFunctionName(func, "TypeScript")).toBe("add");
+  });
+
   test("function_expression with no variable", () => {
     const code = "function(name1: string): string {};";
     const funcIterator = iterFunctions(code, "TypeScript");
