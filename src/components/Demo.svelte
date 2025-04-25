@@ -15,6 +15,7 @@ import ColorScheme from "./ColorSchemeEditor.svelte";
 import Editor from "./Editor.svelte";
 import Graph from "./Graph.svelte";
 import { getSystemColorList, isDark, toggleTheme } from "./lightdark.ts";
+import PanzoomComp from "./PanzoomComp.svelte";
 
 // ADD-LANGUAGES-HERE
 const defaultCodeSamples: { [language in Language]?: string } = {
@@ -259,12 +260,15 @@ function cursorMoved(event): void {
 
 let editor: Editor = $state();
 
+let pzComp;
+
 function onNodeClicked(
   e: CustomEvent<{ node: string; offset: number | null }>,
 ): void {
   console.log("Node clicked!", e.detail.node, e.detail.offset);
   const offset = e.detail.offset;
   if (offset !== null && offset !== undefined) editor?.setCursor(offset);
+  pzComp.reset();
 }
 
 run(() => {
@@ -408,6 +412,7 @@ isDark.subscribe(() => {
         {/if}
       </div>
     </div>
+    <PanzoomComp bind:this={pzComp}>
     <Graph
       code={languageCode[selection.language]}
       {offsetToHighlight}
@@ -420,16 +425,18 @@ isDark.subscribe(() => {
       bind:this={graph}
       on:node-clicked={onNodeClicked}
     />
+    </PanzoomComp>
   </div>
 </main>
 
 <style>
   main {
     display: grid;
+      height:calc(100% - 4rem);
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     /* width: 90%; */
-    padding: 2em;
+    padding: 2rem;
     grid-template-areas:
       "header header"
       "editor graph";
@@ -455,6 +462,9 @@ isDark.subscribe(() => {
 
     display: flex;
     justify-content: space-between;
+      z-index: 1000;
+      position:absolute;
+      background-color: var(--panel-background-color);
   }
 
   .codemirror {

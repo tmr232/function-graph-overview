@@ -249,5 +249,15 @@ export function applyColors(colors: ColorList) {
     align-items: center;
     justify-content: center;
     padding: 1em;
+      width: 100%;
+      height: 100%;
+  }
+  .results {
+      width: 100%;
+      height: 100%;
+  }
+  .graph :global(svg) {
+      width: 100%;
+      height: 100%;
   }
 </style>

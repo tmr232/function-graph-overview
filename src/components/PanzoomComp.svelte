@@ -1,7 +1,7 @@
 <script lang="ts">
 import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
 import type { Action } from "svelte/action";
-import { registerPanzoomOnclick } from "./panzoom-utils.ts";
+import { registerPanzoomOnclick } from "../panzoom/src/panzoom-utils.ts";
 
 
 type OnclickFactory = (
@@ -13,7 +13,8 @@ let {
   dragThreshold,
   onclickFactory,
   content,
-}: { dragThreshold: number; onclickFactory: OnclickFactory, content:any } = $props();
+  children,
+}: { dragThreshold: number; onclickFactory: OnclickFactory } = $props();
 
 let panzoom:PanzoomObject|undefined;
 
@@ -41,5 +42,12 @@ const zoomable: Action<HTMLElement, ZoomConfig> = (
 </script>
 
 <div class="panzoom" use:zoomable={{onclickFactory, dragThreshold}}>
-  {@render content?.()}
+  {@render children?.()}
 </div>
+
+<style>
+  .panzoom {
+      width: 100%;
+      height: 100%;
+  }
+</style>

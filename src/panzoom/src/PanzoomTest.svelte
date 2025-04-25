@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { Graphviz } from "@hpcc-js/wasm-graphviz";
-  import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
-  import { calculatePanToCenter, registerPanzoomOnclick } from "./panzoom-utils.ts";
-  import type { Action } from "svelte/action";
+import { Graphviz } from "@hpcc-js/wasm-graphviz";
+import { type PanzoomObject } from "@panzoom/panzoom";
+import PanzoomComp from "../../components/PanzoomComp.svelte";
+import { calculatePanToCenter } from "./panzoom-utils.ts";
 
-  const demoDot = `
+const demoDot = `
 digraph G {
     node [style=filled bgcolor=gray]
     A -> B0
@@ -15,21 +15,6 @@ digraph G {
     B1 -> C3
 }
 `;
-let panzoom: PanzoomObject | undefined;
-
-
-type ZoomConfig = {
-  onclickFactory:(panzoom:PanzoomObject, elem:HTMLElement)=> (event:MouseEvent|TouchEvent|PointerEvent) => void;
-  dragThreshold: number;
-}
-const zoomable:Action<HTMLElement, ZoomConfig> = (node:HTMLElement, data:ZoomConfig)=> {
-  panzoom = Panzoom(node, { maxScale: 100, minScale: 1 });
-  node.parentElement?.addEventListener("wheel", panzoom.zoomWithWheel);
-  const onclick = data.onclickFactory(panzoom, node);
-  registerPanzoomOnclick(node, (e)=>onclick(e.detail.originalEvent), data.dragThreshold);
-}
-
-
 
 function getClickedNode(target: Element): Element | undefined {
   while (
@@ -46,19 +31,12 @@ function getClickedNode(target: Element): Element | undefined {
   return target;
 }
 
-function getBaseClientRect() {
-  const baseElement = document.querySelector(".panzoom");
-  if (!baseElement) {
-    throw new Error("Could not find base element!");
-  }
-
-  return baseElement.getBoundingClientRect();
-}
-
-
-function makeClickHandler(panzoom:PanzoomObject, panzoomElement:HTMLElement):(event:MouseEvent|TouchEvent|PointerEvent)=>void {
-  return (event: MouseEvent|TouchEvent|PointerEvent) => {
-    let target: Element |undefined = event.target as Element;
+function makeClickHandler(
+  panzoom: PanzoomObject,
+  panzoomElement: HTMLElement,
+): (event: MouseEvent | TouchEvent | PointerEvent) => void {
+  return (event: MouseEvent | TouchEvent | PointerEvent) => {
+    let target: Element | undefined = event.target as Element;
     target = getClickedNode(target);
     if (!target) {
       return;
@@ -70,30 +48,43 @@ function makeClickHandler(panzoom:PanzoomObject, panzoomElement:HTMLElement):(ev
       We scale the distances by the zoom scale, as the pan is relative to the
       original size, not the scaled size.
        */
-    panzoom.pan(...calculatePanToCenter(target.getBoundingClientRect(), panzoomElement.getBoundingClientRect(), panzoom.getScale()), {animate:true});
-  }
+    panzoom.pan(
+      ...calculatePanToCenter(
+        target.getBoundingClientRect(),
+        panzoomElement.getBoundingClientRect(),
+        panzoom.getScale(),
+      ),
+      { animate: true },
+    );
+  };
 }
 
+let panzoom;
 function onKeyDown(event: KeyboardEvent) {
+  console.log(panzoom);
   switch (event.key) {
     case "r":
-      panzoom?.pan(0, 0, { animate: true });
+      panzoom.pan(0, 0, { animate: true });
   }
 }
 </script>
 
 <div class="main">
   <div class="graph">
-    <div class="panzoom" use:zoomable={{onclickFactory:makeClickHandler, dragThreshold:5}}>
+    <PanzoomComp  bind:this={panzoom} dragThreshold={5} onclickFactory={makeClickHandler}>
+
     {#await Graphviz.load()}
       Loading...
     {:then graphviz }
-      {@html graphviz.dot(demoDot)}
+        {#snippet content()}
+        {@html graphviz.dot(demoDot)}
+          {/snippet}
     {/await}
-    </div>
+    </PanzoomComp>
+
     <div class="crosshair">
     </div>
-  </div>
+    </div>
 </div>
 
 <svelte:window on:keydown|preventDefault={onKeyDown} />
