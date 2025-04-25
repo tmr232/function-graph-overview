@@ -7,7 +7,7 @@ import {
   processReturnStatement,
   processThrowStatement,
 } from "./common-patterns.ts";
-import { findNameInParentHierarchy } from "./function-utils.ts";
+import { extractNameByNodeType } from "./function-utils.ts";
 import {
   type Context,
   GenericCFGBuilder,
@@ -162,12 +162,27 @@ const nodeType = {
   identifier: "identifier",
 
   //Unnamed functions
-  anonymous: "<Anonymous>",
+  anonymous: "<anonymous>",
 
   //Special cases , operator-name and destructor-name
   operatorName: "operator_name",
   destructorName: "destructor_name",
 };
+
+function findCppNameInParentHierarchy(
+  func: SyntaxNode,
+  parentType: string,
+  childType: string,
+): string | undefined {
+  let parent = func.parent;
+  while (parent) {
+    if (parent.type === parentType) {
+      return extractNameByNodeType(parent, childType);
+    }
+    parent = parent.parent;
+  }
+  return undefined;
+}
 
 export function extractCppFunctionName(func: SyntaxNode): string | undefined {
   if (func.type === nodeType.functionDefinition) {
@@ -188,12 +203,12 @@ export function extractCppFunctionName(func: SyntaxNode): string | undefined {
     // if the lambda is assigned to a variable, return the variable name
     // otherwise return "<Anonymous>"
     return (
-      findNameInParentHierarchy(
+      findCppNameInParentHierarchy(
         func,
         nodeType.variableDeclaration,
         nodeType.identifier,
       ) ||
-      findNameInParentHierarchy(
+      findCppNameInParentHierarchy(
         func,
         nodeType.initDeclarator,
         nodeType.identifier,

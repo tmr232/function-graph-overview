@@ -14,7 +14,7 @@ import {
 } from "./common-patterns.ts";
 import {
   extractNameByNodeType,
-  findNameInParentHierarchy,
+  extractTaggedValueFromTreeSitterQuery,
 } from "./function-utils.ts";
 import {
   type Context,
@@ -430,21 +430,39 @@ const nodeType = {
   methodDeclaration: "method_declaration",
   funcLiteral: "func_literal",
 
-  // variable‑binding contexts
-  shortVarDeclaration: "short_var_declaration", // `x := func() {}`
-  assignment: "assignment", // `x = func() {}`
-  declaration: "declaration", // `var x = func() {}`
-
-  // list contexts for finding assigned names
-  expressionList: "expression_list",
-  identifierList: "identifier_list",
-
   // identifier lookups
   identifier: "identifier",
   fieldIdentifier: "field_identifier",
 
   // Unnamed functions
-  anonymous: "<Anonymous>",
+  anonymous: "<anonymous>",
+};
+
+const shortVarQueryAndTag = {
+  query: `
+    (short_var_declaration
+      left: (expression_list
+        (identifier) @var.name))
+  `,
+  tag: "var.name",
+};
+
+const varDeclarationQueryAndTag = {
+  query: `
+    (var_declaration
+      (var_spec
+        (identifier) @var.name))
+  `,
+  tag: "var.name",
+};
+
+const assignmentQueryAndTag = {
+  query: `
+    (assignment_statement
+      left: (expression_list
+        (identifier) @var.name))
+  `,
+  tag: "var.name",
 };
 
 export function extractGoFunctionName(func: SyntaxNode): string | undefined {
@@ -453,32 +471,26 @@ export function extractGoFunctionName(func: SyntaxNode): string | undefined {
       return extractNameByNodeType(func, nodeType.identifier);
     case nodeType.methodDeclaration:
       return extractNameByNodeType(func, nodeType.fieldIdentifier);
-    case nodeType.funcLiteral: {
-      // Check if the func_literal is assigned to a variable
-      const variable =
-        findNameInParentHierarchy(
+    case nodeType.funcLiteral:
+      // Check if the func_literal is assigned to a variable or is a standalone function
+      return (
+        extractTaggedValueFromTreeSitterQuery(
           func,
-          nodeType.shortVarDeclaration,
-          nodeType.expressionList,
-        ) || // x := func() {}
-        findNameInParentHierarchy(
+          shortVarQueryAndTag.query,
+          shortVarQueryAndTag.tag,
+        ) ||
+        extractTaggedValueFromTreeSitterQuery(
           func,
-          nodeType.assignment,
-          nodeType.expressionList,
-        ) || // x = func() {}
-        findNameInParentHierarchy(
+          varDeclarationQueryAndTag.query,
+          varDeclarationQueryAndTag.tag,
+        ) ||
+        extractTaggedValueFromTreeSitterQuery(
           func,
-          nodeType.declaration,
-          nodeType.identifierList,
-        ); // var x = func() {}
-
-      if (variable) {
-        return variable;
-      }
-
-      // If no variable is found it is probably an anonymous function
-      return nodeType.anonymous;
-    }
+          assignmentQueryAndTag.query,
+          assignmentQueryAndTag.tag,
+        ) ||
+        nodeType.anonymous
+      );
     default:
       return undefined;
   }

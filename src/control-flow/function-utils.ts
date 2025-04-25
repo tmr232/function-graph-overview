@@ -1,4 +1,4 @@
-import type { Node as SyntaxNode } from "web-tree-sitter";
+import { Query, type Node as SyntaxNode } from "web-tree-sitter";
 import type { Language } from "./cfg";
 import { extractCFunctionName } from "./cfg-c.ts";
 import { extractCppFunctionName } from "./cfg-cpp.ts";
@@ -11,6 +11,7 @@ import { extractTypeScriptFunctionName } from "./cfg-typescript.ts";
  *
  * @param func - The syntax node to search within.
  * @param type - The type of the child node to extract the name from.
+ * used among all languages (mostly the easy cases of extracting the name).
  */
 export function extractNameByNodeType(
   func: SyntaxNode,
@@ -20,26 +21,31 @@ export function extractNameByNodeType(
 }
 
 /**
- * Extracts the name of a variable to which a function is assigned.
- * This function traverses the syntax tree upwards to locate the variable name.
+ * Extract a single tagged value from a syntax tree using a Tree-sitter query.
  *
- * @param func - The syntax node representing the function.
- * @param parentType - The type of the parent node to search for.
- * @param childType - The type of the child node to extract the variable name from.
+ * @param func - The syntax node from which to extract the tree.
+ * @param query - The Tree-sitter query string to execute.
+ * @param tag - The capture tag name to filter by.
  */
-export function findNameInParentHierarchy(
+export function extractTaggedValueFromTreeSitterQuery(
   func: SyntaxNode,
-  parentType: string,
-  childType: string,
+  query: string,
+  tag: string,
 ): string | undefined {
-  let parent = func.parent;
-  while (parent) {
-    if (parent.type === parentType) {
-      return extractNameByNodeType(parent, childType);
-    }
-    parent = parent.parent;
+  const language = func.tree.language;
+  const queryObj = new Query(language, query);
+
+  const rootNode = func.tree.rootNode;
+  const captures = queryObj.captures(rootNode);
+
+  const names = captures
+    .filter((c) => c.name === tag && c.node.text)
+    .map((c) => c.node.text);
+
+  if (names.length > 1) {
+    return "<unsupported>";
   }
-  return undefined;
+  return names[0]; // can (and sometimes will) be undefined
 }
 
 /**

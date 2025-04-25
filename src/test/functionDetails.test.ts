@@ -23,7 +23,7 @@ describe("Go", () => {
     const code = "return func(x int) int {}";
     const funcIterator = iterFunctions(code, "Go");
     const func = funcIterator.next().value;
-    expect(extractFunctionName(func, "Go")).toBe("<Anonymous>");
+    expect(extractFunctionName(func, "Go")).toBe("<anonymous>");
   });
 
   test("func_literal assigned to variable", () => {
@@ -37,7 +37,28 @@ describe("Go", () => {
     const code = "y, x := func() {}, func() {}";
     const funcIterator = iterFunctions(code, "Go");
     const func = funcIterator.next().value;
-    expect(extractFunctionName(func, "Go")).toBe("y, x");
+    expect(extractFunctionName(func, "Go")).toBe("<unsupported>");
+  });
+
+  test("func_literal assigned to var with single identifier", () => {
+    const code = "var x = func() {}";
+    const funcIterator = iterFunctions(code, "Go");
+    const func = funcIterator.next().value;
+    expect(extractFunctionName(func, "Go")).toBe("x");
+  });
+
+  test("func_literal assigned without var keyword", () => {
+    const code = "x = func() {}";
+    const funcIterator = iterFunctions(code, "Go");
+    const func = funcIterator.next().value;
+    expect(extractFunctionName(func, "Go")).toBe("x");
+  });
+
+  test("func_literal assigned to multiple vars using 'var'", () => {
+    const code = "var x, y = func() {}, func() {}";
+    const funcIterator = iterFunctions(code, "Go");
+    const func = funcIterator.next().value;
+    expect(extractFunctionName(func, "Go")).toBe("<unsupported>");
   });
 
   test("nested function", () => {
@@ -85,7 +106,7 @@ describe("C++", () => {
     const code = "[](int value) {};";
     const funcIterator = iterFunctions(code, "C++");
     const func = funcIterator.next().value;
-    expect(extractFunctionName(func, "C++")).toBe("<Anonymous>");
+    expect(extractFunctionName(func, "C++")).toBe("<anonymous>");
   });
 
   test("template function", () => {
@@ -160,7 +181,7 @@ describe("TypeScript", () => {
     const code = "<T,>(value: T): T[] => {};";
     const funcIterator = iterFunctions(code, "TypeScript");
     const func = funcIterator.next().value;
-    expect(extractFunctionName(func, "TypeScript")).toBe("<Anonymous>");
+    expect(extractFunctionName(func, "TypeScript")).toBe("<anonymous>");
   });
 
   test("arrow functions assigned to multiple variables", () => {
@@ -196,7 +217,7 @@ describe("TypeScript", () => {
     const code = "function(name1: string): string {};";
     const funcIterator = iterFunctions(code, "TypeScript");
     const func = funcIterator.next().value;
-    expect(extractFunctionName(func, "TypeScript")).toBe("<Anonymous>");
+    expect(extractFunctionName(func, "TypeScript")).toBe("<anonymous>");
   });
 
   test("generator_function with variable", () => {
@@ -210,7 +231,7 @@ describe("TypeScript", () => {
     const code = "function* <T>(input: T): Generator<number> {}";
     const funcIterator = iterFunctions(code, "TypeScript");
     const func = funcIterator.next().value;
-    expect(extractFunctionName(func, "TypeScript")).toBe("<Anonymous>");
+    expect(extractFunctionName(func, "TypeScript")).toBe("<anonymous>");
   });
 
   test("generator_function_declaration", () => {

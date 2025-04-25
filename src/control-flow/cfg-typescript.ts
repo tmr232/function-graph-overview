@@ -1,4 +1,4 @@
-import { Query, type Node as SyntaxNode } from "web-tree-sitter";
+import type { Node as SyntaxNode } from "web-tree-sitter";
 import treeSitterTSX from "../../parsers/tree-sitter-tsx.wasm?url";
 import treeSitterTypeScript from "../../parsers/tree-sitter-typescript.wasm?url";
 import { matchExistsIn } from "./block-matcher.ts";
@@ -17,7 +17,10 @@ import {
   processStatementSequence,
   processThrowStatement,
 } from "./common-patterns.ts";
-import { extractNameByNodeType } from "./function-utils.ts";
+import {
+  extractNameByNodeType,
+  extractTaggedValueFromTreeSitterQuery,
+} from "./function-utils.ts";
 import {
   type Context,
   GenericCFGBuilder,
@@ -336,43 +339,20 @@ const nodeType = {
 
   // identifier lookups
   identifier: "identifier",
-  variableDeclarator: "variable_declarator",
   propertyIdentifier: "property_identifier",
 
   // Unnamed functions
-  anonymous: "<Anonymous>",
+  anonymous: "<anonymous>",
 };
-/* This function extracts the name of a variable assigned to a function.
-   A Tree-sitter query is used here because extractNameByNodeName (in function-utils.ts)
-   couldn't reliably detect multiple variable_declarators, even when using filter instead of find...
-*/
-export function extractVariableDeclaratorAssignment(func: SyntaxNode): string {
-  const queryStr = `
+
+const variableDeclaratorQueryAndTag = {
+  query: `
     (lexical_declaration
       (variable_declarator
         name: (identifier) @var.name))
-  `;
-
-  const language = func.tree.language;
-  const query = new Query(language, queryStr);
-
-  const rootNode = func.tree.rootNode;
-  const captures = query.captures(rootNode);
-
-  const names = captures
-    .filter((c) => c.name === "var.name" && c.node.text)
-    .map((c) => c.node.text);
-
-  if (names.length === 1) {
-    if (names[0]) {
-      return names[0];
-    }
-    return nodeType.anonymous;
-  }
-  if (names.length === 0) return nodeType.anonymous;
-  //Multiple variable declarators is unsupported.
-  return "<unsupported>";
-}
+  `,
+  tag: "var.name",
+};
 
 /**
  * Extracts the name of a TypeScript function based on its syntax node type.
@@ -390,7 +370,13 @@ export function extractTypeScriptFunctionName(
 
     case nodeType.generatorFunction:
     case nodeType.arrowFunction:
-      return extractVariableDeclaratorAssignment(func);
+      return (
+        extractTaggedValueFromTreeSitterQuery(
+          func,
+          variableDeclaratorQueryAndTag.query,
+          variableDeclaratorQueryAndTag.tag,
+        ) || nodeType.anonymous
+      );
 
     case nodeType.methodDefinition:
       return extractNameByNodeType(func, nodeType.propertyIdentifier);
@@ -404,7 +390,13 @@ export function extractTypeScriptFunctionName(
       if (optionalIdentifier) return optionalIdentifier;
 
       // otherwise fall back to a variable‑assignment name
-      return extractVariableDeclaratorAssignment(func);
+      return (
+        extractTaggedValueFromTreeSitterQuery(
+          func,
+          variableDeclaratorQueryAndTag.query,
+          variableDeclaratorQueryAndTag.tag,
+        ) || nodeType.anonymous
+      );
     }
     default:
       return undefined;
