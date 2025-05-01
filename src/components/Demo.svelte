@@ -16,6 +16,7 @@ import Editor from "./Editor.svelte";
 import Graph from "./Graph.svelte";
 import { getSystemColorList, isDark, toggleTheme } from "./lightdark.ts";
 import PanzoomComp from "./PanzoomComp.svelte";
+import type { PanzoomObject } from "@panzoom/panzoom";
 
 // ADD-LANGUAGES-HERE
 const defaultCodeSamples: { [language in Language]?: string } = {
@@ -262,14 +263,6 @@ let editor: Editor = $state();
 
 let pzComp;
 
-function onNodeClicked(
-  e: CustomEvent<{ node: string; offset: number | null }>,
-): void {
-  console.log("Node clicked!", e.detail.node, e.detail.offset);
-  const offset = e.detail.offset;
-  if (offset !== null && offset !== undefined) editor?.setCursor(offset);
-  pzComp.reset();
-}
 
 run(() => {
   if (!colorPicker && graph) {
@@ -304,6 +297,25 @@ function onSelectionChanged(e) {
 isDark.subscribe(() => {
   colorList = getSystemColorList();
 });
+
+function onZoomClick(event: MouseEvent | TouchEvent | PointerEvent, panzoom:PanzoomObject, zoomElement:HTMLElement): void {
+  console.log("Zoom click!");
+  let target: Element = event.target as Element;
+  while (
+    target.tagName !== "div" &&
+    target.tagName !== "svg" &&
+    !target.classList.contains("node") &&
+    target.parentElement !== null
+    ) {
+    target = target.parentElement;
+  }
+  if (!target.classList.contains("node")) {
+    return;
+  }
+
+  const offset = graph.getOffset(target.id);
+  if (offset !== null && offset !== undefined) editor?.setCursor(offset);
+}
 </script>
 
 <main>
@@ -412,7 +424,7 @@ isDark.subscribe(() => {
         {/if}
       </div>
     </div>
-    <PanzoomComp bind:this={pzComp}>
+    <PanzoomComp bind:this={pzComp} onclick={onZoomClick}>
     <Graph
       code={languageCode[selection.language]}
       {offsetToHighlight}
@@ -423,7 +435,6 @@ isDark.subscribe(() => {
       {highlight}
       {showRegions}
       bind:this={graph}
-      on:node-clicked={onNodeClicked}
     />
     </PanzoomComp>
   </div>

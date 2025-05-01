@@ -2,28 +2,25 @@
 import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
 import type { Action } from "svelte/action";
 import { registerPanzoomOnclick } from "../panzoom/src/panzoom-utils.ts";
+import type { Snippet } from "svelte";
 
 
-type OnclickFactory = (
-  panzoom: PanzoomObject,
-  elem: HTMLElement,
-) => (event: MouseEvent | TouchEvent | PointerEvent) => void;
+
+type ClickHandler = (event: MouseEvent | TouchEvent | PointerEvent, panzoom:PanzoomObject, zoomElement:HTMLElement) => void;
 
 let {
-  dragThreshold,
-  onclickFactory,
-  content,
+  dragThreshold=5,
+  onclick,
   children,
-}: { dragThreshold: number; onclickFactory: OnclickFactory } = $props();
+}: { dragThreshold: number; onclick: ClickHandler, children:Snippet } = $props();
 
-let panzoom:PanzoomObject|undefined;
+let panzoom:PanzoomObject;
 
 export function reset() {
     panzoom?.reset();
 }
 
 type ZoomConfig = {
-  onclickFactory: OnclickFactory;
   dragThreshold: number;
 };
 const zoomable: Action<HTMLElement, ZoomConfig> = (
@@ -32,16 +29,15 @@ const zoomable: Action<HTMLElement, ZoomConfig> = (
 ) => {
   panzoom = Panzoom(node, { maxScale: 100, minScale: 1 });
   node.parentElement?.addEventListener("wheel", panzoom.zoomWithWheel);
-  const onclick = data.onclickFactory(panzoom, node);
-  registerPanzoomOnclick(
+    registerPanzoomOnclick(
     node,
-    (e) => onclick(e.detail.originalEvent),
+    (e) => onclick(e.detail.originalEvent, panzoom, node),
     data.dragThreshold,
   );
 };
 </script>
 
-<div class="panzoom" use:zoomable={{onclickFactory, dragThreshold}}>
+<div class="panzoom" use:zoomable={{dragThreshold}}>
   {@render children?.()}
 </div>
 

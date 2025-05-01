@@ -18,7 +18,6 @@ export function registerPanzoomOnclick(
   function onPanzoomChange(e: CustomEvent<PanzoomEventDetail>) {
     const diffX = Math.abs(e.detail.x - startX);
     const diffY = Math.abs(e.detail.y - startY);
-
     if (diffX > dragThreshold || diffY > dragThreshold) {
       movedSignificantly = true;
     }

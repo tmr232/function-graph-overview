@@ -210,6 +210,10 @@ export function previewColors(colors: ColorList) {
   }
 }
 
+export function getOffset(nodeId:string):number|undefined {
+  return getNodeOffset(nodeId)
+}
+
 export function resetPreview() {
   previewColors(colorList);
 }
