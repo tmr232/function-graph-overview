@@ -45,6 +45,7 @@ export class Renderer {
     svg: string;
     dot: string;
     getNodeOffset: (nodeId: string) => number | undefined;
+    offsetToNode: (offset: number) => string;
   } {
     let { dot, svg, getNodeOffset, offsetToNode } = this.memoizedRenderStatic(
       functionSyntax,
@@ -70,6 +71,7 @@ export class Renderer {
       svg: svg,
       dot,
       getNodeOffset: (nodeId: string) => getNodeOffset(nodeId) + baseOffset,
+      offsetToNode: (offset: number) => offsetToNode(offset - baseOffset),
     };
   }
 
@@ -123,7 +125,7 @@ export class Renderer {
     const dom = svgFromString(svg);
     dom.width("100%");
     dom.height("100%");
-    svg=dom.svg();
+    svg = dom.svg();
 
     // Overlay regions
     if (this.options.showRegions) {

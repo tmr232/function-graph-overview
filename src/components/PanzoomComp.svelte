@@ -1,23 +1,48 @@
 <script lang="ts">
 import Panzoom, { type PanzoomObject } from "@panzoom/panzoom";
-import type { Action } from "svelte/action";
-import { registerPanzoomOnclick } from "../panzoom/src/panzoom-utils.ts";
 import type { Snippet } from "svelte";
+import type { Action } from "svelte/action";
+import {
+  calculatePanToCenter,
+  registerPanzoomOnclick,
+} from "../panzoom/src/panzoom-utils.ts";
 
-
-
-type ClickHandler = (event: MouseEvent | TouchEvent | PointerEvent, panzoom:PanzoomObject, zoomElement:HTMLElement) => void;
+type ClickHandler = (
+  event: MouseEvent | TouchEvent | PointerEvent,
+  panzoom: PanzoomObject,
+  zoomElement: HTMLElement,
+) => void;
 
 let {
-  dragThreshold=5,
+  dragThreshold = 5,
   onclick,
   children,
-}: { dragThreshold: number; onclick: ClickHandler, children:Snippet } = $props();
+}: {
+  dragThreshold: number;
+  onclick: ClickHandler;
+  children: Snippet;
+} = $props();
 
-let panzoom:PanzoomObject;
+let panzoom: PanzoomObject;
+let panzoomElement: HTMLElement;
 
 export function reset() {
-    panzoom?.reset();
+  panzoom?.reset();
+}
+
+export function panTo(query: string) {
+  const target = panzoomElement.querySelector(query);
+  if (!target) {
+    return;
+  }
+  panzoom.pan(
+    ...calculatePanToCenter(
+      target.getBoundingClientRect(),
+      panzoomElement.getBoundingClientRect(),
+      panzoom.getScale(),
+    ),
+    { animate: true },
+  );
 }
 
 type ZoomConfig = {
@@ -29,7 +54,7 @@ const zoomable: Action<HTMLElement, ZoomConfig> = (
 ) => {
   panzoom = Panzoom(node, { maxScale: 100, minScale: 1, contain: "outside" });
   node.parentElement?.addEventListener("wheel", panzoom.zoomWithWheel);
-    registerPanzoomOnclick(
+  registerPanzoomOnclick(
     node,
     (e) => onclick(e.detail.originalEvent, panzoom, node),
     data.dragThreshold,
@@ -37,7 +62,7 @@ const zoomable: Action<HTMLElement, ZoomConfig> = (
 };
 </script>
 
-<div class="panzoom" use:zoomable={{dragThreshold}}>
+<div class="panzoom" use:zoomable={{dragThreshold}} bind:this={panzoomElement}>
   {@render children?.()}
 </div>
 

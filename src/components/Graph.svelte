@@ -23,6 +23,7 @@ let dot: string;
 let tree: Tree;
 let savedSvg: string;
 let getNodeOffset: (nodeId: string) => number | undefined = () => undefined;
+let offsetToNode: (offset: number) => string | undefined = () => undefined;
 interface Props {
   colorList?: ColorList;
   offsetToHighlight?: number | undefined;
@@ -87,6 +88,7 @@ function renderCode(
   savedSvg = renderResult.svg;
   dot = renderResult.dot;
   getNodeOffset = renderResult.getNodeOffset;
+  offsetToNode = renderResult.offsetToNode;
   return savedSvg;
 }
 
@@ -210,8 +212,11 @@ export function previewColors(colors: ColorList) {
   }
 }
 
-export function getOffset(nodeId:string):number|undefined {
-  return getNodeOffset(nodeId)
+export function getOffset(nodeId: string): number | undefined {
+  return getNodeOffset(nodeId);
+}
+export function getNode(offset: number): string | undefined {
+  return offsetToNode(offset);
 }
 
 export function resetPreview() {

@@ -6,17 +6,18 @@ import { go } from "@codemirror/lang-go";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import type { LanguageSupport } from "@codemirror/language";
+import type { PanzoomObject } from "@panzoom/panzoom";
 import * as LZString from "lz-string";
 import { onMount } from "svelte";
 import type { Language } from "../control-flow/cfg";
 import { evolve } from "../control-flow/evolve.ts";
+import { calculatePanToCenter } from "../panzoom/src/panzoom-utils.ts";
 import CodeSegmentation from "./CodeSegmentation.svelte";
 import ColorScheme from "./ColorSchemeEditor.svelte";
 import Editor from "./Editor.svelte";
 import Graph from "./Graph.svelte";
-import { getSystemColorList, isDark, toggleTheme } from "./lightdark.ts";
 import PanzoomComp from "./PanzoomComp.svelte";
-import type { PanzoomObject } from "@panzoom/panzoom";
+import { getSystemColorList, isDark, toggleTheme } from "./lightdark.ts";
 
 // ADD-LANGUAGES-HERE
 const defaultCodeSamples: { [language in Language]?: string } = {
@@ -257,12 +258,15 @@ function editDOT() {
 function cursorMoved(event): void {
   const { index } = event.detail.pos;
   offsetToHighlight = index;
+  const selectedNode = graph.getNode(offsetToHighlight);
+  if (selectedNode) {
+    pzComp.panTo(`#${selectedNode}`);
+  }
 }
 
 let editor: Editor = $state();
 
 let pzComp;
-
 
 run(() => {
   if (!colorPicker && graph) {
@@ -298,7 +302,11 @@ isDark.subscribe(() => {
   colorList = getSystemColorList();
 });
 
-function onZoomClick(event: MouseEvent | TouchEvent | PointerEvent, panzoom:PanzoomObject, zoomElement:HTMLElement): void {
+function onZoomClick(
+  event: MouseEvent | TouchEvent | PointerEvent,
+  panzoom: PanzoomObject,
+  zoomElement: HTMLElement,
+): void {
   console.log("Zoom click!");
   let target: Element = event.target as Element;
   while (
@@ -306,7 +314,7 @@ function onZoomClick(event: MouseEvent | TouchEvent | PointerEvent, panzoom:Panz
     target.tagName !== "svg" &&
     !target.classList.contains("node") &&
     target.parentElement !== null
-    ) {
+  ) {
     target = target.parentElement;
   }
   if (!target.classList.contains("node")) {
