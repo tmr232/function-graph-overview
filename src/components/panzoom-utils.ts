@@ -31,8 +31,11 @@ export function registerPanzoomOnclick(
     callback(e);
   }
 
+  // @ts-expect-error Custom event
   panzoomElement.addEventListener("panzoomchange", onPanzoomChange);
+  // @ts-expect-error Custom event
   panzoomElement.addEventListener("panzoomstart", onPanzoomStart);
+  // @ts-expect-error Custom event
   panzoomElement.addEventListener("panzoomend", onPanzoomEnd);
 }
 

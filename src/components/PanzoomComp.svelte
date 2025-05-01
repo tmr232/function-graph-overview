@@ -5,7 +5,7 @@ import type { Action } from "svelte/action";
 import {
   calculatePanToCenter,
   registerPanzoomOnclick,
-} from "../panzoom/src/panzoom-utils.ts";
+} from "./panzoom-utils.ts";
 
 type ClickHandler = (
   event: MouseEvent | TouchEvent | PointerEvent,

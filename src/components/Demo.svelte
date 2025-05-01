@@ -11,13 +11,13 @@ import * as LZString from "lz-string";
 import { onMount } from "svelte";
 import type { Language } from "../control-flow/cfg";
 import { evolve } from "../control-flow/evolve.ts";
-import { calculatePanToCenter } from "../panzoom/src/panzoom-utils.ts";
 import CodeSegmentation from "./CodeSegmentation.svelte";
 import ColorScheme from "./ColorSchemeEditor.svelte";
 import Editor from "./Editor.svelte";
 import Graph from "./Graph.svelte";
 import PanzoomComp from "./PanzoomComp.svelte";
 import { getSystemColorList, isDark, toggleTheme } from "./lightdark.ts";
+import { calculatePanToCenter } from "./panzoom-utils.ts";
 
 // ADD-LANGUAGES-HERE
 const defaultCodeSamples: { [language in Language]?: string } = {
@@ -266,7 +266,7 @@ function cursorMoved(event): void {
 
 let editor: Editor = $state();
 
-let pzComp;
+let pzComp: PanzoomComp;
 
 run(() => {
   if (!colorPicker && graph) {
