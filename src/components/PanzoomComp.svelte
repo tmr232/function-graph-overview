@@ -52,7 +52,7 @@ const zoomable: Action<HTMLElement, ZoomConfig> = (
   node: HTMLElement,
   data: ZoomConfig,
 ) => {
-  panzoom = Panzoom(node, { maxScale: 100, minScale: 1, contain: "outside" });
+  panzoom = Panzoom(node, { maxScale: 100, minScale: 1, contain: "outside", cursor: "default" });
   node.parentElement?.addEventListener("wheel", panzoom.zoomWithWheel);
   registerPanzoomOnclick(
     node,
