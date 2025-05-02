@@ -27,7 +27,7 @@ let panzoom: PanzoomObject;
 let panzoomElement: HTMLElement;
 
 export function reset() {
-  panzoom?.reset();
+  panzoom?.reset({animate:false, force:true, silent:true, });
 }
 
 export function panTo(query: string) {

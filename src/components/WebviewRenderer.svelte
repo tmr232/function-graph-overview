@@ -10,6 +10,7 @@ import { type RenderOptions, Renderer } from "./renderer.ts";
 import { type Parsers, initialize as initializeUtils } from "./utils";
 import PanzoomComp from "./PanzoomComp.svelte";
 import type { PanzoomObject } from "@panzoom/panzoom";
+import type { Action } from "svelte/action";
 
 type CodeAndOffset = { code: string; offset: number; language: Language };
 
@@ -74,6 +75,7 @@ function getFunctionAtOffset(
   return syntax;
 }
 let functionId:string|undefined = undefined;
+let functionChanged:bool = true;
 function renderCode(
   code: string,
   language: Language,
@@ -86,11 +88,13 @@ function renderCode(
   if (!functionSyntax) {
     throw new Error("No function found!");
   }
+
   const newFunctionId = objectHash({code:functionSyntax.text, language});
-  if (functionId !== newFunctionId) {
+  functionChanged = functionId !== newFunctionId
+  functionId = newFunctionId;
+  if (functionChanged) {
     pzComp.reset();
   }
-  functionId = newFunctionId;
 
   const renderer = getRenderer(options, colorList, graphviz);
   const renderResult = renderer.render(functionSyntax, language, cursorOffset);
@@ -105,6 +109,7 @@ function renderWrapper(
   options: RenderOptions,
   colorList: ColorList,
 ) {
+  console.log("Rendering!")
   const bgcolor = colorList.find(({ name }) => name === "graph.background").hex;
   const color = colorList.find(({ name }) => name === "node.highlight").hex;
   try {
@@ -128,6 +133,10 @@ function renderWrapper(
     console.trace(error);
   }
   return svg;
+}
+
+async function asyncRenderWrapper(codeAndOffset:CodeAndOffset|null,options:RenderOptions, colorList:ColorList) {
+  return Promise.resolve(renderWrapper(codeAndOffset, options, colorList));
 }
 
 
@@ -164,22 +173,35 @@ TODO: Instead of using an `$effect` here, which introduces races,
       `div` wrapper whenever it updates.
       That wrapper will have an action that pans to the right node.
  */
-$effect(() => {
+
+const sleep = (time) => new Promise(resolve => setTimeout(resolve, time));
+
+const panAfterRender:Action =async () => {
+  if (functionChanged) {
+    return;
+  }
+  console.log("Time to pan!")
+  console.log("Code and offset", codeAndOffset);
   if (codeAndOffset === null) {return;}
   const selectedNode = offsetToNode(codeAndOffset.offset)
+  console.log("Selected node", selectedNode)
   if (selectedNode) {
     pzComp.panTo(`#${selectedNode}`);
   }
-})
+}
+
 
 </script>
+<div class="controls">
+  <input type="checkbox" id="panzoom"/> <label for="panzoom">Pan & Zoom</label>
+</div>
 <PanzoomComp bind:this={pzComp} onclick={onZoomClick}>
-{#await initialize() then}
+{#await initialize() then _}
   <!-- I don't know how to make this part accessible. PRs welcome! -->
   <!-- svelte-ignore a11y_click_events_have_key_events -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div class="graph">
-    {@html renderWrapper(
+    {#await asyncRenderWrapper(
       codeAndOffset,
       {
         simplify,
@@ -190,7 +212,11 @@ $effect(() => {
         showRegions,
       },
       colorList,
-    )}
+    ) then inlineSvg}
+        {@html inlineSvg}
+      <div class="svg-wrapper" use:panAfterRender>
+      </div>
+    {/await}
   </div>
 {/await}
 </PanzoomComp>
@@ -205,4 +231,18 @@ $effect(() => {
     width: 100%;
     height: 100%;
   }
+
+  .svg-wrapper {
+      width: 100%;
+      height: 100%;
+  }
+
+  .controls {
+      z-index: 1000;
+      position: relative;
+      width: 100%;
+      background-color: var(--vscode-editor-background);
+      padding: 0.5em;
+  }
+
 </style>
