@@ -73,7 +73,7 @@ function getFunctionAtOffset(
   }
   return syntax;
 }
-
+let functionId:string|undefined = undefined;
 function renderCode(
   code: string,
   language: Language,
@@ -86,6 +86,11 @@ function renderCode(
   if (!functionSyntax) {
     throw new Error("No function found!");
   }
+  const newFunctionId = objectHash({code:functionSyntax.text, language});
+  if (functionId !== newFunctionId) {
+    pzComp.reset();
+  }
+  functionId = newFunctionId;
 
   const renderer = getRenderer(options, colorList, graphviz);
   const renderResult = renderer.render(functionSyntax, language, cursorOffset);
