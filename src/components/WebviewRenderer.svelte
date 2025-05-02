@@ -245,4 +245,12 @@ const panAfterRender: Action = async () => {
       padding: 0.5em;
   }
 
+  :global(.vscode-light) .controls {
+      color-scheme: light;
+  }
+
+  :global(.vscode-dark) .controls {
+      color-scheme: dark;
+  }
+
 </style>
