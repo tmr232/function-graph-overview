@@ -15,10 +15,12 @@ type ClickHandler = (
 
 let {
   dragThreshold = 5,
+  disabled = false,
   onclick,
   children,
 }: {
-  dragThreshold: number;
+  dragThreshold?: number;
+  disabled?: boolean;
   onclick: ClickHandler;
   children: Snippet;
 } = $props();
@@ -27,7 +29,7 @@ let panzoom: PanzoomObject;
 let panzoomElement: HTMLElement;
 
 export function reset() {
-  panzoom?.reset({animate:false, force:true, silent:true, });
+  panzoom?.reset();
 }
 
 export function panTo(query: string) {
@@ -45,6 +47,27 @@ export function panTo(query: string) {
   );
 }
 
+$effect(() => {
+  console.log("Disabled?", disabled);
+  if (!panzoom) {
+    return;
+  }
+  if (disabled) {
+    panzoom.setOptions({
+      disableZoom: true,
+      disablePanZoom: true,
+      disablePan: true,
+    });
+    panzoom.reset({ animate: true, force: true });
+  } else {
+    panzoom.setOptions({
+      disableZoom: false,
+      disablePanZoom: false,
+      disablePan: false,
+    });
+  }
+});
+
 type ZoomConfig = {
   dragThreshold: number;
 };
@@ -52,7 +75,12 @@ const zoomable: Action<HTMLElement, ZoomConfig> = (
   node: HTMLElement,
   data: ZoomConfig,
 ) => {
-  panzoom = Panzoom(node, { maxScale: 100, minScale: 1, contain: "outside", cursor: "default" });
+  panzoom = Panzoom(node, {
+    maxScale: 100,
+    minScale: 1,
+    contain: "outside",
+    cursor: "default",
+  });
   node.parentElement?.addEventListener("wheel", panzoom.zoomWithWheel);
   registerPanzoomOnclick(
     node,

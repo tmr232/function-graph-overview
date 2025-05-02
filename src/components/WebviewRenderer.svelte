@@ -1,16 +1,16 @@
 <script lang="ts">
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
+import type { PanzoomObject } from "@panzoom/panzoom";
 import objectHash from "object-hash";
 import { createEventDispatcher } from "svelte";
+import type { Action } from "svelte/action";
 import { type Node as SyntaxNode, type Tree } from "web-tree-sitter";
 import { type Language, languageDefinitions } from "../control-flow/cfg";
 import { type ColorList, getLightColorList } from "../control-flow/colors";
+import PanzoomComp from "./PanzoomComp.svelte";
 import { memoizeFunction } from "./caching.ts";
 import { type RenderOptions, Renderer } from "./renderer.ts";
 import { type Parsers, initialize as initializeUtils } from "./utils";
-import PanzoomComp from "./PanzoomComp.svelte";
-import type { PanzoomObject } from "@panzoom/panzoom";
-import type { Action } from "svelte/action";
 
 type CodeAndOffset = { code: string; offset: number; language: Language };
 
@@ -74,8 +74,23 @@ function getFunctionAtOffset(
   }
   return syntax;
 }
-let functionId:string|undefined = undefined;
-let functionChanged:bool = true;
+
+/// Hash identifier of the current function, used to keep track of function changes.
+let functionId: string | undefined = undefined;
+/// True if a function changed in the last change of rendering input
+let functionChanged: bool = true;
+
+function trackFunctionChanges(functionSyntax: SyntaxNode, language: string) {
+  // Keep track of when the function changes so that we can update the
+  // panzoom accordingly.
+  const newFunctionId = objectHash({ code: functionSyntax.text, language });
+  functionChanged = functionId !== newFunctionId;
+  functionId = newFunctionId;
+  if (functionChanged) {
+    pzComp.reset();
+  }
+}
+
 function renderCode(
   code: string,
   language: Language,
@@ -88,13 +103,7 @@ function renderCode(
   if (!functionSyntax) {
     throw new Error("No function found!");
   }
-
-  const newFunctionId = objectHash({code:functionSyntax.text, language});
-  functionChanged = functionId !== newFunctionId
-  functionId = newFunctionId;
-  if (functionChanged) {
-    pzComp.reset();
-  }
+  trackFunctionChanges(functionSyntax, language);
 
   const renderer = getRenderer(options, colorList, graphviz);
   const renderResult = renderer.render(functionSyntax, language, cursorOffset);
@@ -109,7 +118,7 @@ function renderWrapper(
   options: RenderOptions,
   colorList: ColorList,
 ) {
-  console.log("Rendering!")
+  console.log("Rendering!");
   const bgcolor = colorList.find(({ name }) => name === "graph.background").hex;
   const color = colorList.find(({ name }) => name === "node.highlight").hex;
   try {
@@ -135,10 +144,13 @@ function renderWrapper(
   return svg;
 }
 
-async function asyncRenderWrapper(codeAndOffset:CodeAndOffset|null,options:RenderOptions, colorList:ColorList) {
+async function asyncRenderWrapper(
+  codeAndOffset: CodeAndOffset | null,
+  options: RenderOptions,
+  colorList: ColorList,
+) {
   return Promise.resolve(renderWrapper(codeAndOffset, options, colorList));
 }
-
 
 function onZoomClick(
   event: MouseEvent | TouchEvent | PointerEvent,
@@ -152,7 +164,7 @@ function onZoomClick(
     target.tagName !== "svg" &&
     !target.classList.contains("node") &&
     target.parentElement !== null
-    ) {
+  ) {
     target = target.parentElement;
   }
   if (!target.classList.contains("node")) {
@@ -164,38 +176,25 @@ function onZoomClick(
   });
 }
 
-let pzComp:PanzoomComp;
-/*
-TODO: Instead of using an `$effect` here, which introduces races,
-      we can use a `use:action` on the element that's created by rendering.
-      To do that, we'll make the rendering return a `Promise` (using
-      `Promise.resolve`) so that we can `#await` it and create a new
-      `div` wrapper whenever it updates.
-      That wrapper will have an action that pans to the right node.
- */
-
-const sleep = (time) => new Promise(resolve => setTimeout(resolve, time));
-
-const panAfterRender:Action =async () => {
+let pzComp: PanzoomComp;
+let enableZoom: boolean = $state(false);
+const panAfterRender: Action = async () => {
   if (functionChanged) {
     return;
   }
-  console.log("Time to pan!")
-  console.log("Code and offset", codeAndOffset);
-  if (codeAndOffset === null) {return;}
-  const selectedNode = offsetToNode(codeAndOffset.offset)
-  console.log("Selected node", selectedNode)
+  if (codeAndOffset === null) {
+    return;
+  }
+  const selectedNode = offsetToNode(codeAndOffset.offset);
   if (selectedNode) {
     pzComp.panTo(`#${selectedNode}`);
   }
-}
-
-
+};
 </script>
 <div class="controls">
-  <input type="checkbox" id="panzoom"/> <label for="panzoom">Pan & Zoom</label>
+  <input type="checkbox" id="panzoom" bind:checked={enableZoom}/> <label for="panzoom">Pan & Zoom</label>
 </div>
-<PanzoomComp bind:this={pzComp} onclick={onZoomClick}>
+<PanzoomComp bind:this={pzComp} onclick={onZoomClick} disabled={!enableZoom}>
 {#await initialize() then _}
   <!-- I don't know how to make this part accessible. PRs welcome! -->
   <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -213,8 +212,9 @@ const panAfterRender:Action =async () => {
       },
       colorList,
     ) then inlineSvg}
-        {@html inlineSvg}
       <div class="svg-wrapper" use:panAfterRender>
+
+        {@html inlineSvg}
       </div>
     {/await}
   </div>
