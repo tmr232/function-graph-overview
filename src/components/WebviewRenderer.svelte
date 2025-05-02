@@ -105,7 +105,6 @@ function renderWrapper(
   options: RenderOptions,
   colorList: ColorList,
 ) {
-  console.log("Rendering!", codeAndOffset, colorList);
   const bgcolor = colorList.find(({ name }) => name === "graph.background").hex;
   const color = colorList.find(({ name }) => name === "node.highlight").hex;
   try {
@@ -157,6 +156,14 @@ function onZoomClick(
 }
 
 let pzComp:PanzoomComp;
+/*
+TODO: Instead of using an `$effect` here, which introduces races,
+      we can use a `use:action` on the element that's created by rendering.
+      To do that, we'll make the rendering return a `Promise` (using
+      `Promise.resolve`) so that we can `#await` it and create a new
+      `div` wrapper whenever it updates.
+      That wrapper will have an action that pans to the right node.
+ */
 $effect(() => {
   if (codeAndOffset === null) {return;}
   const selectedNode = offsetToNode(codeAndOffset.offset)
