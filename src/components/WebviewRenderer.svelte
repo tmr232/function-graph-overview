@@ -8,6 +8,8 @@ import { type ColorList, getLightColorList } from "../control-flow/colors";
 import { memoizeFunction } from "./caching.ts";
 import { type RenderOptions, Renderer } from "./renderer.ts";
 import { type Parsers, initialize as initializeUtils } from "./utils";
+import PanzoomComp from "./PanzoomComp.svelte";
+import type { PanzoomObject } from "@panzoom/panzoom";
 
 type CodeAndOffset = { code: string; offset: number; language: Language };
 
@@ -15,6 +17,7 @@ let parsers: Parsers;
 let graphviz: Graphviz;
 let dot: string;
 let getNodeOffset: (nodeId: string) => number | undefined = () => undefined;
+let offsetToNode: (offset: number) => string | undefined = () => undefined;
 let tree: Tree;
 let svg: string;
 interface Props {
@@ -88,7 +91,7 @@ function renderCode(
   const renderResult = renderer.render(functionSyntax, language, cursorOffset);
   dot = renderResult.dot;
   getNodeOffset = renderResult.getNodeOffset;
-
+  offsetToNode = renderResult.offsetToNode;
   return renderResult.svg;
 }
 
@@ -123,14 +126,20 @@ function renderWrapper(
   return svg;
 }
 
-function onClick(event: MouseEvent) {
+
+function onZoomClick(
+  event: MouseEvent | TouchEvent | PointerEvent,
+  panzoom: PanzoomObject,
+  zoomElement: HTMLElement,
+): void {
+  console.log("Zoom click!");
   let target: Element = event.target as Element;
   while (
     target.tagName !== "div" &&
     target.tagName !== "svg" &&
     !target.classList.contains("node") &&
     target.parentElement !== null
-  ) {
+    ) {
     target = target.parentElement;
   }
   if (!target.classList.contains("node")) {
@@ -141,13 +150,23 @@ function onClick(event: MouseEvent) {
     offset: getNodeOffset(target.id),
   });
 }
-</script>
 
+let pzComp:PanzoomComp;
+$effect(() => {
+  if (codeAndOffset === null) {return;}
+  const selectedNode = offsetToNode(codeAndOffset.offset)
+  if (selectedNode) {
+    pzComp.panTo(`#${selectedNode}`);
+  }
+})
+
+</script>
+<PanzoomComp bind:this={pzComp} onclick={onZoomClick}>
 {#await initialize() then}
   <!-- I don't know how to make this part accessible. PRs welcome! -->
   <!-- svelte-ignore a11y_click_events_have_key_events -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div class="graph" onclick={onClick}>
+  <div class="graph">
     {@html renderWrapper(
       codeAndOffset,
       {
@@ -162,6 +181,8 @@ function onClick(event: MouseEvent) {
     )}
   </div>
 {/await}
+</PanzoomComp>
+
 
 <style>
   .graph {
