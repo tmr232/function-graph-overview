@@ -178,7 +178,7 @@ function onZoomClick(
 
 let pzComp: PanzoomComp;
 let enableZoom: boolean = $state(false);
-const panAfterRender: Action = async () => {
+const panAfterRender: Action = () => {
   if (functionChanged) {
     return;
   }
