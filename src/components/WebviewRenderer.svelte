@@ -16,10 +16,8 @@ type CodeAndOffset = { code: string; offset: number; language: Language };
 
 let parsers: Parsers;
 let graphviz: Graphviz;
-let dot: string;
 let getNodeOffset: (nodeId: string) => number | undefined = () => undefined;
 let offsetToNode: (offset: number) => string | undefined = () => undefined;
-let tree: Tree;
 let svg: string;
 interface Props {
   colorList?: ColorList;
@@ -78,7 +76,7 @@ function getFunctionAtOffset(
 /// Hash identifier of the current function, used to keep track of function changes.
 let functionId: string | undefined = undefined;
 /// True if a function changed in the last change of rendering input
-let functionChanged: bool = true;
+let functionChanged: boolean = true;
 
 function trackFunctionChanges(functionSyntax: SyntaxNode, language: string) {
   // Keep track of when the function changes so that we can update the
@@ -98,7 +96,10 @@ function renderCode(
   options: RenderOptions,
   colorList: ColorList,
 ) {
-  tree = parsers[language].parse(code);
+  const tree = parsers[language].parse(code);
+  if (!tree) {
+    throw new Error("Failed to parse code.");
+  }
   const functionSyntax = getFunctionAtOffset(tree, cursorOffset, language);
   if (!functionSyntax) {
     throw new Error("No function found!");
@@ -107,7 +108,6 @@ function renderCode(
 
   const renderer = getRenderer(options, colorList, graphviz);
   const renderResult = renderer.render(functionSyntax, language, cursorOffset);
-  dot = renderResult.dot;
   getNodeOffset = renderResult.getNodeOffset;
   offsetToNode = renderResult.offsetToNode;
   return renderResult.svg;
@@ -213,7 +213,6 @@ const panAfterRender: Action = () => {
       colorList,
     ) then inlineSvg}
       <div class="svg-wrapper" use:panAfterRender>
-
         {@html inlineSvg}
       </div>
     {/await}
@@ -237,14 +236,26 @@ const panAfterRender: Action = () => {
       height: 100%;
   }
 
+  :root {
+      /* We don't yet get the actual colors from the JetBrains IDEs,
+         so we fake them and default to just dark for now.
+       */
+      --jetbrains-editor-background: #2B2D30;
+      --jetbrains-editor-foreground: #dddddd;
+      --jetbrains-color-scheme: dark;
+  }
+
   .controls {
       z-index: 1000;
       position: relative;
       width: 100%;
-      background-color: var(--vscode-editor-background);
+      background-color: var(--vscode-editor-background, var(--jetbrains-editor-background));
+      color: var(--vscode-editor-foreground, var(--jetbrains-editor-foreground));
+      color-scheme: var(--jetbrains-color-scheme);
       padding: 0.5em;
   }
 
+  /* Match the VSCode light/dark toggle for the checkboxes */
   :global(.vscode-light) .controls {
       color-scheme: light;
   }
