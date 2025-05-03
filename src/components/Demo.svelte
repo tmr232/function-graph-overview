@@ -293,12 +293,13 @@ function setLanguageUrlParam(language: Language) {
   window.history.replaceState(null, "", url);
 }
 
-$effect(() => {
+const onLanguageChange = () => {
   if (selection && isValidLanguage(selection.language)) {
     setLanguageUrlParam(selection.language);
   }
+
   pzComp.reset();
-});
+};
 
 isDark.subscribe(() => {
   colorList = getSystemColorList();
@@ -360,6 +361,7 @@ function onZoomClick(
         <div class="editor-controls">
           <select
             bind:value={selection}
+            onchange={onLanguageChange}
           >
             {#each languages as language}
               <option value={language}>
