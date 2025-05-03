@@ -105,20 +105,22 @@ function resetList() {
   .wrapper {
     display: flex;
     justify-content: center;
-    margin-top: 3rem;
   }
   .label {
     align-self: center;
   }
   .main {
     width: fit-content;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
   }
   .border {
     border: 1px solid var(--color-picker-border);
     border-radius: 100%;
     width: fit-content;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
   }
 
   .colors {

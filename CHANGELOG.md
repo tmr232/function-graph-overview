@@ -15,6 +15,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   This is currently only enabled in the `/render` page to slowly build up a collection of
   functions to match and confidence in the representation before adding to the main tool.
 - When changing the code language, the URL is updated to reflect that.
+- Pan & zoom for the graphs in both the IDE extensions and the web version
 
 ### Fixed
 
@@ -31,6 +32,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Sharing now shares full config in addition to code.
 - Sharing now uses the `compressed=` query parameter for all information.
 - Migrated from Bun Test to Vitest. Tests are now run using `bun vitest`.
+- Web version layout changed to always fit in one screen (no scrollbar).
 
 ## [0.0.15] - 2025-03-26
 

@@ -45,6 +45,7 @@ export class Renderer {
     svg: string;
     dot: string;
     getNodeOffset: (nodeId: string) => number | undefined;
+    offsetToNode: (offset: number) => string;
   } {
     let { dot, svg, getNodeOffset, offsetToNode } = this.memoizedRenderStatic(
       functionSyntax,
@@ -70,6 +71,7 @@ export class Renderer {
       svg: svg,
       dot,
       getNodeOffset: (nodeId: string) => getNodeOffset(nodeId) + baseOffset,
+      offsetToNode: (offset: number) => offsetToNode(offset - baseOffset),
     };
   }
 
@@ -79,7 +81,6 @@ export class Renderer {
       // We construct the SVG, so we know the node must exist.
       const node: G = dom.findOne(`g#${nodeId}`) as G;
       // Same applies to the polygon.
-
       const poly: Polygon = node.findOne("polygon") as Polygon;
       // The highlight class is used when previewing colors in the demo.
       node.addClass("highlight");
@@ -119,6 +120,12 @@ export class Renderer {
 
     // Render SVG
     let svg = this.graphviz.dot(dot);
+
+    // Set width and height
+    const dom = svgFromString(svg);
+    dom.width("100%");
+    dom.height("100%");
+    svg = dom.svg();
 
     // Overlay regions
     if (this.options.showRegions) {

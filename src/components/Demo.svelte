@@ -1,19 +1,20 @@
 <script lang="ts">
-import { run } from "svelte/legacy";
-
 import { cpp } from "@codemirror/lang-cpp";
 import { go } from "@codemirror/lang-go";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import type { LanguageSupport } from "@codemirror/language";
+import type { PanzoomObject } from "@panzoom/panzoom";
 import * as LZString from "lz-string";
 import { onMount } from "svelte";
-import type { Language } from "../control-flow/cfg";
+import { type Language, isValidLanguage } from "../control-flow/cfg";
+import type { ColorList } from "../control-flow/colors.ts";
 import { evolve } from "../control-flow/evolve.ts";
 import CodeSegmentation from "./CodeSegmentation.svelte";
 import ColorScheme from "./ColorSchemeEditor.svelte";
 import Editor from "./Editor.svelte";
 import Graph from "./Graph.svelte";
+import PanzoomComp from "./PanzoomComp.svelte";
 import { getSystemColorList, isDark, toggleTheme } from "./lightdark.ts";
 
 // ADD-LANGUAGES-HERE
@@ -105,6 +106,8 @@ let fontSize = $state("1em");
 let simplify = $state(true);
 let flatSwitch = $state(true);
 let highlight = $state(true);
+/// Panzoom is an interaction config, and makes no sense to share when sharing URLs.
+let panzoomEnabled = $state(true);
 let parsedColorList = undefined;
 const urlParams = new URLSearchParams(window.location.search);
 let isLanguageInURL: boolean = false;
@@ -255,19 +258,17 @@ function editDOT() {
 function cursorMoved(event): void {
   const { index } = event.detail.pos;
   offsetToHighlight = index;
+  const selectedNode = graph.getNode(offsetToHighlight);
+  if (selectedNode) {
+    pzComp.panTo(`#${selectedNode}`);
+  }
 }
 
 let editor: Editor = $state();
 
-function onNodeClicked(
-  e: CustomEvent<{ node: string; offset: number | null }>,
-): void {
-  console.log("Node clicked!", e.detail.node, e.detail.offset);
-  const offset = e.detail.offset;
-  if (offset !== null && offset !== undefined) editor?.setCursor(offset);
-}
+let pzComp: PanzoomComp;
 
-run(() => {
+$effect.pre(() => {
   if (!colorPicker && graph) {
     graph.applyColors(colorList);
   }
@@ -282,24 +283,50 @@ function onToggleClick(e) {
   toggleTheme();
 }
 
-function onSelectionChanged(e) {
-  try {
-    console.log(selection);
-    const languageAlias = languageToAlias(selection.language);
-    const url = new URL(window.location.href);
-    const parameters = url.searchParams;
-    parameters.set("language", languageAlias);
-    parameters.delete("compressed");
-    url.search = parameters.toString();
-    window.history.replaceState(null, "", url);
-  } catch (exception) {
-    console.error("Could not update URL with selected language:", exception);
-  }
+function setLanguageUrlParam(language: Language) {
+  const languageAlias = languageToAlias(language);
+  const url = new URL(window.location.href);
+  const parameters = url.searchParams;
+  parameters.set("language", languageAlias);
+  parameters.delete("compressed");
+  url.search = parameters.toString();
+  window.history.replaceState(null, "", url);
 }
+
+const onLanguageChange = () => {
+  if (selection && isValidLanguage(selection.language)) {
+    setLanguageUrlParam(selection.language);
+  }
+
+  pzComp.reset();
+};
 
 isDark.subscribe(() => {
   colorList = getSystemColorList();
 });
+
+function onZoomClick(
+  event: MouseEvent | TouchEvent | PointerEvent,
+  panzoom: PanzoomObject,
+  zoomElement: HTMLElement,
+): void {
+  console.log("Zoom click!");
+  let target: Element = event.target as Element;
+  while (
+    target.tagName !== "div" &&
+    target.tagName !== "svg" &&
+    !target.classList.contains("node") &&
+    target.parentElement !== null
+  ) {
+    target = target.parentElement;
+  }
+  if (!target.classList.contains("node")) {
+    return;
+  }
+
+  const offset = graph.getOffset(target.id);
+  if (offset !== null && offset !== undefined) editor?.setCursor(offset);
+}
 </script>
 
 <main>
@@ -309,11 +336,11 @@ isDark.subscribe(() => {
       <a href="https://github.com/tmr232/function-graph-overview/">Repo</a>
       <a
         href="https://marketplace.visualstudio.com/items?itemName=tamir-bahar.function-graph-overview"
-        >VSCode Extension</a
+      >VSCode Extension</a
       >
       <a
         href="https://plugins.jetbrains.com/plugin/25676-function-graph-overview"
-        >JetBrains Plugin</a
+      >JetBrains Plugin</a
       >
     </div>
     <div class="themeToggleWrapper">
@@ -324,197 +351,229 @@ isDark.subscribe(() => {
       ></button>
     </div>
   </header>
-  <div class="editor">
-    {#if colorPicker}
-      <div class="picker">
-        <ColorScheme on:preview={onColorPreview} {colorList} />
-      </div>
-    {:else}
-      <div class="controls">
-        <select
-          bind:value={selection}
-          onchange={(e) => onSelectionChanged(e)}
-        >
-          {#each languages as language}
-            <option value={language}>
-              {language.text}
-            </option>
-          {/each}
-        </select>
-        <select bind:value={fontSize}>
-          {#each fontSizes as { label, value }}
-            <option {value}>
-              {label}
-            </option>
-          {/each}
-        </select>
-        <button onclick={share}>Share</button>
-      </div>
-      <div class="codemirror">
-        <Editor
-          bind:this={editor}
-          bind:code={languageCode[selection.language]}
-          lang={selection.codeMirror()}
-          on:cursorMoved={cursorMoved}
-          {fontSize}
-        />
-      </div>
-      {#if showSegmentation}
-        <div class="segmentation">
-          <CodeSegmentation
-            code={languageCode[selection.language]}
-            language={selection.language}
-            {simplify}
+  <div class="panels">
+    <div class="editor">
+      {#if colorPicker}
+        <div class="picker">
+          <ColorScheme on:preview={onColorPreview} {colorList} />
+        </div>
+      {:else}
+        <div class="editor-controls">
+          <select
+            bind:value={selection}
+            onchange={onLanguageChange}
+          >
+            {#each languages as language}
+              <option value={language}>
+                {language.text}
+              </option>
+            {/each}
+          </select>
+          <select bind:value={fontSize}>
+            {#each fontSizes as { label, value }}
+              <option {value}>
+                {label}
+              </option>
+            {/each}
+          </select>
+          <button onclick={share}>Share</button>
+        </div>
+        <div class="codemirror">
+          <Editor
+            bind:this={editor}
+            bind:code={languageCode[selection.language]}
+            lang={selection.codeMirror()}
+            on:cursorMoved={cursorMoved}
+            {fontSize}
           />
         </div>
+        {#if showSegmentation}
+          <div class="segmentation">
+            <CodeSegmentation
+              code={languageCode[selection.language]}
+              language={selection.language}
+              {simplify}
+            />
+          </div>
+        {/if}
       {/if}
-    {/if}
-  </div>
+    </div>
 
-  <div class="graph">
-    <div class="graph-controls">
-      <div class="settings">
-        <input type="checkbox" id="simplify" bind:checked={simplify} />
-        <label for="simplify">Simplify</label>
+    <div class="graph">
+      <div class="graph-controls">
+        <div class="settings">
+          <input type="checkbox" id="simplify" bind:checked={simplify} />
+          <label for="simplify">Simplify</label>
 
-        <input type="checkbox" id="flatSwitch" bind:checked={flatSwitch} />
-        <label for="flatSwitch">Flat Switch</label>
+          <input type="checkbox" id="flatSwitch" bind:checked={flatSwitch} />
+          <label for="flatSwitch">Flat Switch</label>
 
-        <input type="checkbox" id="colorPicker" bind:checked={colorPicker} />
-        <label for="colorPicker">Color Picker</label>
+          <input type="checkbox" id="colorPicker" bind:checked={colorPicker} />
+          <label for="colorPicker">Color Picker</label>
 
-        <input type="checkbox" id="highlight" bind:checked={highlight} />
-        <label for="highlight">Highlight</label>
+          <input type="checkbox" id="highlight" bind:checked={highlight} />
+          <label for="highlight">Highlight</label>
 
-        {#if debugMode}
-          <input type="checkbox" id="verbose" bind:checked={verbose} />
-          <label for="verbose">Verbose</label>
+          <input type="checkbox" id="panAndZoom" bind:checked={panzoomEnabled} />
+          <label for="panAndZoom">Pan & Zoom</label>
 
-          <input
-            type="checkbox"
-            id="showSegmentation"
-            bind:checked={showSegmentation}
-          />
-          <label for="showSegmentation">Show Segmnetation</label>
+          {#if debugMode}
+            <input type="checkbox" id="verbose" bind:checked={verbose} />
+            <label for="verbose">Verbose</label>
 
-          <input type="checkbox" id="showRegions" bind:checked={showRegions} />
-          <label for="showRegions">Show Regions</label>
-        {/if}
+            <input
+              type="checkbox"
+              id="showSegmentation"
+              bind:checked={showSegmentation}
+            />
+            <label for="showSegmentation">Show Segmnetation</label>
+
+            <input type="checkbox" id="showRegions" bind:checked={showRegions} />
+            <label for="showRegions">Show Regions</label>
+          {/if}
+        </div>
+        <div class="download">
+          <button onclick={saveSVG}>Save SVG</button>
+          {#if debugMode}
+            <button onclick={editDOT}>Edit DOT</button>
+          {/if}
+        </div>
       </div>
-      <div class="download">
-        <button onclick={saveSVG}>Save SVG</button>
-        {#if debugMode}
-          <button onclick={editDOT}>Edit DOT</button>
-        {/if}
+      <div class="graph-contents">
+        <PanzoomComp bind:this={pzComp} onclick={onZoomClick} disabled={!panzoomEnabled}>
+          <Graph
+            code={languageCode[selection.language]}
+            {offsetToHighlight}
+            language={selection.language}
+            {simplify}
+            {flatSwitch}
+            {verbose}
+            {highlight}
+            {showRegions}
+            bind:this={graph}
+          />
+        </PanzoomComp>
       </div>
     </div>
-    <Graph
-      code={languageCode[selection.language]}
-      {offsetToHighlight}
-      language={selection.language}
-      {simplify}
-      {flatSwitch}
-      {verbose}
-      {highlight}
-      {showRegions}
-      bind:this={graph}
-      on:node-clicked={onNodeClicked}
-    />
   </div>
 </main>
 
 <style>
-  main {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    /* width: 90%; */
-    padding: 2em;
-    grid-template-areas:
-      "header header"
-      "editor graph";
-  }
-  header {
-    grid-area: header;
-    font-family: Arial, Helvetica, sans-serif;
-    text-align: center;
-    filter: drop-shadow(0 0 0.3rem var(--panel-shadow-color));
-    background-color: var(--panel-background-color);
-    position: relative;
-  }
-  .controls {
-    font-family: Arial, Helvetica, sans-serif;
-    margin-top: 1rem;
-    margin-left: 1rem;
-  }
-  .graph-controls {
-    font-family: Arial, Helvetica, sans-serif;
-    margin-top: 1rem;
-    margin-left: 1rem;
-    margin-right: 1rem;
+    main {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        height: calc(100% - 4rem);
+        gap: 1rem;
+        padding: 2rem;
+    }
 
-    display: flex;
-    justify-content: space-between;
-  }
+    .panels {
+        display: flex;
+        flex-direction: row;
+        flex: 1;
+        gap: 1rem;
+        max-height: calc(100% - 6rem);
+    }
 
-  .codemirror {
-    padding-top: 1rem;
-  }
-  .graph,
-  .segmentation,
-  .editor {
-    background-color: var(--panel-background-color);
-    filter: drop-shadow(0 0 0.3rem var(--panel-shadow-color));
-  }
+    .panels > div {
+        flex: 1;
+    }
 
-  .links a {
-    color: var(--text-color);
-    padding: 0.5rem;
-  }
+    header {
+        grid-area: header;
+        font-family: Arial, Helvetica, sans-serif;
+        text-align: center;
+        filter: drop-shadow(0 0 0.3rem var(--panel-shadow-color));
+        background-color: var(--panel-background-color);
+        position: relative;
+    }
 
-  .links a:hover {
-    background-color: var(--link-hover-background);
-    padding: 0.5rem;
-  }
-  .links {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 2rem;
-    position: absolute;
-    right: 3rem;
-    top: 0;
-    height: 100%;
-  }
-  .themeToggleWrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
 
-    position: absolute;
-    top: 0;
-    left: 3rem;
-    height: 100%;
-    line-height: 3rem;
-  }
-  .themeToggle::before {
-    font-size: 2rem;
-    content: var(--theme-toggle-emoji);
-  }
-  .themeToggle {
-    background: none;
-    border: none;
-  }
-  .themeToggle:hover {
-    filter: drop-shadow(0 0 0.5rem var(--theme-toggle-shadow-color));
-    cursor: pointer;
-  }
-  .picker {
-    /* position: fixed;
-    z-index: 100;
-    top: 0;
-    left: 0;
-    background-color: white; */
-    font-family: Arial, Helvetica, sans-serif;
-  }
+    .graph-controls {
+        font-family: Arial, Helvetica, sans-serif;
+        padding: 1rem;
+
+        display: flex;
+        justify-content: space-between;
+        background-color: var(--panel-background-color);
+    }
+
+    .graph-contents {
+        height: 100%;
+        width: 100%;
+    }
+
+    .editor-controls {
+        font-family: Arial, Helvetica, sans-serif;
+        padding: 1rem;
+    }
+
+    .codemirror {
+        overflow: scroll;
+    }
+
+    .graph,
+    .segmentation,
+    .editor {
+        background-color: var(--panel-background-color);
+        filter: drop-shadow(0 0 0.3rem var(--panel-shadow-color));
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .links a {
+        color: var(--text-color);
+        padding: 0.5rem;
+    }
+
+    .links a:hover {
+        background-color: var(--link-hover-background);
+        padding: 0.5rem;
+    }
+
+    .links {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        position: absolute;
+        right: 3rem;
+        top: 0;
+        height: 100%;
+    }
+
+    .themeToggleWrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        position: absolute;
+        top: 0;
+        left: 3rem;
+        height: 100%;
+        line-height: 3rem;
+    }
+
+    .themeToggle::before {
+        font-size: 2rem;
+        content: var(--theme-toggle-emoji);
+    }
+
+    .themeToggle {
+        background: none;
+        border: none;
+    }
+
+    .themeToggle:hover {
+        filter: drop-shadow(0 0 0.5rem var(--theme-toggle-shadow-color));
+        cursor: pointer;
+    }
+
+    .picker {
+        font-family: Arial, Helvetica, sans-serif;
+        overflow: scroll;
+        padding: 1rem;
+    }
 </style>
