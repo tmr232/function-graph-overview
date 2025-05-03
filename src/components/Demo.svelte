@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { run } from "svelte/legacy";
 
   import { cpp } from "@codemirror/lang-cpp";
   import { go } from "@codemirror/lang-go";
@@ -9,7 +8,7 @@
   import type { PanzoomObject } from "@panzoom/panzoom";
   import * as LZString from "lz-string";
   import { onMount } from "svelte";
-  import type { Language } from "../control-flow/cfg";
+  import { isValidLanguage, type Language } from "../control-flow/cfg";
   import { evolve } from "../control-flow/evolve.ts";
   import CodeSegmentation from "./CodeSegmentation.svelte";
   import ColorScheme from "./ColorSchemeEditor.svelte";
@@ -17,7 +16,7 @@
   import Graph from "./Graph.svelte";
   import PanzoomComp from "./PanzoomComp.svelte";
   import { getSystemColorList, isDark, toggleTheme } from "./lightdark.ts";
-  import { calculatePanToCenter } from "./panzoom-utils.ts";
+  import type { ColorList } from "../control-flow/colors.ts";
 
   // ADD-LANGUAGES-HERE
   const defaultCodeSamples: { [language in Language]?: string } = {
@@ -268,7 +267,7 @@
 
   let pzComp: PanzoomComp;
 
-  run(() => {
+  $effect.pre(() => {
     if (!colorPicker && graph) {
       graph.applyColors(colorList);
     }
@@ -283,47 +282,52 @@
     toggleTheme();
   }
 
-  function onSelectionChanged(e) {
-    try {
-      console.log(selection);
-      const languageAlias = languageToAlias(selection.language);
-      const url = new URL(window.location.href);
-      const parameters = url.searchParams;
-      parameters.set("language", languageAlias);
-      parameters.delete("compressed");
-      url.search = parameters.toString();
-      window.history.replaceState(null, "", url);
-    } catch (exception) {
-      console.error("Could not update URL with selected language:", exception);
-    }
+  function setLanguageUrlParam(language: Language) {
+    const languageAlias = languageToAlias(language);
+    const url = new URL(window.location.href);
+    const parameters = url.searchParams;
+    parameters.set("language", languageAlias);
+    parameters.delete("compressed");
+    url.search = parameters.toString();
+    window.history.replaceState(null, "", url);
   }
 
-  isDark.subscribe(() => {
-    colorList = getSystemColorList();
-  });
 
-  function onZoomClick(
-    event: MouseEvent | TouchEvent | PointerEvent,
-    panzoom: PanzoomObject,
-    zoomElement: HTMLElement
-  ): void {
-    console.log("Zoom click!");
-    let target: Element = event.target as Element;
-    while (
-      target.tagName !== "div" &&
-      target.tagName !== "svg" &&
-      !target.classList.contains("node") &&
-      target.parentElement !== null
-      ) {
-      target = target.parentElement;
-    }
-    if (!target.classList.contains("node")) {
-      return;
-    }
+    $effect(() => {
+        if (selection && isValidLanguage(selection.language)) {
+          setLanguageUrlParam(selection.language);
+        }
+        pzComp.reset();
+      }
+    );
 
-    const offset = graph.getOffset(target.id);
-    if (offset !== null && offset !== undefined) editor?.setCursor(offset);
-  }
+
+    isDark.subscribe(() => {
+      colorList = getSystemColorList();
+    });
+
+    function onZoomClick(
+      event: MouseEvent | TouchEvent | PointerEvent,
+      panzoom: PanzoomObject,
+      zoomElement: HTMLElement
+    ): void {
+      console.log("Zoom click!");
+      let target: Element = event.target as Element;
+      while (
+        target.tagName !== "div" &&
+        target.tagName !== "svg" &&
+        !target.classList.contains("node") &&
+        target.parentElement !== null
+        ) {
+        target = target.parentElement;
+      }
+      if (!target.classList.contains("node")) {
+        return;
+      }
+
+      const offset = graph.getOffset(target.id);
+      if (offset !== null && offset !== undefined) editor?.setCursor(offset);
+    }
 </script>
 
 <main>
@@ -358,7 +362,6 @@
         <div class="editor-controls">
           <select
             bind:value={selection}
-            onchange={(e) => onSelectionChanged(e)}
           >
             {#each languages as language}
               <option value={language}>
@@ -434,19 +437,19 @@
         </div>
       </div>
       <div class="graph-contents">
-      <PanzoomComp bind:this={pzComp} onclick={onZoomClick}>
-        <Graph
-          code={languageCode[selection.language]}
-          {offsetToHighlight}
-          language={selection.language}
-          {simplify}
-          {flatSwitch}
-          {verbose}
-          {highlight}
-          {showRegions}
-          bind:this={graph}
-        />
-      </PanzoomComp>
+        <PanzoomComp bind:this={pzComp} onclick={onZoomClick}>
+          <Graph
+            code={languageCode[selection.language]}
+            {offsetToHighlight}
+            language={selection.language}
+            {simplify}
+            {flatSwitch}
+            {verbose}
+            {highlight}
+            {showRegions}
+            bind:this={graph}
+          />
+        </PanzoomComp>
       </div>
     </div>
   </div>
@@ -484,7 +487,6 @@
     }
 
 
-
     .graph-controls {
         font-family: Arial, Helvetica, sans-serif;
         padding: 1rem;
@@ -495,7 +497,7 @@
     }
 
     .graph-contents {
-      height: 100%;
+        height: 100%;
         width: 100%;
     }
 
@@ -503,6 +505,7 @@
         font-family: Arial, Helvetica, sans-serif;
         padding: 1rem;
     }
+
     .codemirror {
         overflow: scroll;
     }
