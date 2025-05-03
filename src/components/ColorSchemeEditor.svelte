@@ -66,7 +66,7 @@ function resetList() {
   <div class="main">
     <fieldset>
       <legend>Controls</legend>
-      <div class="controls">
+      <div class="editor-controls">
         <button onclick={copyList} title="Copy color scheme to clipboard"
           >Copy</button
         >
@@ -127,7 +127,7 @@ function resetList() {
     gap: 0.3rem;
   }
 
-  .controls {
+  .editor-controls {
     display: flex;
     gap: 1em;
   }

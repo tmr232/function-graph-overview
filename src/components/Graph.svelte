@@ -257,7 +257,6 @@ export function applyColors(colors: ColorList) {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1em;
       width: 100%;
       height: 100%;
   }

@@ -191,7 +191,7 @@ const panAfterRender: Action = () => {
   }
 };
 </script>
-<div class="controls">
+<div class="editor-controls">
   <input type="checkbox" id="panzoom" bind:checked={enableZoom}/> <label for="panzoom">Pan & Zoom</label>
 </div>
 <PanzoomComp bind:this={pzComp} onclick={onZoomClick} disabled={!enableZoom}>
@@ -245,7 +245,7 @@ const panAfterRender: Action = () => {
       --jetbrains-color-scheme: dark;
   }
 
-  .controls {
+  .editor-controls {
       z-index: 1000;
       position: relative;
       width: 100%;
@@ -256,11 +256,11 @@ const panAfterRender: Action = () => {
   }
 
   /* Match the VSCode light/dark toggle for the checkboxes */
-  :global(.vscode-light) .controls {
+  :global(.vscode-light) .editor-controls {
       color-scheme: light;
   }
 
-  :global(.vscode-dark) .controls {
+  :global(.vscode-dark) .editor-controls {
       color-scheme: dark;
   }
 
