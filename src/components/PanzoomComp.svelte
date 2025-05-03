@@ -48,7 +48,6 @@ export function panTo(query: string) {
 }
 
 $effect(() => {
-  console.log("Disabled?", disabled);
   if (!panzoom) {
     return;
   }

@@ -49,7 +49,7 @@ let flatSwitch: boolean = $state(true);
 let showAll: boolean = $state(false);
 </script>
 
-<div class="editor-controls">
+<div class="controls">
   <input type="checkbox" id="simplify" bind:checked={simplify} />
   <label for="simplify">Simplify</label>
 
@@ -107,7 +107,7 @@ let showAll: boolean = $state(false);
     grid-template-columns: repeat(2, 1fr);
     gap: 1em;
   }
-  .editor-controls {
+  .controls {
     position: fixed;
     top: 0;
     left: 0;

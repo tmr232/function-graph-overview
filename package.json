@@ -76,7 +76,6 @@
     "render": "bun run --cwd src/render/ vite",
     "web-tests": "bun run ./scripts/collect-comment-tests.ts",
     "demo": "bun run --cwd ./src/demo/ vite",
-    "panzoom": "bun run --cwd ./src/panzoom/ vite",
     "build-demo": "bun run --cwd ./src/demo/ vite build",
     "build-render": "bun run --cwd ./src/render/ vite build",
     "build-webview": "bun run --cwd src/webview/ vite build",

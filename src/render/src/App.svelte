@@ -279,7 +279,7 @@ onMount(() => {
 </script>
 
 <div class="controlsContainer">
-  <div class="editor-controls">
+  <div class="controls">
     <button onclick={resetView}>Reset View</button>
     <button
       onclick={openCode}
@@ -308,7 +308,7 @@ onMount(() => {
     width: 100%;
     z-index: 1000;
   }
-  .editor-controls {
+  .controls {
     margin: 1em;
   }
   .svgContainer {
