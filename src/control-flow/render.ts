@@ -294,6 +294,20 @@ function renderEdge(
   return `${source} -> ${target} [${formatStyle(dotAttrs)}];`;
 }
 
+export function isExit(graph: CFGGraph, node: string): boolean {
+  if (graph.outDegree(node) === 0) {
+    return true;
+  }
+  // Exception nodes are invisible and "out-of-band", so they don't affect the
+  // definition of exits.
+  for (const { attributes } of graph.outEdgeEntries(node)) {
+    if (attributes.type !== "exception") {
+      return false;
+    }
+  }
+  return true;
+}
+
 function renderNode(
   graph: CFGGraph,
   node: string,
@@ -313,7 +327,7 @@ function renderNode(
     nodeClass = "default";
   } else if (graph.inDegree(node) === 0) {
     nodeClass = "entry";
-  } else if (graph.outDegree(node) === 0) {
+  } else if (isExit(graph, node)) {
     nodeClass = "exit";
   }
   const dotAttrs = getNodeStyle(nodeClass, context.colorScheme);

@@ -10999,6 +10999,218 @@ Lookup {
 }
 `;
 
+exports[`Python: issue-175-return-from-try.py!lookup_type: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    subgraph cluster_0 {
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
+        subgraph cluster_1 {
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
+            node2 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node2"];
+        }
+        subgraph cluster_2 {
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
+            node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
+        }
+    }
+    subgraph cluster_4 {
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
+        subgraph cluster_5 {
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
+            node5 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node5"];
+        }
+        subgraph cluster_6 {
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
+            node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node6"];
+        }
+    }
+    subgraph cluster_8 {
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
+        subgraph cluster_9 {
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
+            node8 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node8"];
+        }
+        subgraph cluster_10 {
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
+            node9 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node9"];
+        }
+    }
+    node0 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.5; id="node0"];
+    node2 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node2"];
+    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
+    node1 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node1"];
+    node5 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node5"];
+    node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node6"];
+    node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
+    node8 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node8"];
+    node9 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node9"];
+    node10 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node10"];
+    node2 -> node3 [style="invis"; headport="e"; tailport="w"];
+    node3 -> node1 [class="regular"; color="#0000ff"];
+    node5 -> node6 [style="invis"; headport="e"; tailport="w"];
+    node6 -> node4 [class="regular"; color="#0000ff"];
+    node8 -> node9 [style="invis"; headport="e"; tailport="w"];
+    node1 -> node5 [class="regular"; color="#0000ff"];
+    node4 -> node8 [class="regular"; color="#0000ff"];
+    node0 -> node2 [class="regular"; color="#0000ff"];
+    node9 -> node10 [class="regular"; color="#0000ff"];
+}"
+`;
+
+exports[`Python: issue-175-return-from-try.py!lookup_type: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node0",
+    },
+    {
+      "start": 11,
+      "value": "node0",
+    },
+    {
+      "start": 35,
+      "value": "node2",
+    },
+    {
+      "start": 42,
+      "value": "node2",
+    },
+    {
+      "start": 70,
+      "value": "node2",
+    },
+    {
+      "start": 70,
+      "value": "node2",
+    },
+    {
+      "start": 72,
+      "value": "node3",
+    },
+    {
+      "start": 92,
+      "value": "node3",
+    },
+    {
+      "start": 96,
+      "value": "node3",
+    },
+    {
+      "start": 96,
+      "value": "node3",
+    },
+    {
+      "start": 96,
+      "value": "node2",
+    },
+    {
+      "start": 96,
+      "value": "node5",
+    },
+    {
+      "start": 98,
+      "value": "node0",
+    },
+    {
+      "start": 98,
+      "value": "node5",
+    },
+    {
+      "start": 105,
+      "value": "node5",
+    },
+    {
+      "start": 145,
+      "value": "node5",
+    },
+    {
+      "start": 145,
+      "value": "node5",
+    },
+    {
+      "start": 147,
+      "value": "node6",
+    },
+    {
+      "start": 167,
+      "value": "node6",
+    },
+    {
+      "start": 171,
+      "value": "node6",
+    },
+    {
+      "start": 171,
+      "value": "node6",
+    },
+    {
+      "start": 171,
+      "value": "node5",
+    },
+    {
+      "start": 171,
+      "value": "node8",
+    },
+    {
+      "start": 173,
+      "value": "node0",
+    },
+    {
+      "start": 173,
+      "value": "node8",
+    },
+    {
+      "start": 180,
+      "value": "node8",
+    },
+    {
+      "start": 234,
+      "value": "node8",
+    },
+    {
+      "start": 234,
+      "value": "node8",
+    },
+    {
+      "start": 236,
+      "value": "node9",
+    },
+    {
+      "start": 256,
+      "value": "node9",
+    },
+    {
+      "start": 260,
+      "value": "node9",
+    },
+    {
+      "start": 260,
+      "value": "node9",
+    },
+    {
+      "start": 260,
+      "value": "node8",
+    },
+    {
+      "start": 260,
+      "value": "node0",
+    },
+    {
+      "start": 260,
+      "value": "node8",
+    },
+    {
+      "start": 260,
+      "value": "node0",
+    },
+  ],
+}
+`;
+
 exports[`Python: sample.py!For: DOT Snapshot 1`] = `
 "digraph "" {
     node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
