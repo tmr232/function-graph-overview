@@ -281,10 +281,7 @@ async function createCFG(params: Params): Promise<CFG> {
   }
 }
 
-let functionAndCFGMetadata: FunctionAndCFGMetadata = {
-  functionData: { name: "", lineCount: 0, language: undefined },
-  cfgGraphData: { nodeCount: 0, edgeCount: 0, cyclomaticComplexity: 0 },
-};
+let functionAndCFGMetadata: FunctionAndCFGMetadata | undefined;
 
 function updateMetadata(func: SyntaxNode, language: Language, CFG: CFG) {
   // Update function metadata
@@ -391,7 +388,7 @@ onMount(() => {
     >Open Code</button>
     <button onclick={saveSVG}>Download SVG</button>
   </div>
-  {#if rawSVG}
+  {#if functionAndCFGMetadata}
    <!-- Metadata display -->
 {#if Object.values(showMetadata).some(value => value)}
 <div class="metadata" class:panel-open={isPanelOpen}>
@@ -432,120 +429,114 @@ onMount(() => {
   .controlsContainer {
     position: fixed;
     display: flex;
-    justify-content: right;
+    justify-content: flex-end;
     width: 100%;
-    z-index: 1000;
+    top: 0;
+    right: 0;
+    z-index: 1002;
   }
 
   .controls {
     margin: 1em;
   }
-  
+
   .metadata {
-    margin: 0;
-    padding: 1em;
     position: fixed;
-    top: 5%;
-    right: 300px; 
+    top: 4em;
+    right: 18.5em;
+    padding: 1em;
+    background-color: var(--metadata-bg);
     transition: right 0.2s ease;
-    text-align: left;
-    background-color: var(--metadata-bg, rgba(30, 30, 30, 0.7));
-    max-width: 500px;
   }
-  
+
   .metadata:not(.panel-open) {
-    right: 25px;
+    right: 2.5em;
   }
-  
+
   .metadata span {
     display: block;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
+    margin: 0.5em;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis; 
-    color: var(--text-color, gray);
-    font-size: 16px;
+    text-overflow: ellipsis;
+    color: var(--text-color);
+    font-size: 1em;
   }
-  
+
   .panel-toggle {
     position: fixed;
-    top: 5%;
-    right: 0;
-    z-index: 1; /* IMPORTANT */
-    width: 25px;
-    height: 60px;
+    top: 4em;
+    z-index: 1001;
+    width: 2em;
+    height: 4em;
     background-color: var(--toggle-bg);
-    color: var(--toggle-color, white);
+    color: var(--toggle-color);
     border: none;
-    cursor: pointer;
-    font-size: 16px;
+    font-size: 1em;
   }
-  
+
+    .panel-toggle:hover {
+        cursor: pointer;
+    }
+
   .control-panel {
     position: fixed;
-    font-size: 1em; 
-    top: 5%;
-    right: -20em; 
-    width: 18em; 
-    height: 36%; 
-    background-color: var(--panel-bg, rgba(30, 30, 30, 0.7));
-    color: var(--panel-text, white);
-    transition: right 0.2s ease;
-    padding: 1.25em; 
+    top: 4em;
+    right: -20em;
+    width: 18em;
+    padding: 1.25em;
+    background-color: var(--panel-bg);
+    color: var(--panel-text);
     box-sizing: border-box;
-    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+    font-size: 1em;
+    transition: right 0.2s ease;
   }
-  
+
   .control-panel.open {
     right: 0;
   }
 
   .control-panel h3 {
-    margin-top: 0px;
-    margin-bottom: 20px;
+    margin: 0 0 1.25em;
     font-size: 1.5em;
-    color: var(--panel-heading, #fff);
+    color: var(--panel-heading);
   }
-  
+
   .control-panel label {
-    display: block;
-    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-bottom: 1em;
     cursor: pointer;
-    user-select: none;
   }
-  
-  .control-panel input[type="checkbox"] {
-    margin-right: 10px;
-  }
-  
+
   .svgContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100dvw;
-    height: 100dvh;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
   }
-  
+
   :global(body), :global(body[data-theme="dark"]) {
     --text-color: white;
     --panel-bg: rgba(30, 30, 30, 0.7);
-    --panel-text: #fff;
-    --panel-heading: #fff;
+    --panel-text: white;
+    --panel-heading: white;
     --toggle-bg: #555;
-    --toggle-color: #fff;
-    --metadata-bg: rgba(30, 30, 30, 0.7);  
+    --toggle-color: white;
+    --metadata-bg: rgba(30, 30, 30, 0.7);
   }
-  
+
   :global(body[data-theme="light"]) {
-    --text-color: #000000;
+    --text-color: black;
     --panel-bg: rgba(240, 240, 240, 0.9);
-    --panel-text: #000000;
-    --panel-heading: #000000;
-    --toggle-bg: rgb(170, 169, 169);
-    --toggle-color: #000000;
+    --panel-text: black;
+    --panel-heading: black;
+    --toggle-bg: #aaa;
+    --toggle-color: black;
     --metadata-bg: rgba(240, 240, 240, 0.9);
   }
-  </style>
-
+</style>
