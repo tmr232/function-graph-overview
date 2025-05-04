@@ -163,7 +163,7 @@ def raise_exception():
     raise
 
 # render: true,
-# exits: 1,
+# exits: 2,
 # nodes: 6
 def raise_again():
     try:

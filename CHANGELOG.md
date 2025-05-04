@@ -21,7 +21,9 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 - Multiple `catch` clauses in C++ are now handled properly, even in case of comments between them.
 - Segmentation of `catch` clauses in C++ is now a lot better.
-- Fixed an issue where after sharing and reopening the page, clicking the "Share" button again would default the language back to Go instead of preserving the selected one.
+- Fixed an issue where after sharing and reopening the page,
+  clicking the "Share" button again would default the language back to Go instead of preserving the selected one.
+- Exit nodes are now drawn properly even inside `try` blocks.
 
 ### Changed
 
