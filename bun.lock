@@ -53,7 +53,7 @@
         "tree-sitter-cli": "^0.25.3",
         "tree-sitter-cpp": "^0.23.4",
         "tree-sitter-go": "^0.23.1",
-        "tree-sitter-python": "^0.23.2",
+        "tree-sitter-python": "^0.23.6",
         "tree-sitter-typescript": "^0.23.2",
         "typedoc": "^0.28.1",
         "typescript": "^5.8.3",
@@ -1054,7 +1054,7 @@
 
     "tree-sitter-javascript": ["tree-sitter-javascript@0.23.1", "", { "dependencies": { "node-addon-api": "^8.2.2", "node-gyp-build": "^4.8.2" }, "peerDependencies": { "tree-sitter": "^0.21.1" }, "optionalPeers": ["tree-sitter"] }, "sha512-/bnhbrTD9frUYHQTiYnPcxyHORIw157ERBa6dqzaKxvR/x3PC4Yzd+D1pZIMS6zNg2v3a8BZ0oK7jHqsQo9fWA=="],
 
-    "tree-sitter-python": ["tree-sitter-python@0.23.2", "", { "dependencies": { "node-addon-api": "^8.1.0", "node-gyp-build": "^4.8.2" }, "peerDependencies": { "tree-sitter": "^0.21.0" }, "optionalPeers": ["tree-sitter"] }, "sha512-QD9PbfIhlFZX3+hh5HPD8MGLIbV+CBxviyDpLRLceNCxI2ClPv8glu9TmLKaVoaWGMfDtBrU9UikRAbJ/4litA=="],
+    "tree-sitter-python": ["tree-sitter-python@0.23.6", "", { "dependencies": { "node-addon-api": "^8.3.0", "node-gyp-build": "^4.8.4" }, "peerDependencies": { "tree-sitter": "^0.22.1" }, "optionalPeers": ["tree-sitter"] }, "sha512-yIM9z0oxKIxT7bAtPOhgoVl6gTXlmlIhue7liFT4oBPF/lha7Ha4dQBS82Av6hMMRZoVnFJI8M6mL+SwWoLD3A=="],
 
     "tree-sitter-typescript": ["tree-sitter-typescript@0.23.2", "", { "dependencies": { "node-addon-api": "^8.2.2", "node-gyp-build": "^4.8.2", "tree-sitter-javascript": "^0.23.1" }, "peerDependencies": { "tree-sitter": "^0.21.0" }, "optionalPeers": ["tree-sitter"] }, "sha512-e04JUUKxTT53/x3Uq1zIL45DoYKVfHH4CZqwgZhPg5qYROl5nQjV+85ruFzFGZxu+QeFVbRTPDRnqL9UbU4VeA=="],
 
@@ -1229,10 +1229,6 @@
     "tree-sitter-javascript/node-addon-api": ["node-addon-api@8.2.2", "", {}, "sha512-9emqXAKhVoNrQ792nLI/wpzPpJ/bj/YXxW0CvAau1+RdGBcCRF1Dmz7719zgVsQNrzHl9Tzn3ImZ4qWFarWL0A=="],
 
     "tree-sitter-javascript/node-gyp-build": ["node-gyp-build@4.8.2", "", { "bin": { "node-gyp-build": "bin.js", "node-gyp-build-optional": "optional.js", "node-gyp-build-test": "build-test.js" } }, "sha512-IRUxE4BVsHWXkV/SFOut4qTlagw2aM8T5/vnTsmrHJvVoKueJHRc/JaFND7QDDc61kLYUJ6qlZM3sqTSyx2dTw=="],
-
-    "tree-sitter-python/node-addon-api": ["node-addon-api@8.1.0", "", {}, "sha512-yBY+qqWSv3dWKGODD6OGE6GnTX7Q2r+4+DfpqxHSHh8x0B4EKP9+wVGLS6U/AM1vxSNNmUEuIV5EGhYwPpfOwQ=="],
-
-    "tree-sitter-python/node-gyp-build": ["node-gyp-build@4.8.2", "", { "bin": { "node-gyp-build": "bin.js", "node-gyp-build-optional": "optional.js", "node-gyp-build-test": "build-test.js" } }, "sha512-IRUxE4BVsHWXkV/SFOut4qTlagw2aM8T5/vnTsmrHJvVoKueJHRc/JaFND7QDDc61kLYUJ6qlZM3sqTSyx2dTw=="],
 
     "tree-sitter-typescript/node-addon-api": ["node-addon-api@8.2.2", "", {}, "sha512-9emqXAKhVoNrQ792nLI/wpzPpJ/bj/YXxW0CvAau1+RdGBcCRF1Dmz7719zgVsQNrzHl9Tzn3ImZ4qWFarWL0A=="],
 
