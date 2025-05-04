@@ -31,9 +31,9 @@ import {
 // Add state for panel and checkbox controls
 let isPanelOpen = false;
 let showMetadata = {
-  language: false,
-  functionName: false,
-  lineCount: false,
+  language: true,
+  functionName: true,
+  lineCount: true,
   nodeCount: false,
   edgeCount: false,
   cyclomaticComplexity: false,
@@ -44,32 +44,32 @@ const metadataFields = [
   {
     key: "language",
     label: "Language",
-    value: () => functionAndCFGMetadata.functionData.language,
+    value: () => functionAndCFGMetadata.functionData?.language,
   },
   {
     key: "functionName",
     label: "Function Name",
-    value: () => functionAndCFGMetadata.functionData.name,
+    value: () => functionAndCFGMetadata.functionData?.name,
   },
   {
     key: "lineCount",
     label: "Line Count",
-    value: () => functionAndCFGMetadata.functionData.lineCount,
+    value: () => functionAndCFGMetadata.functionData?.lineCount,
   },
   {
     key: "nodeCount",
     label: "Node Count",
-    value: () => functionAndCFGMetadata.cfgGraphData.nodeCount,
+    value: () => functionAndCFGMetadata.cfgGraphData?.nodeCount,
   },
   {
     key: "edgeCount",
     label: "Edge Count",
-    value: () => functionAndCFGMetadata.cfgGraphData.edgeCount,
+    value: () => functionAndCFGMetadata.cfgGraphData?.edgeCount,
   },
   {
     key: "cyclomaticComplexity",
     label: "Cyclomatic Complexity",
-    value: () => functionAndCFGMetadata.cfgGraphData.cyclomaticComplexity,
+    value: () => functionAndCFGMetadata.cfgGraphData?.cyclomaticComplexity,
   },
 ];
 
@@ -283,22 +283,23 @@ async function createCFG(params: Params): Promise<CFG> {
 
 let functionAndCFGMetadata: FunctionAndCFGMetadata | undefined;
 
-function updateMetadata(func: SyntaxNode, language: Language, CFG: CFG) {
-  // Update function metadata
-  const name: string | undefined = extractFunctionName(func, language);
-  const lineCount: number = func.endPosition.row - func.startPosition.row + 1;
+function updateMetadata(CFG: CFG, func?: SyntaxNode, language?: Language) {
+  // Update function metadata (GitHub only)
+  let name: string | undefined = undefined;
+  let lineCount: number | undefined = undefined;
+
+  if (func && language) {
+    name = extractFunctionName(func, language);
+    lineCount = func.endPosition.row - func.startPosition.row + 1;
+  }
 
   // Update CFG metadata
   const nodeCount: number = CFG.graph.order;
   const edgeCount: number = CFG.graph.size;
-  const cyclomaticComplexity: number = CFG.graph.size - nodeCount + 2;
+  const cyclomaticComplexity: number = CFG.graph.size - nodeCount + 2; // (https://en.wikipedia.org/wiki/Cyclomatic_complexity)
 
   return {
-    functionData: {
-      name,
-      lineCount,
-      language,
-    },
+    functionData: name && lineCount ? { name, lineCount, language } : undefined,
     cfgGraphData: {
       nodeCount,
       edgeCount,
@@ -318,7 +319,10 @@ async function render() {
     if (params.type === "GitHub") {
       codeUrl = params.codeUrl;
       const { func, language } = await fetchFunctionAndLanguage(params);
-      functionAndCFGMetadata = updateMetadata(func, language, cfg);
+      functionAndCFGMetadata = updateMetadata(cfg, func, language);
+    } else {
+      // Graph
+      functionAndCFGMetadata = updateMetadata(cfg);
     }
 
     const graphviz = await Graphviz.load();
@@ -390,9 +394,9 @@ onMount(() => {
   </div>
   {#if functionAndCFGMetadata}
    <!-- Metadata display -->
-{#if Object.values(showMetadata).some(value => value)}
+{#if metadataFields.some(field => showMetadata[field.key] && field.value() !== undefined)}
 <div class="metadata" class:panel-open={isPanelOpen}>
-  {#each metadataFields as { key, label, value }}
+    {#each metadataFields.filter(field => field.value() !== undefined) as { key, label , value}}
     {#if showMetadata[key]}
       <span>{label}: {value()}</span>
     {/if}
@@ -405,8 +409,8 @@ onMount(() => {
     <!-- Control panel -->
     <div class="control-panel" class:open={isPanelOpen}>
       <h3>Display Options</h3>
-      {#each metadataFields as { key, label }}
-        <label>
+        {#each metadataFields.filter(field => field.value() !== undefined) as { key, label }}
+      <label>
           <input type="checkbox" bind:checked={showMetadata[key]} />
           {label}
         </label>
@@ -473,11 +477,8 @@ onMount(() => {
     color: var(--toggle-color);
     border: none;
     font-size: 1em;
+    cursor: pointer;
   }
-
-    .panel-toggle:hover {
-        cursor: pointer;
-    }
 
   .control-panel {
     position: fixed;
