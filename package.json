@@ -90,7 +90,7 @@
   "//": "START EXTENSION ATTRIBUTES",
   "publisher": "tamir-bahar",
   "name": "function-graph-overview",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Function Graph Overview",
   "displayName": "Function Graph Overview",
   "icon": "./media/icon.png",
