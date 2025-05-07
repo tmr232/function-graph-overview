@@ -6,16 +6,18 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.16] - 2025-05-07
+
 ### Added
 
+- Pan & zoom for the graphs in both the IDE extensions and the web version
 - Documentation now renders `dot` and `dot-cfg` (CFG-styled DOT diagrams)
-- Documentation about our usage of Graphviz
-- Documentation about the representation of control flow in the graph
+- Added docs about GraphViz tips and tricks
+- Added docs about our choices of visuals
 - Added support for "special" function detection and process-terminating nodes in the graph.
   This is currently only enabled in the `/render` page to slowly build up a collection of
   functions to match and confidence in the representation before adding to the main tool.
-- When changing the code language, the URL is updated to reflect that.
-- Pan & zoom for the graphs in both the IDE extensions and the web version
+- In the web demo, URL now updates to reflect the selected language.
 
 ### Fixed
 
@@ -31,8 +33,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   with unexpected recursion in the command. It is also a nicer name.
 - Language definitions are now more unified, making it easier to add new languages.
 - `language` URL query parameter now takes language name instead of index.
-- Sharing now shares full config in addition to code.
-- Sharing now uses the `compressed=` query parameter for all information.
+- Sharing now includes configuration (color scheme, switch handling, highlighting) in addition to the code.
 - Migrated from Bun Test to Vitest. Tests are now run using `bun vitest`.
 - Web version layout changed to always fit in one screen (no scrollbar).
 

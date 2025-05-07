@@ -52,6 +52,14 @@ Custom color schemes are created via the [interactive demo](https://tmr232.githu
 4. Paste the config into the `Custom Color Scheme` field in the VSCode extension settings.<br/>
    ![The Custom Color Scheme field in the settings](media/screenshots/color-scheme/settings-custom.png)
 
+## Pan & Zoom
+
+If the graph is too small, enable the "Pan & Zoom" checkbox.
+You can zoom with the mouse wheel, and pan by dragging the mouse.
+Additionally, the view will automatically pan to the highlighted node when it changes.
+
+![Demonstration of pan & zoom in VSCode](media/gif/panzoom-demo.gif)
+
 ## Supported Languages
 
 - [Go](https://tmr232.github.io/function-graph-overview/?language=go)

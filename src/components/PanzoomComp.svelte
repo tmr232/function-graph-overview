@@ -79,6 +79,7 @@ const zoomable: Action<HTMLElement, ZoomConfig> = (
     minScale: 1,
     contain: "outside",
     cursor: "default",
+    duration: 300,
   });
   node.parentElement?.addEventListener("wheel", panzoom.zoomWithWheel);
   registerPanzoomOnclick(
