@@ -1,10 +1,13 @@
 <script lang="ts">
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
+import type { PanzoomObject } from "@panzoom/panzoom";
 import objectHash from "object-hash";
 import { createEventDispatcher } from "svelte";
+import type { Action } from "svelte/action";
 import { type Node as SyntaxNode, type Tree } from "web-tree-sitter";
 import { type Language, languageDefinitions } from "../control-flow/cfg";
 import { type ColorList, getLightColorList } from "../control-flow/colors";
+import PanzoomComp from "./PanzoomComp.svelte";
 import { memoizeFunction } from "./caching.ts";
 import { type RenderOptions, Renderer } from "./renderer.ts";
 import { type Parsers, initialize as initializeUtils } from "./utils";
@@ -13,9 +16,8 @@ type CodeAndOffset = { code: string; offset: number; language: Language };
 
 let parsers: Parsers;
 let graphviz: Graphviz;
-let dot: string;
 let getNodeOffset: (nodeId: string) => number | undefined = () => undefined;
-let tree: Tree;
+let offsetToNode: (offset: number) => string | undefined = () => undefined;
 let svg: string;
 interface Props {
   colorList?: ColorList;
@@ -71,6 +73,22 @@ function getFunctionAtOffset(
   return syntax;
 }
 
+/// Hash identifier of the current function, used to keep track of function changes.
+let functionId: string | undefined = undefined;
+/// True if a function changed in the last change of rendering input
+let functionChanged: boolean = true;
+
+function trackFunctionChanges(functionSyntax: SyntaxNode, language: string) {
+  // Keep track of when the function changes so that we can update the
+  // panzoom accordingly.
+  const newFunctionId = objectHash({ code: functionSyntax.text, language });
+  functionChanged = functionId !== newFunctionId;
+  functionId = newFunctionId;
+  if (functionChanged) {
+    pzComp.reset();
+  }
+}
+
 function renderCode(
   code: string,
   language: Language,
@@ -78,17 +96,20 @@ function renderCode(
   options: RenderOptions,
   colorList: ColorList,
 ) {
-  tree = parsers[language].parse(code);
+  const tree = parsers[language].parse(code);
+  if (!tree) {
+    throw new Error("Failed to parse code.");
+  }
   const functionSyntax = getFunctionAtOffset(tree, cursorOffset, language);
   if (!functionSyntax) {
     throw new Error("No function found!");
   }
+  trackFunctionChanges(functionSyntax, language);
 
   const renderer = getRenderer(options, colorList, graphviz);
   const renderResult = renderer.render(functionSyntax, language, cursorOffset);
-  dot = renderResult.dot;
   getNodeOffset = renderResult.getNodeOffset;
-
+  offsetToNode = renderResult.offsetToNode;
   return renderResult.svg;
 }
 
@@ -97,7 +118,7 @@ function renderWrapper(
   options: RenderOptions,
   colorList: ColorList,
 ) {
-  console.log("Rendering!", codeAndOffset, colorList);
+  console.log("Rendering!");
   const bgcolor = colorList.find(({ name }) => name === "graph.background").hex;
   const color = colorList.find(({ name }) => name === "node.highlight").hex;
   try {
@@ -123,7 +144,20 @@ function renderWrapper(
   return svg;
 }
 
-function onClick(event: MouseEvent) {
+async function asyncRenderWrapper(
+  codeAndOffset: CodeAndOffset | null,
+  options: RenderOptions,
+  colorList: ColorList,
+) {
+  return Promise.resolve(renderWrapper(codeAndOffset, options, colorList));
+}
+
+function onZoomClick(
+  event: MouseEvent | TouchEvent | PointerEvent,
+  panzoom: PanzoomObject,
+  zoomElement: HTMLElement,
+): void {
+  console.log("Zoom click!");
   let target: Element = event.target as Element;
   while (
     target.tagName !== "div" &&
@@ -141,14 +175,32 @@ function onClick(event: MouseEvent) {
     offset: getNodeOffset(target.id),
   });
 }
-</script>
 
-{#await initialize() then}
+let pzComp: PanzoomComp;
+let enableZoom: boolean = $state(false);
+const panAfterRender: Action = () => {
+  if (functionChanged) {
+    return;
+  }
+  if (codeAndOffset === null) {
+    return;
+  }
+  const selectedNode = offsetToNode(codeAndOffset.offset);
+  if (selectedNode) {
+    pzComp.panTo(`#${selectedNode}`);
+  }
+};
+</script>
+<div class="editor-controls">
+  <input type="checkbox" id="panzoom" bind:checked={enableZoom}/> <label for="panzoom">Pan & Zoom</label>
+</div>
+<PanzoomComp bind:this={pzComp} onclick={onZoomClick} disabled={!enableZoom}>
+{#await initialize() then _}
   <!-- I don't know how to make this part accessible. PRs welcome! -->
   <!-- svelte-ignore a11y_click_events_have_key_events -->
   <!-- svelte-ignore a11y_no_static_element_interactions -->
-  <div class="graph" onclick={onClick}>
-    {@html renderWrapper(
+  <div class="graph">
+    {#await asyncRenderWrapper(
       codeAndOffset,
       {
         simplify,
@@ -159,9 +211,15 @@ function onClick(event: MouseEvent) {
         showRegions,
       },
       colorList,
-    )}
+    ) then inlineSvg}
+      <div class="svg-wrapper" use:panAfterRender>
+        {@html inlineSvg}
+      </div>
+    {/await}
   </div>
 {/await}
+</PanzoomComp>
+
 
 <style>
   .graph {
@@ -172,4 +230,38 @@ function onClick(event: MouseEvent) {
     width: 100%;
     height: 100%;
   }
+
+  .svg-wrapper {
+      width: 100%;
+      height: 100%;
+  }
+
+  :root {
+      /* We don't yet get the actual colors from the JetBrains IDEs,
+         so we fake them and default to just dark for now.
+       */
+      --jetbrains-editor-background: #2B2D30;
+      --jetbrains-editor-foreground: #dddddd;
+      --jetbrains-color-scheme: dark;
+  }
+
+  .editor-controls {
+      z-index: 1000;
+      position: relative;
+      width: 100%;
+      background-color: var(--vscode-editor-background, var(--jetbrains-editor-background));
+      color: var(--vscode-editor-foreground, var(--jetbrains-editor-foreground));
+      color-scheme: var(--jetbrains-color-scheme);
+      padding: 0.5em;
+  }
+
+  /* Match the VSCode light/dark toggle for the checkboxes */
+  :global(.vscode-light) .editor-controls {
+      color-scheme: light;
+  }
+
+  :global(.vscode-dark) .editor-controls {
+      color-scheme: dark;
+  }
+
 </style>

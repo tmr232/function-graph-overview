@@ -11,7 +11,7 @@ import {
   mergeNodeAttrs,
 } from "../control-flow/cfg-defs";
 import { simplifyCFG, trimFor } from "../control-flow/graph-ops";
-import { graphToDot } from "../control-flow/render";
+import { graphToDot, isExit } from "../control-flow/render";
 import type { Requirements, TestFunction } from "./commentTestTypes";
 
 const markerPattern: RegExp = /CFG: (\w+)/;
@@ -111,8 +111,8 @@ export const requirementTests: Record<keyof Requirements, RequirementHandler> =
     exits(testFunc: TestFunction) {
       if (testFunc.reqs.exits !== undefined) {
         const cfg = buildSimpleCFG(testFunc.language, testFunc.function);
-        const exitNodes = cfg.graph.filterNodes(
-          (node) => cfg.graph.outDegree(node) === 0,
+        const exitNodes = cfg.graph.filterNodes((node) =>
+          isExit(cfg.graph, node),
         );
         if (exitNodes.length !== testFunc.reqs.exits) {
           return `expected ${testFunc.reqs.exits} exits but found ${exitNodes.length}`;
