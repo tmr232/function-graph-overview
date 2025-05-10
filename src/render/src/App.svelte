@@ -391,7 +391,7 @@ onMount(() => {
       onclick={openCode}
       disabled={!Boolean(codeUrl)}
       title={Boolean(codeUrl) ? "" : "Only available for GitHub code"}
-    >Open Code</button
+      >Open Code</button
     >
     <button onclick={saveSVG}>Download SVG</button>
   </div>
@@ -440,7 +440,6 @@ onMount(() => {
     width: 100%;
     z-index: 1000;
   }
-
   .controls {
     margin: 1em;
   }
