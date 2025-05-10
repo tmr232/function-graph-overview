@@ -16,17 +16,17 @@ jobs:
     name: "Test"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 # ratchet:exclude
         with:
           persist-credentials: false
 
       - if: ${{ github.event_name == 'release' }}
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # ratchet:oven-sh/setup-bun@v2
         with:
           no-cache: true
 
       - if: ${{ github.event_name != 'release' }}
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # ratchet:oven-sh/setup-bun@v2
 
 
       - run: bun install --frozen-lockfile
@@ -43,17 +43,17 @@ jobs:
     name: "Package"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 # ratchet:exclude
         with:
           persist-credentials: false
 
       - if: ${{ github.event_name == 'release' }}
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # ratchet:oven-sh/setup-bun@v2
         with:
           no-cache: true
 
       - if: ${{ github.event_name != 'release' }}
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # ratchet:oven-sh/setup-bun@v2
 
       - run: bun install --frozen-lockfile
 
@@ -64,7 +64,7 @@ jobs:
       - name: Setup Environment
         run: node -e "console.log('PACKAGE_VERSION=' + require('./package.json').version + '\nPACKAGE_NAME=' + require('./package.json').name + '-' + require('./package.json').version)" >> $GITHUB_ENV
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4 # ratchet:exclude
         with:
           name: ${{ env.PACKAGE_NAME }}.vsix
           path: ./${{ env.PACKAGE_NAME }}.vsix
@@ -79,22 +79,22 @@ jobs:
     name: "JetBrains"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 # ratchet:exclude
         with:
           persist-credentials: false
 
       - if: ${{ github.event_name == 'release' }}
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # ratchet:oven-sh/setup-bun@v2
         with:
           no-cache: true
 
       - if: ${{ github.event_name != 'release' }}
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # ratchet:oven-sh/setup-bun@v2
 
       - run: bun install --frozen-lockfile
       - run: bun build-webview
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4 # ratchet:exclude
         with:
           name: "Jetbrains"
           path: "./dist/webview/"
