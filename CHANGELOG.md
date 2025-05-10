@@ -6,6 +6,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Added
+
+- Function name extraction with support for multiple programming languages. 
+- Unit tests for function name extraction, covering various structures and languages.
+- Frontend logic in `render/src/App.svelte` to extract and display metadata based on render type. 
+- Display of both CFG and function metadata in the GitHub render view, and CFG metadata in the Graph render view.
+
 ## [0.0.16] - 2025-05-07
 
 ### Added
@@ -46,7 +53,6 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   and cases after the catch-all are removed as dead code. 
 - C++ learned `co_yield` and `co_return`
 - Python learned `assert`
-- Function info and stats to the /render page. 
 
 ### Fixed
 

@@ -433,11 +433,9 @@ onMount(() => {
   .controlsContainer {
     position: fixed;
     display: flex;
-    justify-content: flex-end;
+    justify-content: right;
     width: 100%;
-    top: 0;
-    right: 0;
-    z-index: 1002;
+    z-index: 1000;
   }
 
   .controls {
@@ -516,9 +514,8 @@ onMount(() => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
+    width: 100dvw;
+    height: 100dvh;
   }
 
   :global(body), :global(body[data-theme="dark"]) {
