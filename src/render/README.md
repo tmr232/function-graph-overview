@@ -5,7 +5,9 @@ This is a frontend for rendering code from GitHub directly.
 Navigate to it, and use `?github=<GitHub URL>`,
 making sure to include the line number for your function (`#L123`) at the end of the URL (encoded as `%23`).
 
-To choose color scheme pass `colors=light` or `colors=dark`. Default is dark.
+To choose color scheme pass `colors=light` or `colors=dark`. Default is dark. 
+
+A full example : `?github=<GitHub URL>%23L<Line Number>&colors=<Color>`
 
 Served at [`/render`](https://tmr232.github.io/function-graph-overview/render).
 
