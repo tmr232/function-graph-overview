@@ -11,10 +11,10 @@ jobs:
     name: "Build Demo site"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4 # ratchet:exclude
         with:
-            persist-credentials: false
-      - uses: oven-sh/setup-bun@v2
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # ratchet:oven-sh/setup-bun@v2
         with:
           no-cache: true
 
@@ -29,7 +29,7 @@ jobs:
       - name: "Build docs"
         run: bun docs --out ./dist/demo/docs
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v3 # ratchet:exclude
         with:
           path: ./dist/demo
   deploy:
@@ -37,10 +37,12 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+
     permissions:
       pages: write # to deploy to Pages
       id-token: write # to verify the deployment originates from an appropriate source
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+
+        uses: actions/deploy-pages@v4 # ratchet:exclude
