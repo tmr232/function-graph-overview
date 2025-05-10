@@ -243,6 +243,7 @@ async function fetchFunctionAndLanguage(
   const code = await response.text();
   // We assume that the raw URL always ends with the file extension
   const language = getLanguage(rawUrl);
+
   const func = await getFunctionByLine(code, language, line);
   if (!func) {
     throw new Error(`Unable to find function on line ${line}`);
@@ -382,6 +383,7 @@ onMount(() => {
   makeZoomable();
 });
 </script>
+
 <div class="controlsContainer">
   <div class="controls">
     <button onclick={resetView}>Reset View</button>
@@ -389,7 +391,8 @@ onMount(() => {
       onclick={openCode}
       disabled={!Boolean(codeUrl)}
       title={Boolean(codeUrl) ? "" : "Only available for GitHub code"}
-    >Open Code</button>
+    >Open Code</button
+    >
     <button onclick={saveSVG}>Download SVG</button>
   </div>
   {#if functionAndCFGMetadata}
