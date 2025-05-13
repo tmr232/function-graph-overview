@@ -67,6 +67,22 @@ describe("Go", () => {
     const func = funcIterator.next().value;
     expect(extractFunctionName(func, "Go")).toBe("outer");
   });
+
+  test("nested short var", () => {
+    const code = `func main() {
+\tvar x = func() {
+\t\ty := func() {}
+\t\ty()
+\t}
+\tx()
+}`;
+    const funcIterator = iterFunctions(code, "Go");
+    const foundNames = [...funcIterator].map((func) =>
+      extractFunctionName(func, "Go"),
+    );
+    const expectedNames = ["main", "x", "y"];
+    expect(foundNames).toContainEqual(expectedNames);
+  });
 });
 
 // C Tests
@@ -139,6 +155,33 @@ describe("C++", () => {
     const funcIterator = iterFunctions(code, "C++");
     const func = funcIterator.next().value;
     expect(extractFunctionName(func, "C++")).toBe("speak");
+  });
+
+  test("class nested in function", () => {
+    const code = `
+    int square(int num) {
+    class X {
+        ~X() {};
+    };
+    return num * num;
+}`;
+    const funcIterator = iterFunctions(code, "C++");
+    const func = funcIterator.next().value;
+    expect(extractFunctionName(func, "C++")).toBe("square");
+  });
+
+  test("anynomous lambda inside named lambda", () => {
+    const code = `void f() {
+    auto my_func = [](){
+        [](){}();
+    };
+}`;
+    const funcIterator = iterFunctions(code, "C++");
+    const foundNames = [...funcIterator].map((func) =>
+      extractFunctionName(func, "C++"),
+    );
+    const expectedNames = ["f", "my_func", "<anonymous>"];
+    expect(foundNames).toContainEqual(expectedNames);
   });
 });
 
@@ -240,5 +283,24 @@ describe("TypeScript", () => {
     const funcIterator = iterFunctions(code, "TypeScript");
     const func = funcIterator.next().value;
     expect(extractFunctionName(func, "TypeScript")).toBe("iterTestFunctions");
+  });
+  test("var arrow function", () => {
+    const code = "var name = ()=>{};";
+    const funcIterator = iterFunctions(code, "TypeScript");
+    const func = funcIterator.next().value;
+    expect(extractFunctionName(func, "TypeScript")).toBe("name");
+  });
+  test("global arrow function", () => {
+    const code = "name = ()=>{};";
+    const funcIterator = iterFunctions(code, "TypeScript");
+    const func = funcIterator.next().value;
+    expect(extractFunctionName(func, "TypeScript")).toBe("name");
+  });
+
+  test("constant in anonymous arrow function", () => {
+    const code = "()=>{ const x = 2; };";
+    const funcIterator = iterFunctions(code, "TypeScript");
+    const func = funcIterator.next().value;
+    expect(extractFunctionName(func, "TypeScript")).toBe("<anonymous>");
   });
 });
