@@ -7,6 +7,7 @@ import {
   processReturnStatement,
   processThrowStatement,
 } from "./common-patterns.ts";
+import { extractNameByNodeType } from "./function-utils.ts";
 import {
   type Context,
   GenericCFGBuilder,
@@ -147,4 +148,73 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
       exit: mergeNode,
     });
   });
+}
+
+const nodeType = {
+  functionDefinition: "function_definition",
+  lambdaExpression: "lambda_expression",
+
+  // inline/function‑assignment cases
+  variableDeclaration: "variable_declaration",
+  initDeclarator: "init_declarator",
+
+  // identifier lookups
+  identifier: "identifier",
+
+  //Unnamed functions
+  anonymous: "<anonymous>",
+
+  //Special cases , operator-name and destructor-name
+  operatorName: "operator_name",
+  destructorName: "destructor_name",
+};
+
+function findCppNameInParentHierarchy(
+  func: SyntaxNode,
+  parentType: string,
+  childType: string,
+): string | undefined {
+  let parent = func.parent;
+  while (parent) {
+    if (parent.type === parentType) {
+      return extractNameByNodeType(parent, childType);
+    }
+    parent = parent.parent;
+  }
+  return undefined;
+}
+
+export function extractCppFunctionName(func: SyntaxNode): string | undefined {
+  if (func.type === nodeType.functionDefinition) {
+    // Look for an operator overload (This should happen before the identifier/destructor).
+    const operatorNode = func.descendantsOfType(nodeType.operatorName)[0];
+    if (operatorNode) return operatorNode.text;
+
+    // else, look for the destructor name, which is a special case because identifier returns without the ~
+    const destructorNode = func.descendantsOfType(nodeType.destructorName)[0];
+    if (destructorNode) {
+      return destructorNode.text;
+    }
+    //if neither of those, look for the identifier
+    const idNode = func.descendantsOfType(nodeType.identifier)[0];
+    if (idNode) return idNode.text;
+  }
+  if (func.type === nodeType.lambdaExpression) {
+    // if the lambda is assigned to a variable, return the variable name
+    // otherwise return "<Anonymous>"
+    return (
+      findCppNameInParentHierarchy(
+        func,
+        nodeType.variableDeclaration,
+        nodeType.identifier,
+      ) ||
+      findCppNameInParentHierarchy(
+        func,
+        nodeType.initDeclarator,
+        nodeType.identifier,
+      ) ||
+      nodeType.anonymous
+    );
+  }
+  return undefined;
 }

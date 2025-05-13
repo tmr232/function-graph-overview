@@ -6,6 +6,7 @@ import {
   forEachLoopProcessor,
   processStatementSequence,
 } from "./common-patterns.ts";
+import { extractNameByNodeType } from "./function-utils.ts";
 import {
   type Context,
   GenericCFGBuilder,
@@ -623,4 +624,20 @@ function processWhileStatement(
   });
 
   return matcher.update({ entry: condBlock.entry, exit: exitNode });
+}
+
+const nodeType = {
+  functionDefinition: "function_definition",
+
+  // identifier lookups
+  identifier: "identifier",
+};
+
+export function extractPythonFunctionName(
+  func: SyntaxNode,
+): string | undefined {
+  if (func.type === nodeType.functionDefinition) {
+    return extractNameByNodeType(func, nodeType.identifier);
+  }
+  return undefined;
 }
