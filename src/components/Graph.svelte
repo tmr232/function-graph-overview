@@ -1,4 +1,5 @@
 <script lang="ts">
+  import 'highlight.js/styles/github.css';
 import { Graphviz } from "@hpcc-js/wasm-graphviz";
 import objectHash from "object-hash";
 import { createEventDispatcher } from "svelte";
@@ -16,6 +17,7 @@ import {
   getFirstFunction,
   initialize as initializeUtils,
 } from "./utils";
+import hljs from "highlight.js";
 
 let parsers: Parsers;
 let graphviz: Graphviz;
@@ -100,10 +102,10 @@ function renderWrapper(
   colorList: ColorList,
 ) {
   try {
-    return renderCode(code, language, highlightOffset, options, colorList);
+    return Promise.resolve(renderCode(code, language, highlightOffset, options, colorList));
   } catch (error) {
     console.trace(error);
-    return `<p style='border: 2px red solid;'>${error}</p>`;
+    return Promise.resolve(`<p style='border: 2px red solid;'>${error}</p>`);
   }
 }
 
@@ -226,6 +228,30 @@ export function resetPreview() {
 export function applyColors(colors: ColorList) {
   colorList = colors;
 }
+
+function overlayCode(element: Element) {
+  console.log("overlayCode", element);
+  const normalNodes:Iterable<Element> = document.querySelectorAll(".node.default");
+  console.log(normalNodes);
+
+  const parentRect = element.getBoundingClientRect();
+  for (const node of normalNodes) {
+    console.log(node);
+    console.log(node.getBoundingClientRect());
+    const code = `def f():
+    print("Hello, World!")`
+    const highlighted = hljs.highlight(code, {language:"python"});
+    console.log(highlighted);
+    const codeEl = document.createElement("div");
+    codeEl.innerHTML = `<pre>${highlighted.value}</pre>`;
+    element.appendChild(codeEl)
+    codeEl.style.position="absolute";
+    codeEl.style.zIndex = "5000";
+    console.log("Left?", `${node.getBoundingClientRect().left - parentRect.left}`)
+    codeEl.style.left=`${node.getBoundingClientRect().left - parentRect.left}px`;
+    codeEl.style.top=`calc(${node.getBoundingClientRect().top - parentRect.top}px - 0.5em)`;
+  }
+}
 </script>
 
 <div class="results">
@@ -234,7 +260,8 @@ export function applyColors(colors: ColorList) {
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_static_element_interactions -->
     <div class="graph" onclick={onClick}>
-      {@html renderWrapper(
+
+      {#await renderWrapper(
         code,
         language,
         offsetToHighlight,
@@ -247,12 +274,20 @@ export function applyColors(colors: ColorList) {
           showRegions,
         },
         colorList,
-      )}
+      ) then graphMarkup}
+        <div class="onGraph" use:overlayCode>
+      {@html graphMarkup}
+        </div>
+      {/await}
     </div>
   {/await}
 </div>
 
 <style>
+    .onGraph {
+        width:100%;
+        height: 100%;
+    }
   .graph {
     display: flex;
     align-items: center;
