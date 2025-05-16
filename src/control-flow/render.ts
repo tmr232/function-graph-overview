@@ -163,6 +163,20 @@ function getParents(cluster: Cluster) {
   return parents.toReversed();
 }
 
+function calculateTextSize(text:string):{width: number, height: number} {
+  const pre = document.createElement("pre");
+  pre.innerText = text;
+  pre.style.visibility = "hidden";
+  pre.style.height = "fit-content";
+  pre.style.width="fit-content";
+  document.body.appendChild(pre);
+  const rect = pre.getBoundingClientRect();
+  document.body.removeChild(pre);
+  console.log("Rect for ",text,rect);
+
+  return {width:rect.width, height:rect.height};
+}
+
 function renderHierarchy(
   cfg: CFG,
   hierarchy: Hierarchy,
@@ -188,8 +202,9 @@ function renderHierarchy(
   }
 
   // Then everything that remains - connecting edges and non-clustered nodes
-  hierarchy.graph.forEachNode((node) => {
-    parts.push(indent(renderNode(topGraph, node, context)));
+  hierarchy.graph.forEachNode((node, attributes) => {
+    const size = calculateTextSize(attributes.code);
+    parts.push(indent(renderNode(topGraph, node, context, size)));
   });
   hierarchy.graph.forEachEdge((edge, _attributes, source, target) => {
     parts.push(indent(renderEdge(edge, source, target, topGraph, context)));
@@ -312,6 +327,7 @@ function renderNode(
   graph: CFGGraph,
   node: string,
   context: RenderContext,
+  size:{width:number, height:number}
 ): string {
   const nodeAttrs = graph.getNodeAttributes(node);
 
@@ -344,5 +360,8 @@ function renderNode(
     const clusterAttrs = graph.getNodeAttribute(node, "cluster");
     dotAttrs.label = `${clusterAttrs?.id} ${clusterAttrs?.type}\n${dotAttrs.label}`;
   }
+  dotAttrs.width = Math.random() * 5;
+  dotAttrs.width = size.width / 20;
+  dotAttrs.height = size.height / 20;
   return `${node} [${formatStyle(dotAttrs)}];`;
 }
