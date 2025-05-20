@@ -22,17 +22,21 @@ export function iterSourceFiles(root: string): IterableIterator<string> {
   );
   return sourceGlob.scanSync(root);
 }
-function* iterFilenames(
+async function* iterFilenames(
   root: string,
   dirsToInclude: string[],
-): IterableIterator<string> {
+): AsyncGenerator<string> {
   if (dirsToInclude.length === 1 && dirsToInclude[0] === "*") {
     yield* iterSourceFiles(root);
   } else {
     for (const dir of dirsToInclude) {
-      for (const filename of iterSourceFiles(path.join(root, dir))) {
-        // We want the path relative to the root
-        yield path.join(dir, filename);
+      if (await Bun.file(path.join(root, dir)).exists()) {
+        yield dir;
+      } else {
+        for (const filename of iterSourceFiles(path.join(root, dir))) {
+          // We want the path relative to the root
+          yield path.join(dir, filename);
+        }
       }
     }
   }
@@ -40,24 +44,37 @@ function* iterFilenames(
 
 async function* iterFunctionInfo(
   root: string,
-  filenames: IterableIterator<string>,
+  filenames: AsyncGenerator<string>,
 ): AsyncIterableIterator<{
   node_count: number;
   start_position: { row: number; column: number };
   funcdef: string;
   filename: string;
 }> {
-  for (const filename of filenames) {
+  for await (const filename of filenames) {
     const code = await Bun.file(path.join(root, filename)).text();
-    const language = getLanguage(filename);
+    const language = (() => {
+      try {
+        return getLanguage(filename);
+      } catch {
+        return undefined;
+      }
+    })();
+    if (!language) {
+      continue;
+    }
     for (const func of iterFunctions(code, language)) {
       const cfg = buildCFG(func, language);
-      yield {
-        node_count: cfg.graph.order,
-        start_position: func.startPosition,
-        funcdef: getFuncDef(code, func),
-        filename: filename.replaceAll("\\", "/"),
-      };
+      try {
+        yield {
+          node_count: cfg.graph.order,
+          start_position: func.startPosition,
+          funcdef: getFuncDef(code, func),
+          filename: filename.replaceAll("\\", "/"),
+        };
+      } catch (e) {
+        console.error(`Failed getting function definition for ${func.text}`, e);
+      }
     }
   }
 }
