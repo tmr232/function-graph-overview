@@ -166,3 +166,17 @@ function processSwitchlike(switchSyntax: SyntaxNode, ctx: Context): BasicBlock {
 
   return blockHandler.update({ entry: headNode, exit: mergeNode });
 }
+
+const nodeType = {
+  functionDefinition: "function_definition",
+
+  // identifier lookups
+  identifier: "identifier",
+};
+
+export function extractCFunctionName(func: SyntaxNode): string | undefined {
+  if (func.type === nodeType.functionDefinition) {
+    return func.descendantsOfType(nodeType.identifier)[0]?.text;
+  }
+  return undefined;
+}

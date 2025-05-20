@@ -13,6 +13,10 @@ import {
   processStatementSequence,
 } from "./common-patterns.ts";
 import {
+  extractNameByNodeType,
+  extractTaggedValueFromTreeSitterQuery,
+} from "./function-utils.ts";
+import {
   type Context,
   GenericCFGBuilder,
   type StatementHandlers,
@@ -418,4 +422,76 @@ function processSwitchlike(
   }
 
   return blockHandler.update({ entry: headNode, exit: mergeNode });
+}
+
+const nodeType = {
+  // Function-related node types
+  functionDeclaration: "function_declaration",
+  methodDeclaration: "method_declaration",
+  funcLiteral: "func_literal",
+
+  // identifier lookups
+  identifier: "identifier",
+  fieldIdentifier: "field_identifier",
+
+  // Unnamed functions
+  anonymous: "<anonymous>",
+};
+
+const shortVarQueryAndTag = {
+  query: `
+    (short_var_declaration
+      left: (expression_list
+        (identifier) @var.name))
+  `,
+  tag: "var.name",
+};
+
+const varDeclarationQueryAndTag = {
+  query: `
+    (var_declaration
+      (var_spec
+        (identifier) @var.name))
+  `,
+  tag: "var.name",
+};
+
+const assignmentQueryAndTag = {
+  query: `
+    (assignment_statement
+      left: (expression_list
+        (identifier) @var.name))
+  `,
+  tag: "var.name",
+};
+
+export function extractGoFunctionName(func: SyntaxNode): string | undefined {
+  switch (func.type) {
+    case nodeType.functionDeclaration:
+      return extractNameByNodeType(func, nodeType.identifier);
+    case nodeType.methodDeclaration:
+      return extractNameByNodeType(func, nodeType.fieldIdentifier);
+    case nodeType.funcLiteral:
+      // Check if the func_literal is assigned to a variable or is a standalone function
+      return (
+        extractTaggedValueFromTreeSitterQuery(
+          func,
+          shortVarQueryAndTag.query,
+          shortVarQueryAndTag.tag,
+        ) ||
+        extractTaggedValueFromTreeSitterQuery(
+          func,
+          varDeclarationQueryAndTag.query,
+          varDeclarationQueryAndTag.tag,
+        ) ||
+        extractTaggedValueFromTreeSitterQuery(
+          func,
+          assignmentQueryAndTag.query,
+          assignmentQueryAndTag.tag,
+        ) ||
+        nodeType.anonymous
+      );
+    default:
+      return undefined;
+  }
 }
