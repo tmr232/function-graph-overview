@@ -49,7 +49,7 @@
         "svelte": "^5.0.0",
         "svelte-awesome-color-picker": "^4.0.0",
         "svelte-codemirror-editor": "^1.4.1",
-        "tree-sitter-c": "^0.23.5",
+        "tree-sitter-c": "^0.24.1",
         "tree-sitter-cli": "^0.25.3",
         "tree-sitter-cpp": "^0.23.4",
         "tree-sitter-go": "^0.23.1",
@@ -1044,7 +1044,7 @@
 
     "tree-sitter": ["tree-sitter@0.21.1", "", { "dependencies": { "node-addon-api": "^8.0.0", "node-gyp-build": "^4.8.0" } }, "sha512-7dxoA6kYvtgWw80265MyqJlkRl4yawIjO7S5MigytjELkX43fV2WsAXzsNfO7sBpPPCF5Gp0+XzHk0DwLCq3xQ=="],
 
-    "tree-sitter-c": ["tree-sitter-c@0.23.5", "", { "dependencies": { "node-addon-api": "^8.3.0", "node-gyp-build": "^4.8.4" }, "peerDependencies": { "tree-sitter": "^0.22.1" }, "optionalPeers": ["tree-sitter"] }, "sha512-riDWhqVIt8J14R7G0YMKlUy8E7eYR0Vp6DSGL90nX5CTAXkORCyp4WaOgNtfo8dEsHyZF5e/4E9Z9kWj+qLnTQ=="],
+    "tree-sitter-c": ["tree-sitter-c@0.24.1", "", { "dependencies": { "node-addon-api": "^8.3.1", "node-gyp-build": "^4.8.4" }, "peerDependencies": { "tree-sitter": "^0.22.4" }, "optionalPeers": ["tree-sitter"] }, "sha512-lkYwWN3SRecpvaeqmFKkuPNR3ZbtnvHU+4XAEEkJdrp3JfSp2pBrhXOtvfsENUneye76g889Y0ddF2DM0gEDpA=="],
 
     "tree-sitter-cli": ["tree-sitter-cli@0.25.3", "", { "bin": { "tree-sitter": "cli.js" } }, "sha512-Bk6ZUXG+cKnwZpfR/te4NDrKld90p6350eqWlbLwSpV9/8vmL/x8LCw+3k7quY9oMDaYoMXHMvokXJbkM5A7bA=="],
 
