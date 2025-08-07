@@ -438,29 +438,16 @@ const nodeType = {
   anonymous: "<anonymous>",
 };
 
-const shortVarQueryAndTag = {
+const assignmentAndDeclarationVarQueryAndTag = {
   query: `
-    (short_var_declaration
-      left: (expression_list
-        (identifier) @var.name))
-  `,
-  tag: "var.name",
-};
-
-const varDeclarationQueryAndTag = {
-  query: `
-    (var_declaration
-      (var_spec
-        (identifier) @var.name))
-  `,
-  tag: "var.name",
-};
-
-const assignmentQueryAndTag = {
-  query: `
-    (assignment_statement
-      left: (expression_list
-        (identifier) @var.name))
+    [
+      (short_var_declaration
+        left: (expression_list (identifier) @var.name))
+      (assignment_statement
+        left: (expression_list (identifier) @var.name))
+      (var_declaration
+        (var_spec (identifier) @var.name))
+    ]
   `,
   tag: "var.name",
 };
@@ -476,19 +463,9 @@ export function extractGoFunctionName(func: SyntaxNode): string | undefined {
       return (
         extractTaggedValueFromTreeSitterQuery(
           func,
-          shortVarQueryAndTag.query,
-          shortVarQueryAndTag.tag,
-        ) ||
-        extractTaggedValueFromTreeSitterQuery(
-          func,
-          varDeclarationQueryAndTag.query,
-          varDeclarationQueryAndTag.tag,
-        ) ||
-        extractTaggedValueFromTreeSitterQuery(
-          func,
-          assignmentQueryAndTag.query,
-          assignmentQueryAndTag.tag,
-        ) ||
+          assignmentAndDeclarationVarQueryAndTag.query,
+          assignmentAndDeclarationVarQueryAndTag.tag,
+        )||
         nodeType.anonymous
       );
     default:

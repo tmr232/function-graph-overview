@@ -626,18 +626,11 @@ function processWhileStatement(
   return matcher.update({ entry: condBlock.entry, exit: exitNode });
 }
 
-const nodeType = {
-  functionDefinition: "function_definition",
-
-  // identifier lookups
-  identifier: "identifier",
-};
-
 export function extractPythonFunctionName(
   func: SyntaxNode,
 ): string | undefined {
-  if (func.type === nodeType.functionDefinition) {
-    return extractNameByNodeType(func, nodeType.identifier);
+  if (func.type === "function_definition") {
+    return extractNameByNodeType(func, "identifier");
   }
   return undefined;
 }
