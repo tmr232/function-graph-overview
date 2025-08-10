@@ -48,10 +48,27 @@ export function extractTaggedValueFromTreeSitterQuery(
   return names[0]; // can (and sometimes will) be undefined
 }
 
+// ADD-LANGUAGES-HERE
+/**
+ * Mapping of languages to their function name extraction functions.
+ * This ensures all supported languages have extractors via TypeScript typing.
+ */
+const functionNameExtractors: Record<
+  Language,
+  (func: SyntaxNode) => string | undefined
+> = {
+  TypeScript: extractTypeScriptFunctionName,
+  TSX: extractTypeScriptFunctionName,
+  C: extractCFunctionName,
+  "C++": extractCppFunctionName,
+  Python: extractPythonFunctionName,
+  Go: extractGoFunctionName,
+} as const;
+
 /**
  * Extracts the name of a function based on its syntax node and language.
  *
- * Supports:
+ * Supports all languages defined in the Language type:
  * - TypeScript/TSX
  * - C
  * - C++
@@ -65,19 +82,6 @@ export function extractFunctionName(
   func: SyntaxNode,
   language: Language,
 ): string | undefined {
-  switch (language) {
-    case "TypeScript":
-    case "TSX":
-      return extractTypeScriptFunctionName(func);
-    case "C":
-      return extractCFunctionName(func);
-    case "C++":
-      return extractCppFunctionName(func);
-    case "Python":
-      return extractPythonFunctionName(func);
-    case "Go":
-      return extractGoFunctionName(func);
-    default:
-      return undefined;
-  }
+  const extractor = functionNameExtractors[language];
+  return extractor(func);
 }
