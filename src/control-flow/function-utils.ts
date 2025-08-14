@@ -31,21 +31,19 @@ export function extractTaggedValueFromTreeSitterQuery(
   func: SyntaxNode,
   query: string,
   tag: string,
-): string | undefined {
-  const language = func.tree.language;
-  const queryObj = new Query(language, query);
-
-  const rootNode = func.tree.rootNode;
-  const captures = queryObj.captures(rootNode);
-
-  const names = captures
+): string[] {
+  const queryObj = new Query(func.tree.language, query);
+  const captures = queryObj.captures(func);
+  console.log("---------------------------------------------");
+  return captures
     .filter((c) => c.name === tag && c.node.text)
-    .map((c) => c.node.text);
+    .map((c) => {
+      //console.log("name: " , c.node.text);
+      //console.log("start index: " ,c.node.startIndex, "end index: ", c.node.endIndex, "start position: ", c.node.startPosition , "end position: ", c.node.endPosition);
+      return c.node.text;
 
-  if (names.length > 1) {
-    return "<unsupported>";
-  }
-  return names[0]; // can (and sometimes will) be undefined
+    });
+
 }
 
 // ADD-LANGUAGES-HERE

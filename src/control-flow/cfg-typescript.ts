@@ -345,13 +345,23 @@ const nodeType = {
   anonymous: "<anonymous>",
 };
 
-const variableDeclaratorQueryAndTag = {
-  query: `
-    (lexical_declaration
-      (variable_declarator
-        name: (identifier) @var.name))
-  `,
-  tag: "var.name",
+export const query = {
+  // Function Declarations
+  functionDeclaration: `(function_declaration (identifier) @name)`,
+
+  // Arrow Functions (from variable declarator)
+  variableDeclaratorIdentifier: `(variable_declarator name : (identifier) @name)`,
+
+  // Method Definitions (class methods)
+  methodDefinition: `(method_definition name: (property_identifier) @name)`,
+
+  // Function Expressions (named)
+  functionExpression: `(function_expression name: (identifier) @name)`,
+
+  // Generator Functions
+  generatorFunction: `(generator_function name: (identifier) @name)`,
+
+  tag: `name`,
 };
 
 /**
@@ -365,40 +375,78 @@ export function extractTypeScriptFunctionName(
 ): string | undefined {
   switch (func.type) {
     case nodeType.functionDeclaration:
+      return extractTaggedValueFromTreeSitterQuery(func, query.functionDeclaration, query.tag)[0];
+    
+    case "generator_function":
     case nodeType.generatorFunctionDeclaration:
-      return extractNameByNodeType(func, nodeType.identifier);
-
-    case nodeType.generatorFunction:
+      {
+        const names = extractTaggedValueFromTreeSitterQuery(func, query.generatorFunction, query.tag);
+        if(names.length > 0) {
+          return names[0];
+        }
+        return findVariableBinding(func);
+      }
+      
     case nodeType.arrowFunction:
-      return (
-        extractTaggedValueFromTreeSitterQuery(
-          func,
-          variableDeclaratorQueryAndTag.query,
-          variableDeclaratorQueryAndTag.tag,
-        ) || nodeType.anonymous
-      );
-
-    case nodeType.methodDefinition:
-      return extractNameByNodeType(func, nodeType.propertyIdentifier);
+      return findVariableBinding(func);
 
     case nodeType.functionExpression: {
-      // first check for a direct name
-      const optionalIdentifier = extractNameByNodeType(
-        func,
-        nodeType.identifier,
-      );
-      if (optionalIdentifier) return optionalIdentifier;
-
-      // otherwise fall back to a variable‑assignment name
-      return (
-        extractTaggedValueFromTreeSitterQuery(
-          func,
-          variableDeclaratorQueryAndTag.query,
-          variableDeclaratorQueryAndTag.tag,
-        ) || nodeType.anonymous
-      );
+      // Check for direct name first (named function expressions)
+      const directNames = extractTaggedValueFromTreeSitterQuery(func, query.functionExpression, query.tag);
+      if (directNames.length > 0) return directNames[0];
+      
+      return findVariableBinding(func);
     }
+
+    case nodeType.methodDefinition:
+      return extractTaggedValueFromTreeSitterQuery(func, query.methodDefinition, query.tag)[0];
+
     default:
       return undefined;
   }
+}
+
+function findVariableBinding(func: SyntaxNode): string | undefined {
+  const parent = func.parent;
+  if (!parent) return undefined;
+
+  // Check if directly assigned to a variable
+  if (parent.type === "variable_declarator") {
+    const lexicalDeclaration = parent.parent;
+    
+    // Check if this is part of a multiple declaration
+    if (lexicalDeclaration?.type === "lexical_declaration") {
+      const declarators = lexicalDeclaration.namedChildren.filter(
+        child => child.type === "variable_declarator"
+      );
+      
+      // If multiple declarators, it's ambiguous
+      if (declarators.length > 1) {
+        return undefined;
+      }
+    }
+    
+    const nameNode = parent.childForFieldName("name");
+    if (nameNode?.type === "identifier") {
+      return nameNode.text;
+    }
+  }
+  
+  // Check for assignment expressions (obj = func)
+  if (parent.type === "assignment_expression") {
+    const left = parent.childForFieldName("left");
+    if (left?.type === "identifier") {
+      return left.text;
+    }
+  }
+  
+  // Check for object literal properties
+  if (parent.type === "pair") {
+    const key = parent.childForFieldName("key");
+    if (key?.type === "property_identifier" || key?.type === "identifier") {
+      return key.text;
+    }
+  }
+  
+  return undefined;
 }
