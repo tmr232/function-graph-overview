@@ -18,7 +18,6 @@ import {
   processThrowStatement,
 } from "./common-patterns.ts";
 import {
-  extractNameByNodeType,
   extractTaggedValueFromTreeSitterQuery,
 } from "./function-utils.ts";
 import {
@@ -361,6 +360,9 @@ export const query = {
   // Generator Functions
   generatorFunction: `(generator_function name: (identifier) @name)`,
 
+
+  generatorFunctionDeclaration: `(generator_function_declaration name: (identifier) @name)`,
+
   tag: `name`,
 };
 
@@ -378,9 +380,17 @@ export function extractTypeScriptFunctionName(
       return extractTaggedValueFromTreeSitterQuery(func, query.functionDeclaration, query.tag)[0];
     
     case "generator_function":
-    case nodeType.generatorFunctionDeclaration:
       {
         const names = extractTaggedValueFromTreeSitterQuery(func, query.generatorFunction, query.tag);
+        if(names.length > 0) {
+          return names[0];
+        }
+        return findVariableBinding(func);
+      }
+
+    case nodeType.generatorFunctionDeclaration:
+      {
+        const names = extractTaggedValueFromTreeSitterQuery(func, query.generatorFunctionDeclaration, query.tag);
         if(names.length > 0) {
           return names[0];
         }
@@ -410,43 +420,50 @@ function findVariableBinding(func: SyntaxNode): string | undefined {
   const parent = func.parent;
   if (!parent) return undefined;
 
-  // Check if directly assigned to a variable
-  if (parent.type === "variable_declarator") {
-    const lexicalDeclaration = parent.parent;
-    
-    // Check if this is part of a multiple declaration
-    if (lexicalDeclaration?.type === "lexical_declaration") {
-      const declarators = lexicalDeclaration.namedChildren.filter(
-        child => child.type === "variable_declarator"
-      );
-      
-      // If multiple declarators, it's ambiguous
-      if (declarators.length > 1) {
-        return undefined;
-      }
+  const isSingleDeclarator = (decl: SyntaxNode | null | undefined) => {
+    if (!decl || (decl.type !== "lexical_declaration" && decl.type !== "sequence_expression")) return true;
+    const lexDeclarators = decl.namedChildren.filter(
+      (n) => n?.type === "variable_declarator"
+    );
+    const seqDeclarators = decl.namedChildren.filter(
+      (n) => n?.type === "assignment_expression"
+    );
+    return lexDeclarators.length <= 1 && seqDeclarators.length <= 1;
+  };
+
+  switch (parent.type) {
+    case "variable_declarator": {
+      // If part of a multi-declarator statement, it's ambiguous.
+      if (!isSingleDeclarator(parent.parent)) return undefined;
+      const name = parent.childForFieldName("name");
+      return name?.type === "identifier" ? name.text : undefined;
     }
-    
-    const nameNode = parent.childForFieldName("name");
-    if (nameNode?.type === "identifier") {
-      return nameNode.text;
+
+    case "assignment_expression": {
+      // If part of a multi-declarator statement, it's ambiguous.
+      if (!isSingleDeclarator(parent.parent)) return undefined;
+      const name = parent.childForFieldName("left");
+      return name?.type === "identifier" ? name.text : undefined;
     }
+
+    case "public_field_definition": {
+      const name = parent.childForFieldName("name");
+      return name?.type === "property_identifier" ? name.text : undefined;
+    }
+
+    case "assignment_expression": {
+      const left = parent.childForFieldName("left");
+      return left?.type === "identifier" ? left.text : undefined;
+    }
+
+    case "pair": {
+      const key = parent.childForFieldName("key");
+      return key && (key.type === "property_identifier" || key.type === "identifier")
+        ? key.text
+        : undefined;
+    }
+
+    default:
+      return undefined;
   }
-  
-  // Check for assignment expressions (obj = func)
-  if (parent.type === "assignment_expression") {
-    const left = parent.childForFieldName("left");
-    if (left?.type === "identifier") {
-      return left.text;
-    }
-  }
-  
-  // Check for object literal properties
-  if (parent.type === "pair") {
-    const key = parent.childForFieldName("key");
-    if (key?.type === "property_identifier" || key?.type === "identifier") {
-      return key.text;
-    }
-  }
-  
-  return undefined;
 }
