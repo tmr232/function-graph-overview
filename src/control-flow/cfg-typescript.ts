@@ -323,10 +323,10 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
 
 const functionQuery = {
   functionDeclaration: `(function_declaration 
-                          (identifier) @name)`,
+    (identifier) @name)`,
 
   variableDeclaratorIdentifier: `(variable_declarator 
-                                   name: (identifier) @name)`,
+    name: (identifier) @name)`,
 
   methodDefinition: `[
   (method_definition
@@ -340,17 +340,21 @@ const functionQuery = {
            ] @name))
   (pair
     key: (string) @name)
+    
+  (method_definition
+    name: (private_property_identifier) @name)
 
 ]`,
 
   functionExpression: `(function_expression 
-                          name: (identifier) @name)`,
+    name: (identifier) @name)`,
 
   generatorFunction: `(generator_function 
-                        name: (identifier) @name)`,
+    name: (identifier) @name)`,
 
   generatorFunctionDeclaration: `(generator_function_declaration 
-                                   name: (identifier) @name)`,
+    name: (identifier) @name)`,
+
   tag: "name",
 };
 
@@ -417,79 +421,40 @@ export function extractTypeScriptFunctionName(
   }
 }
 
-function findVariableBinding(func: SyntaxNode): string | undefined {
+function findVariableBinding(func: SyntaxNode): string {
   const parent = func.parent;
-  if (!parent) return undefined;
-
-  const isSingleDeclarator = (decl: SyntaxNode | null | undefined) => {
-    if (
-      !decl ||
-      (decl.type !== "lexical_declaration" &&
-        decl.type !== "sequence_expression" &&
-        decl.type !== "assignment_expression" &&
-        decl.type !== "variable_declarator")
-    )
-      return true;
-    
-    if(decl.type === "variable_declarator") {
-      const query = `(variable_declarator
-                        name: (identifier) @name
-                        value: (assignment_expression
-                                left: (identifier) @name))
-                      `;
-      const declarators = extractTaggedValueFromTreeSitterQuery(
-      decl,
-      query,
-      "name"
-    );
-      if (declarators.length > 1) return false;
-    }
-
-    if(decl.type === "assignment_expression") {
-      const query = `                
-                  ((assignment_expression
-                            left: (identifier) @name
-                            right: (assignment_expression
-                                    left: (identifier) @name)))
-                      `;
-      const declarators = extractTaggedValueFromTreeSitterQuery(
-      decl,
-      query,
-      "name"
-    );
-     
-      if (declarators.length > 1) return false;
-    }
-  
-    const lexDeclarators = decl.namedChildren.filter(
-      (n) => n?.type === "variable_declarator",
-    );
-    const seqDeclarators = decl.namedChildren.filter(
-      (n) => n?.type === "assignment_expression",
-    );
-    console.log(lexDeclarators.length, seqDeclarators.length);
-    console.log(lexDeclarators.length <= 1 && seqDeclarators.length <= 1);
-    return lexDeclarators.length <= 1 && seqDeclarators.length <= 1;
-  };
+  const anonymous = "<anonymous>";
+  if (!parent) return anonymous;
 
   switch (parent.type) {
     case "variable_declarator": {
-      // If part of a multi-declarator statement, it's ambiguous.
-      if (!isSingleDeclarator(parent.parent)) return undefined;
       const name = parent.childForFieldName("name");
-      return name?.type === "identifier" ? name.text : undefined;
+      return name?.type === "identifier" ? name.text : anonymous;
     }
 
-    case "assignment_expression": {
-      // If part of a multi-declarator statement, it's ambiguous.
-      if (!isSingleDeclarator(parent.parent)) return undefined;
+    case "required_parameter": {
+      const name = parent.childForFieldName("pattern");
+      return name?.type === "identifier" ? name.text : anonymous;
+    }
+
+    case "assignment_expression":
+    case "assignment_pattern": {
       const name = parent.childForFieldName("left");
-      return name?.type === "identifier" ? name.text : undefined;
+      return name?.type === "identifier" || name?.type === "member_expression"
+        ? name.text
+        : anonymous;
     }
 
     case "public_field_definition": {
       const name = parent.childForFieldName("name");
-      return name?.type === "property_identifier" ? name.text : undefined;
+      return name?.type === "property_identifier" ? name.text : anonymous;
+    }
+
+    case "object_assignment_pattern": {
+      const left = parent.childForFieldName("left");
+      return left?.type === "shorthand_property_identifier_pattern"
+        ? left.text
+        : anonymous;
     }
 
     case "pair": {
@@ -499,10 +464,9 @@ function findVariableBinding(func: SyntaxNode): string | undefined {
           key.type === "identifier" ||
           key.type === "string")
         ? key.text
-        : undefined;
+        : anonymous;
     }
-
     default:
-      return undefined;
+      return anonymous;
   }
 }

@@ -7,13 +7,15 @@ import { extractPythonFunctionName } from "./cfg-python.ts";
 import { extractTypeScriptFunctionName } from "./cfg-typescript.ts";
 
 /**
+ * ********************Will probably be removed.********************
+ *
  * Extracts the name of a node by searching for a child node with a specific type.
  *
  * @param func - The syntax node to search within.
  * @param type - The type of the child node to extract the name from.
- * 
+ *
  * used among all languages (mostly the easy cases of extracting the name).
- * 
+ *
  */
 export function extractNameByNodeType(
   func: SyntaxNode,
@@ -35,7 +37,7 @@ export function extractTaggedValueFromTreeSitterQuery(
   tag: string,
 ): string[] {
   const queryObj = new Query(func.tree.language, query);
-  const captures = queryObj.captures(func);
+  const captures = queryObj.captures(func, { maxStartDepth: 1 });
   return captures
     .filter((c) => c.name === tag && c.node.text)
     .map((c) => {
