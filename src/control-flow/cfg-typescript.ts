@@ -17,9 +17,7 @@ import {
   processStatementSequence,
   processThrowStatement,
 } from "./common-patterns.ts";
-import {
-  extractTaggedValueFromTreeSitterQuery,
-} from "./function-utils.ts";
+import { extractTaggedValueFromTreeSitterQuery } from "./function-utils.ts";
 import {
   type Context,
   GenericCFGBuilder,
@@ -323,47 +321,37 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
   });
 }
 
-const nodeType = {
-  // function‑declaration cases
-  functionDeclaration: "function_declaration",
-  generatorFunctionDeclaration: "generator_function_declaration",
+const functionQuery = {
+  functionDeclaration: `(function_declaration 
+                          (identifier) @name)`,
 
-  // inline/function‑expression cases
-  generatorFunction: "generator_function",
-  arrowFunction: "arrow_function",
-  functionExpression: "function_expression",
+  variableDeclaratorIdentifier: `(variable_declarator 
+                                   name: (identifier) @name)`,
 
-  // methods
-  methodDefinition: "method_definition",
+  methodDefinition: `[
+  (method_definition
+    name: (property_identifier) @name)
 
-  // identifier lookups
-  identifier: "identifier",
-  propertyIdentifier: "property_identifier",
+  (method_definition
+  name: (computed_property_name
+           [
+             (string)
+             (identifier)
+           ] @name))
+  (pair
+    key: (string) @name)
 
-  // Unnamed functions
-  anonymous: "<anonymous>",
-};
+]`,
 
-export const query = {
-  // Function Declarations
-  functionDeclaration: `(function_declaration (identifier) @name)`,
+  functionExpression: `(function_expression 
+                          name: (identifier) @name)`,
 
-  // Arrow Functions (from variable declarator)
-  variableDeclaratorIdentifier: `(variable_declarator name : (identifier) @name)`,
+  generatorFunction: `(generator_function 
+                        name: (identifier) @name)`,
 
-  // Method Definitions (class methods)
-  methodDefinition: `(method_definition name: (property_identifier) @name)`,
-
-  // Function Expressions (named)
-  functionExpression: `(function_expression name: (identifier) @name)`,
-
-  // Generator Functions
-  generatorFunction: `(generator_function name: (identifier) @name)`,
-
-
-  generatorFunctionDeclaration: `(generator_function_declaration name: (identifier) @name)`,
-
-  tag: `name`,
+  generatorFunctionDeclaration: `(generator_function_declaration 
+                                   name: (identifier) @name)`,
+  tag: "name",
 };
 
 /**
@@ -376,40 +364,53 @@ export function extractTypeScriptFunctionName(
   func: SyntaxNode,
 ): string | undefined {
   switch (func.type) {
-    case nodeType.functionDeclaration:
-      return extractTaggedValueFromTreeSitterQuery(func, query.functionDeclaration, query.tag)[0];
-    
-    case "generator_function":
-      {
-        const names = extractTaggedValueFromTreeSitterQuery(func, query.generatorFunction, query.tag);
-        if(names.length > 0) {
-          return names[0];
-        }
-        return findVariableBinding(func);
-      }
+    case "function_declaration":
+      return extractTaggedValueFromTreeSitterQuery(
+        func,
+        functionQuery.functionDeclaration,
+        functionQuery.tag,
+      )[0];
 
-    case nodeType.generatorFunctionDeclaration:
-      {
-        const names = extractTaggedValueFromTreeSitterQuery(func, query.generatorFunctionDeclaration, query.tag);
-        if(names.length > 0) {
-          return names[0];
-        }
-        return findVariableBinding(func);
-      }
-      
-    case nodeType.arrowFunction:
-      return findVariableBinding(func);
-
-    case nodeType.functionExpression: {
-      // Check for direct name first (named function expressions)
-      const directNames = extractTaggedValueFromTreeSitterQuery(func, query.functionExpression, query.tag);
-      if (directNames.length > 0) return directNames[0];
-      
+    case "generator_function": {
+      const names = extractTaggedValueFromTreeSitterQuery(
+        func,
+        functionQuery.generatorFunction,
+        functionQuery.tag,
+      );
+      if (names.length > 0) return names[0];
       return findVariableBinding(func);
     }
 
-    case nodeType.methodDefinition:
-      return extractTaggedValueFromTreeSitterQuery(func, query.methodDefinition, query.tag)[0];
+    case "generator_function_declaration": {
+      const names = extractTaggedValueFromTreeSitterQuery(
+        func,
+        functionQuery.generatorFunctionDeclaration,
+        functionQuery.tag,
+      );
+      if (names.length > 0) return names[0];
+      return findVariableBinding(func);
+    }
+
+    case "arrow_function":
+      return findVariableBinding(func);
+
+    case "function_expression": {
+      // Check for direct name first (named function expressions)
+      const directNames = extractTaggedValueFromTreeSitterQuery(
+        func,
+        functionQuery.functionExpression,
+        functionQuery.tag,
+      );
+      if (directNames.length > 0) return directNames[0];
+      return findVariableBinding(func);
+    }
+
+    case "method_definition":
+      return extractTaggedValueFromTreeSitterQuery(
+        func,
+        functionQuery.methodDefinition,
+        functionQuery.tag,
+      )[0];
 
     default:
       return undefined;
@@ -421,13 +422,53 @@ function findVariableBinding(func: SyntaxNode): string | undefined {
   if (!parent) return undefined;
 
   const isSingleDeclarator = (decl: SyntaxNode | null | undefined) => {
-    if (!decl || (decl.type !== "lexical_declaration" && decl.type !== "sequence_expression")) return true;
+    if (
+      !decl ||
+      (decl.type !== "lexical_declaration" &&
+        decl.type !== "sequence_expression" &&
+        decl.type !== "assignment_expression" &&
+        decl.type !== "variable_declarator")
+    )
+      return true;
+    
+    if(decl.type === "variable_declarator") {
+      const query = `(variable_declarator
+                        name: (identifier) @name
+                        value: (assignment_expression
+                                left: (identifier) @name))
+                      `;
+      const declarators = extractTaggedValueFromTreeSitterQuery(
+      decl,
+      query,
+      "name"
+    );
+      if (declarators.length > 1) return false;
+    }
+
+    if(decl.type === "assignment_expression") {
+      const query = `                
+                  ((assignment_expression
+                            left: (identifier) @name
+                            right: (assignment_expression
+                                    left: (identifier) @name)))
+                      `;
+      const declarators = extractTaggedValueFromTreeSitterQuery(
+      decl,
+      query,
+      "name"
+    );
+     
+      if (declarators.length > 1) return false;
+    }
+  
     const lexDeclarators = decl.namedChildren.filter(
-      (n) => n?.type === "variable_declarator"
+      (n) => n?.type === "variable_declarator",
     );
     const seqDeclarators = decl.namedChildren.filter(
-      (n) => n?.type === "assignment_expression"
+      (n) => n?.type === "assignment_expression",
     );
+    console.log(lexDeclarators.length, seqDeclarators.length);
+    console.log(lexDeclarators.length <= 1 && seqDeclarators.length <= 1);
     return lexDeclarators.length <= 1 && seqDeclarators.length <= 1;
   };
 
@@ -451,14 +492,12 @@ function findVariableBinding(func: SyntaxNode): string | undefined {
       return name?.type === "property_identifier" ? name.text : undefined;
     }
 
-    case "assignment_expression": {
-      const left = parent.childForFieldName("left");
-      return left?.type === "identifier" ? left.text : undefined;
-    }
-
     case "pair": {
       const key = parent.childForFieldName("key");
-      return key && (key.type === "property_identifier" || key.type === "identifier")
+      return key &&
+        (key.type === "property_identifier" ||
+          key.type === "identifier" ||
+          key.type === "string")
         ? key.text
         : undefined;
     }

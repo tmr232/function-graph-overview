@@ -465,8 +465,7 @@ export function extractGoFunctionName(func: SyntaxNode): string | undefined {
           func,
           assignmentAndDeclarationVarQueryAndTag.query,
           assignmentAndDeclarationVarQueryAndTag.tag,
-        )||
-        nodeType.anonymous
+        ) || nodeType.anonymous
       );
     default:
       return undefined;

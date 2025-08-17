@@ -11,7 +11,9 @@ import { extractTypeScriptFunctionName } from "./cfg-typescript.ts";
  *
  * @param func - The syntax node to search within.
  * @param type - The type of the child node to extract the name from.
+ * 
  * used among all languages (mostly the easy cases of extracting the name).
+ * 
  */
 export function extractNameByNodeType(
   func: SyntaxNode,
@@ -34,16 +36,11 @@ export function extractTaggedValueFromTreeSitterQuery(
 ): string[] {
   const queryObj = new Query(func.tree.language, query);
   const captures = queryObj.captures(func);
-  console.log("---------------------------------------------");
   return captures
     .filter((c) => c.name === tag && c.node.text)
     .map((c) => {
-      //console.log("name: " , c.node.text);
-      //console.log("start index: " ,c.node.startIndex, "end index: ", c.node.endIndex, "start position: ", c.node.startPosition , "end position: ", c.node.endPosition);
       return c.node.text;
-
     });
-
 }
 
 // ADD-LANGUAGES-HERE
