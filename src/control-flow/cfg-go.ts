@@ -13,15 +13,14 @@ import {
   processStatementSequence,
 } from "./common-patterns.ts";
 import {
-  extractNameByNodeType,
-  extractTaggedValueFromTreeSitterQuery,
-} from "./query-utils.ts";
-import {
   type Context,
   GenericCFGBuilder,
   type StatementHandlers,
 } from "./generic-cfg-builder";
 import { treeSitterNoNullNodes } from "./hacks.ts";
+import {
+  extractTaggedValueFromTreeSitterQuery,
+} from "./query-utils.ts";
 import { type SwitchOptions, buildSwitch, collectCases } from "./switch-utils";
 
 export const goLanguageDefinition = {
@@ -424,49 +423,69 @@ function processSwitchlike(
   return blockHandler.update({ entry: headNode, exit: mergeNode });
 }
 
-const nodeType = {
-  // Function-related node types
-  functionDeclaration: "function_declaration",
-  methodDeclaration: "method_declaration",
-  funcLiteral: "func_literal",
+const functionQuery = {
+  functionDeclaration: 
+  `(function_declaration
+	  name :(identifier) @name)`, 
 
-  // identifier lookups
-  identifier: "identifier",
-  fieldIdentifier: "field_identifier",
+  methodDeclaration:
+   `(method_declaration
+	  name: (field_identifier) @name)`,
 
-  // Unnamed functions
-  anonymous: "<anonymous>",
+  tag: "name",
 };
 
-const assignmentAndDeclarationVarQueryAndTag = {
-  query: `
-    [
-      (short_var_declaration
-        left: (expression_list (identifier) @var.name))
-      (assignment_statement
-        left: (expression_list (identifier) @var.name))
-      (var_declaration
-        (var_spec (identifier) @var.name))
-    ]
-  `,
-  tag: "var.name",
-};
+// function findVariableBinding(func: SyntaxNode): string {
+//   const parent = func.parent?.parent;
+//   const anonymous = "<anonymous>";
+//   if (!parent) return anonymous;
+
+//   switch (parent.type) {
+//     case "short_var_declaration": {
+//       // x := func(){}
+//       const names = parent.childForFieldName("left");
+//       return names?.type === "identifier" ? names.text : anonymous;
+//     }
+
+//     case "var_spec":
+//     case "parameter_declaration": {
+//     // var x = func(){}
+//     // func do(f func()) {}
+//     const names = parent.childForFieldName("name");
+//     return names?.type === "identifier" ? names.text : anonymous;
+//     }
+
+//     case "assignment_statement": {
+//       // x = func(){}
+//       const left = parent.childForFieldName("left");
+//       return left?.type === "identifier" ? left.text : anonymous;
+//     }
+
+//     case "keyed_element": {
+//       // map or struct literal: {"a": func(){}} or S{F: func(){}}
+//       const key = parent.childForFieldName("key");
+//       return key ? key.text : anonymous;
+//     }
+
+//     default:
+//       return anonymous;
+//   }
+// }
 
 export function extractGoFunctionName(func: SyntaxNode): string | undefined {
   switch (func.type) {
-    case nodeType.functionDeclaration:
-      return extractNameByNodeType(func, nodeType.identifier);
-    case nodeType.methodDeclaration:
-      return extractNameByNodeType(func, nodeType.fieldIdentifier);
-    case nodeType.funcLiteral:
-      // Check if the func_literal is assigned to a variable or is a standalone function
-      return (
-        extractTaggedValueFromTreeSitterQuery(
-          func,
-          assignmentAndDeclarationVarQueryAndTag.query,
-          assignmentAndDeclarationVarQueryAndTag.tag,
-        )
-      );
+    case "function_declaration":
+      return extractTaggedValueFromTreeSitterQuery(func, functionQuery.functionDeclaration ,functionQuery.tag)[0];
+    case "method_declaration":
+      return extractTaggedValueFromTreeSitterQuery(func, functionQuery.methodDeclaration ,functionQuery.tag)[0];
+    //case "func_literal":
+    //{
+      // console.log("-----------------");
+      // console.log("father: ", func.parent?.type);
+      // console.log("grandfather: ", func.parent?.parent?.type);
+      // console.log("great-grandfather: ", func.parent?.parent?.parent?.type);
+      // return findVariableBinding(func);
+    //}
     default:
       return undefined;
   }

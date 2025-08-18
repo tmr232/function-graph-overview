@@ -7,13 +7,13 @@ import {
   processReturnStatement,
   processThrowStatement,
 } from "./common-patterns.ts";
-import { extractNameByNodeType } from "./query-utils.ts";
 import {
   type Context,
   GenericCFGBuilder,
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
 import { pairwise, zip } from "./itertools.ts";
+import { extractNameByNodeType } from "./query-utils.ts";
 
 export const cppLanguageDefinition = {
   wasmPath: treeSitterCpp,

@@ -1,12 +1,12 @@
-import { describe, test, expect } from "vitest";
-import { iterFunctions } from "../file-parsing/bun.ts";
+import { describe, expect, test } from "vitest";
 import { extractFunctionName } from "../control-flow/function-utils.ts";
+import { iterFunctions } from "../file-parsing/bun.ts";
 
 /**
  * Helpers
  */
 const namesFrom = (code: string) =>
-  [...iterFunctions(code, "C")].map(f => extractFunctionName(f, "C"));
+  [...iterFunctions(code, "C")].map((f) => extractFunctionName(f, "C"));
 
 /* ================================
    UNIQUE FUNCTION EXTRACTION CASES

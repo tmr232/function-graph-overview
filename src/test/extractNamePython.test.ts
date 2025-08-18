@@ -1,12 +1,12 @@
 import { describe, expect, test } from "vitest";
-import { iterFunctions } from "../file-parsing/bun.ts";
 import { extractFunctionName } from "../control-flow/function-utils.ts";
+import { iterFunctions } from "../file-parsing/bun.ts";
 
 /**
  * Helpers
  */
 const namesFrom = (code: string) =>
-  [...iterFunctions(code, "Python")].map(f =>
+  [...iterFunctions(code, "Python")].map((f) =>
     extractFunctionName(f, "Python"),
   );
 
@@ -65,13 +65,7 @@ class C:
     def c(cls): pass
     async def a(self): pass
     `;
-    expect(namesFrom(code)).toEqual([
-      "__init__",
-      "m",
-      "s",
-      "c",
-      "a",
-    ]);
+    expect(namesFrom(code)).toEqual(["__init__", "m", "s", "c", "a"]);
   });
 
   test("nested classes", () => {
@@ -109,4 +103,3 @@ def outer():
     expect(namesFrom(code)).toEqual(["outer", "helper"]);
   });
 });
-

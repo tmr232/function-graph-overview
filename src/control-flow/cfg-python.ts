@@ -6,13 +6,13 @@ import {
   forEachLoopProcessor,
   processStatementSequence,
 } from "./common-patterns.ts";
-import { extractTaggedValueFromTreeSitterQuery } from "./query-utils.ts";
 import {
   type Context,
   GenericCFGBuilder,
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
 import { maybe, zip } from "./itertools.ts";
+import { extractTaggedValueFromTreeSitterQuery } from "./query-utils.ts";
 
 export const pythonLanguageDefinition = {
   wasmPath: treeSitterPython,
@@ -627,19 +627,19 @@ function processWhileStatement(
 }
 
 const functionQuery = {
-  functionDefinition: 
-  `(function_definition
+  functionDefinition: `(function_definition
 	    name :(identifier)@name)`,
 
-  tag : "name"  
-}
+  tag: "name",
+};
 
-export function extractPythonFunctionName(func: SyntaxNode): string | undefined {
-  const name = extractTaggedValueFromTreeSitterQuery( 
-          func,
-          functionQuery.functionDefinition,
-          functionQuery.tag,
-        );
-   return name.length > 1 ? undefined : name[0];
-
+export function extractPythonFunctionName(
+  func: SyntaxNode,
+): string | undefined {
+  const name = extractTaggedValueFromTreeSitterQuery(
+    func,
+    functionQuery.functionDefinition,
+    functionQuery.tag,
+  );
+  return name.length > 1 ? undefined : name[0];
 }

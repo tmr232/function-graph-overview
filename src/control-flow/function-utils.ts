@@ -1,11 +1,10 @@
+import type { Node as SyntaxNode } from "web-tree-sitter";
 import type { Language } from "./cfg";
 import { extractCFunctionName } from "./cfg-c.ts";
 import { extractCppFunctionName } from "./cfg-cpp.ts";
 import { extractGoFunctionName } from "./cfg-go.ts";
 import { extractPythonFunctionName } from "./cfg-python.ts";
 import { extractTypeScriptFunctionName } from "./cfg-typescript.ts";
-import { type Node as SyntaxNode } from "web-tree-sitter";
-
 
 // ADD-LANGUAGES-HERE
 /**

@@ -167,4 +167,3 @@ describe("C++", () => {
     expect(foundNames).toContainEqual(expectedNames);
   });
 });
-
