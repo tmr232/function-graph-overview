@@ -21,6 +21,7 @@ import {
 } from "./generic-cfg-builder.ts";
 import { treeSitterNoNullNodes } from "./hacks.ts";
 import { buildSwitch, collectCases } from "./switch-utils.ts";
+import { extractTaggedValueFromTreeSitterQuery } from "./query-utils.ts";
 
 export const cLanguageDefinition = {
   wasmPath: treeSitterC,
@@ -167,9 +168,20 @@ function processSwitchlike(switchSyntax: SyntaxNode, ctx: Context): BasicBlock {
   return blockHandler.update({ entry: headNode, exit: mergeNode });
 }
 
+const functionQuery = {
+  functionDeclarator: 
+  `(function_declarator
+	  declarator:(identifier)@name)`,
+
+  tag : "name"  
+}
+
 export function extractCFunctionName(func: SyntaxNode): string | undefined {
-  if (func.type === "function_definition") {
-    return func.descendantsOfType("identifier")[0]?.text;
-  }
-  return undefined;
+  const name = extractTaggedValueFromTreeSitterQuery(
+          func,
+          functionQuery.functionDeclarator,
+          functionQuery.tag,
+        );
+   return name.length > 1 ? undefined : name[0];
+
 }

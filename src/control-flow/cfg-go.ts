@@ -15,7 +15,7 @@ import {
 import {
   extractNameByNodeType,
   extractTaggedValueFromTreeSitterQuery,
-} from "./function-utils.ts";
+} from "./query-utils.ts";
 import {
   type Context,
   GenericCFGBuilder,
@@ -465,7 +465,7 @@ export function extractGoFunctionName(func: SyntaxNode): string | undefined {
           func,
           assignmentAndDeclarationVarQueryAndTag.query,
           assignmentAndDeclarationVarQueryAndTag.tag,
-        ) || nodeType.anonymous
+        )
       );
     default:
       return undefined;

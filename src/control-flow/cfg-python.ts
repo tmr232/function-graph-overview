@@ -6,7 +6,7 @@ import {
   forEachLoopProcessor,
   processStatementSequence,
 } from "./common-patterns.ts";
-import { extractNameByNodeType } from "./function-utils.ts";
+import { extractNameByNodeType } from "./query-utils.ts";
 import {
   type Context,
   GenericCFGBuilder,

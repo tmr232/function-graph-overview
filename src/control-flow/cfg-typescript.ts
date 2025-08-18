@@ -17,7 +17,7 @@ import {
   processStatementSequence,
   processThrowStatement,
 } from "./common-patterns.ts";
-import { extractTaggedValueFromTreeSitterQuery } from "./function-utils.ts";
+import { extractTaggedValueFromTreeSitterQuery } from "./query-utils.ts";
 import {
   type Context,
   GenericCFGBuilder,
