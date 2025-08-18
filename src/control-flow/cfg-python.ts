@@ -6,7 +6,7 @@ import {
   forEachLoopProcessor,
   processStatementSequence,
 } from "./common-patterns.ts";
-import { extractNameByNodeType } from "./query-utils.ts";
+import { extractTaggedValueFromTreeSitterQuery } from "./query-utils.ts";
 import {
   type Context,
   GenericCFGBuilder,
@@ -626,11 +626,20 @@ function processWhileStatement(
   return matcher.update({ entry: condBlock.entry, exit: exitNode });
 }
 
-export function extractPythonFunctionName(
-  func: SyntaxNode,
-): string | undefined {
-  if (func.type === "function_definition") {
-    return extractNameByNodeType(func, "identifier");
-  }
-  return undefined;
+const functionQuery = {
+  functionDefinition: 
+  `(function_definition
+	    name :(identifier)@name)`,
+
+  tag : "name"  
+}
+
+export function extractPythonFunctionName(func: SyntaxNode): string | undefined {
+  const name = extractTaggedValueFromTreeSitterQuery( 
+          func,
+          functionQuery.functionDefinition,
+          functionQuery.tag,
+        );
+   return name.length > 1 ? undefined : name[0];
+
 }

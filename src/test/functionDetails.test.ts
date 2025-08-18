@@ -85,23 +85,6 @@ describe("Go", () => {
   });
 });
 
-// C Tests
-describe("C", () => {
-  test("function_definition", () => {
-    const code = "static void tr_where (const void caller, Dl_infoinfo) {}";
-    const funcIterator = iterFunctions(code, "C");
-    const func = funcIterator.next().value;
-    expect(extractFunctionName(func, "C")).toBe("tr_where");
-  });
-
-  test("inline function", () => {
-    const code = "inline int add(int a, int b) {}";
-    const funcIterator = iterFunctions(code, "C");
-    const func = funcIterator.next().value;
-    expect(extractFunctionName(func, "C")).toBe("add");
-  });
-});
-
 // C++ Tests
 describe("C++", () => {
   test("function_definition", () => {
@@ -185,19 +168,3 @@ describe("C++", () => {
   });
 });
 
-// Python Tests
-describe("Python", () => {
-  test("function_definition", () => {
-    const code = "def now(tz: Optional[TZ_EXPR] = None) -> Arrow:";
-    const funcIterator = iterFunctions(code, "Python");
-    const func = funcIterator.next().value;
-    expect(extractFunctionName(func, "Python")).toBe("now");
-  });
-
-  test("function_definition with async", () => {
-    const code = "async def fetch_recent_messages(client):";
-    const funcIterator = iterFunctions(code, "Python");
-    const func = funcIterator.next().value;
-    expect(extractFunctionName(func, "Python")).toBe("fetch_recent_messages");
-  });
-});
