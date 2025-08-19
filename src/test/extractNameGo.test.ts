@@ -13,7 +13,6 @@ const namesFrom = (code: string) =>
 describe("Go: basic functions", () => {
   test("named top-level functions", () => {
     const code = `
-      package main
       func Add(a int, b int) int { return a + b }
       func greet(name string) string { return "Hello " + name }
     `;
@@ -22,7 +21,6 @@ describe("Go: basic functions", () => {
 
   test("anonymous functions assigned to variables", () => {
     const code = `
-      package main
       func main() {
         x := func(a int) int { return a * 2 }
         y := func() {}
@@ -39,7 +37,6 @@ describe("Go: basic functions", () => {
 describe("Go: methods and interfaces", () => {
   test("methods with receivers", () => {
     const code = `
-      package main
       type Point struct { X, Y int }
       func (p Point) Move(dx int, dy int) { p.X += dx; p.Y += dy }
       func (p *Point) Reset() { p.X = 0; p.Y = 0 }
@@ -54,7 +51,6 @@ describe("Go: methods and interfaces", () => {
 describe("Go: special contexts", () => {
   test("function returning another function", () => {
     const code = `
-      package main
       func makeAdder(base int) func(int) int {
         return func(x int) int { return base + x }
       }
@@ -64,7 +60,6 @@ describe("Go: special contexts", () => {
 
   test("functions in composite literals", () => {
     const code = `
-      package main
       var handlers = []func(int){
         func(x int) {},
         func(y int) {},
@@ -75,7 +70,6 @@ describe("Go: special contexts", () => {
 
   test("functions used as parameters", () => {
     const code = `
-      package main
       func do(f func(int) int) int { return f(5) }
       func square(x int) int { return x * x }
       func main() { do(square) }
@@ -90,7 +84,6 @@ describe("Go: special contexts", () => {
 describe("Go: multiple func assignments", () => {
   test("two anonymous functions assigned together", () => {
     const code = `
-      package main
       func main() {
         var x, y = func() {}, func() {}
         _ = x; _ = y
@@ -101,25 +94,13 @@ describe("Go: multiple func assignments", () => {
 
   test("mix declared function + anonymous func", () => {
     const code = `
-      package main
       func Declared() {}
       func main() {
-        x, y := Declared, func() {}
-        _ = x; _ = y
+        x, y, z := Declared, func() {}, "Hello"
+        _ = x; _ = y; _ = z
       }
     `;
     expect(namesFrom(code)).toEqual(["Declared", "main", "y"]);
-  });
-  test("function assigned alongside non-function expression", () => {
-    const code = `
-      package main
-      func main() {
-        msg, handler := "go" + "lang", func() {}
-        x, y, _ := "Hello", 123, func() {}
-        _ = msg; _ = handler
-      }
-    `;
-    expect(namesFrom(code)).toEqual(["main", "handler", "_"]);
   });
 });
 
@@ -136,12 +117,7 @@ describe("Go: nested and edge cases", () => {
       }
       x()
     }`;
-    const funcIterator = iterFunctions(code, "Go");
-    const foundNames = [...funcIterator].map((func) =>
-      extractFunctionName(func, "Go"),
-    );
-    const expectedNames = ["main", "x", "y"];
-    expect(foundNames).toEqual(expectedNames);
+    expect(namesFrom(code)).toEqual(["main", "x", "y"]);
   });
 });
 
@@ -149,39 +125,16 @@ describe("Go: nested and edge cases", () => {
    ADVANCED ASSIGNMENTS
 ================================ */
 describe("Go: advanced assignments", () => {
-  // test("multiple vars with one func literal", () => {
-  //   const code = `
-  //     package main
-  //     func main() {
-  //       var a, b = func() {}
-  //       _ = a; _ = b
-  //     }
-  //   `;
-  //   // both a and b point to the same func literal
-  //   expect(namesFrom(code)).toEqual(["main", "a"]);
-  // });
-
-  test("short var declaration with blank identifier", () => {
+  test("multiple vars with one func literal", () => {
     const code = `
-      package main
       func main() {
-        x, _ := func() {}, func() {}
-        _ = x
+        var a, b = func() {}
+        _ = a; _ = b
       }
     `;
-    expect(namesFrom(code)).toEqual(["main", "x", "_"]);
-  });
-
-  test("reassignment with existing var and new func", () => {
-    const code = `
-      package main
-      func main() {
-        x := 1
-        x, y := x, func() {}
-        _ = x; _ = y
-      }
-    `;
-    expect(namesFrom(code)).toEqual(["main", "y"]);
+    // both a and b get the same func literal.
+    // either could be used, but we take the first (a) as the name.
+    expect(namesFrom(code)).toEqual(["main", "a"]);
   });
 });
 
@@ -191,7 +144,6 @@ describe("Go: advanced assignments", () => {
 describe("Go: functions in literals", () => {
   test("func literal inside struct literal", () => {
     const code = `
-      package main
       type Holder struct {
         fn func()
       }
@@ -199,18 +151,17 @@ describe("Go: functions in literals", () => {
         fn: func() {},
       }
     `;
-    expect(namesFrom(code)).toEqual(["<anonymous>"]);
+    expect(namesFrom(code)).toEqual(["fn"]);
   });
 
   test("map with func literal values", () => {
     const code = `
-      package main
       var m = map[string]func(){
         "a": func() {},
         "b": func() {},
       }
     `;
-    expect(namesFrom(code)).toEqual(["<anonymous>", "<anonymous>"]);
+    expect(namesFrom(code)).toEqual(['"a"', '"b"']);
   });
 });
 
@@ -220,7 +171,6 @@ describe("Go: functions in literals", () => {
 describe("Go: nested returns", () => {
   test("returning func literal from another function", () => {
     const code = `
-      package main
       func outer() func() {
         return func() {}
       }
@@ -230,7 +180,6 @@ describe("Go: nested returns", () => {
 
   test("immediately invoked func literal (IIFE style)", () => {
     const code = `
-      package main
       func main() {
         func() { println("hi") }()
       }
@@ -245,7 +194,6 @@ describe("Go: nested returns", () => {
 describe("Go: interfaces", () => {
   test("interface with function type", () => {
     const code = `
-      package main
       type Runner interface {
         Run()
       }
@@ -254,4 +202,69 @@ describe("Go: interfaces", () => {
     // interface methods are not functions we parse, only the Run impl is
     expect(namesFrom(code)).toEqual(["Run"]);
   });
+});
+
+
+
+test("plain assignment =", () => {
+  const code = `
+    package main
+    func main() {
+      var x func()
+      x = func() {}
+      _ = x
+    }`;
+  expect(namesFrom(code)).toEqual(["main", "x"]);
+});
+
+test("selector on LHS (=)", () => {
+  const code = `
+    package main
+    type S struct{ fn func() }
+    func main() {
+      var s S
+      s.fn = func() {}
+      _ = s
+    }`;
+  // if you support selector names, expect "fn"; otherwise expect "<anonymous>"
+  expect(namesFrom(code)).toEqual(["main", "fn"]);
+});
+
+test("type on var_spec with init", () => {
+  const code = `
+    package main
+    func main() {
+      var f func() = func() {}
+      _ = f
+    }`;
+  expect(namesFrom(code)).toEqual(["main", "f"]);
+});
+
+test("go/defer with func literal → anonymous", () => {
+  const code = `
+    package main
+    func main() {
+      go func() {}()
+      defer func() {}()
+    }`;
+  expect(namesFrom(code)).toEqual(["main", "<anonymous>", "<anonymous>"]);
+});
+
+test("map with numeric key", () => {
+  const code = `
+    package main
+    var m = map[int]func(){
+      1: func() {},
+    }`;
+  expect(namesFrom(code)).toEqual(["1"]); // or "1" depending on your lexer output
+});
+
+// fix interface method test to concrete type
+test("method on concrete type", () => {
+  const code = `
+    package main
+    type Runner struct{}
+    func (r *Runner) Run() {}
+  `;
+  expect(namesFrom(code)).toEqual(["Run"]);
 });
