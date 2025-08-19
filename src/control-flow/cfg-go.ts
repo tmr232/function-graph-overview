@@ -18,9 +18,7 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder";
 import { treeSitterNoNullNodes } from "./hacks.ts";
-import {
-  extractTaggedValueFromTreeSitterQuery,
-} from "./query-utils.ts";
+import { extractTaggedValueFromTreeSitterQuery } from "./query-utils.ts";
 import { type SwitchOptions, buildSwitch, collectCases } from "./switch-utils";
 
 export const goLanguageDefinition = {
@@ -424,68 +422,99 @@ function processSwitchlike(
 }
 
 const functionQuery = {
-  functionDeclaration: 
-  `(function_declaration
-	  name :(identifier) @name)`, 
+  functionDeclaration: `(function_declaration
+	  name :(identifier) @name)`,
 
-  methodDeclaration:
-   `(method_declaration
+  methodDeclaration: `(method_declaration
 	  name: (field_identifier) @name)`,
 
-  tag: "name",
+  shortVarDeclaration: `(short_var_declaration
+    left: (expression_list (identifier) @name))`,
+
+  varSpec: `(var_spec
+    name: (identifier) @name)`,
+
+  name: "name",
 };
 
-// function findVariableBinding(func: SyntaxNode): string {
-//   const parent = func.parent?.parent;
-//   const anonymous = "<anonymous>";
-//   if (!parent) return anonymous;
+function findVariableBinding(func: SyntaxNode): string {
+  const parent = func.parent;
+  const anonymous = "<anonymous>";
+  if (!parent) return anonymous;
 
-//   switch (parent.type) {
-//     case "short_var_declaration": {
-//       // x := func(){}
-//       const names = parent.childForFieldName("left");
-//       return names?.type === "identifier" ? names.text : anonymous;
-//     }
+  const findFuncIndex = (
+    func: SyntaxNode,
+    right: SyntaxNode,
+  ): number | null => {
+    for (let i = 0; i < right.namedChildCount; i++) {
+      const child = right.namedChild(i);
+      if (child?.type === "func_literal" && child.id === func.id) {
+        return i;
+      }
+    }
+    return null;
+  };
 
-//     case "var_spec":
-//     case "parameter_declaration": {
-//     // var x = func(){}
-//     // func do(f func()) {}
-//     const names = parent.childForFieldName("name");
-//     return names?.type === "identifier" ? names.text : anonymous;
-//     }
+  if (parent.parent?.type === "short_var_declaration") {
+    const left = extractTaggedValueFromTreeSitterQuery(
+      parent.parent,
+      functionQuery.shortVarDeclaration,
+      functionQuery.name,
+    );
+    
+    const right = parent.parent.childForFieldName("right");
+    if (!right) return anonymous;
 
-//     case "assignment_statement": {
-//       // x = func(){}
-//       const left = parent.childForFieldName("left");
-//       return left?.type === "identifier" ? left.text : anonymous;
-//     }
+    // We have the variable names on the left and the expressions on the right.
+    // We go over the right-hand expressions one by one and check if it is a func_literal.
+    // If it is, and the id is the same as the current function, we return the variable at the same index.
+    //
+    // Examples:
+    //   y, x := func() { return 1 }, func() { return 2 }
+    // If we're looking for func() { return 2 } -> index is 1 -> variable x.
+    //
+    // Example 2:
+    //   x, y, z := "Hello", 123, func() {}
+    // At index 2: func_literal → matches variable z.
+    //
+    // In the end we return the variable name if found, otherwise <anonymous>.
+    const foundIndex = findFuncIndex(func, right);
+    if (foundIndex !== null) {
+      return left[foundIndex] ?? anonymous;
+    }
+  }
 
-//     case "keyed_element": {
-//       // map or struct literal: {"a": func(){}} or S{F: func(){}}
-//       const key = parent.childForFieldName("key");
-//       return key ? key.text : anonymous;
-//     }
-
-//     default:
-//       return anonymous;
-//   }
-// }
-
+  if (parent.parent?.type === "var_spec") {
+    const vars = extractTaggedValueFromTreeSitterQuery(
+      parent.parent,
+      functionQuery.varSpec,
+      functionQuery.name,
+    );
+    const value = parent.parent.childForFieldName("value");
+    if (!value) return anonymous;
+    const foundIndex = findFuncIndex(func, value);
+    if (foundIndex !== null) {
+      return vars[foundIndex] ?? anonymous;
+    }
+  }
+  return anonymous;
+}
 export function extractGoFunctionName(func: SyntaxNode): string | undefined {
   switch (func.type) {
     case "function_declaration":
-      return extractTaggedValueFromTreeSitterQuery(func, functionQuery.functionDeclaration ,functionQuery.tag)[0];
+      return extractTaggedValueFromTreeSitterQuery(
+        func,
+        functionQuery.functionDeclaration,
+        functionQuery.name,
+      )[0];
     case "method_declaration":
-      return extractTaggedValueFromTreeSitterQuery(func, functionQuery.methodDeclaration ,functionQuery.tag)[0];
-    //case "func_literal":
-    //{
-      // console.log("-----------------");
-      // console.log("father: ", func.parent?.type);
-      // console.log("grandfather: ", func.parent?.parent?.type);
-      // console.log("great-grandfather: ", func.parent?.parent?.parent?.type);
-      // return findVariableBinding(func);
-    //}
+      return extractTaggedValueFromTreeSitterQuery(
+        func,
+        functionQuery.methodDeclaration,
+        functionQuery.name,
+      )[0];
+    case "func_literal":
+      return findVariableBinding(func);
     default:
       return undefined;
   }

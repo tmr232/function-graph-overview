@@ -13,12 +13,12 @@ const namesFrom = (code: string) =>
 ================================ */
 describe("C: function name extraction", () => {
   test("basic definition", () => {
-    const code = `int add(int a, int b) { return a + b; }`;
+    const code = "int add(int a, int b) { return a + b; }";
     expect(namesFrom(code)).toEqual(["add"]);
   });
 
   test("inline + static", () => {
-    const code = `static inline double square(double x) { return x * x; }`;
+    const code = "static inline double square(double x) { return x * x; }";
     expect(namesFrom(code)).toEqual(["square"]);
   });
 
@@ -65,7 +65,7 @@ describe("C: function name extraction", () => {
   });
 
   test("recursive function", () => {
-    const code = `int fact(int n) { return n <= 1 ? 1 : n * fact(n-1); }`;
+    const code = "int fact(int n) { return n <= 1 ? 1 : n * fact(n-1); }";
     expect(namesFrom(code)).toEqual(["fact"]);
   });
 

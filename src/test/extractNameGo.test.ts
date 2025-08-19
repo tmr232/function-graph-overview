@@ -6,9 +6,7 @@ import { iterFunctions } from "../file-parsing/bun.ts";
  * Helpers
  */
 const namesFrom = (code: string) =>
-  [...iterFunctions(code, "Go")].map((f) =>
-    extractFunctionName(f, "Go"),
-  );
+  [...iterFunctions(code, "Go")].map((f) => extractFunctionName(f, "Go"));
 /* ================================
    BASIC FUNCTIONS
 ================================ */
@@ -61,7 +59,7 @@ describe("Go: special contexts", () => {
         return func(x int) int { return base + x }
       }
     `;
-    expect(namesFrom(code)).toEqual(["makeAdder"]);
+    expect(namesFrom(code)).toEqual(["makeAdder", "<anonymous>"]);
   });
 
   test("functions in composite literals", () => {
@@ -112,6 +110,17 @@ describe("Go: multiple func assignments", () => {
     `;
     expect(namesFrom(code)).toEqual(["Declared", "main", "y"]);
   });
+  test("function assigned alongside non-function expression", () => {
+    const code = `
+      package main
+      func main() {
+        msg, handler := "go" + "lang", func() {}
+        x, y, _ := "Hello", 123, func() {}
+        _ = msg; _ = handler
+      }
+    `;
+    expect(namesFrom(code)).toEqual(["main", "handler", "_"]);
+  });
 });
 
 /* ================================
@@ -132,6 +141,117 @@ describe("Go: nested and edge cases", () => {
       extractFunctionName(func, "Go"),
     );
     const expectedNames = ["main", "x", "y"];
-    expect(foundNames).toContainEqual(expectedNames);
+    expect(foundNames).toEqual(expectedNames);
+  });
+});
+
+/* ================================
+   ADVANCED ASSIGNMENTS
+================================ */
+describe("Go: advanced assignments", () => {
+  // test("multiple vars with one func literal", () => {
+  //   const code = `
+  //     package main
+  //     func main() {
+  //       var a, b = func() {}
+  //       _ = a; _ = b
+  //     }
+  //   `;
+  //   // both a and b point to the same func literal
+  //   expect(namesFrom(code)).toEqual(["main", "a"]);
+  // });
+
+  test("short var declaration with blank identifier", () => {
+    const code = `
+      package main
+      func main() {
+        x, _ := func() {}, func() {}
+        _ = x
+      }
+    `;
+    expect(namesFrom(code)).toEqual(["main", "x", "_"]);
+  });
+
+  test("reassignment with existing var and new func", () => {
+    const code = `
+      package main
+      func main() {
+        x := 1
+        x, y := x, func() {}
+        _ = x; _ = y
+      }
+    `;
+    expect(namesFrom(code)).toEqual(["main", "y"]);
+  });
+});
+
+/* ================================
+   FUNCTIONS AS FIELDS AND LITERALS
+================================ */
+describe("Go: functions in literals", () => {
+  test("func literal inside struct literal", () => {
+    const code = `
+      package main
+      type Holder struct {
+        fn func()
+      }
+      var h = Holder{
+        fn: func() {},
+      }
+    `;
+    expect(namesFrom(code)).toEqual(["<anonymous>"]);
+  });
+
+  test("map with func literal values", () => {
+    const code = `
+      package main
+      var m = map[string]func(){
+        "a": func() {},
+        "b": func() {},
+      }
+    `;
+    expect(namesFrom(code)).toEqual(["<anonymous>", "<anonymous>"]);
+  });
+});
+
+/* ================================
+   NESTED + RETURN CASES
+================================ */
+describe("Go: nested returns", () => {
+  test("returning func literal from another function", () => {
+    const code = `
+      package main
+      func outer() func() {
+        return func() {}
+      }
+    `;
+    expect(namesFrom(code)).toEqual(["outer", "<anonymous>"]);
+  });
+
+  test("immediately invoked func literal (IIFE style)", () => {
+    const code = `
+      package main
+      func main() {
+        func() { println("hi") }()
+      }
+    `;
+    expect(namesFrom(code)).toEqual(["main", "<anonymous>"]);
+  });
+});
+
+/* ================================
+   INTERFACES AND METHODS
+================================ */
+describe("Go: interfaces", () => {
+  test("interface with function type", () => {
+    const code = `
+      package main
+      type Runner interface {
+        Run()
+      }
+      func (r *Runner) Run() {}
+    `;
+    // interface methods are not functions we parse, only the Run impl is
+    expect(namesFrom(code)).toEqual(["Run"]);
   });
 });

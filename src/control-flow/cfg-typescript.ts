@@ -17,13 +17,13 @@ import {
   processStatementSequence,
   processThrowStatement,
 } from "./common-patterns.ts";
-import { extractTaggedValueFromTreeSitterQuery } from "./query-utils.ts";
 import {
   type Context,
   GenericCFGBuilder,
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
 import { treeSitterNoNullNodes } from "./hacks.ts";
+import { extractTaggedValueFromTreeSitterQuery } from "./query-utils.ts";
 import { buildSwitch, collectCases } from "./switch-utils.ts";
 
 const typeScriptFunctionNodeTypes = [
