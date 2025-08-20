@@ -107,11 +107,11 @@ describe("objects and classes", () => {
       };
     `;
     expect(namesFrom(code)).toEqual([
-      "a",
+      "<anonymous>",
       "b",
       "gen",
       "c",
-      '"computed"',
+      '["computed"]',
       "named",
       "computed",
     ]);
@@ -391,14 +391,15 @@ describe("special cases", () => {
       @dec
       class C {
         m() {}
+        y = () => 2;
       }
     `;
-    expect(namesFrom(code1)).toEqual(["dec", "m"]);
+    expect(namesFrom(code1)).toEqual(["dec", "m", "y"]);
 
     const code2 = `
       enum E {
         A = 1,
-        B = (() => 2)()
+        B = () => 2
       }
     `;
     expect(namesFrom(code2)).toEqual(["<anonymous>"]);
@@ -432,4 +433,5 @@ describe("special cases", () => {
     const code4 = "const o = { ...{ fn: function spreaded() {} } };";
     expect(namesFrom(code4)).toEqual(["spreaded"]);
   });
+
 });

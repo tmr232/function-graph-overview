@@ -434,107 +434,27 @@ const functionQuery = {
   varSpec: `(var_spec
     name: (identifier) @name)`,
 
-   keyedElement: `(keyed_element
-    (literal_element [
-      (interpreted_string_literal) @name
-      (identifier) @name
-      (int_literal) @name         
-    ]))
-    `,
-
-   assignmentStatement: `(assignment_statement
+  assignmentStatement: `(assignment_statement
   left: (expression_list
     [
       (identifier) @name
-      (selector_expression
-        field: (field_identifier) @name)
+      (selector_expression) @name
     ]))`,
 
   name: "name",
 };
-
-// function findVariableBinding(func: SyntaxNode): string {
-//   const parent = func.parent;
-//   const anonymous = "<anonymous>";
-//   if (!parent) return anonymous;
-
-//   const findFuncIndex = (
-//     func: SyntaxNode,
-//     right: SyntaxNode,
-//   ): number | null => {
-//     for (let i = 0; i < right.namedChildCount; i++) {
-//       const child = right.namedChild(i);
-//       if (child?.type === "func_literal" && child.id === func.id) {
-//         return i;
-//       }
-//     }
-//     return null;
-//   };
-
-//   if (parent.parent?.type === "short_var_declaration") {
-//     const left = extractTaggedValueFromTreeSitterQuery(
-//       parent.parent,
-//       functionQuery.shortVarDeclaration,
-//       functionQuery.name,
-//     );
-
-//     const right = parent.parent.childForFieldName("right");
-//     if (!right) return anonymous;
-
-//     // We have the variable names on the left and the expressions on the right.
-//     // We go over the right-hand expressions one by one and check if it is a func_literal.
-//     // If it is, and the id is the same as the current function, we return the variable at the same index.
-//     //
-//     // Examples:
-//     //   y, x := func() { return 1 }, func() { return 2 }
-//     // If we're looking for func() { return 2 } -> index is 1 -> variable x.
-//     //
-//     // Example 2:
-//     //   x, y, z := "Hello", 123, func() {}
-//     // At index 2: func_literal → matches variable z.
-//     //
-//     // In the end we return the variable name if found, otherwise <anonymous>.
-//     const foundIndex = findFuncIndex(func, right);
-//     if (foundIndex !== null) {
-//       return left[foundIndex] ?? anonymous;
-//     }
-//   }
-
-//   if (parent.parent?.type === "var_spec") {
-//     const vars = extractTaggedValueFromTreeSitterQuery(
-//       parent.parent,
-//       functionQuery.varSpec,
-//       functionQuery.name,
-//     );
-//     const value = parent.parent.childForFieldName("value");
-//     if (!value) return anonymous;
-//     const foundIndex = findFuncIndex(func, value);
-//     if (foundIndex !== null) {
-//       return vars[foundIndex] ?? anonymous;
-//     }
-//   }
-
-//   if (parent.parent?.type === "keyed_element") {
-//     // keyed_element in Go is always 1 key per 1 value.
-//     // Works same for map and struct literals, like "a": func(){} or fn: func(){}
-//     return (
-//       extractTaggedValueFromTreeSitterQuery(
-//         parent.parent,
-//         functionQuery.keyedElement,
-//         functionQuery.name,
-//       )[0] ?? anonymous
-//     );
-//   }
-
-//   return anonymous;
-// }
 
 function findVariableBinding(func: SyntaxNode): string {
   const parent = func.parent;
   const anonymous = "<anonymous>";
   if (!parent) return anonymous;
 
-  const findFuncIndex = (funcNode: SyntaxNode, right: SyntaxNode): number | null => {
+  // Walk the right-hand expression list and find the index of *this* func literal.
+  // I compare by node id to be safe — same node, same id.
+  const findFuncIndex = (
+    funcNode: SyntaxNode,
+    right: SyntaxNode,
+  ): number | null => {
     for (let i = 0; i < right.namedChildCount; i++) {
       const child = right.namedChild(i);
       if (child?.type === "func_literal" && child.id === funcNode.id) return i;
@@ -542,13 +462,19 @@ function findVariableBinding(func: SyntaxNode): string {
     return null;
   };
 
-  // generic binder for nodes that have a left list of identifiers and a right list of expressions
+  // We run the left query -> get names[], locate our func literal on the right -> get index,
+  // then names[index] is the binding. 
+  // If nothing matches, return "<anonymous>".
   const bindFromPair = (
     node: SyntaxNode,
     leftPattern: string,
     rightField: "right" | "value" = "right",
   ): string => {
-    const left = extractTaggedValueFromTreeSitterQuery(node, leftPattern, functionQuery.name);
+    const left = extractTaggedValueFromTreeSitterQuery(
+      node,
+      leftPattern,
+      functionQuery.name,
+    );
     const right = node.childForFieldName(rightField);
     if (!right) return anonymous;
 
@@ -558,31 +484,29 @@ function findVariableBinding(func: SyntaxNode): string {
 
   // := short var declaration
   if (parent.parent?.type === "short_var_declaration") {
-    return bindFromPair(parent.parent, functionQuery.shortVarDeclaration, "right");
-  }
-
-  // = plain assignment
-  if (parent.parent?.type === "assignment_statement") {
-    return bindFromPair(parent.parent, functionQuery.assignmentStatement, "right");
-  }
-
-  // var spec (note: right field is "value")
-  if (parent.parent?.type === "var_spec") {
-    return bindFromPair(parent.parent, functionQuery.varSpec, "value");
-  }
-
-  // keyed element (map/struct literal)
-  if (parent.parent?.type === "keyed_element") {
-    // 1 key -> 1 value
-    return (
-      extractTaggedValueFromTreeSitterQuery(
-        parent.parent,
-        functionQuery.keyedElement,
-        functionQuery.name,
-      )[0] ?? anonymous
+    return bindFromPair(
+      parent.parent,
+      functionQuery.shortVarDeclaration,
+      "right",
     );
   }
 
+  // = plain assignment ...
+  if (parent.parent?.type === "assignment_statement") {
+    return bindFromPair(
+      parent.parent,
+      functionQuery.assignmentStatement,
+      "right",
+    );
+  }
+
+  // var x, y = ..., func(){}, ...
+  // Same idea, but Go’s var spec uses "value". 
+  if (parent.parent?.type === "var_spec") {
+    return bindFromPair(parent.parent, functionQuery.varSpec, "value");
+  }
+  
+  // If we got here, we didn’t find a binding in the supported contexts.
   return anonymous;
 }
 

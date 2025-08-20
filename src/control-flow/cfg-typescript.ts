@@ -328,23 +328,12 @@ const functionQuery = {
   variableDeclaratorIdentifier: `(variable_declarator 
     name: (identifier) @name)`,
 
-  methodDefinition: `[
-  (method_definition
-    name: (property_identifier) @name)
-
-  (method_definition
-  name: (computed_property_name
-           [
-             (string)
-             (identifier)
-           ] @name))
-  (pair
-    key: (string) @name)
-    
-  (method_definition
-    name: (private_property_identifier) @name)
-
-]`,
+  methodDefinition: `(method_definition
+  [
+    (property_identifier) @name
+    (computed_property_name) @name
+    (private_property_identifier) @name
+  ])`,
 
   functionExpression: `(function_expression 
     name: (identifier) @name)`,
@@ -457,15 +446,6 @@ function findVariableBinding(func: SyntaxNode): string {
         : anonymous;
     }
 
-    case "pair": {
-      const key = parent.childForFieldName("key");
-      return key &&
-        (key.type === "property_identifier" ||
-          key.type === "identifier" ||
-          key.type === "string")
-        ? key.text
-        : anonymous;
-    }
     default:
       return anonymous;
   }

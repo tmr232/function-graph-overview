@@ -149,19 +149,10 @@ describe("Go: functions in literals", () => {
       }
       var h = Holder{
         fn: func() {},
-      }
+        1: func() {},
+      };
     `;
-    expect(namesFrom(code)).toEqual(["fn"]);
-  });
-
-  test("map with func literal values", () => {
-    const code = `
-      var m = map[string]func(){
-        "a": func() {},
-        "b": func() {},
-      }
-    `;
-    expect(namesFrom(code)).toEqual(['"a"', '"b"']);
+    expect(namesFrom(code)).toEqual(["<anonymous>", "<anonymous>"]);
   });
 });
 
@@ -204,8 +195,6 @@ describe("Go: interfaces", () => {
   });
 });
 
-
-
 test("plain assignment =", () => {
   const code = `
     package main
@@ -227,7 +216,7 @@ test("selector on LHS (=)", () => {
       _ = s
     }`;
   // if you support selector names, expect "fn"; otherwise expect "<anonymous>"
-  expect(namesFrom(code)).toEqual(["main", "fn"]);
+  expect(namesFrom(code)).toEqual(["main", "s.fn"]);
 });
 
 test("type on var_spec with init", () => {
@@ -250,15 +239,6 @@ test("go/defer with func literal → anonymous", () => {
   expect(namesFrom(code)).toEqual(["main", "<anonymous>", "<anonymous>"]);
 });
 
-test("map with numeric key", () => {
-  const code = `
-    package main
-    var m = map[int]func(){
-      1: func() {},
-    }`;
-  expect(namesFrom(code)).toEqual(["1"]); // or "1" depending on your lexer output
-});
-
 // fix interface method test to concrete type
 test("method on concrete type", () => {
   const code = `
@@ -267,4 +247,21 @@ test("method on concrete type", () => {
     func (r *Runner) Run() {}
   `;
   expect(namesFrom(code)).toEqual(["Run"]);
+});
+
+describe("Go: keyed elements - not supported", () => {
+  test("simple keys", () => {
+    const code = `
+      var _ = map[interface{}]func(){
+        "simple":        func() {},  
+        'r':             func() {},  
+        fmt.Sprint(1):   func() {},         
+        T(1):            func() {},        
+        [2]int{1,2}:     func() {},   
+        1 + 2:           func() {},     
+      }
+    `;
+    expect(namesFrom(code)).toEqual([
+      "<anonymous>", "<anonymous>", "<anonymous>", "<anonymous>", "<anonymous>", "<anonymous>"])
+  });
 });
