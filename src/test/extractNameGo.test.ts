@@ -262,6 +262,12 @@ describe("Go: keyed elements - not supported", () => {
       }
     `;
     expect(namesFrom(code)).toEqual([
-      "<anonymous>", "<anonymous>", "<anonymous>", "<anonymous>", "<anonymous>", "<anonymous>"])
+      "<anonymous>",
+      "<anonymous>",
+      "<anonymous>",
+      "<anonymous>",
+      "<anonymous>",
+      "<anonymous>",
+    ]);
   });
 });

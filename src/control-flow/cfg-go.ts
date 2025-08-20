@@ -463,7 +463,7 @@ function findVariableBinding(func: SyntaxNode): string {
   };
 
   // We run the left query -> get names[], locate our func literal on the right -> get index,
-  // then names[index] is the binding. 
+  // then names[index] is the binding.
   // If nothing matches, return "<anonymous>".
   const bindFromPair = (
     node: SyntaxNode,
@@ -501,15 +501,14 @@ function findVariableBinding(func: SyntaxNode): string {
   }
 
   // var x, y = ..., func(){}, ...
-  // Same idea, but Go’s var spec uses "value". 
+  // Same idea, but Go’s var spec uses "value".
   if (parent.parent?.type === "var_spec") {
     return bindFromPair(parent.parent, functionQuery.varSpec, "value");
   }
-  
+
   // If we got here, we didn’t find a binding in the supported contexts.
   return anonymous;
 }
-
 
 export function extractGoFunctionName(func: SyntaxNode): string | undefined {
   switch (func.type) {

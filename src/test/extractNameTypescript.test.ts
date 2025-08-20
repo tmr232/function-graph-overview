@@ -433,5 +433,4 @@ describe("special cases", () => {
     const code4 = "const o = { ...{ fn: function spreaded() {} } };";
     expect(namesFrom(code4)).toEqual(["spreaded"]);
   });
-
 });
