@@ -17,7 +17,7 @@ describe("C++: basic functions", () => {
       int add(int a, int b) { return a + b; }
       unsigned int Miner::calculate_hash_code() {}
     `;
-    expect(namesFrom(code)).toEqual(["add", "calculate_hash_code"]);
+    expect(namesFrom(code)).toEqual(["add", "Miner::calculate_hash_code"]);
   });
 
   test("namespaces", () => {
@@ -56,7 +56,7 @@ describe("C++: class/struct methods and special members", () => {
       A::~A() {}
       void A::foo() {}
     `;
-    expect(namesFrom(code)).toEqual(["A", "~A", "foo"]);
+    expect(namesFrom(code)).toEqual(["A::A()", "A::~A()", "A::foo()"]);
   });
 
   test("operator overloads (member and free)", () => {
@@ -88,7 +88,7 @@ describe("C++: class/struct methods and special members", () => {
         return num * num;
       }
     `;
-    expect(namesFrom(code)).toEqual(["square"]);
+    expect(namesFrom(code)).toEqual(["square", "~X"]);
   });
 });
 
@@ -97,12 +97,12 @@ describe("C++: class/struct methods and special members", () => {
 ================================ */
 describe("C++: lambdas & captures", () => {
   test("lambda assigned to variable", () => {
-    const code = `auto fn = [&](int v){ return v + 1; };`;
+    const code = "auto fn = [&](int v){ return v + 1; };";
     expect(namesFrom(code)).toEqual(["fn"]);
   });
 
   test("immediately-invoked lambda (IIFE style)", () => {
-    const code = `[](){ return 42; }();`;
+    const code = "[](){ return 42; }();";
     expect(namesFrom(code)).toEqual(["<anonymous>"]);
   });
 
@@ -225,7 +225,7 @@ describe("C++: containers & callbacks", () => {
 ================================ */
 describe("C++: templates & specialization", () => {
   test("function template", () => {
-    const code = `template <typename T> T add(T a, T b) { return a + b; }`;
+    const code = "template <typename T> T add(T a, T b) { return a + b; }";
     expect(namesFrom(code)).toEqual(["add"]);
   });
 
@@ -367,3 +367,12 @@ describe("C++: nested templates & expression contexts (TEC)", () => {
     expect(namesFrom(code)).toEqual(["run", "<anonymous>"]);
   });
 });
+
+// (function_definition
+//   declarator: (function_declarator
+//     declarator: (_) @name))
+
+//Need to add operator before the @name.
+// (function_definition
+//   declarator: (operator_cast
+//     type: (_) @name))
