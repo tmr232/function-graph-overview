@@ -3,7 +3,7 @@ import { extractFunctionName } from "../control-flow/function-utils.ts";
 import { iterFunctions } from "../file-parsing/bun.ts";
 
 /**
- * Helpers
+ * Helper
  */
 const namesFrom = (code: string) =>
   [...iterFunctions(code, "Python")].map((f) =>
@@ -42,9 +42,9 @@ def outer():
 
   test("async and generator functions", () => {
     const code = `
-async def a(): pass
-def gen():
-    yield 1
+    async def a(): pass
+    def gen():
+        yield 1
     `;
     expect(namesFrom(code)).toEqual(["a", "gen"]);
   });

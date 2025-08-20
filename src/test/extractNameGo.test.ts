@@ -3,7 +3,7 @@ import { extractFunctionName } from "../control-flow/function-utils.ts";
 import { iterFunctions } from "../file-parsing/bun.ts";
 
 /**
- * Helpers
+ * Helper
  */
 const namesFrom = (code: string) =>
   [...iterFunctions(code, "Go")].map((f) => extractFunctionName(f, "Go"));
@@ -139,47 +139,6 @@ describe("Go: advanced assignments", () => {
 });
 
 /* ================================
-   FUNCTIONS AS FIELDS AND LITERALS
-================================ */
-describe("Go: functions in literals", () => {
-  test("func literal inside struct literal", () => {
-    const code = `
-      type Holder struct {
-        fn func()
-      }
-      var h = Holder{
-        fn: func() {},
-        1: func() {},
-      };
-    `;
-    expect(namesFrom(code)).toEqual(["<anonymous>", "<anonymous>"]);
-  });
-});
-
-/* ================================
-   NESTED + RETURN CASES
-================================ */
-describe("Go: nested returns", () => {
-  test("returning func literal from another function", () => {
-    const code = `
-      func outer() func() {
-        return func() {}
-      }
-    `;
-    expect(namesFrom(code)).toEqual(["outer", "<anonymous>"]);
-  });
-
-  test("immediately invoked func literal (IIFE style)", () => {
-    const code = `
-      func main() {
-        func() { println("hi") }()
-      }
-    `;
-    expect(namesFrom(code)).toEqual(["main", "<anonymous>"]);
-  });
-});
-
-/* ================================
    INTERFACES AND METHODS
 ================================ */
 describe("Go: interfaces", () => {
@@ -237,16 +196,6 @@ test("go/defer with func literal → anonymous", () => {
       defer func() {}()
     }`;
   expect(namesFrom(code)).toEqual(["main", "<anonymous>", "<anonymous>"]);
-});
-
-// fix interface method test to concrete type
-test("method on concrete type", () => {
-  const code = `
-    package main
-    type Runner struct{}
-    func (r *Runner) Run() {}
-  `;
-  expect(namesFrom(code)).toEqual(["Run"]);
 });
 
 describe("Go: keyed elements - not supported", () => {

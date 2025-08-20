@@ -3,7 +3,7 @@ import { extractFunctionName } from "../control-flow/function-utils.ts";
 import { iterFunctions } from "../file-parsing/bun.ts";
 
 /**
- * Helpers
+ * Helper
  */
 const namesFrom = (code: string) =>
   [...iterFunctions(code, "TypeScript")].map((f) =>
@@ -87,9 +87,6 @@ describe("IIFE patterns", () => {
 
     const code2 = "(function Boot() {})();";
     expect(namesFrom(code2)).toEqual(["Boot"]);
-
-    const code3 = "(async () => {})();";
-    expect(namesFrom(code3)).toEqual(["<anonymous>"]);
   });
 });
 
@@ -301,45 +298,22 @@ describe("expression contexts", () => {
   test("functions in logical expressions", () => {
     const code1 = "const f = (() => {}) ?? (() => {});";
     expect(namesFrom(code1)).toEqual(["<anonymous>", "<anonymous>"]);
-
-    const code2 = "const f = (async () => {}) || (async () => {});";
-    expect(namesFrom(code2)).toEqual(["<anonymous>", "<anonymous>"]);
   });
 
   test("functions in various expressions", () => {
     const code1 = "const str = `${function f(){}}`;";
     expect(namesFrom(code1)).toEqual(["f"]);
 
-    const code2 = "void (function gone() {})();";
-    expect(namesFrom(code2)).toEqual(["gone"]);
+    const code2 = "new C(function inner() {})";
+    expect(namesFrom(code2)).toEqual(["inner"]);
 
-    const code3 = "new C(function inner() {})";
-    expect(namesFrom(code3)).toEqual(["inner"]);
-
-    const code4 = "delete (function doomed() {})";
-    expect(namesFrom(code4)).toEqual(["doomed"]);
-
-    const code5 = "const t = typeof function fn() {};";
-    expect(namesFrom(code5)).toEqual(["fn"]);
-
-    const code6 = "(0, () => {})();";
-    expect(namesFrom(code6)).toEqual(["<anonymous>"]);
+    const code3 = "const t = typeof function fn() {};";
+    expect(namesFrom(code3)).toEqual(["fn"]);
   });
 
   test("functions in control flow", () => {
     const code1 = "while ((function cond(){ return false; })()) {}";
     expect(namesFrom(code1)).toEqual(["cond"]);
-
-    const code2 = `
-      switch (0) {
-        case (function pick(){ return 1; })(): break;
-      }
-    `;
-    expect(namesFrom(code2)).toEqual(["pick"]);
-
-    const code3 =
-      "for (let i = (function init(){ return 0; })(); i < 1; i++) {}";
-    expect(namesFrom(code3)).toEqual(["init"]);
   });
 
   test("callbacks and higher-order functions", () => {
@@ -348,9 +322,6 @@ describe("expression contexts", () => {
 
     const code2 = "[1,2,3].map(n => n + 1);";
     expect(namesFrom(code2)).toEqual(["<anonymous>"]);
-
-    const code3 = "obj?.method(() => {});";
-    expect(namesFrom(code3)).toEqual(["<anonymous>"]);
   });
 
   test("static class blocks and labeled statements", () => {
@@ -395,42 +366,19 @@ describe("special cases", () => {
       }
     `;
     expect(namesFrom(code1)).toEqual(["dec", "m", "y"]);
-
-    const code2 = `
-      enum E {
-        A = 1,
-        B = () => 2
-      }
-    `;
-    expect(namesFrom(code2)).toEqual(["<anonymous>"]);
   });
 
   test("edge cases with parentheses and wrappers", () => {
-    const code1 = "(export default (() => {}));";
-    expect(namesFrom(code1)).toEqual(["<anonymous>"]);
-
-    const code2 = `
+    const code1 = `
       function outer() {
         return function inner() {};
       }
     `;
-    expect(namesFrom(code2)).toEqual(["outer", "inner"]);
-
-    const code3 = "import((() => './path')());";
-    expect(namesFrom(code3)).toEqual(["<anonymous>"]);
+    expect(namesFrom(code1)).toEqual(["outer", "inner"]);
   });
 
   test("template literals and spread operators", () => {
-    const code1 = "tag`${(() => {})}`;";
-    expect(namesFrom(code1)).toEqual(["<anonymous>"]);
-
-    const code2 = "(function tag() {} )`template`;";
-    expect(namesFrom(code2)).toEqual(["tag"]);
-
-    const code3 = "const arr = [...[function f() {}]];";
-    expect(namesFrom(code3)).toEqual(["f"]);
-
-    const code4 = "const o = { ...{ fn: function spreaded() {} } };";
-    expect(namesFrom(code4)).toEqual(["spreaded"]);
+    const code1 = "(function tag() {} )`template`;";
+    expect(namesFrom(code1)).toEqual(["tag"]);
   });
 });

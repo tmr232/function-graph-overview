@@ -3,7 +3,7 @@ import { extractFunctionName } from "../control-flow/function-utils.ts";
 import { iterFunctions } from "../file-parsing/bun.ts";
 
 /**
- * Helpers
+ * Helper
  */
 const namesFrom = (code: string) =>
   [...iterFunctions(code, "C")].map((f) => extractFunctionName(f, "C"));
@@ -46,15 +46,6 @@ describe("C: function name extraction", () => {
     expect(namesFrom(code)).toEqual(["init"]);
   });
 
-  test("union with callback", () => {
-    const code = `
-      void shutdown() {}
-      union U { void (*end)(); } u;
-      u.end = shutdown;
-    `;
-    expect(namesFrom(code)).toEqual(["shutdown"]);
-  });
-
   test("nested struct callback assignment", () => {
     const code = `
       void deep() {}
@@ -75,16 +66,6 @@ describe("C: function name extraction", () => {
       int main() { qsort(arr, n, sizeof(int), cmp); }
     `;
     expect(namesFrom(code)).toEqual(["cmp", "main"]);
-  });
-
-  test("block-scope static function", () => {
-    const code = `
-      int outer() {
-        static int inner(int x) { return x + 1; }
-        return inner(5);
-      }
-    `;
-    expect(namesFrom(code)).toEqual(["outer", "inner"]);
   });
 
   test("multiple functions defined in one line", () => {

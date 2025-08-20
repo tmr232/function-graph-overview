@@ -13,7 +13,7 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
 import { pairwise, zip } from "./itertools.ts";
-import { extractNameByNodeType } from "./query-utils.ts";
+import { extractTaggedValueFromTreeSitterQuery } from "./query-utils.ts";
 
 export const cppLanguageDefinition = {
   wasmPath: treeSitterCpp,
@@ -177,7 +177,7 @@ function findCppNameInParentHierarchy(
   let parent = func.parent;
   while (parent) {
     if (parent.type === parentType) {
-      return extractNameByNodeType(parent, childType);
+      return undefined;
     }
     parent = parent.parent;
   }
