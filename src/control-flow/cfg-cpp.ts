@@ -151,72 +151,91 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
 }
 
 const functionQuery = {
-  functionDefinitionOperator: `(function_definition
-   declarator: (operator_cast
-     type: (_) @name))`,
+  functionDeclarator: `
+   (function_declarator
+    declarator: [
+      (identifier)        @name
+      (type_identifier)   @name
+      (destructor_name)   @name
+      (operator_name)     @name
+      (operator_cast)     @name
+      (field_identifier)  @name
+      (qualified_identifier
+        name: [
+          (identifier)        @name
+          (type_identifier)   @name
+          (destructor_name)   @name
+          (operator_name)     @name
+          (operator_cast)     @name
+        ])
+    ])
+`,
+  functionDefinitionOperator: `
+(function_definition
+  declarator: (operator_cast
+    (_) @type))   
 
-  functionDefinition: `(function_definition
-   declarator: (function_declarator
-     declarator: (_) @name))`,
+(function_definition
+  declarator: (qualified_identifier
+    name: (operator_cast
+      (_) @type)))`,
 
   name: "name",
+
+  type: "type",
 };
 
-export function extractCppFunctionName(func: SyntaxNode): string | undefined {
-  if (func.type === "function_definition") {
-    const name = extractTaggedValueFromTreeSitterQuery(
-      func,
-      functionQuery.functionDefinitionOperator,
-      functionQuery.name,
-    )[0];
-    return name === undefined
-      ? extractTaggedValueFromTreeSitterQuery(
-          func,
-          functionQuery.functionDefinition,
-          functionQuery.name,
-        )[0]
-      : `operator ${name}`;
+/**
+ * Get the function_declarator node for a function_definition.
+ * Uses descendantsOfType to find it directly, even if wrapped
+ * in pointer/reference/parenthesized declarators.
+ */
+function getFunctionDeclarator(funcDef: SyntaxNode): SyntaxNode | null {
+  const body = funcDef.childForFieldName("body");
+  const end = body ? body.startPosition : funcDef.endPosition;
+
+  const nodes = funcDef.descendantsOfType(
+    "function_declarator",
+    funcDef.startPosition,
+    end,
+  );
+
+  for (const node of nodes) {
+    const decl = node?.childForFieldName("declarator");
+    if (
+      decl &&
+      (decl.type === "identifier" ||
+        decl.type === "operator_name" ||
+        decl.type === "operator_cast" ||
+        decl.type === "destructor_name" ||
+        decl.type === "qualified_identifier" ||
+        decl.type === "type_identifier" ||
+        decl.type === "field_identifier")
+    ) {
+      return node;
+    }
   }
-  return undefined;
+
+  return null;
 }
 
-// int*&   ref_to_ptr_global()   { static int v=42; static int* p=&v; static int*& r=p; return r; }        // -> ref_to_ptr_global
-// int**   ptr_to_ptr_global()   { static int v=5;  static int* p=&v; static int** pp=&p; return pp; }     // -> ptr_to_ptr_global
-// int***  ptr_to_ptr_to_ptr()   { static int v=1;  static int* p=&v; static int** pp=&p; return &pp; }    // -> ptr_to_ptr_to_ptr
+export function extractCppFunctionName(func: SyntaxNode): string | undefined {
+  if (func.type !== "function_definition") return undefined; //Just for now...
 
-// int&    ref_to_array_elem()   { static int arr[3]={1,2,3}; return arr[1]; }                             // -> ref_to_array_elem
-// int (*  ptr_to_array())[3]    { static int arr[3]={7,8,9}; return &arr; }                               // -> ptr_to_array
-// int (&  ref_to_array())[3]    { static int arr[3]={10,11,12}; return arr; }                             // -> ref_to_array
+  const declarator = getFunctionDeclarator(func);
+  const name = declarator
+    ? extractTaggedValueFromTreeSitterQuery(
+        declarator,
+        functionQuery.functionDeclarator,
+        functionQuery.name,
+      )[0]
+    : undefined;
+  if (name) return name;
 
-// int&&   rvalue_ref_global()   { static int v=2; return std::move(v); }                                  // -> rvalue_ref_global
-// const int& const_ref_global() { static int v=3; return v; }                                             // -> const_ref_global
-// volatile int* volatile_ptr()  { static volatile int v=4; return &v; }                                   // -> volatile_ptr
-// const int*  const_ptr_global(){ static int v=5; return &v; }                                            // -> const_ptr_global
-
-// int (*  array_of_func_ptrs()[2])(int) {
-//   static int f1(int x){ return x+1; }                                                                  // -> f1
-//   static int f2(int x){ return x+2; }                                                                  // -> f2
-//   static int (*arr[2])(int)={f1,f2};
-//   return arr;
-// }                                                                                                      // -> array_of_func_ptrs
-
-// int (&  array_ref_func())[2]  { static int arr[2]={7,8}; return arr; }                                 // -> array_ref_func
-
-// int (*  func_returns_funcptr())(int) { static int inner(int x){ return x*2; } return inner; }           // -> func_returns_funcptr (+ inner)
-// int (&  func_returns_funcref())(int) { static int impl(int x){ return x*3; } return impl; }             // -> func_returns_funcref (+ impl)
-
-// int*    inner_return(int)      { static int v=77; return &v; }                                          // -> inner_return
-// int* (* ptr_to_func_ret_ptr())(int) { return &inner_return; }                                           // -> ptr_to_func_ret_ptr
-
-// int&    func_ref_impl(int& x)  { return x; }                                                            // -> func_ref_impl
-// int (&  ref_to_func())(int&)   { return func_ref_impl; }                                                // -> ref_to_func
-
-// struct PmfDemo { int f(int x){ return x+1; } int val; };                                                // -> f
-// int (PmfDemo::* ptr_to_memfunc())(int) { return &PmfDemo::f; }                                          // -> ptr_to_memfunc
-// int PmfDemo::* ptr_to_memvar()         { return &PmfDemo::val; }                                        // -> ptr_to_memvar
-
-// int     takes_func_ptr(int (*f)(int)) { return f(5); }                                                  // -> takes_func_ptr
-// int* (& ref_to_ptr_global2())()       { static int* p=nullptr; return p; }                              // -> ref_to_ptr_global2
-// auto    auto_return_func() -> int*    { static int v=9; return &v; }                                    // -> auto_return_func
-
-// int (*  complex_func(int (*f)(int)))(int) { return f; }                                                 // -> complex_func
+  const type = extractTaggedValueFromTreeSitterQuery(
+    func,
+    functionQuery.functionDefinitionOperator,
+    functionQuery.type,
+  )[0];
+  return type ? `operator ${type}` : undefined;
+}
