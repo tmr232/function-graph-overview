@@ -152,24 +152,18 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
 
 const functionQuery = {
   functionDeclarator: `
-   (function_declarator
+    (function_declarator
     declarator: [
-      (identifier)        @name
-      (type_identifier)   @name
-      (destructor_name)   @name
-      (operator_name)     @name
-      (operator_cast)     @name
-      (field_identifier)  @name
-      (qualified_identifier
-        name: [
-          (identifier)        @name
-          (type_identifier)   @name
-          (destructor_name)   @name
-          (operator_name)     @name
-          (operator_cast)     @name
-        ])
-    ])
+      (identifier)        		
+      (type_identifier)   		
+      (destructor_name)   		
+      (operator_name)     		
+      (operator_cast)     		
+      (field_identifier)  		
+      (qualified_identifier)	
+    ] @name )
 `,
+  //  ok this probebly wont work because I can have multiple qualified_identifier
   functionDefinitionOperator: `
 (function_definition
   declarator: (operator_cast
@@ -179,6 +173,12 @@ const functionQuery = {
   declarator: (qualified_identifier
     name: (operator_cast
       (_) @type)))`,
+
+  initDeclarator: `
+   (init_declarator
+      declarator: (_) @name)
+
+  `,
 
   name: "name",
 
@@ -220,22 +220,46 @@ function getFunctionDeclarator(funcDef: SyntaxNode): SyntaxNode | null {
 }
 
 export function extractCppFunctionName(func: SyntaxNode): string | undefined {
-  if (func.type !== "function_definition") return undefined; //Just for now...
+  if (func.type === "function_definition") {
+    const declarator = getFunctionDeclarator(func);
+    const name = declarator
+      ? extractTaggedValueFromTreeSitterQuery(
+          declarator,
+          functionQuery.functionDeclarator,
+          functionQuery.name,
+        )[0]
+      : undefined;
+    if (name) return name;
 
-  const declarator = getFunctionDeclarator(func);
-  const name = declarator
-    ? extractTaggedValueFromTreeSitterQuery(
-        declarator,
-        functionQuery.functionDeclarator,
-        functionQuery.name,
-      )[0]
-    : undefined;
-  if (name) return name;
+    //if we got to here, this means that we don't have function declarator
+    //this is special case, I think only for conversion operators
+    return undefined; //just for now...until Ill figure it out.
+  }
+  if (func.type === "lambda_expression") {
+    const name = findVariableBinding(func);
+    return name ? name : "<anonymous>";
+  }
+  return undefined;
+}
 
-  const type = extractTaggedValueFromTreeSitterQuery(
-    func,
-    functionQuery.functionDefinitionOperator,
-    functionQuery.type,
-  )[0];
-  return type ? `operator ${type}` : undefined;
+function findVariableBinding(func: SyntaxNode): string | undefined {
+  const parent = func.parent;
+  if (!parent) return undefined;
+
+  if (parent.type === "assignment_expression") {
+    const name = parent.childForFieldName("left");
+    return name?.type === "identifier" || name?.type === "field_expression"
+      ? name.text
+      : undefined;
+  }
+
+  if (parent.type === "init_declarator") {
+    const name = extractTaggedValueFromTreeSitterQuery(
+      parent,
+      functionQuery.initDeclarator,
+      functionQuery.name,
+    )[0];
+    return name;
+  }
+  return undefined;
 }

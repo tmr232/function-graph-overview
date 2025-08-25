@@ -174,7 +174,6 @@ test("selector on LHS (=)", () => {
       s.fn = func() {}
       _ = s
     }`;
-  // if you support selector names, expect "fn"; otherwise expect "<anonymous>"
   expect(namesFrom(code)).toEqual(["main", "s.fn"]);
 });
 
