@@ -71,15 +71,15 @@ describe("C++: class/struct methods and special members", () => {
     expect(namesFrom(code)).toEqual(["operator+", "operator+=", "operator-"]);
   });
 
-  // test("call operator and conversion operator", () => {
-  //   const code = `
-  //     struct F {
-  //       int operator()(int v) const { return v; }
-  //       operator bool() const { return true; }
-  //     };
-  //   `;
-  //   expect(namesFrom(code)).toEqual(["operator()", "operator bool"]);
-  // });
+  test("call operator and conversion operator", () => {
+    const code = `
+      struct F {
+        int operator()(int v) const { return v; }
+        operator bool() const { return true; }
+      };
+    `;
+    expect(namesFrom(code)).toEqual(["operator()", "operator bool"]);
+  });
 
   test("local class inside function (ignore class dtor)", () => {
     const code = `
@@ -598,5 +598,321 @@ describe("C++: more function shapes", () => {
       int nf2() noexcept(true) { return 0; }
     `;
     expect(namesFrom(code)).toEqual(["att", "id", "nf", "nf2"]);
+  });
+});
+
+/* ================================
+   CONVERSION OPERATORS (VARIANTS)
+================================ */
+describe("C++: conversion operators (edge cases)", () => {
+  test("qualified conversion operator (out-of-class definition)", () => {
+    const code = `
+      struct QualConv { operator bool() const; };
+      QualConv::operator bool() const { return true; }
+    `;
+    expect(namesFrom(code)).toEqual(["QualConv::operator bool"]);
+  });
+
+  test("explicit + ref-qualifiers + noexcept", () => {
+    const code = `
+      struct RQ {
+        explicit operator int() & noexcept { return 0; }
+        explicit operator const char*() && { return ""; }
+      };
+    `;
+    expect(namesFrom(code)).toEqual(["operator int", "operator const char*"]);
+  });
+
+  test("template-dependent conversion target", () => {
+    const code = `
+      template<typename T>
+      struct As { operator T() const { return T{}; } };
+    `;
+    expect(namesFrom(code)).toEqual(["operator T"]);
+  });
+
+  test("nested qualified conversion (Outer::Inner::operator long)", () => {
+    const code = `
+      struct Outer { struct Inner { operator long() const; }; };
+      long Outer::Inner::operator long() const { return 1; }
+    `;
+    expect(namesFrom(code)).toEqual(["Outer::Inner::operator long"]);
+  });
+
+  test("conversion to pointer type", () => {
+    const code = `
+      struct P {
+        operator int*() const { static int v=0; return &v; }
+      };
+    `;
+    expect(namesFrom(code)).toEqual(["operator int*"]);
+  });
+});
+
+/* ================================
+   USER-DEFINED LITERALS (UDLs)
+================================ */
+describe("C++: user-defined literals", () => {
+  test('integer UDL (operator "" _km)', () => {
+    const code = `
+      unsigned long long operator "" _km(unsigned long long n) { return n * 1000ULL; }
+    `;
+    expect(namesFrom(code)).toEqual(['operator "" _km']);
+  });
+
+  test('templated UDL (operator "" _tag)', () => {
+    const code = `
+      template<char... Cs>
+      int operator "" _tag() { return sizeof...(Cs); }
+    `;
+    expect(namesFrom(code)).toEqual(['operator "" _tag']);
+  });
+});
+
+/* ================================
+   ADDITIONAL OPERATORS (UNIQUE)
+================================ */
+describe("C++: additional operators", () => {
+  test("arrow operator", () => {
+    const code = `
+      struct PtrLike {
+        PtrLike* operator->() { return this; }
+      };
+    `;
+    expect(namesFrom(code)).toEqual(["operator->"]);
+  });
+
+  test("prefix/postfix ++/-- (distinct overloads)", () => {
+    const code = `
+      struct Inc {
+        Inc& operator++() { return *this; }      // prefix
+        Inc  operator++(int) { return *this; }   // postfix
+        Inc& operator--() { return *this; }      // prefix
+        Inc  operator--(int) { return *this; }   // postfix
+      };
+    `;
+    expect(namesFrom(code)).toEqual([
+      "operator++",
+      "operator++",
+      "operator--",
+      "operator--",
+    ]);
+  });
+
+  test("unary/binary bitwise, shifts, logical-not", () => {
+    const code = `
+      struct Ops {
+        int  operator~() const { return 0; }
+        bool operator!() const { return false; }
+        Ops  operator&(const Ops&) const { return {}; }
+        Ops  operator|(const Ops&) const { return {}; }
+        Ops  operator^(const Ops&) const { return {}; }
+        Ops  operator<<(int) const { return {}; }
+        Ops  operator>>(int) const { return {}; }
+      };
+    `;
+    expect(namesFrom(code)).toEqual([
+      "operator~",
+      "operator!",
+      "operator&",
+      "operator|",
+      "operator^",
+      "operator<<",
+      "operator>>",
+    ]);
+  });
+
+  test("address-of and dereference as members", () => {
+    const code = `
+      struct FancyPtr {
+        FancyPtr* operator&() { return this; }
+        int& operator*() { static int v = 0; return v; }
+      };
+    `;
+    expect(namesFrom(code)).toEqual(["operator&", "operator*"]);
+  });
+});
+
+/* ================================
+   FRIEND & STREAM OPERATORS
+================================ */
+describe("C++: friend & stream operators", () => {
+  test("friend operator== inline inside class", () => {
+    const code = `
+      struct S2 {
+        int x;
+        friend bool operator==(const S2& a, const S2& b) { return a.x == b.x; }
+      };
+    `;
+    expect(namesFrom(code)).toEqual(["operator=="]);
+  });
+
+  test("friend declared in class, defined out-of-class (operator+ and operator<<)", () => {
+    const code = `
+      #include <ostream>
+      struct S {
+        int x;
+        friend S operator+(S a, S b);
+        friend std::ostream& operator<<(std::ostream& os, const S& s);
+      };
+      S operator+(S a, S b) { return {a.x + b.x}; }
+      std::ostream& operator<<(std::ostream& os, const S& s) { return os; }
+    `;
+    expect(namesFrom(code)).toEqual(["operator+", "operator<<"]);
+  });
+});
+
+/* ===============================================
+   MEMORY MGMT OPS: PLACEMENT / ALIGNED / SIZED
+================================================ */
+describe("C++: memory management operators (placement/aligned/sized)", () => {
+  test("placement new/delete", () => {
+    const code = `
+      #include <cstddef>
+      void* operator new(std::size_t, void* p) noexcept { return p; }
+      void  operator delete(void*, void*) noexcept {}
+    `;
+    expect(namesFrom(code)).toEqual(["operator new", "operator delete"]);
+  });
+
+  test("aligned new/delete", () => {
+    const code = `
+      #include <new>
+      #include <cstddef>
+      void* operator new(std::size_t sz, std::align_val_t) { return ::operator new(sz); }
+      void  operator delete(void* p, std::align_val_t) noexcept {}
+    `;
+    expect(namesFrom(code)).toEqual(["operator new", "operator delete"]);
+  });
+
+  test("sized delete / sized delete[]", () => {
+    const code = `
+      #include <cstddef>
+      void operator delete(void* p, std::size_t) noexcept {}
+      void operator delete[](void* p, std::size_t) noexcept {}
+    `;
+    expect(namesFrom(code)).toEqual(["operator delete", "operator delete[]"]);
+  });
+});
+
+/* ================================
+   USER-DEFINED LITERALS (MORE)
+================================ */
+describe("C++: user-defined literals (more forms)", () => {
+  test('floating UDL', () => {
+    const code = `
+      long double operator "" _deg(long double d) { return d; }
+    `;
+    expect(namesFrom(code)).toEqual(['operator "" _deg']);
+  });
+
+  test('raw UDL with (const char*, size_t)', () => {
+    const code = `
+      #include <cstddef>
+      const char* operator "" _raw(const char* s, std::size_t n) { return s; }
+    `;
+    expect(namesFrom(code)).toEqual(['operator "" _raw']);
+  });
+
+  test('namespace-scoped UDL', () => {
+    const code = `
+      namespace L {
+        unsigned long long operator "" _id(unsigned long long n) { return n; }
+      }
+    `;
+    expect(namesFrom(code)).toEqual(['operator "" _id']);
+  });
+});
+
+/* ===========================================
+   CALL OPERATOR: TEMPLATES & CONSTRAINTS
+=========================================== */
+describe("C++: call operator templates & constraints", () => {
+  test("templated operator()", () => {
+    const code = `
+      struct Fun {
+        template<typename T>
+        int operator()(T) const { return 0; }
+      };
+    `;
+    expect(namesFrom(code)).toEqual(["operator()"]);
+  });
+
+  test("requires-constrained operator+ (free template)", () => {
+    const code = `
+      template<typename T>
+      concept Addable = requires(T a){ a + a; };
+
+      template<typename T> struct Vec { T v; };
+
+      template<Addable T>
+      Vec<T> operator+(Vec<T> a, Vec<T> b) { return {a.v + b.v}; }
+    `;
+    expect(namesFrom(code)).toEqual(["operator+"]);
+  });
+
+  test("operator() with ref-qualifier and noexcept", () => {
+    const code = `
+      struct Callable {
+        int operator()() & noexcept { return 1; }
+      };
+    `;
+    expect(namesFrom(code)).toEqual(["operator()"]);
+  });
+});
+
+/* ================================
+   COROUTINES: OPERATOR CO_AWAIT
+================================ */
+describe("C++: coroutines operator", () => {
+  test("operator co_await as member", () => {
+    const code = `
+      struct Awaiter {
+        bool await_ready() noexcept { return true; }
+        void await_suspend(int) noexcept {}
+        void await_resume() noexcept {}
+      };
+      struct Holder {
+        Awaiter operator co_await() noexcept { return {}; }
+      };
+    `;
+    expect(namesFrom(code)).toEqual([
+      "await_ready",
+      "await_suspend",
+      "await_resume",
+      "operator co_await",
+    ]);
+  });
+});
+
+/* ======================================
+   QUALIFIED OPERATOR DEFINITIONS
+====================================== */
+describe("C++: qualified operator definitions", () => {
+  test("nested class out-of-class operator()", () => {
+    const code = `
+      struct Outer { struct Fn { int operator()(int); }; };
+      int Outer::Fn::operator()(int){ return 0; }
+    `;
+    expect(namesFrom(code)).toEqual(["Outer::Fn::operator()"]);
+  });
+
+  test("operator* with trailing return type", () => {
+    const code = `
+      struct It {
+        int v;
+        auto operator*() -> int& { return v; }
+      };
+    `;
+    expect(namesFrom(code)).toEqual(["operator*"]);
+  });
+
+  test("operator() with attributes", () => {
+    const code = `
+      struct AttrCall {
+        [[nodiscard]] int operator()(int x) const { return x; }
+      };
+    `;
+    expect(namesFrom(code)).toEqual(["operator()"]);
   });
 });

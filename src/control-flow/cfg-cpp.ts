@@ -231,10 +231,12 @@ export function extractCppFunctionName(func: SyntaxNode): string | undefined {
       : undefined;
     if (name) return name;
 
-    //if we got to here, this means that we don't have function declarator
-    //this is special case, I think only for conversion operators
-    return undefined; //just for now...until Ill figure it out.
+    //From my observations, the only functions that do not have a function_declarator child are conversion operators.
+    //To extract their names, I need to manipulate strings (not ideal, but it works).
+    const fullDeclarationName = func.childForFieldName("declarator");
+    return fullDeclarationName?.text.split("(")[0]; 
   }
+
   if (func.type === "lambda_expression") {
     const name = findVariableBinding(func);
     return name ? name : "<anonymous>";
