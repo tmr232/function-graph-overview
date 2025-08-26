@@ -1,14 +1,14 @@
 import { Query, type Node as SyntaxNode } from "web-tree-sitter";
 
 /**
- * Extract a single tagged value from a syntax tree using a Tree-sitter query.
+ * Extracts the text content of syntax tree nodes captured by a Tree-sitter query.
  *
  * @param func - The syntax node from which to extract the tree.
  * @param query - The Tree-sitter query string to execute.
  * @param tag - The capture tag name to filter by.
  *
  */
-export function extractTaggedValueFromTreeSitterQuery(
+export function extractCapturedTextsByTag(
   func: SyntaxNode,
   query: string,
   tag: string,

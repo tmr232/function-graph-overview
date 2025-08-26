@@ -18,7 +18,7 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder";
 import { treeSitterNoNullNodes } from "./hacks.ts";
-import { extractTaggedValueFromTreeSitterQuery } from "./query-utils.ts";
+import { extractCapturedTextsByTag } from "./query-utils.ts";
 import { type SwitchOptions, buildSwitch, collectCases } from "./switch-utils";
 
 export const goLanguageDefinition = {
@@ -435,22 +435,21 @@ const functionQuery = {
     name: (identifier) @name)`,
 
   assignmentStatement: `(assignment_statement
-  left: (expression_list
-    [
-      (identifier) @name
-      (selector_expression) @name
-    ]))`,
+    left: (expression_list
+      [
+        (identifier) @name
+        (selector_expression) @name
+      ]))`,
 
   name: "name",
 };
 
-function findVariableBinding(func: SyntaxNode): string {
+function findVariableBinding(func: SyntaxNode): string | undefined {
   const parent = func.parent;
-  const anonymous = "<anonymous>";
-  if (!parent) return anonymous;
+  if (!parent) return undefined;
 
   // Walk the right-hand expression list and find the index of *this* func literal.
-  // I compare by node id to be safe — same node, same id.
+  // I compare by node id to be safe - same node, same id.
   const findFuncIndex = (
     funcNode: SyntaxNode,
     right: SyntaxNode,
@@ -464,22 +463,22 @@ function findVariableBinding(func: SyntaxNode): string {
 
   // We run the left query -> get names[], locate our func literal on the right -> get index,
   // then names[index] is the binding.
-  // If nothing matches, return "<anonymous>".
+  // If nothing matches, return undefined.
   const bindFromPair = (
     node: SyntaxNode,
     leftPattern: string,
     rightField: "right" | "value" = "right",
-  ): string => {
-    const left = extractTaggedValueFromTreeSitterQuery(
+  ): string | undefined => {
+    const left = extractCapturedTextsByTag(
       node,
       leftPattern,
       functionQuery.name,
     );
     const right = node.childForFieldName(rightField);
-    if (!right) return anonymous;
+    if (!right) return undefined;
 
     const foundIndex = findFuncIndex(func, right);
-    return foundIndex !== null ? (left[foundIndex] ?? anonymous) : anonymous;
+    return foundIndex !== null ? (left[foundIndex] ?? undefined) : undefined;
   };
 
   // := short var declaration
@@ -506,26 +505,26 @@ function findVariableBinding(func: SyntaxNode): string {
     return bindFromPair(parent.parent, functionQuery.varSpec, "value");
   }
 
-  // If we got here, we didn’t find a binding in the supported contexts.
-  return anonymous;
+  // If we got here, we didn't find a binding in the supported contexts.
+  return undefined;
 }
 
 export function extractGoFunctionName(func: SyntaxNode): string | undefined {
   switch (func.type) {
     case "function_declaration":
-      return extractTaggedValueFromTreeSitterQuery(
+      return extractCapturedTextsByTag(
         func,
         functionQuery.functionDeclaration,
         functionQuery.name,
       )[0];
     case "method_declaration":
-      return extractTaggedValueFromTreeSitterQuery(
+      return extractCapturedTextsByTag(
         func,
         functionQuery.methodDeclaration,
         functionQuery.name,
       )[0];
     case "func_literal":
-      return findVariableBinding(func);
+      return findVariableBinding(func) ?? "<anonymous>";
     default:
       return undefined;
   }

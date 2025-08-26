@@ -20,7 +20,7 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
 import { treeSitterNoNullNodes } from "./hacks.ts";
-import { extractTaggedValueFromTreeSitterQuery } from "./query-utils.ts";
+import { extractCapturedTextsByTag } from "./query-utils.ts";
 import { buildSwitch, collectCases } from "./switch-utils.ts";
 
 export const cLanguageDefinition = {
@@ -176,10 +176,9 @@ const functionQuery = {
 };
 
 export function extractCFunctionName(func: SyntaxNode): string | undefined {
-  const name = extractTaggedValueFromTreeSitterQuery(
+  return extractCapturedTextsByTag(
     func,
     functionQuery.functionDeclarator,
     functionQuery.tag,
-  );
-  return name.length > 1 ? undefined : name[0];
+  )[0];
 }

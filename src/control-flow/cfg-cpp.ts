@@ -13,7 +13,7 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
 import { pairwise, zip } from "./itertools.ts";
-import { extractTaggedValueFromTreeSitterQuery } from "./query-utils.ts";
+import { extractCapturedTextsByTag } from "./query-utils.ts";
 
 export const cppLanguageDefinition = {
   wasmPath: treeSitterCpp,
@@ -163,26 +163,13 @@ const functionQuery = {
       (qualified_identifier)	
     ] @name )
 `,
-  //  ok this probebly wont work because I can have multiple qualified_identifier
-  functionDefinitionOperator: `
-(function_definition
-  declarator: (operator_cast
-    (_) @type))   
-
-(function_definition
-  declarator: (qualified_identifier
-    name: (operator_cast
-      (_) @type)))`,
 
   initDeclarator: `
    (init_declarator
       declarator: (_) @name)
-
   `,
 
   name: "name",
-
-  type: "type",
 };
 
 /**
@@ -223,7 +210,7 @@ export function extractCppFunctionName(func: SyntaxNode): string | undefined {
   if (func.type === "function_definition") {
     const declarator = getFunctionDeclarator(func);
     const name = declarator
-      ? extractTaggedValueFromTreeSitterQuery(
+      ? extractCapturedTextsByTag(
           declarator,
           functionQuery.functionDeclarator,
           functionQuery.name,
@@ -234,12 +221,12 @@ export function extractCppFunctionName(func: SyntaxNode): string | undefined {
     //From my observations, the only functions that do not have a function_declarator child are conversion operators.
     //To extract their names, I need to manipulate strings (not ideal, but it works).
     const fullDeclarationName = func.childForFieldName("declarator");
-    return fullDeclarationName?.text.split("(")[0]; 
+    return fullDeclarationName?.text.split("(")[0];
   }
 
   if (func.type === "lambda_expression") {
     const name = findVariableBinding(func);
-    return name ? name : "<anonymous>";
+    return name ?? "<anonymous>";
   }
   return undefined;
 }
@@ -256,12 +243,11 @@ function findVariableBinding(func: SyntaxNode): string | undefined {
   }
 
   if (parent.type === "init_declarator") {
-    const name = extractTaggedValueFromTreeSitterQuery(
+    return extractCapturedTextsByTag(
       parent,
       functionQuery.initDeclarator,
       functionQuery.name,
     )[0];
-    return name;
   }
   return undefined;
 }

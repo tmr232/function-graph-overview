@@ -26,13 +26,6 @@ const functionNameExtractors: Record<
 /**
  * Extracts the name of a function based on its syntax node and language.
  *
- * Supports all languages defined in the Language type:
- * - TypeScript/TSX
- * - C
- * - C++
- * - Python
- * - Go
- *
  * @param func - The syntax node (The function).
  * @param language - The programming language of the function.
  */

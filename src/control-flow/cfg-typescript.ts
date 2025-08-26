@@ -23,7 +23,7 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
 import { treeSitterNoNullNodes } from "./hacks.ts";
-import { extractTaggedValueFromTreeSitterQuery } from "./query-utils.ts";
+import { extractCapturedTextsByTag } from "./query-utils.ts";
 import { buildSwitch, collectCases } from "./switch-utils.ts";
 
 const typeScriptFunctionNodeTypes = [
@@ -329,11 +329,11 @@ const functionQuery = {
     name: (identifier) @name)`,
 
   methodDefinition: `(method_definition
-  [
-    (property_identifier) @name
-    (computed_property_name) @name
-    (private_property_identifier) @name
-  ])`,
+    [
+      (property_identifier) @name
+      (computed_property_name) @name
+      (private_property_identifier) @name
+    ])`,
 
   functionExpression: `(function_expression 
     name: (identifier) @name)`,
@@ -352,54 +352,54 @@ const functionQuery = {
  *
  * @param {SyntaxNode} func - The syntax node representing the TypeScript function.
  * @returns {string | undefined} The function name, or `undefined` if not found.
+ *
  */
 export function extractTypeScriptFunctionName(
   func: SyntaxNode,
 ): string | undefined {
   switch (func.type) {
     case "function_declaration":
-      return extractTaggedValueFromTreeSitterQuery(
+      return extractCapturedTextsByTag(
         func,
         functionQuery.functionDeclaration,
         functionQuery.tag,
       )[0];
 
     case "generator_function": {
-      const names = extractTaggedValueFromTreeSitterQuery(
+      const names = extractCapturedTextsByTag(
         func,
         functionQuery.generatorFunction,
         functionQuery.tag,
       );
       if (names.length > 0) return names[0];
-      return findVariableBinding(func);
+      return findVariableBinding(func) ?? "<anonymous>";
     }
 
     case "generator_function_declaration": {
-      const names = extractTaggedValueFromTreeSitterQuery(
+      const names = extractCapturedTextsByTag(
         func,
         functionQuery.generatorFunctionDeclaration,
         functionQuery.tag,
       );
       if (names.length > 0) return names[0];
-      return findVariableBinding(func);
+      return findVariableBinding(func) ?? "<anonymous>";
     }
 
     case "arrow_function":
-      return findVariableBinding(func);
+      return findVariableBinding(func) ?? "<anonymous>";
 
     case "function_expression": {
-      // Check for direct name first (named function expressions)
-      const directNames = extractTaggedValueFromTreeSitterQuery(
+      const directNames = extractCapturedTextsByTag(
         func,
         functionQuery.functionExpression,
         functionQuery.tag,
       );
       if (directNames.length > 0) return directNames[0];
-      return findVariableBinding(func);
+      return findVariableBinding(func) ?? "<anonymous>";
     }
 
     case "method_definition":
-      return extractTaggedValueFromTreeSitterQuery(
+      return extractCapturedTextsByTag(
         func,
         functionQuery.methodDefinition,
         functionQuery.tag,
@@ -410,20 +410,19 @@ export function extractTypeScriptFunctionName(
   }
 }
 
-function findVariableBinding(func: SyntaxNode): string {
+function findVariableBinding(func: SyntaxNode): string | undefined {
   const parent = func.parent;
-  const anonymous = "<anonymous>";
-  if (!parent) return anonymous;
+  if (!parent) return undefined;
 
   switch (parent.type) {
     case "variable_declarator": {
       const name = parent.childForFieldName("name");
-      return name?.type === "identifier" ? name.text : anonymous;
+      return name?.type === "identifier" ? name.text : undefined;
     }
 
     case "required_parameter": {
       const name = parent.childForFieldName("pattern");
-      return name?.type === "identifier" ? name.text : anonymous;
+      return name?.type === "identifier" ? name.text : undefined;
     }
 
     case "assignment_expression":
@@ -431,22 +430,22 @@ function findVariableBinding(func: SyntaxNode): string {
       const name = parent.childForFieldName("left");
       return name?.type === "identifier" || name?.type === "member_expression"
         ? name.text
-        : anonymous;
+        : undefined;
     }
 
     case "public_field_definition": {
       const name = parent.childForFieldName("name");
-      return name?.type === "property_identifier" ? name.text : anonymous;
+      return name?.type === "property_identifier" ? name.text : undefined;
     }
 
     case "object_assignment_pattern": {
       const left = parent.childForFieldName("left");
       return left?.type === "shorthand_property_identifier_pattern"
         ? left.text
-        : anonymous;
+        : undefined;
     }
 
     default:
-      return anonymous;
+      return undefined;
   }
 }

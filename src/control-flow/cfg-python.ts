@@ -12,7 +12,7 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
 import { maybe, zip } from "./itertools.ts";
-import { extractTaggedValueFromTreeSitterQuery } from "./query-utils.ts";
+import { extractCapturedTextsByTag } from "./query-utils.ts";
 
 export const pythonLanguageDefinition = {
   wasmPath: treeSitterPython,
@@ -628,7 +628,7 @@ function processWhileStatement(
 
 const functionQuery = {
   functionDefinition: `(function_definition
-	    name :(identifier)@name)`,
+	  name :(identifier) @name)`,
 
   tag: "name",
 };
@@ -636,10 +636,9 @@ const functionQuery = {
 export function extractPythonFunctionName(
   func: SyntaxNode,
 ): string | undefined {
-  const name = extractTaggedValueFromTreeSitterQuery(
+  return extractCapturedTextsByTag(
     func,
     functionQuery.functionDefinition,
     functionQuery.tag,
-  );
-  return name.length > 1 ? undefined : name[0];
+  )[0];
 }

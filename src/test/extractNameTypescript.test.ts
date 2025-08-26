@@ -2,9 +2,6 @@ import { describe, expect, test } from "vitest";
 import { extractFunctionName } from "../control-flow/function-utils.ts";
 import { iterFunctions } from "../file-parsing/bun.ts";
 
-/**
- * Helper
- */
 const namesFrom = (code: string) =>
   [...iterFunctions(code, "TypeScript")].map((f) =>
     extractFunctionName(f, "TypeScript"),

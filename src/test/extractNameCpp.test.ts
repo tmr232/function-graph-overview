@@ -2,9 +2,6 @@ import { describe, expect, test } from "vitest";
 import { extractFunctionName } from "../control-flow/function-utils.ts";
 import { iterFunctions } from "../file-parsing/bun.ts";
 
-/**
- * Helper
- */
 const namesFrom = (code: string) =>
   [...iterFunctions(code, "C++")].map((f) => extractFunctionName(f, "C++"));
 
@@ -565,16 +562,16 @@ describe("C++: more function shapes", () => {
     ]);
   });
 
-  // test("conversion operators to non-bool types", () => {
-  //   const code = `
-  //     #include <string>
-  //     struct C {
-  //       operator std::string() const { return {}; }
-  //       operator long() const { return 0; }
-  //     };
-  //   `;
-  //   expect(namesFrom(code)).toEqual(["operator std::string", "operator long"]);
-  // });
+  test("conversion operators to non-bool types", () => {
+    const code = `
+      #include <string>
+      struct C {
+        operator std::string() const { return {}; }
+        operator long() const { return 0; }
+      };
+    `;
+    expect(namesFrom(code)).toEqual(["operator std::string", "operator long"]);
+  });
 
   test("concepts + requires (template bodies)", () => {
     const code = `
@@ -799,14 +796,14 @@ describe("C++: memory management operators (placement/aligned/sized)", () => {
    USER-DEFINED LITERALS (MORE)
 ================================ */
 describe("C++: user-defined literals (more forms)", () => {
-  test('floating UDL', () => {
+  test("floating UDL", () => {
     const code = `
       long double operator "" _deg(long double d) { return d; }
     `;
     expect(namesFrom(code)).toEqual(['operator "" _deg']);
   });
 
-  test('raw UDL with (const char*, size_t)', () => {
+  test("raw UDL with (const char*, size_t)", () => {
     const code = `
       #include <cstddef>
       const char* operator "" _raw(const char* s, std::size_t n) { return s; }
@@ -814,7 +811,7 @@ describe("C++: user-defined literals (more forms)", () => {
     expect(namesFrom(code)).toEqual(['operator "" _raw']);
   });
 
-  test('namespace-scoped UDL', () => {
+  test("namespace-scoped UDL", () => {
     const code = `
       namespace L {
         unsigned long long operator "" _id(unsigned long long n) { return n; }
