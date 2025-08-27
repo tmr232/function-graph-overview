@@ -226,7 +226,7 @@ export function extractCppFunctionName(func: SyntaxNode): string | undefined {
 
   if (func.type === "lambda_expression") {
     const name = findVariableBinding(func);
-    return name ?? "<anonymous>";
+    return name;
   }
   return undefined;
 }

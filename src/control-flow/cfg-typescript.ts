@@ -372,7 +372,7 @@ export function extractTypeScriptFunctionName(
         functionQuery.tag,
       );
       if (names.length > 0) return names[0];
-      return findVariableBinding(func) ?? "<anonymous>";
+      return findVariableBinding(func);
     }
 
     case "generator_function_declaration": {
@@ -382,11 +382,11 @@ export function extractTypeScriptFunctionName(
         functionQuery.tag,
       );
       if (names.length > 0) return names[0];
-      return findVariableBinding(func) ?? "<anonymous>";
+      return findVariableBinding(func);
     }
 
     case "arrow_function":
-      return findVariableBinding(func) ?? "<anonymous>";
+      return findVariableBinding(func);
 
     case "function_expression": {
       const directNames = extractCapturedTextsByTag(
@@ -395,7 +395,7 @@ export function extractTypeScriptFunctionName(
         functionQuery.tag,
       );
       if (directNames.length > 0) return directNames[0];
-      return findVariableBinding(func) ?? "<anonymous>";
+      return findVariableBinding(func);
     }
 
     case "method_definition":

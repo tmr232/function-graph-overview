@@ -73,6 +73,26 @@ const metadataFields = [
   },
 ];
 
+const anonymousFunctionNodes: Record<Language, Set<string> | undefined> =
+  (() => {
+    const tsNodes = new Set([
+      "generator_function",
+      "generator_function_declaration",
+      "arrow_function",
+      "function_expression",
+      "function_declaration",
+    ]);
+
+    return {
+      "C++": new Set(["lambda_expression"]),
+      Go: new Set(["func_literal"]),
+      TypeScript: tsNodes,
+      TSX: tsNodes,
+      C: undefined,
+      Python: undefined,
+    };
+  })();
+
 // Toggle panel open/closed
 function togglePanel() {
   isPanelOpen = !isPanelOpen;
@@ -285,12 +305,18 @@ async function createCFG(params: Params): Promise<CFG> {
 let functionAndCFGMetadata: FunctionAndCFGMetadata | undefined;
 
 function updateMetadata(CFG: CFG, func?: SyntaxNode, language?: Language) {
+  const isAnonymousFunctionNode = (lang: Language, nodeType: string): boolean =>
+    anonymousFunctionNodes[lang]?.has(nodeType) ?? false;
+
   // Update function metadata (GitHub only)
   let name: string | undefined = undefined;
   let lineCount: number | undefined = undefined;
 
   if (func && language) {
     name = extractFunctionName(func, language);
+    if (!name && isAnonymousFunctionNode(language, func.type)) {
+      name = "<anonymous>";
+    }
     lineCount = func.endPosition.row - func.startPosition.row + 1;
   }
 

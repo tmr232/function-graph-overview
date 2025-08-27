@@ -524,7 +524,7 @@ export function extractGoFunctionName(func: SyntaxNode): string | undefined {
         functionQuery.name,
       )[0];
     case "func_literal":
-      return findVariableBinding(func) ?? "<anonymous>";
+      return findVariableBinding(func);
     default:
       return undefined;
   }
