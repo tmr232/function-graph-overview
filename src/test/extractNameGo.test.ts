@@ -52,7 +52,7 @@ describe("Go: special contexts", () => {
         return func(x int) int { return base + x }
       }
     `;
-    expect(namesFrom(code)).toEqual(["makeAdder", "<anonymous>"]);
+    expect(namesFrom(code)).toEqual(["makeAdder", undefined]);
   });
 
   test("functions in composite literals", () => {
@@ -62,7 +62,7 @@ describe("Go: special contexts", () => {
         func(y int) {},
       }
     `;
-    expect(namesFrom(code)).toEqual(["<anonymous>", "<anonymous>"]);
+    expect(namesFrom(code)).toEqual([undefined, undefined]);
   });
 
   test("functions used as parameters", () => {
@@ -191,7 +191,7 @@ test("go/defer with func literal → anonymous", () => {
       go func() {}()
       defer func() {}()
     }`;
-  expect(namesFrom(code)).toEqual(["main", "<anonymous>", "<anonymous>"]);
+  expect(namesFrom(code)).toEqual(["main", undefined, undefined]);
 });
 
 describe("Go: keyed elements - not supported", () => {
@@ -207,12 +207,12 @@ describe("Go: keyed elements - not supported", () => {
       }
     `;
     expect(namesFrom(code)).toEqual([
-      "<anonymous>",
-      "<anonymous>",
-      "<anonymous>",
-      "<anonymous>",
-      "<anonymous>",
-      "<anonymous>",
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
     ]);
   });
 });

@@ -100,7 +100,7 @@ describe("C++: lambdas & captures", () => {
 
   test("immediately-invoked lambda (IIFE style)", () => {
     const code = "[](){ return 42; }();";
-    expect(namesFrom(code)).toEqual(["<anonymous>"]);
+    expect(namesFrom(code)).toEqual([undefined]);
   });
 
   test("generic/mutable/noexcept flavors", () => {
@@ -120,7 +120,7 @@ describe("C++: lambdas & captures", () => {
         };
       }
     `;
-    expect(namesFrom(code)).toEqual(["f", "my_func", "<anonymous>"]);
+    expect(namesFrom(code)).toEqual(["f", "my_func", undefined]);
   });
 });
 
@@ -176,7 +176,7 @@ describe("C++: containers & callbacks", () => {
       #include <functional>
       std::vector<std::function<void()>> v{ [](){}, [](){} };
     `;
-    expect(namesFrom(code)).toEqual(["<anonymous>", "<anonymous>"]);
+    expect(namesFrom(code)).toEqual([undefined, undefined]);
   });
 
   test("algorithm callback", () => {
@@ -186,7 +186,7 @@ describe("C++: containers & callbacks", () => {
       std::vector<int> xs{1,2,3};
       std::for_each(xs.begin(), xs.end(), [](int){});
     `;
-    expect(namesFrom(code)).toEqual(["<anonymous>"]);
+    expect(namesFrom(code)).toEqual([undefined]);
   });
 
   test("map with function values", () => {
@@ -198,7 +198,7 @@ describe("C++: containers & callbacks", () => {
         {2, [](){}}
       };
     `;
-    expect(namesFrom(code)).toEqual(["<anonymous>", "<anonymous>"]);
+    expect(namesFrom(code)).toEqual([undefined, undefined]);
   });
 
   test("new/delete/sizeof/decltype contexts", () => {
@@ -209,10 +209,10 @@ describe("C++: containers & callbacks", () => {
       decltype([](){}) *t = nullptr;
     `;
     expect(namesFrom(code)).toEqual([
-      "<anonymous>",
-      "<anonymous>",
-      "<anonymous>",
-      "<anonymous>",
+      undefined,
+      undefined,
+      undefined,
+      undefined,
     ]);
   });
 });
@@ -255,10 +255,10 @@ describe("C++: control flow & expressions", () => {
       for (int i = [](){ return 0; }(); i < 1; ++i) {}
     `;
     expect(namesFrom(code)).toEqual([
-      "<anonymous>",
-      "<anonymous>",
-      "<anonymous>",
-      "<anonymous>",
+      undefined,
+      undefined,
+      undefined,
+      undefined,
     ]);
   });
 
@@ -268,7 +268,7 @@ describe("C++: control flow & expressions", () => {
         return [](){};
       }
     `;
-    expect(namesFrom(code)).toEqual(["factory", "<anonymous>"]);
+    expect(namesFrom(code)).toEqual(["factory", undefined]);
   });
 
   test("ternary with two lambdas (both anonymous, assigned to a variable)", () => {
@@ -276,7 +276,7 @@ describe("C++: control flow & expressions", () => {
       bool cond = true;
       auto f = cond ? [](){} : [](){};
     `;
-    expect(namesFrom(code)).toEqual(["<anonymous>", "<anonymous>"]);
+    expect(namesFrom(code)).toEqual([undefined, undefined]);
   });
 });
 
@@ -332,7 +332,7 @@ describe("C++: nested templates & expression contexts (TEC)", () => {
     const code = `
       auto outer = [n = [](){ return 42; }()](){};
     `;
-    expect(namesFrom(code)).toEqual(["outer", "<anonymous>"]);
+    expect(namesFrom(code)).toEqual(["outer", undefined]);
   });
 
   test("nested invocation chain: lambda inside template call", () => {
@@ -345,7 +345,7 @@ describe("C++: nested templates & expression contexts (TEC)", () => {
         call([](){});
       }
     `;
-    expect(namesFrom(code)).toEqual(["call", "use", "<anonymous>"]);
+    expect(namesFrom(code)).toEqual(["call", "use", undefined]);
   });
 
   test("namespace + template + nested class + method + inner lambda", () => {
@@ -361,7 +361,7 @@ describe("C++: nested templates & expression contexts (TEC)", () => {
         };
       }
     `;
-    expect(namesFrom(code)).toEqual(["run", "<anonymous>"]);
+    expect(namesFrom(code)).toEqual(["run", undefined]);
   });
 });
 

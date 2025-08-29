@@ -16,7 +16,7 @@ describe("arrow functions", () => {
 
   test("arrow variations", () => {
     const code1 = "<T,>(value: T): T[] => {};";
-    expect(namesFrom(code1)).toEqual(["<anonymous>"]);
+    expect(namesFrom(code1)).toEqual([undefined]);
 
     const code2 = `
       function f() {
@@ -25,7 +25,7 @@ describe("arrow functions", () => {
         const d = () => () => {};
       }
     `;
-    expect(namesFrom(code2)).toEqual(["f", "b", "c", "d", "<anonymous>"]);
+    expect(namesFrom(code2)).toEqual(["f", "b", "c", "d", undefined]);
   });
 });
 
@@ -38,7 +38,7 @@ describe("function declarations and expressions", () => {
     expect(namesFrom(code2)).toEqual(["add"]);
 
     const code3 = "function(name: string): string {};";
-    expect(namesFrom(code3)).toEqual(["<anonymous>"]);
+    expect(namesFrom(code3)).toEqual([undefined]);
   });
 
   test("generator and async functions", () => {
@@ -80,7 +80,7 @@ describe("IIFE patterns", () => {
         (() => {})();
       }
     `;
-    expect(namesFrom(code1)).toEqual(["f", "g", "<anonymous>"]);
+    expect(namesFrom(code1)).toEqual(["f", "g", undefined]);
 
     const code2 = "(function Boot() {})();";
     expect(namesFrom(code2)).toEqual(["Boot"]);
@@ -101,7 +101,7 @@ describe("objects and classes", () => {
       };
     `;
     expect(namesFrom(code)).toEqual([
-      "<anonymous>",
+      undefined,
       "b",
       "gen",
       "c",
@@ -140,7 +140,7 @@ describe("objects and classes", () => {
     const code2 = `
       class C extends ( () => class Base { m(){} } )() {}
     `;
-    expect(namesFrom(code2)).toEqual(["<anonymous>", "m"]);
+    expect(namesFrom(code2)).toEqual([undefined, "m"]);
   });
 
   test("member assignments", () => {
@@ -159,7 +159,7 @@ describe("exports", () => {
     expect(namesFrom(code1)).toEqual(["main"]);
 
     const code2 = "export default function () {}";
-    expect(namesFrom(code2)).toEqual(["<anonymous>"]);
+    expect(namesFrom(code2)).toEqual([undefined]);
 
     const code3 = "export const myFunc = () => {};";
     expect(namesFrom(code3)).toEqual(["myFunc"]);
@@ -186,9 +186,9 @@ describe("nesting and complex structures", () => {
     expect(namesFrom(code)).toEqual([
       "f",
       "myFunc",
-      "<anonymous>",
+      undefined,
       "innerFunc",
-      "<anonymous>",
+      undefined,
       "x",
     ]);
   });
@@ -278,23 +278,19 @@ describe("expression contexts", () => {
   test("functions in arrays and conditionals", () => {
     const code1 =
       "const arr = [() => {}, function named() {}, function* gen(){ yield 1; }];";
-    expect(namesFrom(code1)).toEqual(["<anonymous>", "named", "gen"]);
+    expect(namesFrom(code1)).toEqual([undefined, "named", "gen"]);
 
     const code2 = "const f = true ? () => {} : function alt() {};";
-    expect(namesFrom(code2)).toEqual(["<anonymous>", "alt"]);
+    expect(namesFrom(code2)).toEqual([undefined, "alt"]);
 
     const code3 =
       "const f = cond ? (() => {}) : (other ? () => {} : () => {});";
-    expect(namesFrom(code3)).toEqual([
-      "<anonymous>",
-      "<anonymous>",
-      "<anonymous>",
-    ]);
+    expect(namesFrom(code3)).toEqual([undefined, undefined, undefined]);
   });
 
   test("functions in logical expressions", () => {
     const code1 = "const f = (() => {}) ?? (() => {});";
-    expect(namesFrom(code1)).toEqual(["<anonymous>", "<anonymous>"]);
+    expect(namesFrom(code1)).toEqual([undefined, undefined]);
   });
 
   test("functions in various expressions", () => {
@@ -318,7 +314,7 @@ describe("expression contexts", () => {
     expect(namesFrom(code1)).toEqual(["tick"]);
 
     const code2 = "[1,2,3].map(n => n + 1);";
-    expect(namesFrom(code2)).toEqual(["<anonymous>"]);
+    expect(namesFrom(code2)).toEqual([undefined]);
   });
 
   test("static class blocks and labeled statements", () => {
@@ -337,7 +333,7 @@ describe("expression contexts", () => {
         (() => {})();
       }
     `;
-    expect(namesFrom(code2)).toEqual(["f", "<anonymous>"]);
+    expect(namesFrom(code2)).toEqual(["f", undefined]);
   });
 
   test("async/await and generator contexts", () => {
@@ -345,7 +341,7 @@ describe("expression contexts", () => {
     expect(namesFrom(code1)).toEqual(["f", "g"]);
 
     const code2 = "function* g() { yield (() => {})(); }";
-    expect(namesFrom(code2)).toEqual(["g", "<anonymous>"]);
+    expect(namesFrom(code2)).toEqual(["g", undefined]);
 
     const code3 = "const a = async () => { function* g() {} };";
     expect(namesFrom(code3)).toEqual(["a", "g"]);
