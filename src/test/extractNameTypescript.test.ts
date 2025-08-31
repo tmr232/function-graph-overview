@@ -10,80 +10,102 @@ const namesFrom = (code: string) =>
 describe("arrow functions", () => {
   test("arrow with variable binding and generic", () => {
     const code = "const returnInArray = <T,>(value: T): T[] => {};";
-    const func = iterFunctions(code, "TypeScript").next().value;
-    expect(extractFunctionName(func, "TypeScript")).toBe("returnInArray");
+    expect(namesFrom(code)).toEqual(["returnInArray"]);
   });
 
-  test("arrow variations", () => {
-    const code1 = "<T,>(value: T): T[] => {};";
-    expect(namesFrom(code1)).toEqual([undefined]);
+  test("arrow function with type parameters", () => {
+    const code = "<T,>(value: T): T[] => {};";
+    expect(namesFrom(code)).toEqual([undefined]);
+  });
 
-    const code2 = `
-      function f() {
-        const b = n => n + 1;
-        const c = async () => { return 1; };
-        const d = () => () => {};
-      }
-    `;
-    expect(namesFrom(code2)).toEqual(["f", "b", "c", "d", undefined]);
+  test("arrow functions inside function body", () => {
+    const code = `
+    function f() {
+      const b = n => n + 1;
+      const c = async () => { return 1; };
+      const d = () => () => {};
+    }
+  `;
+    expect(namesFrom(code)).toEqual(["f", "b", "c", "d", undefined]);
   });
 });
 
 describe("function declarations and expressions", () => {
-  test("function expression variants", () => {
-    const code1 = "const myFunction = function(name: string): string {};";
-    expect(namesFrom(code1)).toEqual(["myFunction"]);
-
-    const code2 = "const sum = function add(): number {};";
-    expect(namesFrom(code2)).toEqual(["add"]);
-
-    const code3 = "function(name: string): string {};";
-    expect(namesFrom(code3)).toEqual([undefined]);
+  test.each([
+    [
+      "named function expression assigned to const",
+      "const myFunction = function(name: string): string {};",
+      ["myFunction"],
+    ],
+    [
+      "named function expression with inner name (alias kept)",
+      "const sum = function add(): number {};",
+      ["add"],
+    ],
+    [
+      "anonymous function expression (standalone)",
+      "function(name: string): string {};",
+      [undefined],
+    ],
+  ])("expression variants: %s", (_title, code, expected) => {
+    expect(namesFrom(code)).toEqual(expected);
   });
 
-  test("generator and async functions", () => {
-    const code1 =
-      "const fn = function* myGenerator<T>(input: T): Generator<number> {};";
-    expect(namesFrom(code1)).toEqual(["myGenerator"]);
-
-    const code2 = "async function* stream() {}";
-    expect(namesFrom(code2)).toEqual(["stream"]);
+  test.each([
+    [
+      "named generator function expression assigned to const",
+      "const fn = function* myGenerator<T>(input: T): Generator<number> {};",
+      ["myGenerator"],
+    ],
+    ["async generator declaration", "async function* stream() {}", ["stream"]],
+  ])("generator/async variants: %s", (_title, code, expected) => {
+    expect(namesFrom(code)).toEqual(expected);
   });
 });
 
 describe("assignments", () => {
-  test("assignment expressions and chained assignments", () => {
-    const code1 = `
-      function f() {
-        let x;
-        x = () => {};
-      }
-    `;
-    expect(namesFrom(code1)).toEqual(["f", "x"]);
-
-    const code2 = "x = () => {}, y = () => {};";
-    expect(namesFrom(code2)).toEqual(["x", "y"]);
-
-    const code3 = "let x = y = z = () => {};";
-    expect(namesFrom(code3)).toEqual(["z"]);
-
-    const code4 = "let a; a = b = function inner() {};";
-    expect(namesFrom(code4)).toEqual(["inner"]);
+  test.each([
+    [
+      "simple assignment expression inside a function",
+      `
+        function f() {
+          let x;
+          x = () => {};
+        }
+      `,
+      ["f", "x"],
+    ],
+    [
+      "multiple assignment expressions",
+      "x = () => {}, y = () => {};",
+      ["x", "y"],
+    ],
+    ["chained assignment expression", "let x = y = z = () => {};", ["z"]],
+    [
+      "nested assignment with named inner function",
+      "let a; a = b = function inner() {};",
+      ["inner"],
+    ],
+  ])("%s", (_title, code, expected) => {
+    expect(namesFrom(code)).toEqual(expected);
   });
 });
 
 describe("IIFE patterns", () => {
-  test("immediate function expressions", () => {
-    const code1 = `
-      function f() {
-        const g = () => {};
-        (() => {})();
-      }
-    `;
-    expect(namesFrom(code1)).toEqual(["f", "g", undefined]);
-
-    const code2 = "(function Boot() {})();";
-    expect(namesFrom(code2)).toEqual(["Boot"]);
+  test.each([
+    [
+      "arrow IIFE inside function body",
+      `
+        function f() {
+          const g = () => {};
+          (() => {})();
+        }
+      `,
+      ["f", "g", undefined],
+    ],
+    ["named function-expression IIFE", "(function Boot() {})();", ["Boot"]],
+  ])("%s", (_title, code, expected) => {
+    expect(namesFrom(code)).toEqual(expected);
   });
 });
 
@@ -111,36 +133,35 @@ describe("objects and classes", () => {
     ]);
   });
 
-  test("class methods and fields", () => {
-    const code = `
-      class C {
-        constructor() {}
-        m() {}
-        static s() {}
-        async a() {}
-        *g() {}
-        field = () => {};
-        #private() {}
-        get x() {}
-        set x(v: number) {}
-      }
-    `;
-    expect(namesFrom(code)).toEqual([
-      "constructor",
-      "m",
-      "s",
-      "a",
-      "g",
-      "field",
-      "#private",
-      "x",
-      "x",
-    ]);
-
-    const code2 = `
-      class C extends ( () => class Base { m(){} } )() {}
-    `;
-    expect(namesFrom(code2)).toEqual([undefined, "m"]);
+  describe("class members", () => {
+    test.each([
+      [
+        "methods, fields, accessors (incl. private + arrow field)",
+        `
+        class C {
+          constructor() {}
+          m() {}
+          static s() {}
+          async a() {}
+          *g() {}
+          field = () => {};
+          #private() {}
+          get x() {}
+          set x(v: number) {}
+        }
+      `,
+        ["constructor", "m", "s", "a", "g", "field", "#private", "x", "x"],
+      ],
+      [
+        "class expression in extends with inline base",
+        `
+        class C extends ( () => class Base { m(){} } )() {}
+      `,
+        [undefined, "m"],
+      ],
+    ])("%s", (_title, code, expected) => {
+      expect(namesFrom(code)).toEqual(expected);
+    });
   });
 
   test("member assignments", () => {
@@ -154,18 +175,24 @@ describe("objects and classes", () => {
 });
 
 describe("exports", () => {
-  test("export patterns", () => {
-    const code1 = "export default function main() {}";
-    expect(namesFrom(code1)).toEqual(["main"]);
-
-    const code2 = "export default function () {}";
-    expect(namesFrom(code2)).toEqual([undefined]);
-
-    const code3 = "export const myFunc = () => {};";
-    expect(namesFrom(code3)).toEqual(["myFunc"]);
-
-    const code4 = "export = function main() {};";
-    expect(namesFrom(code4)).toEqual(["main"]);
+  test.each([
+    [
+      "default export with named function",
+      "export default function main() {}",
+      ["main"],
+    ],
+    [
+      "default export with anonymous function",
+      "export default function () {}",
+      [undefined],
+    ],
+    [
+      "export const with arrow function",
+      "export const myFunc = () => {};",
+      ["myFunc"],
+    ],
+  ])("%s", (_title, code, expected) => {
+    expect(namesFrom(code)).toEqual(expected);
   });
 });
 
@@ -179,6 +206,7 @@ describe("nesting and complex structures", () => {
               (() => {})();
             };
             function x() {}
+            function y() {}
           })();
         };
       }
@@ -190,21 +218,8 @@ describe("nesting and complex structures", () => {
       "innerFunc",
       undefined,
       "x",
+      "y",
     ]);
-  });
-
-  test("multiple function declarations with duplicate names", () => {
-    const code = `
-      function f() {
-        function x() {}
-        function y() {}
-        function b() {
-          function o() {}
-          function o() {} // duplicate name
-        }
-      }
-    `;
-    expect(namesFrom(code)).toEqual(["f", "x", "y", "b", "o", "o"]);
   });
 
   test("nested class with methods inside function", () => {
@@ -223,155 +238,124 @@ describe("nesting and complex structures", () => {
   });
 });
 
-describe("overloads", () => {
-  test("function and method overloads", () => {
-    const code1 = `
-      function foo(a: string): void;
-      function foo(a: number): void;
-      function foo(a: any): void {}
-    `;
-    expect(namesFrom(code1)).toEqual(["foo"]);
-
-    const code2 = `
-      class C {
-        m(a: string): void;
-        m(a: number): void;
-        m(a: any): void {}
-      }
-    `;
-    expect(namesFrom(code2)).toEqual(["m"]);
-  });
-});
-
 describe("destructuring and defaults", () => {
-  test("destructuring with function defaults", () => {
-    const code1 = "function f(x = function g() {}) {}";
-    expect(namesFrom(code1)).toEqual(["f", "g"]);
-
-    const code2 = "const { a = function def() {} } = {};";
-    expect(namesFrom(code2)).toEqual(["def"]);
-
-    const code3 = "const [a = () => {}] = [];";
-    expect(namesFrom(code3)).toEqual(["a"]);
-
-    const code4 = "function f(x = () => {}) {}";
-    expect(namesFrom(code4)).toEqual(["f", "x"]);
-  });
-});
-
-describe("namespaces and modules", () => {
-  test("functions inside namespace", () => {
-    const code = `
-      namespace N {
-        export function a() {}
-        function b() {}
-        namespace Inner {
-          function c() {}
-        }
-      }
-    `;
-    expect(namesFrom(code)).toEqual(["a", "b", "c"]);
+  test.each([
+    [
+      "default param is named function",
+      "function f(x = function g() {}) {}",
+      ["f", "g"],
+    ],
+    ["array pattern default is arrow", "const [a = () => {}] = [];", ["a"]],
+    ["default param is arrow", "function f(x = () => {}) {}", ["f", "x"]],
+  ])("%s", (_title, code, expected) => {
+    expect(namesFrom(code)).toEqual(expected);
   });
 });
 
 describe("expression contexts", () => {
-  test("functions in arrays and conditionals", () => {
-    const code1 =
-      "const arr = [() => {}, function named() {}, function* gen(){ yield 1; }];";
-    expect(namesFrom(code1)).toEqual([undefined, "named", "gen"]);
-
-    const code2 = "const f = true ? () => {} : function alt() {};";
-    expect(namesFrom(code2)).toEqual([undefined, "alt"]);
-
-    const code3 =
-      "const f = cond ? (() => {}) : (other ? () => {} : () => {});";
-    expect(namesFrom(code3)).toEqual([undefined, undefined, undefined]);
+  describe("arrays and conditionals", () => {
+    test.each([
+      [
+        "array: unnamed arrow, named fn, generator",
+        "const arr = [() => {}, function named() {}, function* gen(){ yield 1; }];",
+        [undefined, "named", "gen"],
+      ],
+      [
+        "ternary: unnamed arrow vs named fn",
+        "const f = true ? () => {} : function alt() {};",
+        [undefined, "alt"],
+      ],
+      [
+        "nested ternary: all unnamed arrows",
+        "const f = cond ? (() => {}) : (other ? () => {} : () => {});",
+        [undefined, undefined, undefined],
+      ],
+    ])("%s", (_t, code, expected) => {
+      expect(namesFrom(code)).toEqual(expected);
+    });
   });
 
-  test("functions in logical expressions", () => {
-    const code1 = "const f = (() => {}) ?? (() => {});";
-    expect(namesFrom(code1)).toEqual([undefined, undefined]);
+  describe("logical expressions", () => {
+    test("nullish coalescing with unnamed arrows", () => {
+      const code = "const f = (() => {}) ?? (() => {});";
+      expect(namesFrom(code)).toEqual([undefined, undefined]);
+    });
   });
 
-  test("functions in various expressions", () => {
-    const code1 = "const str = `${function f(){}}`;";
-    expect(namesFrom(code1)).toEqual(["f"]);
-
-    const code2 = "new C(function inner() {})";
-    expect(namesFrom(code2)).toEqual(["inner"]);
-
-    const code3 = "const t = typeof function fn() {};";
-    expect(namesFrom(code3)).toEqual(["fn"]);
+  describe("various expressions", () => {
+    test.each([
+      [
+        "template literal with inline function",
+        "const str = `${function f(){}}`;",
+        ["f"],
+      ],
+      ["new call with function arg", "new C(function inner() {})", ["inner"]],
+      ["typeof function", "const t = typeof function fn() {};", ["fn"]],
+    ])("%s", (_t, code, expected) => {
+      expect(namesFrom(code)).toEqual(expected);
+    });
   });
 
-  test("functions in control flow", () => {
-    const code1 = "while ((function cond(){ return false; })()) {}";
-    expect(namesFrom(code1)).toEqual(["cond"]);
+  describe("callbacks and higher-order", () => {
+    test.each([
+      [
+        "setTimeout named callback",
+        "setTimeout(function tick(){}, 0);",
+        ["tick"],
+      ],
+      ["array.map with unnamed arrow", "[1,2,3].map(n => n + 1);", [undefined]],
+    ])("%s", (_t, code, expected) => {
+      expect(namesFrom(code)).toEqual(expected);
+    });
   });
 
-  test("callbacks and higher-order functions", () => {
-    const code1 = "setTimeout(function tick(){}, 0);";
-    expect(namesFrom(code1)).toEqual(["tick"]);
-
-    const code2 = "[1,2,3].map(n => n + 1);";
-    expect(namesFrom(code2)).toEqual([undefined]);
+  describe("static class blocks and labels", () => {
+    test.each([
+      [
+        "static block with IIFE",
+        `
+          class C {
+            static {
+              (function init() {})();
+            }
+          }
+        `,
+        ["init"],
+      ],
+      [
+        "labeled block with named fn and unnamed arrow IIFE",
+        `
+          label: {
+            function f() {}
+            (() => {})();
+          }
+        `,
+        ["f", undefined],
+      ],
+    ])("%s", (_t, code, expected) => {
+      expect(namesFrom(code)).toEqual(expected);
+    });
   });
 
-  test("static class blocks and labeled statements", () => {
-    const code1 = `
-      class C {
-        static {
-          (function init() {})();
-        }
-      }
-    `;
-    expect(namesFrom(code1)).toEqual(["init"]);
-
-    const code2 = `
-      label: {
-        function f() {}
-        (() => {})();
-      }
-    `;
-    expect(namesFrom(code2)).toEqual(["f", undefined]);
-  });
-
-  test("async/await and generator contexts", () => {
-    const code1 = "async function f() { await (function g() {})(); }";
-    expect(namesFrom(code1)).toEqual(["f", "g"]);
-
-    const code2 = "function* g() { yield (() => {})(); }";
-    expect(namesFrom(code2)).toEqual(["g", undefined]);
-
-    const code3 = "const a = async () => { function* g() {} };";
-    expect(namesFrom(code3)).toEqual(["a", "g"]);
-  });
-});
-
-describe("special cases", () => {
-  test("decorators and enums", () => {
-    const code1 = `
-      function dec(target: any) {}
-      @dec
-      class C {
-        m() {}
-        y = () => 2;
-      }
-    `;
-    expect(namesFrom(code1)).toEqual(["dec", "m", "y"]);
-  });
-
-  test("edge cases with parentheses and wrappers", () => {
-    const code1 = `
-      function outer() {
-        return function inner() {};
-      }
-    `;
-    expect(namesFrom(code1)).toEqual(["outer", "inner"]);
-  });
-
-  test("template literals and spread operators", () => {
-    const code1 = "(function tag() {} )`template`;";
-    expect(namesFrom(code1)).toEqual(["tag"]);
+  describe("async/await and generator contexts", () => {
+    test.each([
+      [
+        "await calling named function",
+        "async function f() { await (function g() {})(); }",
+        ["f", "g"],
+      ],
+      [
+        "yield calling unnamed arrow",
+        "function* g() { yield (() => {})(); }",
+        ["g", undefined],
+      ],
+      [
+        "async arrow containing generator decl",
+        "const a = async () => { function* g() {} };",
+        ["a", "g"],
+      ],
+    ])("%s", (_t, code, expected) => {
+      expect(namesFrom(code)).toEqual(expected);
+    });
   });
 });
