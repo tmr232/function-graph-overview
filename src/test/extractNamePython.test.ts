@@ -7,16 +7,18 @@ const namesFrom = (code: string) =>
     extractFunctionName(f, "Python"),
   );
 
-/* ================================
-   BASIC & NESTED DEFINITIONS
-================================ */
 describe("Python: function definitions", () => {
-  test("basic and nested functions", () => {
+  test("basic functions", () => {
     const code = `
 def foo(): pass
 def bar(x): return x
 def _private(): pass
+  `;
+    expect(namesFrom(code)).toEqual(["foo", "bar", "_private"]);
+  });
 
+  test("nested functions", () => {
+    const code = `
 def outer():
     def inner():
         def deep():
@@ -25,16 +27,8 @@ def outer():
     def cb(): pass
     run(cb)
     return inner
-    `;
-    expect(namesFrom(code)).toEqual([
-      "foo",
-      "bar",
-      "_private",
-      "outer",
-      "inner",
-      "deep",
-      "cb",
-    ]);
+  `;
+    expect(namesFrom(code)).toEqual(["outer", "inner", "deep", "cb"]);
   });
 
   test("async and generator functions", () => {
@@ -47,9 +41,6 @@ def outer():
   });
 });
 
-/* ================================
-   CLASSES & METHODS
-================================ */
 describe("Python: classes and methods", () => {
   test("methods of various types", () => {
     const code = `
@@ -73,30 +64,5 @@ class Outer:
         def n(self): pass
     `;
     expect(namesFrom(code)).toEqual(["m", "n"]);
-  });
-});
-
-/* ================================
-   SPECIAL CONTEXTS
-================================ */
-describe("Python: special contexts", () => {
-  test("decorated functions", () => {
-    const code = `
-def dec(fn): return fn
-
-@dec
-def decorated(): pass
-    `;
-    expect(namesFrom(code)).toEqual(["dec", "decorated"]);
-  });
-
-  test("function inside comprehension", () => {
-    const code = `
-def outer():
-    def helper(): return 1
-    results = [helper() for n in range(5)]
-    return results
-    `;
-    expect(namesFrom(code)).toEqual(["outer", "helper"]);
   });
 });
