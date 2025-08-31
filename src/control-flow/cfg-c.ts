@@ -175,9 +175,30 @@ const functionQuery = {
   tag: "name",
 };
 
+function getFunctionDeclarator(funcDef: SyntaxNode): SyntaxNode | null {
+  const body = funcDef.childForFieldName("body");
+  const end = body ? body.startPosition : funcDef.endPosition;
+
+  const nodes = funcDef.descendantsOfType(
+    "function_declarator",
+    funcDef.startPosition,
+    end,
+  );
+
+  for (const node of nodes) {
+    const decl = node?.childForFieldName("declarator");
+    if (decl && decl.type === "identifier") return node;
+  }
+
+  return null;
+}
+
 export function extractCFunctionName(func: SyntaxNode): string | undefined {
+  const declarator = getFunctionDeclarator(func);
+  if (!declarator) return undefined;
+
   return extractCapturedTextsByTag(
-    func,
+    declarator,
     functionQuery.functionDeclarator,
     functionQuery.tag,
   )[0];

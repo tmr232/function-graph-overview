@@ -169,7 +169,7 @@ const functionQuery = {
       declarator: (_) @name)
   `,
 
-  name: "name",
+  tag: "name",
 };
 
 /**
@@ -213,7 +213,7 @@ export function extractCppFunctionName(func: SyntaxNode): string | undefined {
       ? extractCapturedTextsByTag(
           declarator,
           functionQuery.functionDeclarator,
-          functionQuery.name,
+          functionQuery.tag,
         )[0]
       : undefined;
     if (name) return name;
@@ -246,7 +246,7 @@ function findVariableBinding(func: SyntaxNode): string | undefined {
     return extractCapturedTextsByTag(
       parent,
       functionQuery.initDeclarator,
-      functionQuery.name,
+      functionQuery.tag,
     )[0];
   }
   return undefined;

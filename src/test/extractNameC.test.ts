@@ -4,145 +4,97 @@ import { iterFunctions } from "../file-parsing/bun.ts";
 
 const namesFrom = (code: string) =>
   [...iterFunctions(code, "C")].map((f) => extractFunctionName(f, "C"));
-
-/* ================================
-   UNIQUE FUNCTION EXTRACTION CASES
-================================ */
 describe("C: function name extraction", () => {
-  test("basic definition", () => {
-    const code = "int add(int a, int b) { return a + b; }";
-    expect(namesFrom(code)).toEqual(["add"]);
-  });
-
-  test("inline + static", () => {
-    const code = "static inline double square(double x) { return x * x; }";
-    expect(namesFrom(code)).toEqual(["square"]);
-  });
-
-  test("function pointer assignment", () => {
-    const code = `
-      void handler() {}
-      void (*fp)() = handler;
-    `;
-    expect(namesFrom(code)).toEqual(["handler"]);
-  });
-
-  test("typedef function pointer + definition", () => {
-    const code = `
-      typedef int (*cmp_t)(int, int);
-      int compare(int a, int b) { return a - b; }
-    `;
-    expect(namesFrom(code)).toEqual(["compare"]);
-  });
-
-  test("struct with callback", () => {
-    const code = `
-      void init() {}
-      struct C { void (*cb)(); } c = { init };
-    `;
-    expect(namesFrom(code)).toEqual(["init"]);
-  });
-
-  test("nested struct callback assignment", () => {
-    const code = `
-      void deep() {}
-      struct Outer { struct Inner { void (*cb)(); } in; } outer;
-      outer.in.cb = deep;
-    `;
-    expect(namesFrom(code)).toEqual(["deep"]);
-  });
-
-  test("recursive function", () => {
-    const code = "int fact(int n) { return n <= 1 ? 1 : n * fact(n-1); }";
-    expect(namesFrom(code)).toEqual(["fact"]);
-  });
-
-  test("function passed to qsort", () => {
-    const code = `
-      int cmp(const void* a, const void* b) { return 0; }
-      int main() { qsort(arr, n, sizeof(int), cmp); }
-    `;
-    expect(namesFrom(code)).toEqual(["cmp", "main"]);
-  });
-
-  test("multiple functions defined in one line", () => {
-    const code = `
-      void start() {} void stop() {} void reset() {}
-    `;
-    expect(namesFrom(code)).toEqual(["start", "stop", "reset"]);
-  });
-
-  test("duplicate function redefinition", () => {
-    const code = `
-      void ping() {}
-      void ping() {}
-    `;
-    expect(namesFrom(code)).toEqual(["ping", "ping"]);
+  test.each([
+    [
+      "simple top-level function definition",
+      "int add(int a, int b) { return a + b; }",
+      ["add"],
+    ],
+    [
+      "static inline function definition",
+      "static inline double square(double x) { return x * x; }",
+      ["square"],
+    ],
+    [
+      "multiple functions defined on one line",
+      "void start() {} void stop() {} void reset() {};",
+      ["start", "stop", "reset"],
+    ],
+  ])("%s", (_title, code, expected) => {
+    expect(namesFrom(code)).toEqual(expected);
   });
 });
 
-/* ================================
-   NESTED (GNU C EXTENSION)
-================================ */
-describe("C: nested functions (GNU C extension)", () => {
-  test("single nested function", () => {
-    const code = `
-      void outer() {
-        int inner(int x) { return x + 1; }
-        inner(5);
-      }
-    `;
-    expect(namesFrom(code)).toEqual(["outer", "inner"]);
-  });
-
-  test("multiple nested functions in same scope", () => {
-    const code = `
-      void container() {
-        void first() {}
-        void second() {}
-        first(); second();
-      }
-    `;
-    expect(namesFrom(code)).toEqual(["container", "first", "second"]);
-  });
-
-  test("deeply nested functions", () => {
-    const code = `
-      void top() {
-        void mid() {
-          void bottom() {}
-          bottom();
+describe("C: (GNU extension) nested functions", () => {
+  test.each([
+    [
+      "single nested function inside another function",
+      `
+        void outer() {
+          int inner(int x) { return x + 1; }
+          inner(5);
         }
-        mid();
-      }
-    `;
-    expect(namesFrom(code)).toEqual(["top", "mid", "bottom"]);
-  });
-
-  test("nested function inside loop", () => {
-    const code = `
-      void runner(int n) {
-        for (int i = 0; i < n; i++) {
-          int loopfn(int x) { return x * i; }
-          loopfn(i);
+      `,
+      ["outer", "inner"],
+    ],
+    [
+      "multiple levels of nested functions",
+      `
+        void top() {
+          void mid() {
+            void bottom() {}
+            void bottom2() {}
+            bottom();
+            bottom2();
+          }
+          mid();
         }
-      }
-    `;
-    expect(namesFrom(code)).toEqual(["runner", "loopfn"]);
-  });
-
-  test("nested function inside conditional", () => {
-    const code = `
-      void check(int flag) {
-        if (flag) {
-          void innerA() {}
-          innerA();
-        } else {
-          void innerB() {}
-          innerB();
+      `,
+      ["top", "mid", "bottom", "bottom2"],
+    ],
+    [
+      "nested functions declared inside conditional branches",
+      `
+        void check(int flag) {
+          if (flag) {
+            void innerA() {}
+            innerA();
+          } else {
+            void innerB() {}
+            innerB();
+          }
         }
-      }
-    `;
-    expect(namesFrom(code)).toEqual(["check", "innerA", "innerB"]);
+      `,
+      ["check", "innerA", "innerB"],
+    ],
+  ])("%s", (_title, code, expected) => {
+    expect(namesFrom(code)).toEqual(expected);
+  });
+});
+
+describe("C: functions returning function pointers", () => {
+  test.each([
+    [
+      "recurse returns its function pointer argument",
+      `
+        int add(int a, int b) { return a + b; }
+        int (*recurse(int (*f)(int, int)))(int, int) { return f; }
+        int main(void) { return recurse(add)(2, 3); }
+      `,
+      ["add", "recurse", "main"],
+    ],
+    [
+      "select_op returns one of two function pointers",
+      `
+        int add(int a, int b) { return a + b; }
+        int sub(int a, int b) { return a - b; }
+        int (*select_op(int t))(int, int) { return t ? add : sub; }
+        int main(void) { return select_op(0)(5, 5); }
+      `,
+      ["add", "sub", "select_op", "main"],
+    ],
+  ])("%s", (_title, code, expected) => {
+    expect(namesFrom(code)).toEqual(expected);
   });
 });

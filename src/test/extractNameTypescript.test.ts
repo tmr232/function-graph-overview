@@ -7,30 +7,35 @@ const namesFrom = (code: string) =>
     extractFunctionName(f, "TypeScript"),
   );
 
-describe("arrow functions", () => {
-  test("arrow with variable binding and generic", () => {
-    const code = "const returnInArray = <T,>(value: T): T[] => {};";
-    expect(namesFrom(code)).toEqual(["returnInArray"]);
-  });
-
-  test("arrow function with type parameters", () => {
-    const code = "<T,>(value: T): T[] => {};";
-    expect(namesFrom(code)).toEqual([undefined]);
-  });
-
-  test("arrow functions inside function body", () => {
-    const code = `
-    function f() {
-      const b = n => n + 1;
-      const c = async () => { return 1; };
-      const d = () => () => {};
-    }
-  `;
-    expect(namesFrom(code)).toEqual(["f", "b", "c", "d", undefined]);
+describe("TypeScript: arrow functions", () => {
+  test.each([
+    [
+      "arrow with variable binding and generic",
+      "const returnInArray = <T,>(value: T): T[] => {};",
+      ["returnInArray"],
+    ],
+    [
+      "unnamed arrow with type parameters",
+      "<T,>(value: T): T[] => {};",
+      [undefined],
+    ],
+    [
+      "arrow functions inside function body",
+      `
+      function f() {
+        const b = n => n + 1;
+        const c = async () => { return 1; };
+        const d = () => () => {};
+      }
+      `,
+      ["f", "b", "c", "d", undefined],
+    ],
+  ])("%s", (_title, code, expected) => {
+    expect(namesFrom(code)).toEqual(expected);
   });
 });
 
-describe("function declarations and expressions", () => {
+describe("TypeScript: function declarations and expressions", () => {
   test.each([
     [
       "named function expression assigned to const",
@@ -63,7 +68,7 @@ describe("function declarations and expressions", () => {
   });
 });
 
-describe("assignments", () => {
+describe("TypeScript: assignments", () => {
   test.each([
     [
       "simple assignment expression inside a function",
@@ -91,7 +96,7 @@ describe("assignments", () => {
   });
 });
 
-describe("IIFE patterns", () => {
+describe("TypeScript: IIFE patterns", () => {
   test.each([
     [
       "arrow IIFE inside function body",
@@ -109,7 +114,7 @@ describe("IIFE patterns", () => {
   });
 });
 
-describe("objects and classes", () => {
+describe("TypeScript: objects and classes", () => {
   test("object literal methods and properties", () => {
     const code = `
       const o = {
@@ -133,7 +138,7 @@ describe("objects and classes", () => {
     ]);
   });
 
-  describe("class members", () => {
+  describe("TypeScript: class members", () => {
     test.each([
       [
         "methods, fields, accessors (incl. private + arrow field)",
@@ -159,22 +164,22 @@ describe("objects and classes", () => {
       `,
         [undefined, "m"],
       ],
+      [
+        "member assignments",
+        `
+      const o: any = {};
+      o.x = function named() {};
+      o.y = () => {};
+      `,
+        ["named", "o.y"],
+      ],
     ])("%s", (_title, code, expected) => {
       expect(namesFrom(code)).toEqual(expected);
     });
   });
-
-  test("member assignments", () => {
-    const code = `
-      const o: any = {};
-      o.x = function named() {};
-      o.y = () => {};
-    `;
-    expect(namesFrom(code)).toEqual(["named", "o.y"]);
-  });
 });
 
-describe("exports", () => {
+describe("TypeScript: exports", () => {
   test.each([
     [
       "default export with named function",
@@ -196,9 +201,11 @@ describe("exports", () => {
   });
 });
 
-describe("nesting and complex structures", () => {
-  test("deeply nested functions", () => {
-    const code = `
+describe("TypeScript: nesting and complex structures", () => {
+  test.each([
+    [
+      "deeply nested functions",
+      `
       function f() {
         const myFunc = () => {
           (() => {
@@ -210,20 +217,12 @@ describe("nesting and complex structures", () => {
           })();
         };
       }
-    `;
-    expect(namesFrom(code)).toEqual([
-      "f",
-      "myFunc",
-      undefined,
-      "innerFunc",
-      undefined,
-      "x",
-      "y",
-    ]);
-  });
-
-  test("nested class with methods inside function", () => {
-    const code = `
+      `,
+      ["f", "myFunc", undefined, "innerFunc", undefined, "x", "y"],
+    ],
+    [
+      "nested class with methods inside function",
+      `
       const outer = function namedOuter() {
         class A {
           m() {
@@ -233,12 +232,15 @@ describe("nesting and complex structures", () => {
           }
         }
       }
-    `;
-    expect(namesFrom(code)).toEqual(["namedOuter", "m", "n"]);
+      `,
+      ["namedOuter", "m", "n"],
+    ],
+  ])("%s", (_title, code, expected) => {
+    expect(namesFrom(code)).toEqual(expected);
   });
 });
 
-describe("destructuring and defaults", () => {
+describe("TypeScript: destructuring and defaults", () => {
   test.each([
     [
       "default param is named function",
@@ -252,7 +254,7 @@ describe("destructuring and defaults", () => {
   });
 });
 
-describe("expression contexts", () => {
+describe("TypeScript: expression contexts", () => {
   describe("arrays and conditionals", () => {
     test.each([
       [
@@ -270,7 +272,7 @@ describe("expression contexts", () => {
         "const f = cond ? (() => {}) : (other ? () => {} : () => {});",
         [undefined, undefined, undefined],
       ],
-    ])("%s", (_t, code, expected) => {
+    ])("%s", (_title, code, expected) => {
       expect(namesFrom(code)).toEqual(expected);
     });
   });
@@ -291,7 +293,7 @@ describe("expression contexts", () => {
       ],
       ["new call with function arg", "new C(function inner() {})", ["inner"]],
       ["typeof function", "const t = typeof function fn() {};", ["fn"]],
-    ])("%s", (_t, code, expected) => {
+    ])("%s", (_title, code, expected) => {
       expect(namesFrom(code)).toEqual(expected);
     });
   });
@@ -304,7 +306,7 @@ describe("expression contexts", () => {
         ["tick"],
       ],
       ["array.map with unnamed arrow", "[1,2,3].map(n => n + 1);", [undefined]],
-    ])("%s", (_t, code, expected) => {
+    ])("%s", (_title, code, expected) => {
       expect(namesFrom(code)).toEqual(expected);
     });
   });
@@ -332,7 +334,7 @@ describe("expression contexts", () => {
         `,
         ["f", undefined],
       ],
-    ])("%s", (_t, code, expected) => {
+    ])("%s", (_title, code, expected) => {
       expect(namesFrom(code)).toEqual(expected);
     });
   });
@@ -354,7 +356,7 @@ describe("expression contexts", () => {
         "const a = async () => { function* g() {} };",
         ["a", "g"],
       ],
-    ])("%s", (_t, code, expected) => {
+    ])("%s", (_title, code, expected) => {
       expect(namesFrom(code)).toEqual(expected);
     });
   });

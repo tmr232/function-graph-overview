@@ -441,7 +441,7 @@ const functionQuery = {
         (selector_expression) @name
       ]))`,
 
-  name: "name",
+  tag: "name",
 };
 
 function findVariableBinding(func: SyntaxNode): string | undefined {
@@ -472,7 +472,7 @@ function findVariableBinding(func: SyntaxNode): string | undefined {
     const left = extractCapturedTextsByTag(
       node,
       leftPattern,
-      functionQuery.name,
+      functionQuery.tag,
     );
     const right = node.childForFieldName(rightField);
     if (!right) return undefined;
@@ -515,13 +515,13 @@ export function extractGoFunctionName(func: SyntaxNode): string | undefined {
       return extractCapturedTextsByTag(
         func,
         functionQuery.functionDeclaration,
-        functionQuery.name,
+        functionQuery.tag,
       )[0];
     case "method_declaration":
       return extractCapturedTextsByTag(
         func,
         functionQuery.methodDeclaration,
-        functionQuery.name,
+        functionQuery.tag,
       )[0];
     case "func_literal":
       return findVariableBinding(func);
