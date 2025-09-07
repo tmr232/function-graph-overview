@@ -445,11 +445,10 @@ const functionQuery = {
   captureName: "name",
 };
 
+// Find the variable or field name bound to a function literal
 function findVariableBinding(func: SyntaxNode): string | undefined {
   const parent = func.parent;
-  if (!parent) {
-    return undefined;
-  }
+  if (!parent) return undefined;
 
   // Walk the right-hand expression list and find the index of *this* func literal.
   // I compare by node id to be safe - same node, same id.

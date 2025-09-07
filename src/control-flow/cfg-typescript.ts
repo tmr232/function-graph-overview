@@ -349,16 +349,7 @@ const functionQuery = {
   captureName: "name",
 };
 
-/**
- * Extracts the name of a TypeScript function based on its syntax node type.
- *
- * @param {SyntaxNode} func - The syntax node representing the TypeScript function.
- * @returns {string | undefined} The function name, or `undefined` if not found.
- *
- */
-export function extractTypeScriptFunctionName(
-  func: SyntaxNode,
-): string | undefined {
+function extractTypeScriptFunctionName(func: SyntaxNode): string | undefined {
   switch (func.type) {
     case "function_declaration":
       return extractCapturedTextsByCaptureName(
@@ -412,21 +403,24 @@ export function extractTypeScriptFunctionName(
   }
 }
 
+// Find the variable, parameter, or field that this function is bound to
 function findVariableBinding(func: SyntaxNode): string | undefined {
   const parent = func.parent;
   if (!parent) return undefined;
 
   switch (parent.type) {
+    // const/let/var x = <func>  -> "x"
     case "variable_declarator": {
       const name = parent.childForFieldName("name");
       return name?.type === "identifier" ? name.text : undefined;
     }
-
+    // function f(x = <func>) {}  -> "x" (default param bindings)
     case "required_parameter": {
       const name = parent.childForFieldName("pattern");
       return name?.type === "identifier" ? name.text : undefined;
     }
-
+    // x = <func>  -> "x"
+    // x.field = <func>  -> "x.field"
     case "assignment_expression":
     case "assignment_pattern": {
       const name = parent.childForFieldName("left");
@@ -434,19 +428,11 @@ function findVariableBinding(func: SyntaxNode): string | undefined {
         ? name.text
         : undefined;
     }
-
+    // class c { field = <func> } -> "field"
     case "public_field_definition": {
       const name = parent.childForFieldName("name");
       return name?.type === "property_identifier" ? name.text : undefined;
     }
-
-    case "object_assignment_pattern": {
-      const left = parent.childForFieldName("left");
-      return left?.type === "shorthand_property_identifier_pattern"
-        ? left.text
-        : undefined;
-    }
-
     default:
       return undefined;
   }

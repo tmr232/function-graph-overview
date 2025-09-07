@@ -239,8 +239,8 @@ function findVariableBinding(func: SyntaxNode): string | undefined {
   if (!parent) return undefined;
 
   switch (parent.type) {
-    // x = <func> -> return 'x' (identifier)
-    // x.field = <func> -> return 'x.field' (field_expression)
+    // x = <func> -> "x" (identifier)
+    // x.field = <func> -> "x.field" (field_expression)
     case "assignment_expression": {
       const name = parent.childForFieldName("left");
       console.log(name?.type);
@@ -248,7 +248,7 @@ function findVariableBinding(func: SyntaxNode): string | undefined {
         ? name.text
         : undefined;
     }
-    // <type> x = <func> -> return 'x'
+    // <type> x = <func> -> "x"
     case "init_declarator":
       return extractCapturedTextsByCaptureName(
         parent,
