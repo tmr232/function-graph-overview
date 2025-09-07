@@ -490,32 +490,31 @@ function findVariableBinding(func: SyntaxNode): string | undefined {
     return undefined;
   };
 
-  // := short var declaration
-  if (parent.parent?.type === "short_var_declaration") {
-    return bindFromPair(
-      parent.parent,
-      functionQuery.shortVarDeclaration,
-      "right",
-    );
-  }
+  switch (parent.parent?.type) {
+    // := short var declaration
+    case "short_var_declaration":
+      return bindFromPair(
+        parent.parent,
+        functionQuery.shortVarDeclaration,
+        "right",
+      );
 
-  // = plain assignment ...
-  if (parent.parent?.type === "assignment_statement") {
-    return bindFromPair(
-      parent.parent,
-      functionQuery.assignmentStatement,
-      "right",
-    );
-  }
+    // = plain assignment ...
+    case "assignment_statement":
+      return bindFromPair(
+        parent.parent,
+        functionQuery.assignmentStatement,
+        "right",
+      );
 
-  // var x, y = ..., func(){}, ...
-  // Same idea, but Go’s var spec uses "value".
-  if (parent.parent?.type === "var_spec") {
-    return bindFromPair(parent.parent, functionQuery.varSpec, "value");
-  }
+    // var x, y = ..., func(){}, ...
+    // Same idea, but Go’s var spec uses "value".
+    case "var_spec":
+      return bindFromPair(parent.parent, functionQuery.varSpec, "value");
 
-  // If we got here, we didn't find a binding in the supported contexts.
-  return undefined;
+    default:
+      return undefined;
+  }
 }
 
 function extractGoFunctionName(func: SyntaxNode): string | undefined {

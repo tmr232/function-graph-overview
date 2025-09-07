@@ -233,23 +233,30 @@ function extractCppFunctionName(func: SyntaxNode): string | undefined {
   return undefined;
 }
 
+// Find the binding variable of a lambda function
 function findVariableBinding(func: SyntaxNode): string | undefined {
   const parent = func.parent;
   if (!parent) return undefined;
 
-  if (parent.type === "assignment_expression") {
-    const name = parent.childForFieldName("left");
-    return name?.type === "identifier" || name?.type === "field_expression"
-      ? name.text
-      : undefined;
-  }
+  switch (parent.type) {
+    // x = <func> -> return 'x' (identifier)
+    // x.field = <func> -> return 'x.field' (field_expression)
+    case "assignment_expression": {
+      const name = parent.childForFieldName("left");
+      console.log(name?.type);
+      return name?.type === "identifier" || name?.type === "field_expression"
+        ? name.text
+        : undefined;
+    }
+    // <type> x = <func> -> return 'x'
+    case "init_declarator":
+      return extractCapturedTextsByCaptureName(
+        parent,
+        functionQuery.initDeclarator,
+        functionQuery.captureName,
+      )[0];
 
-  if (parent.type === "init_declarator") {
-    return extractCapturedTextsByCaptureName(
-      parent,
-      functionQuery.initDeclarator,
-      functionQuery.captureName,
-    )[0];
+    default:
+      return undefined;
   }
-  return undefined;
 }
