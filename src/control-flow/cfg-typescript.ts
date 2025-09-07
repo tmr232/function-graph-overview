@@ -412,7 +412,6 @@ export function extractTypeScriptFunctionName(
   }
 }
 
-
 function findVariableBinding(func: SyntaxNode): string | undefined {
   const parent = func.parent;
   if (!parent) return undefined;

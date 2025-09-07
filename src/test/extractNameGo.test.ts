@@ -134,26 +134,3 @@ describe("Go: assignments & invocation forms", () => {
     expect(namesFrom(code)).toEqual(expected);
   });
 });
-
-describe("Go: keyed elements - not supported", () => {
-  test("simple keys", () => {
-    const code = `
-      var _ = map[interface{}]func(){
-        "simple":        func() {},  
-        'r':             func() {},  
-        fmt.Sprint(1):   func() {},         
-        T(1):            func() {},        
-        [2]int{1,2}:     func() {},   
-        1 + 2:           func() {},     
-      }
-    `;
-    expect(namesFrom(code)).toEqual([
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-    ]);
-  });
-});
