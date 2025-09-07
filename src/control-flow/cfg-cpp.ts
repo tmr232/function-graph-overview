@@ -13,12 +13,13 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
 import { pairwise, zip } from "./itertools.ts";
-import { extractCapturedTextsByTag } from "./query-utils.ts";
+import { extractCapturedTextsByCaptureName } from "./query-utils.ts";
 
 export const cppLanguageDefinition = {
   wasmPath: treeSitterCpp,
   createCFGBuilder: createCFGBuilder,
   functionNodeTypes: ["function_definition", "lambda_expression"],
+  extractFunctionName: extractCppFunctionName,
 };
 
 export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
@@ -169,8 +170,18 @@ const functionQuery = {
       declarator: (_) @name)
   `,
 
-  tag: "name",
+  captureName: "name",
 };
+
+const validDeclaratorTypes = new Set([
+  "identifier",
+  "operator_name",
+  "operator_cast",
+  "destructor_name",
+  "qualified_identifier",
+  "type_identifier",
+  "field_identifier",
+]);
 
 /**
  * Get the function_declarator node for a function_definition.
@@ -189,16 +200,7 @@ function getFunctionDeclarator(funcDef: SyntaxNode): SyntaxNode | null {
 
   for (const node of nodes) {
     const decl = node?.childForFieldName("declarator");
-    if (
-      decl &&
-      (decl.type === "identifier" ||
-        decl.type === "operator_name" ||
-        decl.type === "operator_cast" ||
-        decl.type === "destructor_name" ||
-        decl.type === "qualified_identifier" ||
-        decl.type === "type_identifier" ||
-        decl.type === "field_identifier")
-    ) {
+    if (decl && validDeclaratorTypes.has(decl.type)) {
       return node;
     }
   }
@@ -206,14 +208,14 @@ function getFunctionDeclarator(funcDef: SyntaxNode): SyntaxNode | null {
   return null;
 }
 
-export function extractCppFunctionName(func: SyntaxNode): string | undefined {
+function extractCppFunctionName(func: SyntaxNode): string | undefined {
   if (func.type === "function_definition") {
     const declarator = getFunctionDeclarator(func);
     const name = declarator
-      ? extractCapturedTextsByTag(
+      ? extractCapturedTextsByCaptureName(
           declarator,
           functionQuery.functionDeclarator,
-          functionQuery.tag,
+          functionQuery.captureName,
         )[0]
       : undefined;
     if (name) return name;
@@ -243,10 +245,10 @@ function findVariableBinding(func: SyntaxNode): string | undefined {
   }
 
   if (parent.type === "init_declarator") {
-    return extractCapturedTextsByTag(
+    return extractCapturedTextsByCaptureName(
       parent,
       functionQuery.initDeclarator,
-      functionQuery.tag,
+      functionQuery.captureName,
     )[0];
   }
   return undefined;

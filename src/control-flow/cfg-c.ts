@@ -20,13 +20,14 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
 import { treeSitterNoNullNodes } from "./hacks.ts";
-import { extractCapturedTextsByTag } from "./query-utils.ts";
+import { extractCapturedTextsByCaptureName } from "./query-utils.ts";
 import { buildSwitch, collectCases } from "./switch-utils.ts";
 
 export const cLanguageDefinition = {
   wasmPath: treeSitterC,
   createCFGBuilder: createCFGBuilder,
   functionNodeTypes: ["function_definition"],
+  extractFunctionName: extractCFunctionName,
 };
 
 function getChildFieldText(node: SyntaxNode, fieldName: string): string {
@@ -172,7 +173,7 @@ const functionQuery = {
   functionDeclarator: `(function_declarator
 	  declarator:(identifier)@name)`,
 
-  tag: "name",
+  captureName: "name",
 };
 
 function getFunctionDeclarator(funcDef: SyntaxNode): SyntaxNode | null {
@@ -185,21 +186,21 @@ function getFunctionDeclarator(funcDef: SyntaxNode): SyntaxNode | null {
     end,
   );
 
-  for (const node of nodes) {
+  const declaratorNode = nodes.find((node) => {
     const decl = node?.childForFieldName("declarator");
-    if (decl && decl.type === "identifier") return node;
-  }
+    return decl?.type === "identifier";
+  });
 
-  return null;
+  return declaratorNode ?? null;
 }
 
-export function extractCFunctionName(func: SyntaxNode): string | undefined {
+function extractCFunctionName(func: SyntaxNode): string | undefined {
   const declarator = getFunctionDeclarator(func);
   if (!declarator) return undefined;
 
-  return extractCapturedTextsByTag(
+  return extractCapturedTextsByCaptureName(
     declarator,
     functionQuery.functionDeclarator,
-    functionQuery.tag,
+    functionQuery.captureName,
   )[0];
 }

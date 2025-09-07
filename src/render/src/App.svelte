@@ -6,6 +6,7 @@ import { onMount } from "svelte";
 import { type Node as SyntaxNode } from "web-tree-sitter";
 import { callProcessorFor } from "../../control-flow/call-processor";
 import { type Language, newCFGBuilder } from "../../control-flow/cfg";
+import { extractFunctionName } from "../../control-flow/cfg";
 import {
   type CFG,
   type GraphEdge,
@@ -18,7 +19,6 @@ import {
   getLightColorList,
   listToScheme,
 } from "../../control-flow/colors";
-import { extractFunctionName } from "../../control-flow/function-utils";
 import { simplifyCFG, trimFor } from "../../control-flow/graph-ops";
 import { Lookup } from "../../control-flow/ranges";
 import { graphToDot } from "../../control-flow/render";
@@ -154,7 +154,7 @@ async function getFunctionByLine(
   return undefined;
 }
 
-function setBackgroundColor(colors: "light" | "dark") {
+function applyColors(colors: "light" | "dark") {
   if (colors === "dark") {
     document.body.style.backgroundColor = "black";
     document.body.setAttribute("data-theme", "dark");
@@ -288,19 +288,24 @@ function updateMetadata(CFG: CFG, func?: SyntaxNode, language?: Language) {
   // Update function metadata (GitHub only)
   let name: string | undefined = undefined;
   let lineCount: number | undefined = undefined;
+  let functionData:
+    | { name: string; lineCount: number; language: Language }
+    | undefined = undefined;
 
   if (func && language) {
     name = extractFunctionName(func, language) ?? "<anonymous>";
     lineCount = func.endPosition.row - func.startPosition.row + 1;
+    functionData = { name, lineCount, language };
   }
 
   // Update CFG metadata
   const nodeCount: number = CFG.graph.order;
   const edgeCount: number = CFG.graph.size;
-  const cyclomaticComplexity: number = CFG.graph.size - nodeCount + 2; // (https://en.wikipedia.org/wiki/Cyclomatic_complexity)
+  // https://en.wikipedia.org/wiki/Cyclomatic_complexity
+  const cyclomaticComplexity: number = CFG.graph.size - nodeCount + 2;
 
   return {
-    functionData: name && lineCount ? { name, lineCount, language } : undefined,
+    functionData,
     cfgGraphData: {
       nodeCount,
       edgeCount,
@@ -313,7 +318,7 @@ async function render() {
   try {
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = parseUrlSearchParams(urlSearchParams);
-    setBackgroundColor(params.colors);
+    applyColors(params.colors);
 
     const cfg = await createCFG(params);
 
@@ -391,29 +396,33 @@ onMount(() => {
       onclick={openCode}
       disabled={!Boolean(codeUrl)}
       title={Boolean(codeUrl) ? "" : "Only available for GitHub code"}
-      >Open Code</button
     >
+      Open Code
+    </button>
     <button onclick={saveSVG}>Download SVG</button>
   </div>
+
   {#if functionAndCFGMetadata}
-   <!-- Metadata display -->
-{#if metadataFields.some(field => showMetadata[field.key] && field.value() !== undefined)}
-<div class="metadata" class:panel-open={isPanelOpen}>
-    {#each metadataFields.filter(field => field.value() !== undefined) as { key, label , value}}
-    {#if showMetadata[key]}
-      <span>{label}: {value()}</span>
+    <!-- Metadata display -->
+    {#if metadataFields.some(field => showMetadata[field.key] && field.value() !== undefined)}
+      <div class="metadata" class:panel-open={isPanelOpen}>
+        {#each metadataFields.filter(field => field.value() !== undefined) as { key, label, value }}
+          {#if showMetadata[key]}
+            <span>{label}: {value()}</span>
+          {/if}
+        {/each}
+      </div>
     {/if}
-  {/each}
-</div>
-{/if}
+
     <button class="panel-toggle" onclick={togglePanel}>
       {isPanelOpen ? '→' : '←'}
     </button>
+
     <!-- Control panel -->
     <div class="control-panel" class:open={isPanelOpen}>
       <h3>Display Options</h3>
-        {#each metadataFields.filter(field => field.value() !== undefined) as { key, label }}
-      <label>
+      {#each metadataFields.filter(field => field.value() !== undefined) as { key, label }}
+        <label>
           <input type="checkbox" bind:checked={showMetadata[key]} />
           {label}
         </label>

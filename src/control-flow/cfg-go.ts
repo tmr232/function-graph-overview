@@ -18,7 +18,7 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder";
 import { treeSitterNoNullNodes } from "./hacks.ts";
-import { extractCapturedTextsByTag } from "./query-utils.ts";
+import { extractCapturedTextsByCaptureName } from "./query-utils.ts";
 import { type SwitchOptions, buildSwitch, collectCases } from "./switch-utils";
 
 export const goLanguageDefinition = {
@@ -29,6 +29,7 @@ export const goLanguageDefinition = {
     "method_declaration",
     "func_literal",
   ],
+  extractFunctionName: extractGoFunctionName,
 };
 
 const processBreakStatement = labeledBreakProcessor(`
@@ -441,12 +442,14 @@ const functionQuery = {
         (selector_expression) @name
       ]))`,
 
-  tag: "name",
+  captureName: "name",
 };
 
 function findVariableBinding(func: SyntaxNode): string | undefined {
   const parent = func.parent;
-  if (!parent) return undefined;
+  if (!parent) {
+    return undefined;
+  }
 
   // Walk the right-hand expression list and find the index of *this* func literal.
   // I compare by node id to be safe - same node, same id.
@@ -454,9 +457,12 @@ function findVariableBinding(func: SyntaxNode): string | undefined {
     funcNode: SyntaxNode,
     right: SyntaxNode,
   ): number | null => {
-    for (let i = 0; i < right.namedChildCount; i++) {
-      const child = right.namedChild(i);
-      if (child?.type === "func_literal" && child.id === funcNode.id) return i;
+    const index = right.namedChildren.findIndex(
+      (child) => child?.type === "func_literal" && child.id === funcNode.id,
+    );
+
+    if (index !== -1) {
+      return index;
     }
     return null;
   };
@@ -469,16 +475,19 @@ function findVariableBinding(func: SyntaxNode): string | undefined {
     leftPattern: string,
     rightField: "right" | "value" = "right",
   ): string | undefined => {
-    const left = extractCapturedTextsByTag(
+    const left = extractCapturedTextsByCaptureName(
       node,
       leftPattern,
-      functionQuery.tag,
+      functionQuery.captureName,
     );
     const right = node.childForFieldName(rightField);
     if (!right) return undefined;
 
-    const foundIndex = findFuncIndex(func, right);
-    return foundIndex !== null ? (left[foundIndex] ?? undefined) : undefined;
+    const bindingIndex = findFuncIndex(func, right);
+    if (bindingIndex !== null) {
+      return left[bindingIndex] ?? undefined;
+    }
+    return undefined;
   };
 
   // := short var declaration
@@ -509,19 +518,19 @@ function findVariableBinding(func: SyntaxNode): string | undefined {
   return undefined;
 }
 
-export function extractGoFunctionName(func: SyntaxNode): string | undefined {
+function extractGoFunctionName(func: SyntaxNode): string | undefined {
   switch (func.type) {
     case "function_declaration":
-      return extractCapturedTextsByTag(
+      return extractCapturedTextsByCaptureName(
         func,
         functionQuery.functionDeclaration,
-        functionQuery.tag,
+        functionQuery.captureName,
       )[0];
     case "method_declaration":
-      return extractCapturedTextsByTag(
+      return extractCapturedTextsByCaptureName(
         func,
         functionQuery.methodDeclaration,
-        functionQuery.tag,
+        functionQuery.captureName,
       )[0];
     case "func_literal":
       return findVariableBinding(func);

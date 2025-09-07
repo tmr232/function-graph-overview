@@ -23,7 +23,7 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
 import { treeSitterNoNullNodes } from "./hacks.ts";
-import { extractCapturedTextsByTag } from "./query-utils.ts";
+import { extractCapturedTextsByCaptureName } from "./query-utils.ts";
 import { buildSwitch, collectCases } from "./switch-utils.ts";
 
 const typeScriptFunctionNodeTypes = [
@@ -38,11 +38,13 @@ export const typeScriptLanguageDefinition = {
   wasmPath: treeSitterTypeScript,
   createCFGBuilder: createCFGBuilder,
   functionNodeTypes: typeScriptFunctionNodeTypes,
+  extractFunctionName: extractTypeScriptFunctionName,
 };
 export const tsxLanguageDefinition = {
   wasmPath: treeSitterTSX,
   createCFGBuilder: createCFGBuilder,
   functionNodeTypes: typeScriptFunctionNodeTypes,
+  extractFunctionName: extractTypeScriptFunctionName,
 };
 
 export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
@@ -344,7 +346,7 @@ const functionQuery = {
   generatorFunctionDeclaration: `(generator_function_declaration 
     name: (identifier) @name)`,
 
-  tag: "name",
+  captureName: "name",
 };
 
 /**
@@ -359,27 +361,27 @@ export function extractTypeScriptFunctionName(
 ): string | undefined {
   switch (func.type) {
     case "function_declaration":
-      return extractCapturedTextsByTag(
+      return extractCapturedTextsByCaptureName(
         func,
         functionQuery.functionDeclaration,
-        functionQuery.tag,
+        functionQuery.captureName,
       )[0];
 
     case "generator_function": {
-      const names = extractCapturedTextsByTag(
+      const names = extractCapturedTextsByCaptureName(
         func,
         functionQuery.generatorFunction,
-        functionQuery.tag,
+        functionQuery.captureName,
       );
       if (names.length > 0) return names[0];
       return findVariableBinding(func);
     }
 
     case "generator_function_declaration": {
-      const names = extractCapturedTextsByTag(
+      const names = extractCapturedTextsByCaptureName(
         func,
         functionQuery.generatorFunctionDeclaration,
-        functionQuery.tag,
+        functionQuery.captureName,
       );
       if (names.length > 0) return names[0];
       return findVariableBinding(func);
@@ -389,26 +391,27 @@ export function extractTypeScriptFunctionName(
       return findVariableBinding(func);
 
     case "function_expression": {
-      const directNames = extractCapturedTextsByTag(
+      const directNames = extractCapturedTextsByCaptureName(
         func,
         functionQuery.functionExpression,
-        functionQuery.tag,
+        functionQuery.captureName,
       );
       if (directNames.length > 0) return directNames[0];
       return findVariableBinding(func);
     }
 
     case "method_definition":
-      return extractCapturedTextsByTag(
+      return extractCapturedTextsByCaptureName(
         func,
         functionQuery.methodDefinition,
-        functionQuery.tag,
+        functionQuery.captureName,
       )[0];
 
     default:
       return undefined;
   }
 }
+
 
 function findVariableBinding(func: SyntaxNode): string | undefined {
   const parent = func.parent;

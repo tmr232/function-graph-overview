@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { extractFunctionName } from "../control-flow/function-utils.ts";
+import { extractFunctionName } from "../control-flow/cfg.ts";
 import { iterFunctions } from "../file-parsing/bun.ts";
 
 const namesFrom = (code: string) =>
