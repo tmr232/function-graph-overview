@@ -1,3 +1,4 @@
+import type { Node as SyntaxNode } from "web-tree-sitter";
 import { cLanguageDefinition } from "./cfg-c";
 import { cppLanguageDefinition } from "./cfg-cpp";
 import type { BuilderOptions, CFGBuilder } from "./cfg-defs";
@@ -32,6 +33,8 @@ export type LanguageDefinition = {
   createCFGBuilder: (options: BuilderOptions) => CFGBuilder;
   /** All AST nodes types representing functions */
   functionNodeTypes: string[];
+  /** Extract the function name from a function node */
+  extractFunctionName: (node: SyntaxNode) => string | undefined;
 };
 
 export const languageDefinitions: Record<Language, LanguageDefinition> = {
@@ -53,4 +56,11 @@ export function newCFGBuilder(
   options: BuilderOptions,
 ): CFGBuilder {
   return languageDefinitions[language].createCFGBuilder(options);
+}
+
+export function extractFunctionName(
+  func: SyntaxNode,
+  language: Language,
+): string | undefined {
+  return languageDefinitions[language].extractFunctionName(func);
 }

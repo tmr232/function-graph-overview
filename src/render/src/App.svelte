@@ -6,6 +6,7 @@ import { onMount } from "svelte";
 import { type Node as SyntaxNode } from "web-tree-sitter";
 import { callProcessorFor } from "../../control-flow/call-processor";
 import { type Language, newCFGBuilder } from "../../control-flow/cfg";
+import { extractFunctionName } from "../../control-flow/cfg";
 import {
   type CFG,
   type GraphEdge,
@@ -26,6 +27,56 @@ import {
   initParsers,
   iterFunctions,
 } from "../../file-parsing/vite";
+
+// Add state for panel and checkbox controls
+let isPanelOpen = false;
+let showMetadata = {
+  language: true,
+  functionName: true,
+  lineCount: true,
+  nodeCount: false,
+  edgeCount: false,
+  cyclomaticComplexity: false,
+};
+
+// Metadata field definitions
+const metadataFields = [
+  {
+    key: "language",
+    label: "Language",
+    value: () => functionAndCFGMetadata.functionData?.language,
+  },
+  {
+    key: "functionName",
+    label: "Function Name",
+    value: () => functionAndCFGMetadata.functionData?.name,
+  },
+  {
+    key: "lineCount",
+    label: "Line Count",
+    value: () => functionAndCFGMetadata.functionData?.lineCount,
+  },
+  {
+    key: "nodeCount",
+    label: "Node Count",
+    value: () => functionAndCFGMetadata.cfgGraphData?.nodeCount,
+  },
+  {
+    key: "edgeCount",
+    label: "Edge Count",
+    value: () => functionAndCFGMetadata.cfgGraphData?.edgeCount,
+  },
+  {
+    key: "cyclomaticComplexity",
+    label: "Cyclomatic Complexity",
+    value: () => functionAndCFGMetadata.cfgGraphData?.cyclomaticComplexity,
+  },
+];
+
+// Toggle panel open/closed
+function togglePanel() {
+  isPanelOpen = !isPanelOpen;
+}
 
 let codeUrl: string | undefined;
 
@@ -103,11 +154,13 @@ async function getFunctionByLine(
   return undefined;
 }
 
-function setBackgroundColor(colors: "light" | "dark") {
+function applyColors(colors: "light" | "dark") {
   if (colors === "dark") {
     document.body.style.backgroundColor = "black";
+    document.body.setAttribute("data-theme", "dark");
   } else {
     document.body.style.backgroundColor = "#ddd";
+    document.body.setAttribute("data-theme", "light");
   }
 }
 
@@ -132,6 +185,18 @@ type GraphParams = {
 type Params = (GithubParams | GraphParams) & {
   colorScheme: ColorScheme;
   colors: "light" | "dark";
+};
+type FunctionAndCFGMetadata = {
+  functionData: {
+    name: string;
+    lineCount: number;
+    language: Language;
+  };
+  cfgGraphData: {
+    nodeCount: number;
+    edgeCount: number;
+    cyclomaticComplexity: number;
+  };
 };
 
 function parseUrlSearchParams(urlSearchParams: URLSearchParams): Params {
@@ -170,7 +235,9 @@ function parseUrlSearchParams(urlSearchParams: URLSearchParams): Params {
   };
 }
 
-async function createGitHubCFG(ghParams: GithubParams): Promise<CFG> {
+async function fetchFunctionAndLanguage(
+  ghParams: GithubParams,
+): Promise<{ func: SyntaxNode; language: Language }> {
   const { rawUrl, line } = ghParams;
   const response = await fetch(rawUrl);
   const code = await response.text();
@@ -182,6 +249,11 @@ async function createGitHubCFG(ghParams: GithubParams): Promise<CFG> {
     throw new Error(`Unable to find function on line ${line}`);
   }
 
+  return { func, language };
+}
+
+async function createGitHubCFG(ghParams: GithubParams): Promise<CFG> {
+  const { func, language } = await fetchFunctionAndLanguage(ghParams);
   return buildCFG(func, language);
 }
 
@@ -210,16 +282,55 @@ async function createCFG(params: Params): Promise<CFG> {
   }
 }
 
+let functionAndCFGMetadata: FunctionAndCFGMetadata | undefined;
+
+function updateMetadata(CFG: CFG, func?: SyntaxNode, language?: Language) {
+  // Update function metadata (GitHub only)
+  let name: string | undefined = undefined;
+  let lineCount: number | undefined = undefined;
+  let functionData:
+    | { name: string; lineCount: number; language: Language }
+    | undefined = undefined;
+
+  if (func && language) {
+    name = extractFunctionName(func, language) ?? "<anonymous>";
+    lineCount = func.endPosition.row - func.startPosition.row + 1;
+    functionData = { name, lineCount, language };
+  }
+
+  // Update CFG metadata
+  const nodeCount: number = CFG.graph.order;
+  const edgeCount: number = CFG.graph.size;
+  // https://en.wikipedia.org/wiki/Cyclomatic_complexity
+  const cyclomaticComplexity: number = CFG.graph.size - nodeCount + 2;
+
+  return {
+    functionData,
+    cfgGraphData: {
+      nodeCount,
+      edgeCount,
+      cyclomaticComplexity,
+    },
+  };
+}
+
 async function render() {
   try {
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = parseUrlSearchParams(urlSearchParams);
-    setBackgroundColor(params.colors);
-    if (params.type === "GitHub") {
-      codeUrl = params.codeUrl;
-    }
+    applyColors(params.colors);
 
     const cfg = await createCFG(params);
+
+    if (params.type === "GitHub") {
+      codeUrl = params.codeUrl;
+      const { func, language } = await fetchFunctionAndLanguage(params);
+      functionAndCFGMetadata = updateMetadata(cfg, func, language);
+    } else {
+      // Graph
+      functionAndCFGMetadata = updateMetadata(cfg);
+    }
+
     const graphviz = await Graphviz.load();
     rawSVG = graphviz.dot(graphToDot(cfg, false, params.colorScheme));
     return rawSVG;
@@ -285,11 +396,41 @@ onMount(() => {
       onclick={openCode}
       disabled={!Boolean(codeUrl)}
       title={Boolean(codeUrl) ? "" : "Only available for GitHub code"}
-      >Open Code</button
     >
+      Open Code
+    </button>
     <button onclick={saveSVG}>Download SVG</button>
   </div>
+
+  {#if functionAndCFGMetadata}
+    <!-- Metadata display -->
+    {#if metadataFields.some(field => showMetadata[field.key] && field.value() !== undefined)}
+      <div class="metadata" class:panel-open={isPanelOpen}>
+        {#each metadataFields.filter(field => field.value() !== undefined) as { key, label, value }}
+          {#if showMetadata[key]}
+            <span>{label}: {value()}</span>
+          {/if}
+        {/each}
+      </div>
+    {/if}
+
+    <button class="panel-toggle" onclick={togglePanel}>
+      {isPanelOpen ? '→' : '←'}
+    </button>
+
+    <!-- Control panel -->
+    <div class="control-panel" class:open={isPanelOpen}>
+      <h3>Display Options</h3>
+      {#each metadataFields.filter(field => field.value() !== undefined) as { key, label }}
+        <label>
+          <input type="checkbox" bind:checked={showMetadata[key]} />
+          {label}
+        </label>
+      {/each}
+    </div>
+  {/if}
 </div>
+
 <div class="svgContainer">
   {#await render()}
     <p style="color: green">Loading code...</p>
@@ -311,6 +452,74 @@ onMount(() => {
   .controls {
     margin: 1em;
   }
+
+  .metadata {
+    position: fixed;
+    top: 4em;
+    right: 18.5em;
+    padding: 1em;
+    background-color: var(--metadata-bg);
+    transition: right 0.2s ease;
+  }
+
+  .metadata:not(.panel-open) {
+    right: 2.5em;
+  }
+
+  .metadata span {
+    display: block;
+    margin: 0.5em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-color);
+    font-size: 1em;
+  }
+
+  .panel-toggle {
+    position: fixed;
+    top: 4em;
+    z-index: 1001;
+    width: 2em;
+    height: 4em;
+    background-color: var(--toggle-bg);
+    color: var(--toggle-color);
+    border: none;
+    font-size: 1em;
+    cursor: pointer;
+  }
+
+  .control-panel {
+    position: fixed;
+    top: 4em;
+    right: -20em;
+    width: 18em;
+    padding: 1.25em;
+    background-color: var(--panel-bg);
+    color: var(--panel-text);
+    box-sizing: border-box;
+    font-size: 1em;
+    transition: right 0.2s ease;
+  }
+
+  .control-panel.open {
+    right: 0;
+  }
+
+  .control-panel h3 {
+    margin: 0 0 1.25em;
+    font-size: 1.5em;
+    color: var(--panel-heading);
+  }
+
+  .control-panel label {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-bottom: 1em;
+    cursor: pointer;
+  }
+
   .svgContainer {
     display: flex;
     flex-direction: column;
@@ -318,5 +527,25 @@ onMount(() => {
     justify-content: center;
     width: 100dvw;
     height: 100dvh;
+  }
+
+  :global(body), :global(body[data-theme="dark"]) {
+    --text-color: white;
+    --panel-bg: rgba(30, 30, 30, 0.7);
+    --panel-text: white;
+    --panel-heading: white;
+    --toggle-bg: #555;
+    --toggle-color: white;
+    --metadata-bg: rgba(30, 30, 30, 0.7);
+  }
+
+  :global(body[data-theme="light"]) {
+    --text-color: black;
+    --panel-bg: rgba(240, 240, 240, 0.9);
+    --panel-text: black;
+    --panel-heading: black;
+    --toggle-bg: #aaa;
+    --toggle-color: black;
+    --metadata-bg: rgba(240, 240, 240, 0.9);
   }
 </style>

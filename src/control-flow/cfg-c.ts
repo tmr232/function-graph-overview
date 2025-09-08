@@ -20,12 +20,14 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
 import { treeSitterNoNullNodes } from "./hacks.ts";
+import { extractCapturedTextsByCaptureName } from "./query-utils.ts";
 import { buildSwitch, collectCases } from "./switch-utils.ts";
 
 export const cLanguageDefinition = {
   wasmPath: treeSitterC,
   createCFGBuilder: createCFGBuilder,
   functionNodeTypes: ["function_definition"],
+  extractFunctionName: extractCFunctionName,
 };
 
 function getChildFieldText(node: SyntaxNode, fieldName: string): string {
@@ -165,4 +167,40 @@ function processSwitchlike(switchSyntax: SyntaxNode, ctx: Context): BasicBlock {
   }
 
   return blockHandler.update({ entry: headNode, exit: mergeNode });
+}
+
+const functionQuery = {
+  functionDeclarator: `(function_declarator
+	  declarator:(identifier)@name)`,
+
+  captureName: "name",
+};
+
+function getFunctionDeclarator(funcDef: SyntaxNode): SyntaxNode | null {
+  const body = funcDef.childForFieldName("body");
+  const end = body ? body.startPosition : funcDef.endPosition;
+
+  const nodes = funcDef.descendantsOfType(
+    "function_declarator",
+    funcDef.startPosition,
+    end,
+  );
+
+  const declaratorNode = nodes.find((node) => {
+    const decl = node?.childForFieldName("declarator");
+    return decl?.type === "identifier";
+  });
+
+  return declaratorNode ?? null;
+}
+
+function extractCFunctionName(func: SyntaxNode): string | undefined {
+  const declarator = getFunctionDeclarator(func);
+  if (!declarator) return undefined;
+
+  return extractCapturedTextsByCaptureName(
+    declarator,
+    functionQuery.functionDeclarator,
+    functionQuery.captureName,
+  )[0];
 }

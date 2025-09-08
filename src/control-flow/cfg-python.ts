@@ -12,11 +12,13 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
 import { maybe, zip } from "./itertools.ts";
+import { extractCapturedTextsByCaptureName } from "./query-utils.ts";
 
 export const pythonLanguageDefinition = {
   wasmPath: treeSitterPython,
   createCFGBuilder: createCFGBuilder,
   functionNodeTypes: ["function_definition"],
+  extractFunctionName: extractPythonFunctionName,
 };
 const processForStatement = forEachLoopProcessor({
   query: `
@@ -623,4 +625,19 @@ function processWhileStatement(
   });
 
   return matcher.update({ entry: condBlock.entry, exit: exitNode });
+}
+
+const functionQuery = {
+  functionDefinition: `(function_definition
+	  name :(identifier) @name)`,
+
+  captureName: "name",
+};
+
+function extractPythonFunctionName(func: SyntaxNode): string | undefined {
+  return extractCapturedTextsByCaptureName(
+    func,
+    functionQuery.functionDefinition,
+    functionQuery.captureName,
+  )[0];
 }

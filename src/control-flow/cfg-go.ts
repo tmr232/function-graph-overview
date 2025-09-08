@@ -18,6 +18,7 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder";
 import { treeSitterNoNullNodes } from "./hacks.ts";
+import { extractCapturedTextsByCaptureName } from "./query-utils.ts";
 import { type SwitchOptions, buildSwitch, collectCases } from "./switch-utils";
 
 export const goLanguageDefinition = {
@@ -28,6 +29,7 @@ export const goLanguageDefinition = {
     "method_declaration",
     "func_literal",
   ],
+  extractFunctionName: extractGoFunctionName,
 };
 
 const processBreakStatement = labeledBreakProcessor(`
@@ -418,4 +420,119 @@ function processSwitchlike(
   }
 
   return blockHandler.update({ entry: headNode, exit: mergeNode });
+}
+
+const functionQuery = {
+  functionDeclaration: `(function_declaration
+	  name :(identifier) @name)`,
+
+  methodDeclaration: `(method_declaration
+	  name: (field_identifier) @name)`,
+
+  shortVarDeclaration: `(short_var_declaration
+    left: (expression_list (identifier) @name))`,
+
+  varSpec: `(var_spec
+    name: (identifier) @name)`,
+
+  assignmentStatement: `(assignment_statement
+    left: (expression_list
+      [
+        (identifier) @name
+        (selector_expression) @name
+      ]))`,
+
+  captureName: "name",
+};
+
+// Find the variable or field name bound to a function literal
+function findVariableBinding(func: SyntaxNode): string | undefined {
+  const parent = func.parent;
+  if (!parent) return undefined;
+
+  // Walk the right-hand expression list and find the index of *this* func literal.
+  // I compare by node id to be safe - same node, same id.
+  const findFuncIndex = (
+    funcNode: SyntaxNode,
+    right: SyntaxNode,
+  ): number | null => {
+    const index = right.namedChildren.findIndex(
+      (child) => child?.type === "func_literal" && child.id === funcNode.id,
+    );
+
+    if (index !== -1) {
+      return index;
+    }
+    return null;
+  };
+
+  // We run the left query -> get names[], locate our func literal on the right -> get index,
+  // then names[index] is the binding.
+  // If nothing matches, return undefined.
+  const bindFromPair = (
+    node: SyntaxNode,
+    leftPattern: string,
+    rightField: "right" | "value" = "right",
+  ): string | undefined => {
+    const left = extractCapturedTextsByCaptureName(
+      node,
+      leftPattern,
+      functionQuery.captureName,
+    );
+    const right = node.childForFieldName(rightField);
+    if (!right) return undefined;
+
+    const bindingIndex = findFuncIndex(func, right);
+    if (bindingIndex !== null) {
+      return left[bindingIndex] ?? undefined;
+    }
+    return undefined;
+  };
+
+  switch (parent.parent?.type) {
+    // := short var declaration
+    case "short_var_declaration":
+      return bindFromPair(
+        parent.parent,
+        functionQuery.shortVarDeclaration,
+        "right",
+      );
+
+    // = plain assignment ...
+    case "assignment_statement":
+      return bindFromPair(
+        parent.parent,
+        functionQuery.assignmentStatement,
+        "right",
+      );
+
+    // var x, y = ..., func(){}, ...
+    // Same idea, but Go’s var spec uses "value".
+    case "var_spec":
+      return bindFromPair(parent.parent, functionQuery.varSpec, "value");
+
+    default:
+      return undefined;
+  }
+}
+
+function extractGoFunctionName(func: SyntaxNode): string | undefined {
+  switch (func.type) {
+    case "function_declaration":
+      return extractCapturedTextsByCaptureName(
+        func,
+        functionQuery.functionDeclaration,
+        functionQuery.captureName,
+      )[0];
+    case "method_declaration":
+      return extractCapturedTextsByCaptureName(
+        func,
+        functionQuery.methodDeclaration,
+        functionQuery.captureName,
+      )[0];
+    case "func_literal":
+      return findVariableBinding(func);
+    default:
+      return undefined;
+  }
 }

@@ -13,11 +13,13 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
 import { pairwise, zip } from "./itertools.ts";
+import { extractCapturedTextsByCaptureName } from "./query-utils.ts";
 
 export const cppLanguageDefinition = {
   wasmPath: treeSitterCpp,
   createCFGBuilder: createCFGBuilder,
   functionNodeTypes: ["function_definition", "lambda_expression"],
+  extractFunctionName: extractCppFunctionName,
 };
 
 export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
@@ -147,4 +149,114 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
       exit: mergeNode,
     });
   });
+}
+
+const functionQuery = {
+  functionDeclarator: `
+    (function_declarator
+    declarator: [
+      (identifier)        		
+      (type_identifier)   		
+      (destructor_name)   		
+      (operator_name)     		
+      (operator_cast)     		
+      (field_identifier)  		
+      (qualified_identifier)	
+    ] @name )
+`,
+
+  initDeclarator: `
+   (init_declarator
+      declarator: (_) @name)
+  `,
+
+  captureName: "name",
+};
+
+const validDeclaratorTypes = new Set([
+  "identifier",
+  "operator_name",
+  "operator_cast",
+  "destructor_name",
+  "qualified_identifier",
+  "type_identifier",
+  "field_identifier",
+]);
+
+/**
+ * Get the function_declarator node for a function_definition.
+ * Uses descendantsOfType to find it directly, even if wrapped
+ * in pointer/reference/parenthesized declarators.
+ */
+function getFunctionDeclarator(funcDef: SyntaxNode): SyntaxNode | null {
+  const body = funcDef.childForFieldName("body");
+  const end = body ? body.startPosition : funcDef.endPosition;
+
+  const nodes = funcDef.descendantsOfType(
+    "function_declarator",
+    funcDef.startPosition,
+    end,
+  );
+
+  for (const node of nodes) {
+    const decl = node?.childForFieldName("declarator");
+    if (decl && validDeclaratorTypes.has(decl.type)) {
+      return node;
+    }
+  }
+
+  return null;
+}
+
+function extractCppFunctionName(func: SyntaxNode): string | undefined {
+  if (func.type === "function_definition") {
+    const declarator = getFunctionDeclarator(func);
+    const name = declarator
+      ? extractCapturedTextsByCaptureName(
+          declarator,
+          functionQuery.functionDeclarator,
+          functionQuery.captureName,
+        )[0]
+      : undefined;
+    if (name) return name;
+
+    //From my observations, the only functions that do not have a function_declarator child are conversion operators.
+    //To extract their names, I need to manipulate strings (not ideal, but it works).
+    const fullDeclarationName = func.childForFieldName("declarator");
+    return fullDeclarationName?.text.split("(")[0];
+  }
+
+  if (func.type === "lambda_expression") {
+    const name = findVariableBinding(func);
+    return name;
+  }
+  return undefined;
+}
+
+// Find the binding variable of a lambda function
+function findVariableBinding(func: SyntaxNode): string | undefined {
+  const parent = func.parent;
+  if (!parent) return undefined;
+
+  switch (parent.type) {
+    // x = <func> -> "x" (identifier)
+    // x.field = <func> -> "x.field" (field_expression)
+    case "assignment_expression": {
+      const name = parent.childForFieldName("left");
+      console.log(name?.type);
+      return name?.type === "identifier" || name?.type === "field_expression"
+        ? name.text
+        : undefined;
+    }
+    // <type> x = <func> -> "x"
+    case "init_declarator":
+      return extractCapturedTextsByCaptureName(
+        parent,
+        functionQuery.initDeclarator,
+        functionQuery.captureName,
+      )[0];
+
+    default:
+      return undefined;
+  }
 }

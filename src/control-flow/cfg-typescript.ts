@@ -23,6 +23,7 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
 import { treeSitterNoNullNodes } from "./hacks.ts";
+import { extractCapturedTextsByCaptureName } from "./query-utils.ts";
 import { buildSwitch, collectCases } from "./switch-utils.ts";
 
 const typeScriptFunctionNodeTypes = [
@@ -37,11 +38,13 @@ export const typeScriptLanguageDefinition = {
   wasmPath: treeSitterTypeScript,
   createCFGBuilder: createCFGBuilder,
   functionNodeTypes: typeScriptFunctionNodeTypes,
+  extractFunctionName: extractTypeScriptFunctionName,
 };
 export const tsxLanguageDefinition = {
   wasmPath: treeSitterTSX,
   createCFGBuilder: createCFGBuilder,
   functionNodeTypes: typeScriptFunctionNodeTypes,
+  extractFunctionName: extractTypeScriptFunctionName,
 };
 
 export function createCFGBuilder(options: BuilderOptions): CFGBuilder {
@@ -318,4 +321,119 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
       exit: mergeNode,
     });
   });
+}
+
+const functionQuery = {
+  functionDeclaration: `(function_declaration 
+    (identifier) @name)`,
+
+  variableDeclaratorIdentifier: `(variable_declarator 
+    name: (identifier) @name)`,
+
+  methodDefinition: `(method_definition
+    [
+      (property_identifier) @name
+      (computed_property_name) @name
+      (private_property_identifier) @name
+    ])`,
+
+  functionExpression: `(function_expression 
+    name: (identifier) @name)`,
+
+  generatorFunction: `(generator_function 
+    name: (identifier) @name)`,
+
+  generatorFunctionDeclaration: `(generator_function_declaration 
+    name: (identifier) @name)`,
+
+  captureName: "name",
+};
+
+function extractTypeScriptFunctionName(func: SyntaxNode): string | undefined {
+  switch (func.type) {
+    case "function_declaration":
+      return extractCapturedTextsByCaptureName(
+        func,
+        functionQuery.functionDeclaration,
+        functionQuery.captureName,
+      )[0];
+
+    case "generator_function": {
+      const names = extractCapturedTextsByCaptureName(
+        func,
+        functionQuery.generatorFunction,
+        functionQuery.captureName,
+      );
+      if (names.length > 0) return names[0];
+      return findVariableBinding(func);
+    }
+
+    case "generator_function_declaration": {
+      const names = extractCapturedTextsByCaptureName(
+        func,
+        functionQuery.generatorFunctionDeclaration,
+        functionQuery.captureName,
+      );
+      if (names.length > 0) return names[0];
+      return findVariableBinding(func);
+    }
+
+    case "arrow_function":
+      return findVariableBinding(func);
+
+    case "function_expression": {
+      const directNames = extractCapturedTextsByCaptureName(
+        func,
+        functionQuery.functionExpression,
+        functionQuery.captureName,
+      );
+      if (directNames.length > 0) return directNames[0];
+      return findVariableBinding(func);
+    }
+
+    case "method_definition":
+      return extractCapturedTextsByCaptureName(
+        func,
+        functionQuery.methodDefinition,
+        functionQuery.captureName,
+      )[0];
+
+    default:
+      return undefined;
+  }
+}
+
+// Find the variable, parameter, or field that this function is bound to
+function findVariableBinding(func: SyntaxNode): string | undefined {
+  const parent = func.parent;
+  if (!parent) return undefined;
+
+  switch (parent.type) {
+    // const/let/var x = <func>  -> "x"
+    case "variable_declarator": {
+      const name = parent.childForFieldName("name");
+      return name?.type === "identifier" ? name.text : undefined;
+    }
+    // function f(x = <func>) {}  -> "x" (default param bindings)
+    case "required_parameter": {
+      const name = parent.childForFieldName("pattern");
+      return name?.type === "identifier" ? name.text : undefined;
+    }
+    // x = <func>  -> "x"
+    // x.field = <func>  -> "x.field"
+    case "assignment_expression":
+    case "assignment_pattern": {
+      const name = parent.childForFieldName("left");
+      return name?.type === "identifier" || name?.type === "member_expression"
+        ? name.text
+        : undefined;
+    }
+    // class c { field = <func> } -> "field"
+    case "public_field_definition": {
+      const name = parent.childForFieldName("name");
+      return name?.type === "property_identifier" ? name.text : undefined;
+    }
+    default:
+      return undefined;
+  }
 }
