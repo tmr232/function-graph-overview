@@ -4,7 +4,7 @@ import { iterFunctions } from "../file-parsing/bun.ts";
 
 const namesFrom = (code: string) =>
   [...iterFunctions(code, "Python")].map((f) =>
-    extractFunctionName(f, "Python"),
+    extractFunctionName("Python", f),
   );
 
 describe("Python: function definitions", () => {

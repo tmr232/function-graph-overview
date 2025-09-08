@@ -3,7 +3,7 @@ import { extractFunctionName } from "../control-flow/cfg.ts";
 import { iterFunctions } from "../file-parsing/bun.ts";
 
 const namesFrom = (code: string) =>
-  [...iterFunctions(code, "C++")].map((f) => extractFunctionName(f, "C++"));
+  [...iterFunctions(code, "C++")].map((f) => extractFunctionName("C++", f));
 
 describe("C++: basic functions & namespaces", () => {
   test.each([

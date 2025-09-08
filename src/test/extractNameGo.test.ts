@@ -3,7 +3,7 @@ import { extractFunctionName } from "../control-flow/cfg.ts";
 import { iterFunctions } from "../file-parsing/bun.ts";
 
 const namesFrom = (code: string) =>
-  [...iterFunctions(code, "Go")].map((f) => extractFunctionName(f, "Go"));
+  [...iterFunctions(code, "Go")].map((f) => extractFunctionName("Go", f));
 
 describe("Go: basic functions", () => {
   test("named top-level functions", () => {

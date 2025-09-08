@@ -445,7 +445,9 @@ const functionQuery = {
   captureName: "name",
 };
 
-// Find the variable or field name bound to a function literal
+/**
+ * Find the variable or field name bound to a function literal
+ */
 function findVariableBinding(func: SyntaxNode): string | undefined {
   const parent = func.parent;
   if (!parent) return undefined;
