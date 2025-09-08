@@ -233,7 +233,9 @@ function extractCppFunctionName(func: SyntaxNode): string | undefined {
   return undefined;
 }
 
-// Find the binding variable of a lambda function
+/**
+ * Find the binding variable of a lambda function
+ */
 function findVariableBinding(func: SyntaxNode): string | undefined {
   const parent = func.parent;
   if (!parent) return undefined;

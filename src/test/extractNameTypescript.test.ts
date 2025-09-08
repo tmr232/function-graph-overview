@@ -4,7 +4,7 @@ import { iterFunctions } from "../file-parsing/bun.ts";
 
 const namesFrom = (code: string) =>
   [...iterFunctions(code, "TypeScript")].map((f) =>
-    extractFunctionName(f, "TypeScript"),
+    extractFunctionName("TypeScript", f),
   );
 
 describe("TypeScript: arrow functions", () => {

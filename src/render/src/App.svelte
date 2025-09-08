@@ -293,7 +293,7 @@ function updateMetadata(CFG: CFG, func?: SyntaxNode, language?: Language) {
     | undefined = undefined;
 
   if (func && language) {
-    name = extractFunctionName(func, language) ?? "<anonymous>";
+    name = extractFunctionName(language, func) ?? "<anonymous>";
     lineCount = func.endPosition.row - func.startPosition.row + 1;
     functionData = { name, lineCount, language };
   }

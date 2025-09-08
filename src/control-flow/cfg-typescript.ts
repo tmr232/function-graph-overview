@@ -403,7 +403,9 @@ function extractTypeScriptFunctionName(func: SyntaxNode): string | undefined {
   }
 }
 
-// Find the variable, parameter, or field that this function is bound to
+/**
+ * Finds the variable, parameter, or field that this function is bound to
+ */
 function findVariableBinding(func: SyntaxNode): string | undefined {
   const parent = func.parent;
   if (!parent) return undefined;

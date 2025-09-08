@@ -59,8 +59,8 @@ export function newCFGBuilder(
 }
 
 export function extractFunctionName(
-  func: SyntaxNode,
   language: Language,
+  func: SyntaxNode,
 ): string | undefined {
   return languageDefinitions[language].extractFunctionName(func);
 }
