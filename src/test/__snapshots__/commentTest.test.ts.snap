@@ -10152,6 +10152,301 @@ Lookup {
 }
 `;
 
+exports[`Java: sample.java!ArrowSwitch: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node1 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.8999999999999999; id="node1"];
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
+    node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
+    node9 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node9"];
+    node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node6"];
+    node1 -> node2 [class="consequence"; color="#008000"];
+    node1 -> node3 [class="alternative"; color="#ff0000"];
+    node3 -> node4 [class="consequence"; color="#008000"];
+    node3 -> node6 [class="alternative"; color="#ff0000"];
+    node2 -> node9 [class="regular"; color="#0000ff"];
+    node4 -> node9 [class="regular"; color="#0000ff"];
+    node6 -> node9 [class="regular"; color="#0000ff"];
+}"
+`;
+
+exports[`Java: sample.java!ArrowSwitch: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 3760,
+      "value": "node1",
+    },
+    {
+      "start": 3789,
+      "value": "node1",
+    },
+    {
+      "start": 3801,
+      "value": "node1",
+    },
+    {
+      "start": 3814,
+      "value": "node1",
+    },
+    {
+      "start": 3814,
+      "value": "node1",
+    },
+    {
+      "start": 3824,
+      "value": "node2",
+    },
+    {
+      "start": 3828,
+      "value": "node1",
+    },
+    {
+      "start": 3828,
+      "value": "node3",
+    },
+    {
+      "start": 3841,
+      "value": "node1",
+    },
+    {
+      "start": 3841,
+      "value": "node3",
+    },
+    {
+      "start": 3851,
+      "value": "node4",
+    },
+    {
+      "start": 3855,
+      "value": "node3",
+    },
+    {
+      "start": 3855,
+      "value": "node6",
+    },
+    {
+      "start": 3868,
+      "value": "node1",
+    },
+    {
+      "start": 3868,
+      "value": "node6",
+    },
+    {
+      "start": 3879,
+      "value": "node6",
+    },
+    {
+      "start": 3883,
+      "value": "node6",
+    },
+    {
+      "start": 3883,
+      "value": "node6",
+    },
+    {
+      "start": 3893,
+      "value": "node1",
+    },
+    {
+      "start": 3893,
+      "value": "node1",
+    },
+    {
+      "start": 3899,
+      "value": "node1",
+    },
+    {
+      "start": 3899,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`Java: sample.java!ArrowSwitchMultiLabel: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node1 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.8999999999999999; id="node1"];
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
+    node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
+    node9 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node9"];
+    node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node6"];
+    node1 -> node2 [class="consequence"; color="#008000"];
+    node1 -> node3 [class="alternative"; color="#ff0000"];
+    node3 -> node4 [class="consequence"; color="#008000"];
+    node3 -> node6 [class="alternative"; color="#ff0000"];
+    node2 -> node9 [class="regular"; color="#0000ff"];
+    node4 -> node9 [class="regular"; color="#0000ff"];
+    node6 -> node9 [class="regular"; color="#0000ff"];
+}"
+`;
+
+exports[`Java: sample.java!ArrowSwitchMultiLabel: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 3950,
+      "value": "node1",
+    },
+    {
+      "start": 3989,
+      "value": "node1",
+    },
+    {
+      "start": 4001,
+      "value": "node1",
+    },
+    {
+      "start": 4014,
+      "value": "node1",
+    },
+    {
+      "start": 4014,
+      "value": "node1",
+    },
+    {
+      "start": 4027,
+      "value": "node2",
+    },
+    {
+      "start": 4031,
+      "value": "node1",
+    },
+    {
+      "start": 4031,
+      "value": "node3",
+    },
+    {
+      "start": 4044,
+      "value": "node1",
+    },
+    {
+      "start": 4044,
+      "value": "node3",
+    },
+    {
+      "start": 4054,
+      "value": "node4",
+    },
+    {
+      "start": 4058,
+      "value": "node3",
+    },
+    {
+      "start": 4058,
+      "value": "node6",
+    },
+    {
+      "start": 4071,
+      "value": "node1",
+    },
+    {
+      "start": 4071,
+      "value": "node6",
+    },
+    {
+      "start": 4082,
+      "value": "node6",
+    },
+    {
+      "start": 4086,
+      "value": "node6",
+    },
+    {
+      "start": 4086,
+      "value": "node6",
+    },
+    {
+      "start": 4096,
+      "value": "node1",
+    },
+    {
+      "start": 4096,
+      "value": "node1",
+    },
+    {
+      "start": 4102,
+      "value": "node1",
+    },
+    {
+      "start": 4102,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`Java: sample.java!AssertStatement: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=1.2; id="node3"];
+}"
+`;
+
+exports[`Java: sample.java!AssertStatement: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node3",
+    },
+    {
+      "start": 5553,
+      "value": "node3",
+    },
+    {
+      "start": 5586,
+      "value": "node3",
+    },
+    {
+      "start": 5603,
+      "value": "node3",
+    },
+    {
+      "start": 5612,
+      "value": "node3",
+    },
+    {
+      "start": 5616,
+      "value": "node3",
+    },
+    {
+      "start": 5616,
+      "value": "node3",
+    },
+    {
+      "start": 5622,
+      "value": "node3",
+    },
+    {
+      "start": 5622,
+      "value": "node3",
+    },
+  ],
+}
+`;
+
 exports[`Java: sample.java!ForEachLoop: DOT Snapshot 1`] = `
 "digraph "" {
     node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
@@ -10888,6 +11183,146 @@ Lookup {
     {
       "start": 2062,
       "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`Java: sample.java!IfWithoutBraces: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node5 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.6; id="node5"];
+    node1 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node1"];
+    node2 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node2"];
+    node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
+    node1 -> node2 [class="consequence"; color="#008000"];
+    node1 -> node4 [class="alternative"; color="#ff0000"];
+    node5 -> node1 [class="regular"; color="#0000ff"];
+    node1 -> node4 [class="regular"; color="#0000ff"; penwidth=2; dir="back"; headport="s"; tailport="n"];
+}"
+`;
+
+exports[`Java: sample.java!IfWithoutBraces: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node5",
+    },
+    {
+      "start": 5149,
+      "value": "node5",
+    },
+    {
+      "start": 5182,
+      "value": "node5",
+    },
+    {
+      "start": 5191,
+      "value": "node1",
+    },
+    {
+      "start": 5205,
+      "value": "node1",
+    },
+    {
+      "start": 5208,
+      "value": "node1",
+    },
+    {
+      "start": 5211,
+      "value": "node2",
+    },
+    {
+      "start": 5212,
+      "value": "node1",
+    },
+    {
+      "start": 5212,
+      "value": "node2",
+    },
+    {
+      "start": 5218,
+      "value": "node1",
+    },
+    {
+      "start": 5218,
+      "value": "node1",
+    },
+    {
+      "start": 5228,
+      "value": "node5",
+    },
+    {
+      "start": 5228,
+      "value": "node12",
+    },
+    {
+      "start": 5237,
+      "value": "node5",
+    },
+    {
+      "start": 5237,
+      "value": "node12",
+    },
+    {
+      "start": 5246,
+      "value": "node10",
+    },
+    {
+      "start": 5260,
+      "value": "node8",
+    },
+    {
+      "start": 5263,
+      "value": "node8",
+    },
+    {
+      "start": 5266,
+      "value": "node9",
+    },
+    {
+      "start": 5267,
+      "value": "node8",
+    },
+    {
+      "start": 5267,
+      "value": "node9",
+    },
+    {
+      "start": 5285,
+      "value": "node9",
+    },
+    {
+      "start": 5291,
+      "value": "node9",
+    },
+    {
+      "start": 5305,
+      "value": "node8",
+    },
+    {
+      "start": 5305,
+      "value": "node10",
+    },
+    {
+      "start": 5315,
+      "value": "node12",
+    },
+    {
+      "start": 5315,
+      "value": "node12",
+    },
+    {
+      "start": 5321,
+      "value": "node5",
+    },
+    {
+      "start": 5321,
+      "value": "node5",
     },
   ],
 }
@@ -11668,6 +12103,780 @@ Lookup {
 }
 `;
 
+exports[`Java: sample.java!MultipleCatchClauses: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    subgraph cluster_0 {
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
+        subgraph cluster_1 {
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
+            node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+        }
+        subgraph cluster_2 {
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
+            node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
+        }
+        subgraph cluster_3 {
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
+            node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
+        }
+    }
+    node0 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.5; id="node0"];
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
+    node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
+    node5 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node5"];
+    node2 -> node3 [style="invis"; headport="e"; tailport="w"];
+    node2 -> node4 [style="invis"; headport="e"; tailport="w"];
+    node0 -> node2 [class="regular"; color="#0000ff"];
+    node3 -> node5 [class="regular"; color="#0000ff"];
+    node4 -> node5 [class="regular"; color="#0000ff"];
+    node2 -> node5 [class="regular"; color="#0000ff"];
+}"
+`;
+
+exports[`Java: sample.java!MultipleCatchClauses: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node0",
+    },
+    {
+      "start": 4153,
+      "value": "node0",
+    },
+    {
+      "start": 4191,
+      "value": "node2",
+    },
+    {
+      "start": 4195,
+      "value": "node2",
+    },
+    {
+      "start": 4209,
+      "value": "node2",
+    },
+    {
+      "start": 4217,
+      "value": "node2",
+    },
+    {
+      "start": 4227,
+      "value": "node2",
+    },
+    {
+      "start": 4228,
+      "value": "node3",
+    },
+    {
+      "start": 4250,
+      "value": "node3",
+    },
+    {
+      "start": 4264,
+      "value": "node3",
+    },
+    {
+      "start": 4275,
+      "value": "node3",
+    },
+    {
+      "start": 4285,
+      "value": "node3",
+    },
+    {
+      "start": 4285,
+      "value": "node2",
+    },
+    {
+      "start": 4286,
+      "value": "node4",
+    },
+    {
+      "start": 4306,
+      "value": "node4",
+    },
+    {
+      "start": 4320,
+      "value": "node4",
+    },
+    {
+      "start": 4336,
+      "value": "node4",
+    },
+    {
+      "start": 4346,
+      "value": "node4",
+    },
+    {
+      "start": 4346,
+      "value": "node2",
+    },
+    {
+      "start": 4346,
+      "value": "node2",
+    },
+    {
+      "start": 4352,
+      "value": "node0",
+    },
+    {
+      "start": 4352,
+      "value": "node0",
+    },
+  ],
+}
+`;
+
+exports[`Java: sample.java!NestedTryCatchFinally: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    subgraph cluster_0 {
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
+        subgraph cluster_1 {
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
+            node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+            subgraph cluster_2 {
+                penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
+                subgraph cluster_3 {
+                    penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
+                    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
+                }
+                subgraph cluster_4 {
+                    penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
+                    node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
+                }
+            }
+        }
+        subgraph cluster_6 {
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
+            node5 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node5"];
+        }
+        subgraph cluster_7 {
+            penwidth=0; class="finally"; color="#ffffff"; bgcolor="#ffffdd"
+            node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node6"];
+        }
+    }
+    node0 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.5; id="node0"];
+    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
+    node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+    node5 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node5"];
+    node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node6"];
+    node7 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node7"];
+    node3 -> node4 [style="invis"; headport="e"; tailport="w"];
+    node4 -> node2 [class="regular"; color="#0000ff"];
+    node3 -> node2 [class="regular"; color="#0000ff"];
+    node3 -> node5 [style="invis"; headport="e"; tailport="w"];
+    node2 -> node6 [class="regular"; color="#0000ff"];
+    node5 -> node6 [class="regular"; color="#0000ff"];
+    node0 -> node3 [class="regular"; color="#0000ff"];
+    node6 -> node7 [class="regular"; color="#0000ff"];
+}"
+`;
+
+exports[`Java: sample.java!NestedTryCatchFinally: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node0",
+    },
+    {
+      "start": 4591,
+      "value": "node0",
+    },
+    {
+      "start": 4630,
+      "value": "node3",
+    },
+    {
+      "start": 4634,
+      "value": "node3",
+    },
+    {
+      "start": 4648,
+      "value": "node3",
+    },
+    {
+      "start": 4652,
+      "value": "node3",
+    },
+    {
+      "start": 4670,
+      "value": "node3",
+    },
+    {
+      "start": 4678,
+      "value": "node3",
+    },
+    {
+      "start": 4692,
+      "value": "node3",
+    },
+    {
+      "start": 4693,
+      "value": "node4",
+    },
+    {
+      "start": 4717,
+      "value": "node4",
+    },
+    {
+      "start": 4735,
+      "value": "node4",
+    },
+    {
+      "start": 4749,
+      "value": "node4",
+    },
+    {
+      "start": 4763,
+      "value": "node4",
+    },
+    {
+      "start": 4763,
+      "value": "node3",
+    },
+    {
+      "start": 4763,
+      "value": "node3",
+    },
+    {
+      "start": 4773,
+      "value": "node3",
+    },
+    {
+      "start": 4774,
+      "value": "node5",
+    },
+    {
+      "start": 4798,
+      "value": "node5",
+    },
+    {
+      "start": 4812,
+      "value": "node5",
+    },
+    {
+      "start": 4826,
+      "value": "node5",
+    },
+    {
+      "start": 4836,
+      "value": "node5",
+    },
+    {
+      "start": 4836,
+      "value": "node3",
+    },
+    {
+      "start": 4837,
+      "value": "node6",
+    },
+    {
+      "start": 4845,
+      "value": "node6",
+    },
+    {
+      "start": 4859,
+      "value": "node6",
+    },
+    {
+      "start": 4869,
+      "value": "node6",
+    },
+    {
+      "start": 4879,
+      "value": "node6",
+    },
+    {
+      "start": 4879,
+      "value": "node3",
+    },
+    {
+      "start": 4879,
+      "value": "node3",
+    },
+    {
+      "start": 4885,
+      "value": "node0",
+    },
+    {
+      "start": 4885,
+      "value": "node0",
+    },
+  ],
+}
+`;
+
+exports[`Java: sample.java!ReturnInsideTryFinally: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    subgraph cluster_0 {
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
+        subgraph cluster_1 {
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
+            node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node2"];
+            node3 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node3"];
+            node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node6"];
+            node2 -> node3 [class="consequence"; color="#008000"];
+            node2 -> node6 [class="alternative"; color="#ff0000"];
+        }
+        subgraph cluster_2 {
+            penwidth=0; class="finally"; color="#ffffff"; bgcolor="#ffffdd"
+            node7 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node7"];
+        }
+    }
+    node0 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.5; id="node0"];
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node2"];
+    node3 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node3"];
+    node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node6"];
+    node7 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node7"];
+    node8 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node8"];
+    node6 -> node7 [class="regular"; color="#0000ff"];
+    node0 -> node2 [class="regular"; color="#0000ff"];
+    node7 -> node8 [class="regular"; color="#0000ff"];
+}"
+`;
+
+exports[`Java: sample.java!ReturnInsideTryFinally: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node0",
+    },
+    {
+      "start": 4936,
+      "value": "node0",
+    },
+    {
+      "start": 4976,
+      "value": "node2",
+    },
+    {
+      "start": 4980,
+      "value": "node2",
+    },
+    {
+      "start": 4994,
+      "value": "node2",
+    },
+    {
+      "start": 4997,
+      "value": "node2",
+    },
+    {
+      "start": 5000,
+      "value": "node3",
+    },
+    {
+      "start": 5001,
+      "value": "node2",
+    },
+    {
+      "start": 5001,
+      "value": "node3",
+    },
+    {
+      "start": 5019,
+      "value": "node3",
+    },
+    {
+      "start": 5026,
+      "value": "node3",
+    },
+    {
+      "start": 5040,
+      "value": "node2",
+    },
+    {
+      "start": 5040,
+      "value": "node6",
+    },
+    {
+      "start": 5053,
+      "value": "node6",
+    },
+    {
+      "start": 5057,
+      "value": "node2",
+    },
+    {
+      "start": 5067,
+      "value": "node2",
+    },
+    {
+      "start": 5068,
+      "value": "node7",
+    },
+    {
+      "start": 5076,
+      "value": "node7",
+    },
+    {
+      "start": 5090,
+      "value": "node7",
+    },
+    {
+      "start": 5100,
+      "value": "node7",
+    },
+    {
+      "start": 5110,
+      "value": "node7",
+    },
+    {
+      "start": 5110,
+      "value": "node2",
+    },
+    {
+      "start": 5110,
+      "value": "node2",
+    },
+    {
+      "start": 5116,
+      "value": "node0",
+    },
+    {
+      "start": 5116,
+      "value": "node0",
+    },
+  ],
+}
+`;
+
+exports[`Java: sample.java!SwitchWithDefault: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node1 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.8999999999999999; id="node1"];
+    node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
+    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node3"];
+    node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node6"];
+    node12 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node12"];
+    node9 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node9"];
+    node1 -> node4 [class="alternative"; color="#ff0000"];
+    node1 -> node3 [class="consequence"; color="#008000"];
+    node4 -> node6 [class="consequence"; color="#008000"];
+    node4 -> node9 [class="alternative"; color="#ff0000"];
+    node3 -> node12 [class="regular"; color="#0000ff"];
+    node6 -> node12 [class="regular"; color="#0000ff"];
+    node9 -> node12 [class="regular"; color="#0000ff"];
+}"
+`;
+
+exports[`Java: sample.java!SwitchWithDefault: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 5673,
+      "value": "node1",
+    },
+    {
+      "start": 5708,
+      "value": "node1",
+    },
+    {
+      "start": 5720,
+      "value": "node1",
+    },
+    {
+      "start": 5733,
+      "value": "node1",
+    },
+    {
+      "start": 5733,
+      "value": "node1",
+    },
+    {
+      "start": 5740,
+      "value": "node3",
+    },
+    {
+      "start": 5757,
+      "value": "node3",
+    },
+    {
+      "start": 5761,
+      "value": "node1",
+    },
+    {
+      "start": 5761,
+      "value": "node3",
+    },
+    {
+      "start": 5778,
+      "value": "node3",
+    },
+    {
+      "start": 5784,
+      "value": "node1",
+    },
+    {
+      "start": 5784,
+      "value": "node4",
+    },
+    {
+      "start": 5797,
+      "value": "node1",
+    },
+    {
+      "start": 5797,
+      "value": "node4",
+    },
+    {
+      "start": 5804,
+      "value": "node6",
+    },
+    {
+      "start": 5821,
+      "value": "node6",
+    },
+    {
+      "start": 5825,
+      "value": "node4",
+    },
+    {
+      "start": 5825,
+      "value": "node6",
+    },
+    {
+      "start": 5842,
+      "value": "node6",
+    },
+    {
+      "start": 5848,
+      "value": "node4",
+    },
+    {
+      "start": 5848,
+      "value": "node9",
+    },
+    {
+      "start": 5861,
+      "value": "node1",
+    },
+    {
+      "start": 5861,
+      "value": "node9",
+    },
+    {
+      "start": 5869,
+      "value": "node9",
+    },
+    {
+      "start": 5886,
+      "value": "node9",
+    },
+    {
+      "start": 5890,
+      "value": "node9",
+    },
+    {
+      "start": 5890,
+      "value": "node9",
+    },
+    {
+      "start": 5907,
+      "value": "node9",
+    },
+    {
+      "start": 5913,
+      "value": "node9",
+    },
+    {
+      "start": 5913,
+      "value": "node9",
+    },
+    {
+      "start": 5923,
+      "value": "node1",
+    },
+    {
+      "start": 5923,
+      "value": "node1",
+    },
+    {
+      "start": 5929,
+      "value": "node1",
+    },
+    {
+      "start": 5929,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`Java: sample.java!SynchronizedBlock: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node1 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.8999999999999999; id="node1"];
+    node2 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node2"];
+    node6 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.8999999999999999; id="node6"];
+    node1 -> node2 [class="consequence"; color="#008000"];
+    node1 -> node6 [class="alternative"; color="#ff0000"];
+}"
+`;
+
+exports[`Java: sample.java!SynchronizedBlock: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 5372,
+      "value": "node1",
+    },
+    {
+      "start": 5427,
+      "value": "node1",
+    },
+    {
+      "start": 5441,
+      "value": "node1",
+    },
+    {
+      "start": 5444,
+      "value": "node1",
+    },
+    {
+      "start": 5447,
+      "value": "node2",
+    },
+    {
+      "start": 5448,
+      "value": "node1",
+    },
+    {
+      "start": 5448,
+      "value": "node2",
+    },
+    {
+      "start": 5466,
+      "value": "node2",
+    },
+    {
+      "start": 5473,
+      "value": "node2",
+    },
+    {
+      "start": 5487,
+      "value": "node1",
+    },
+    {
+      "start": 5487,
+      "value": "node6",
+    },
+    {
+      "start": 5500,
+      "value": "node6",
+    },
+    {
+      "start": 5504,
+      "value": "node1",
+    },
+    {
+      "start": 5514,
+      "value": "Not found",
+    },
+    {
+      "start": 5520,
+      "value": "node1",
+    },
+    {
+      "start": 5520,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`Java: sample.java!SynchronizedSimple: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=1.2; id="node3"];
+}"
+`;
+
+exports[`Java: sample.java!SynchronizedSimple: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node3",
+    },
+    {
+      "start": 6232,
+      "value": "node3",
+    },
+    {
+      "start": 6288,
+      "value": "node3",
+    },
+    {
+      "start": 6302,
+      "value": "node3",
+    },
+    {
+      "start": 6306,
+      "value": "node3",
+    },
+    {
+      "start": 6306,
+      "value": "node3",
+    },
+    {
+      "start": 6319,
+      "value": "node3",
+    },
+    {
+      "start": 6323,
+      "value": "node3",
+    },
+    {
+      "start": 6333,
+      "value": "Not found",
+    },
+    {
+      "start": 6339,
+      "value": "node3",
+    },
+    {
+      "start": 6339,
+      "value": "node3",
+    },
+  ],
+}
+`;
+
 exports[`Java: sample.java!ThrowStatement: DOT Snapshot 1`] = `
 "digraph "" {
     node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
@@ -11963,6 +13172,234 @@ Lookup {
     },
     {
       "start": 2999,
+      "value": "node0",
+    },
+  ],
+}
+`;
+
+exports[`Java: sample.java!TryWithResources: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    subgraph cluster_0 {
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
+        subgraph cluster_1 {
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
+            node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+        }
+        subgraph cluster_2 {
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
+            node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
+        }
+    }
+    node0 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.5; id="node0"];
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
+    node4 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node4"];
+    node2 -> node3 [style="invis"; headport="e"; tailport="w"];
+    node0 -> node2 [class="regular"; color="#0000ff"];
+    node3 -> node4 [class="regular"; color="#0000ff"];
+    node2 -> node4 [class="regular"; color="#0000ff"];
+}"
+`;
+
+exports[`Java: sample.java!TryWithResources: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node0",
+    },
+    {
+      "start": 4403,
+      "value": "node0",
+    },
+    {
+      "start": 4437,
+      "value": "node2",
+    },
+    {
+      "start": 4463,
+      "value": "node2",
+    },
+    {
+      "start": 4477,
+      "value": "node2",
+    },
+    {
+      "start": 4484,
+      "value": "node2",
+    },
+    {
+      "start": 4494,
+      "value": "node2",
+    },
+    {
+      "start": 4495,
+      "value": "node3",
+    },
+    {
+      "start": 4515,
+      "value": "node3",
+    },
+    {
+      "start": 4529,
+      "value": "node3",
+    },
+    {
+      "start": 4538,
+      "value": "node3",
+    },
+    {
+      "start": 4548,
+      "value": "node3",
+    },
+    {
+      "start": 4548,
+      "value": "node2",
+    },
+    {
+      "start": 4548,
+      "value": "node2",
+    },
+    {
+      "start": 4554,
+      "value": "node0",
+    },
+    {
+      "start": 4554,
+      "value": "node0",
+    },
+  ],
+}
+`;
+
+exports[`Java: sample.java!TryWithResourcesFinally: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    subgraph cluster_0 {
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
+        subgraph cluster_1 {
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
+            node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+        }
+        subgraph cluster_2 {
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
+            node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
+        }
+        subgraph cluster_3 {
+            penwidth=0; class="finally"; color="#ffffff"; bgcolor="#ffffdd"
+            node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
+        }
+    }
+    node0 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.5; id="node0"];
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
+    node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
+    node5 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node5"];
+    node2 -> node3 [style="invis"; headport="e"; tailport="w"];
+    node2 -> node4 [class="regular"; color="#0000ff"];
+    node3 -> node4 [class="regular"; color="#0000ff"];
+    node0 -> node2 [class="regular"; color="#0000ff"];
+    node4 -> node5 [class="regular"; color="#0000ff"];
+}"
+`;
+
+exports[`Java: sample.java!TryWithResourcesFinally: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node0",
+    },
+    {
+      "start": 5980,
+      "value": "node0",
+    },
+    {
+      "start": 6021,
+      "value": "node2",
+    },
+    {
+      "start": 6047,
+      "value": "node2",
+    },
+    {
+      "start": 6061,
+      "value": "node2",
+    },
+    {
+      "start": 6068,
+      "value": "node2",
+    },
+    {
+      "start": 6078,
+      "value": "node2",
+    },
+    {
+      "start": 6079,
+      "value": "node3",
+    },
+    {
+      "start": 6099,
+      "value": "node3",
+    },
+    {
+      "start": 6113,
+      "value": "node3",
+    },
+    {
+      "start": 6122,
+      "value": "node3",
+    },
+    {
+      "start": 6132,
+      "value": "node3",
+    },
+    {
+      "start": 6132,
+      "value": "node2",
+    },
+    {
+      "start": 6133,
+      "value": "node4",
+    },
+    {
+      "start": 6141,
+      "value": "node4",
+    },
+    {
+      "start": 6155,
+      "value": "node4",
+    },
+    {
+      "start": 6165,
+      "value": "node4",
+    },
+    {
+      "start": 6175,
+      "value": "node4",
+    },
+    {
+      "start": 6175,
+      "value": "node2",
+    },
+    {
+      "start": 6175,
+      "value": "node2",
+    },
+    {
+      "start": 6181,
+      "value": "node0",
+    },
+    {
+      "start": 6181,
       "value": "node0",
     },
   ],

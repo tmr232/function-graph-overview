@@ -237,4 +237,164 @@ class Sample {
             throw new RuntimeException("error");
         }
     }
+
+    /*
+    exits: 1,
+    render: true
+    */
+    void ArrowSwitch() {
+        switch (x) {
+            case 1 -> f();
+            case 2 -> g();
+            default -> h();
+        }
+    }
+
+    /*
+    exits: 1,
+    render: true
+    */
+    void ArrowSwitchMultiLabel() {
+        switch (x) {
+            case 1, 2 -> f();
+            case 3 -> g();
+            default -> h();
+        }
+    }
+
+    /*
+    exits: 1,
+    render: true
+    */
+    void MultipleCatchClauses() {
+        try {
+            risky();
+        } catch (IOException e) {
+            handleIO();
+        } catch (Exception e) {
+            handleGeneral();
+        }
+    }
+
+    /*
+    exits: 1,
+    render: true
+    */
+    void TryWithResources() {
+        try (Resource r = open()) {
+            use(r);
+        } catch (Exception e) {
+            handle();
+        }
+    }
+
+    /*
+    render: true
+    */
+    void NestedTryCatchFinally() {
+        try {
+            try {
+                risky();
+            } catch (Exception inner) {
+                handleInner();
+            }
+        } catch (Exception outer) {
+            handleOuter();
+        } finally {
+            cleanup();
+        }
+    }
+
+    /*
+    exits: 2,
+    render: true
+    */
+    void ReturnInsideTryFinally() {
+        try {
+            if (x) {
+                return;
+            }
+            f();
+        } finally {
+            cleanup();
+        }
+    }
+
+    /*
+    nodes: 4
+    */
+    void IfWithoutBraces() {
+        for (;;) {
+            if (x) break;
+        }
+        for (;;) {
+            if (x) {
+                break;
+            }
+        }
+    }
+
+    /*
+    exits: 2,
+    render: true
+    */
+    void SynchronizedBlock() {
+        synchronized (lock) {
+            if (x) {
+                return;
+            }
+            f();
+        }
+    }
+
+    /*
+    exits: 1
+    */
+    void AssertStatement() {
+        assert x != null;
+        f();
+    }
+
+    /*
+    exits: 1,
+    render: true
+    */
+    void SwitchWithDefault() {
+        switch (x) {
+            case 1:
+                f();
+                break;
+            case 2:
+                g();
+                break;
+            default:
+                h();
+                break;
+        }
+    }
+
+    /*
+    exits: 1,
+    render: true
+    */
+    void TryWithResourcesFinally() {
+        try (Resource r = open()) {
+            use(r);
+        } catch (Exception e) {
+            handle();
+        } finally {
+            cleanup();
+        }
+    }
+
+    /*
+    exits: 1,
+    render: true
+    */
+    void SynchronizedSimple() {
+        synchronized (lock) {
+            f();
+            g();
+        }
+    }
 }

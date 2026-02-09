@@ -20,6 +20,7 @@ import {
   type StatementHandlers,
 } from "./generic-cfg-builder.ts";
 import { treeSitterNoNullNodes } from "./hacks.ts";
+import { zip } from "./itertools.ts";
 import { extractCapturedTextsByCaptureName } from "./query-utils.ts";
 import { buildSwitch, collectCases } from "./switch-utils.ts";
 
@@ -83,6 +84,7 @@ const statementHandlers: StatementHandlers = {
     throw_statement: processThrowStatement,
     try_statement: processTryStatement,
     try_with_resources_statement: processTryStatement,
+    synchronized_statement: processSynchronizedStatement,
     labeled_statement: processLabeledStatement,
     line_comment: processComment,
     block_comment: processComment,
@@ -266,14 +268,14 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
       ? `
     (try_with_resources_statement
       body: (_) @try-body
-      (catch_clause body: (_) @except-body)? @except
+      ((catch_clause body: (_) @except-body) @except)*
       (finally_clause (_) @finally-body)? @finally
     ) @try
   `
       : `
     (try_statement
       body: (_) @try-body
-      (catch_clause body: (_) @except-body)? @except
+      ((catch_clause body: (_) @except-body) @except)*
       (finally_clause (_) @finally-body)? @finally
     ) @try
   `;
@@ -281,7 +283,7 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
   const match = matcher.match(trySyntax, queryString);
 
   const bodySyntax = match.requireSyntax("try-body");
-  const exceptSyntax = match.getSyntax("except-body");
+  const exceptSyntaxMany = match.getSyntaxMany("except-body");
   const finallySyntax = match.getSyntax("finally-body");
 
   const mergeNode = builder.addNode(
@@ -297,12 +299,20 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
     ctx.link.syntaxToNode(trySyntax, bodyBlock.entry);
     const headNode = bodyBlock.entry;
 
-    const exceptBlock = builder.withCluster("except", () =>
-      match.getBlock(exceptSyntax),
+    const exceptBlocks = exceptSyntaxMany.map((exceptSyntax) =>
+      builder.withCluster("except", () => match.getBlock(exceptSyntax)),
     );
-    if (exceptBlock) {
-      ctx.link.syntaxToNode(match.requireSyntax("except"), exceptBlock.entry);
-      builder.addEdge(headNode, exceptBlock.entry, "exception");
+    for (const [syntax, block] of zip(
+      match.getSyntaxMany("except"),
+      exceptBlocks,
+    )) {
+      ctx.link.syntaxToNode(syntax, block.entry);
+    }
+
+    if (headNode) {
+      for (const exceptBlock of exceptBlocks) {
+        builder.addEdge(headNode, exceptBlock.entry, "exception");
+      }
     }
 
     const finallyBlock = builder.withCluster("finally", () => {
@@ -334,10 +344,14 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
       const toFinally = bodyBlock.exit;
       if (toFinally) builder.addEdge(toFinally, finallyBlock.entry);
       happyExit = finallyBlock.exit;
-      if (exceptBlock?.exit)
-        builder.addEdge(exceptBlock.exit, finallyBlock.entry as string);
+      for (const exceptBlock of exceptBlocks) {
+        if (exceptBlock.exit)
+          builder.addEdge(exceptBlock.exit, finallyBlock.entry);
+      }
     } else {
-      if (exceptBlock?.exit) builder.addEdge(exceptBlock.exit, mergeNode);
+      for (const exceptBlock of exceptBlocks) {
+        if (exceptBlock.exit) builder.addEdge(exceptBlock.exit, mergeNode);
+      }
     }
 
     if (happyExit) builder.addEdge(happyExit, mergeNode);
@@ -347,6 +361,18 @@ function processTryStatement(trySyntax: SyntaxNode, ctx: Context): BasicBlock {
       exit: mergeNode,
     });
   });
+}
+
+function processSynchronizedStatement(
+  syncSyntax: SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const bodySyntax = syncSyntax.childForFieldName("body");
+  if (!bodySyntax) {
+    return defaultProcessStatement(syncSyntax, ctx);
+  }
+  const bodyBlock = ctx.dispatch.single(bodySyntax);
+  return ctx.state.update({ entry: bodyBlock.entry, exit: bodyBlock.exit });
 }
 
 function processLabeledStatement(

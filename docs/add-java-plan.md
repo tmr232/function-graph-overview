@@ -129,3 +129,39 @@ This needs validation via the AST exploration script.
 3. **Batch 3** (Steps 12-18): Test infrastructure, call handlers, verification
 
 The riskiest part is **Step 5** (CFG builder), specifically the if-statement query and switch handler, since Java's AST differs from C/TypeScript. Step 4 (AST exploration) is designed to de-risk this.
+
+## Phase 8: Extended Test Coverage & Bug Fixes
+
+After the initial implementation, an audit of Java control-flow features revealed gaps in test coverage and several bugs. This phase added 12 new test functions and fixed 3 issues.
+
+### New test functions added to `sample.java`
+
+| Test | What it covers |
+|---|---|
+| `ArrowSwitch` | Arrow-style switch cases (`case 1 -> f()`) |
+| `ArrowSwitchMultiLabel` | Multi-label arrow cases (`case 1, 2 -> f()`) |
+| `MultipleCatchClauses` | Try with two catch blocks (IOException + Exception) |
+| `TryWithResources` | `try (Resource r = open()) { ... } catch { ... }` |
+| `TryWithResourcesFinally` | Try-with-resources + catch + finally |
+| `NestedTryCatchFinally` | Nested try inside try with catch and finally |
+| `ReturnInsideTryFinally` | Early return inside try with finally block |
+| `IfWithoutBraces` | Braceless `if (x) break;` inside infinite loops |
+| `SynchronizedBlock` | `synchronized (lock) { ... }` with control flow inside |
+| `SynchronizedSimple` | Basic synchronized block (sequential statements) |
+| `AssertStatement` | `assert x != null;` followed by a statement |
+| `SwitchWithDefault` | Traditional switch with explicit default + break |
+
+### Bugs found and fixed
+
+1. **Multiple catch clauses not supported**: The try handler query used `(catch_clause ...)? @except` which only captured one catch block. Fixed by changing to `((catch_clause ...) @except)*` and using `getSyntaxMany` to iterate over all catch blocks — mirroring how Python's try handler works.
+
+2. **Arrow-style switch cases crashed**: The shared `collectCases` in `switch-utils.ts` assumed every case node contains a `":"` token (for offset linking). Arrow-style `switch_rule` nodes use `"->"` instead, causing a "No match found for query" error. Fixed by using `tryMatch` instead of `match` for the colon query, skipping offset linking when no colon is present.
+
+3. **`synchronized` blocks not dispatched into**: Without a handler, `synchronized_statement` fell to `defaultProcessStatement`, which treated the entire block as a single opaque statement node. Any control flow inside (if/return/break) was invisible. Fixed by adding a `synchronized_statement` handler that dispatches into the body.
+
+### Files changed
+
+- `src/control-flow/cfg-java.ts` — Multi-catch support, `synchronized_statement` handler, `zip` import
+- `src/control-flow/switch-utils.ts` — Made colon query optional via `tryMatch`
+- `src/control-flow/block-matcher.ts` — Extended `tryMatch` to accept `QueryOptions`
+- `src/test/commentTestSamples/sample.java` — 12 new test functions
