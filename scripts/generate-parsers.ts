@@ -31,6 +31,7 @@ const parsersToBuild: (Location | string)[] = [
   "tree-sitter-cpp",
   "tree-sitter-typescript",
   { package: "tree-sitter-typescript", name: "tree-sitter-tsx" },
+  "tree-sitter-java",
 ];
 
 function locatePrebuiltWasm(location: Location): string {

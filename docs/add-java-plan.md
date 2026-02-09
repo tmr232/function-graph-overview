@@ -9,12 +9,12 @@ Java's control-flow constructs closely mirror C/TypeScript: if/else, for, enhanc
 ## Implementation Checklist
 
 ### Phase 1: Parser Setup
-- [ ] **Step 1** — Install `tree-sitter-java` (dev) and `@codemirror/lang-java`
-- [ ] **Step 2** — Register parser in `scripts/generate-parsers.ts` (`parsersToBuild` array)
-- [ ] **Step 3** — Generate WASM: `bun generate-parsers`
+- [x] **Step 1** — Install `tree-sitter-java` (dev) and `@codemirror/lang-java`
+- [x] **Step 2** — Register parser in `scripts/generate-parsers.ts` (`parsersToBuild` array)
+- [x] **Step 3** — Generate WASM: `bun generate-parsers`
 
 ### Phase 2: AST Exploration
-- [ ] **Step 4** — Write and run an AST exploration script (`scripts/explore-java-ast.ts`) to dump the AST for representative Java code snippets, validating node types and field names before writing the CFG builder
+- [x] **Step 4** — Write and run AST exploration scripts to dump the AST for representative Java code snippets, validating node types and field names before writing the CFG builder
 
 ### Phase 3: CFG Builder
 - [ ] **Step 5** — Create `src/control-flow/cfg-java.ts` with `javaLanguageDefinition` and all statement handlers (details below)
@@ -40,6 +40,28 @@ Java's control-flow constructs closely mirror C/TypeScript: if/else, for, enhanc
 - [ ] **Step 17** — `bun lint` — no lint errors
 - [ ] **Step 18** — `bun run build` — build succeeds
 
+## AST Exploration Findings (Step 4)
+
+Validated all tree-sitter queries against the actual Java WASM parser. Key findings:
+
+1. **if_statement**: `condition` is `parenthesized_expression`, `consequence` and `alternative` are direct children (no `else_clause` wrapper like C/TypeScript). The `alternative` can be `if_statement` (else-if) or `block` (else). The `cStyleIfProcessor` query approach works with the right pattern — `alternative` captures match correctly with `([...])? @else`.
+
+2. **for_statement**: The `init` field can be `local_variable_declaration` which *embeds its own semicolon*. This means the C-style query that matches `";" @init-semi` after init won't work. **Need a custom for handler** that uses `childForFieldName("init")` directly instead of the query-based approach from `cStyleForStatementProcessor`. The `condition`, `update`, `body`, `"("`, and `")"` are all queryable.
+
+3. **enhanced_for_statement**: Fields are `type`, `name`, `value`, `body`. The `")"` token is available for `@closingParen`. Works with `forEachLoopProcessor`.
+
+4. **switch_expression**: Used for both switch statements and expressions. Body is `switch_block` containing either `switch_block_statement_group` (traditional) or `switch_rule` (arrow). In traditional mode, each group has `switch_label` as first named child, then statement children. A "default" label has `namedChildCount: 0`. Fallthrough empty cases appear as separate groups with only a `switch_label`.
+
+5. **try_statement / try_with_resources_statement**: `catch_clause` has a `body` field. `finally_clause` contains a `block` child (no `body` field). Both try forms share the same catch/finally structure.
+
+6. **break_statement / continue_statement**: Optional `identifier` child for labels. Works with `labeledBreakProcessor`/`labeledContinueProcessor`.
+
+7. **labeled_statement**: Has `identifier` and a statement as children, but no `label` field name — the label is accessed via `namedChildren[0]` (identifier) and `namedChildren[1]` (body statement). The common `processLabeledStatement` looks for `childForFieldName("label")` which won't work — **need a custom labeled statement handler**.
+
+8. **constructor_declaration**: Has a `body` field of type `constructor_body` (not `block`). The `constructor_body` contains statements. Need to handle both `block` and `constructor_body` as statement sequences.
+
+9. **Method/constructor name extraction**: `method_declaration` and `constructor_declaration` both have a `name` field (identifier).
+
 ## CFG Builder Design (Step 5 details)
 
 ### Function node types
@@ -53,19 +75,20 @@ Java's control-flow constructs closely mirror C/TypeScript: if/else, for, enhanc
 | Java construct | AST node type | Handler strategy |
 |---|---|---|
 | block | `block` | `processStatementSequence` |
-| if/else | `if_statement` | Custom if handler (see below) |
-| for | `for_statement` | `cStyleForStatementProcessor` with Java-specific query |
+| constructor body | `constructor_body` | `processStatementSequence` (same treatment) |
+| if/else | `if_statement` | `cStyleIfProcessor` with Java-specific query (no `else_clause` wrapper) |
+| for | `for_statement` | **Custom handler** — can't reuse `cStyleForStatementProcessor` because `init: local_variable_declaration` embeds its own `;` |
 | enhanced for | `enhanced_for_statement` | `forEachLoopProcessor` |
 | while | `while_statement` | `cStyleWhileProcessor()` |
 | do-while | `do_statement` | `cStyleDoWhileProcessor()` |
-| switch | `switch_expression` | Custom handler using `collectCases`/`buildSwitch` |
+| switch | `switch_expression` | **Custom handler** using `collectCases`/`buildSwitch` — Java has `switch_block_statement_group` (traditional) and `switch_rule` (arrow) |
 | break | `break_statement` | `labeledBreakProcessor` (Java break can have labels) |
 | continue | `continue_statement` | `labeledContinueProcessor` (Java continue can have labels) |
 | return | `return_statement` | `processReturnStatement` |
 | throw | `throw_statement` | `processThrowStatement` |
-| try/catch/finally | `try_statement` | Custom handler modeled on TypeScript's `processTryStatement` |
-| try-with-resources | `try_with_resources_statement` | Same custom try handler (shares structure) |
-| labeled statement | `labeled_statement` | `processLabeledStatement` |
+| try/catch/finally | `try_statement` | **Custom handler** modeled on TypeScript's `processTryStatement` |
+| try-with-resources | `try_with_resources_statement` | Same custom try handler (shares catch/finally structure) |
+| labeled statement | `labeled_statement` | **Custom handler** — no `label` field, uses `namedChildren[0]` for identifier |
 | comments | `line_comment`, `block_comment` | `processComment` |
 
 ### Key AST differences from C/TypeScript
