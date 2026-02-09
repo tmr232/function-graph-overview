@@ -13,6 +13,7 @@ export const fileTypes: FileType[] = [
   { ext: "cc", language: "C++" },
   { ext: "py", language: "Python" },
   { ext: "go", language: "Go" },
+  { ext: "java", language: "Java" },
   { ext: "ts", language: "TypeScript" },
   { ext: "js", language: "TypeScript" },
   { ext: "tsx", language: "TSX" },

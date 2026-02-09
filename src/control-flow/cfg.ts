@@ -3,6 +3,7 @@ import { cLanguageDefinition } from "./cfg-c";
 import { cppLanguageDefinition } from "./cfg-cpp";
 import type { BuilderOptions, CFGBuilder } from "./cfg-defs";
 import { goLanguageDefinition } from "./cfg-go";
+import { javaLanguageDefinition } from "./cfg-java";
 import { pythonLanguageDefinition } from "./cfg-python";
 import {
   tsxLanguageDefinition,
@@ -16,6 +17,7 @@ import {
 export const supportedLanguages = [
   "C",
   "Go",
+  "Java",
   "Python",
   "C++",
   "TypeScript",
@@ -40,6 +42,7 @@ export type LanguageDefinition = {
 export const languageDefinitions: Record<Language, LanguageDefinition> = {
   C: cLanguageDefinition,
   Go: goLanguageDefinition,
+  Java: javaLanguageDefinition,
   Python: pythonLanguageDefinition,
   "C++": cppLanguageDefinition,
   TypeScript: typeScriptLanguageDefinition,

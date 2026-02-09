@@ -17,15 +17,15 @@ Java's control-flow constructs closely mirror C/TypeScript: if/else, for, enhanc
 - [x] **Step 4** — Write and run AST exploration scripts to dump the AST for representative Java code snippets, validating node types and field names before writing the CFG builder
 
 ### Phase 3: CFG Builder
-- [ ] **Step 5** — Create `src/control-flow/cfg-java.ts` with `javaLanguageDefinition` and all statement handlers (details below)
+- [x] **Step 5** — Create `src/control-flow/cfg-java.ts` with `javaLanguageDefinition` and all statement handlers (details below)
 
 ### Phase 4: Registration (8 touch points)
-- [ ] **Step 6** — `src/control-flow/cfg.ts`: Add `"Java"` to `supportedLanguages`, import `javaLanguageDefinition`, add to `languageDefinitions`
-- [ ] **Step 7** — `src/file-parsing/file-parsing.ts`: Add `{ ext: "java", language: "Java" }`
-- [ ] **Step 8** — `src/vscode/extension.ts`: Add `java: "Java"` to `languageMapping`
-- [ ] **Step 9** — `src/components/Demo.svelte` (3 spots): `defaultCodeSamples`, `languages` array, `languageAliases`
-- [ ] **Step 10** — `src/demo/src/App.svelte`: Import demo file, add to `code` object
-- [ ] **Step 11** — Create `src/demo/src/assets/demo.java` with example code
+- [x] **Step 6** — `src/control-flow/cfg.ts`: Add `"Java"` to `supportedLanguages`, import `javaLanguageDefinition`, add to `languageDefinitions`
+- [x] **Step 7** — `src/file-parsing/file-parsing.ts`: Add `{ ext: "java", language: "Java" }`
+- [x] **Step 8** — `src/vscode/extension.ts`: Add `java: "Java"` to `languageMapping`
+- [x] **Step 9** — `src/components/Demo.svelte` (3 spots): `defaultCodeSamples`, `languages` array, `languageAliases`
+- [x] **Step 10** — `src/demo/src/App.svelte`: Import demo file, add to `code` object
+- [x] **Step 11** — Create `src/demo/src/assets/demo.java` with example code
 
 ### Phase 5: Testing
 - [ ] **Step 12** — Create `src/test/collect-java.ts` (test collector)

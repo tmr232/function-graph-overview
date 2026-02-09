@@ -1,6 +1,7 @@
 <script lang="ts">
 import { cpp } from "@codemirror/lang-cpp";
 import { go } from "@codemirror/lang-go";
+import { java } from "@codemirror/lang-java";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import type { LanguageSupport } from "@codemirror/language";
@@ -20,6 +21,7 @@ import { getSystemColorList, isDark, toggleTheme } from "./lightdark.ts";
 // ADD-LANGUAGES-HERE
 const defaultCodeSamples: { [language in Language]?: string } = {
   Go: "func Example() {\n\tif x {\n\t\treturn\n\t}\n}",
+  Java: "void example() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
   C: "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
   "C++": "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
   Python: "def example():\n    if x:\n        return",
@@ -48,6 +50,7 @@ let languages: {
   codeMirror: () => LanguageSupport;
 }[] = [
   { language: "Go" as Language, text: "Go", codeMirror: go },
+  { language: "Java" as Language, text: "Java", codeMirror: java },
   { language: "C" as Language, text: "C", codeMirror: cpp },
   {
     language: "Python" as Language,
@@ -85,6 +88,7 @@ type ShareParameters = {
 // ADD-LANGUAGES-HERE
 const languageAliases: Record<string, Language> = {
   go: "Go",
+  java: "Java",
   c: "C",
   cpp: "C++",
   python: "Python",

@@ -19,6 +19,7 @@ const languageMapping: { [key: string]: Language } = {
   c: "C",
   cpp: "C++",
   go: "Go",
+  java: "Java",
   python: "Python",
   typescript: "TypeScript",
   javascript: "TypeScript",

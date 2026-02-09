@@ -13,9 +13,15 @@ Function-Graph-Overview generates control-flow graphs (CFGs) from source code. I
 - **Generate parsers**: `bun generate-parsers`
 - **Build**: `bun run build` (check package.json for exact scripts)
 
+## Platform Notes
+
+This project uses **bun** as its JavaScript runtime, package manager, and script runner — not npm or node. Use `bun` in place of `npm run`, `npx`, and `node` for all commands (e.g., `bun install`, `bun vitest run`, `bun run build`).
+
+On Windows, bun runs commands via PowerShell. Unix utilities like `tail`, `head`, `grep` are not available — use PowerShell equivalents or omit them. Pipe bun command output directly without filters (e.g., `bun vitest run 2>&1` not `bun vitest run 2>&1 | tail -30`).
+
 ## Supported Languages
 
-C, C++, Go, Python, TypeScript, TSX.
+C, C++, Go, Java, Python, TypeScript, TSX.
 
 Each language has a `cfg-<lang>.ts` file in `src/control-flow/`.
 
