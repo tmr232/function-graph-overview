@@ -28,17 +28,17 @@ Java's control-flow constructs closely mirror C/TypeScript: if/else, for, enhanc
 - [x] **Step 11** — Create `src/demo/src/assets/demo.java` with example code
 
 ### Phase 5: Testing
-- [ ] **Step 12** — Create `src/test/collect-java.ts` (test collector)
-- [ ] **Step 13** — Register in `src/test/commentTestCollector.ts`
-- [ ] **Step 14** — Create `src/test/commentTestSamples/sample.java` with test cases
+- [x] **Step 12** — Create `src/test/collect-java.ts` (test collector)
+- [x] **Step 13** — Register in `src/test/commentTestCollector.ts`
+- [x] **Step 14** — Create `src/test/commentTestSamples/sample.java` with test cases
 
 ### Phase 6: Per-Language Call Handlers
-- [ ] **Step 15** — Add `System.exit` → TERMINATE in `src/control-flow/per-language-call-handlers.ts`
+- [x] **Step 15** — Add `System.exit` → TERMINATE in `src/control-flow/per-language-call-handlers.ts`
 
 ### Phase 7: Verification
-- [ ] **Step 16** — `bun vitest run` — all tests pass
-- [ ] **Step 17** — `bun lint` — no lint errors
-- [ ] **Step 18** — `bun run build` — build succeeds
+- [x] **Step 16** — `bun vitest run` — all 694 tests pass (75 new Java tests)
+- [x] **Step 17** — `bun lint` — no lint errors
+- [x] **Step 18** — `bun run build` — build succeeds
 
 ## AST Exploration Findings (Step 4)
 
