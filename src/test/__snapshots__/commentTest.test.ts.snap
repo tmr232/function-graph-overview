@@ -10400,7 +10400,11 @@ exports[`Java: sample.java!AssertStatement: DOT Snapshot 1`] = `
     edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
     bgcolor="#ffffff";
 
-    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=1.2; id="node3"];
+    node1 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.6; id="node1"];
+    node2 [shape="triangle"; class="throw"; fillcolor="#ffdddd"; color="#000000"; height=0.3; id="node2"];
+    node5 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.8999999999999999; id="node5"];
+    node1 -> node2 [class="alternative"; color="#ff0000"];
+    node1 -> node5 [class="consequence"; color="#008000"];
 }"
 `;
 
@@ -10409,39 +10413,35 @@ Lookup {
   "ranges": [
     {
       "start": 0,
-      "value": "node3",
+      "value": "node1",
     },
     {
-      "start": 5553,
-      "value": "node3",
+      "start": 5571,
+      "value": "node1",
     },
     {
-      "start": 5586,
-      "value": "node3",
+      "start": 5621,
+      "value": "node5",
     },
     {
-      "start": 5603,
-      "value": "node3",
+      "start": 5630,
+      "value": "node5",
     },
     {
-      "start": 5612,
-      "value": "node3",
+      "start": 5634,
+      "value": "node1",
     },
     {
-      "start": 5616,
-      "value": "node3",
+      "start": 5634,
+      "value": "node5",
     },
     {
-      "start": 5616,
-      "value": "node3",
+      "start": 5640,
+      "value": "node1",
     },
     {
-      "start": 5622,
-      "value": "node3",
-    },
-    {
-      "start": 5622,
-      "value": "node3",
+      "start": 5640,
+      "value": "node1",
     },
   ],
 }
@@ -10659,33 +10659,80 @@ exports[`Java: sample.java!ForLoops: DOT Snapshot 1`] = `
     node1 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.8999999999999999; id="node1"];
     node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node2"];
     node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node4"];
-    node5 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node5"];
+    node5 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node5"];
     node11 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node11"];
     node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node3"];
     node12 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node12"];
     node13 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node13"];
-    node14 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node14"];
+    node14 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node14"];
     node16 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node16"];
     node20 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node20"];
     node22 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node22"];
-    node23 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node23"];
     node21 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node21"];
+    node29 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=1.2; id="node29"];
+    node30 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node30"];
+    node33 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node33"];
+    node43 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node43"];
+    node37 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node37"];
+    node39 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node39"];
+    node51 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node51"];
+    node40 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node40"];
+    node38 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node38"];
+    node46 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node46"];
+    node47 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node47"];
+    node59 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node59"];
+    node48 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node48"];
+    node50 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node50"];
+    node55 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node55"];
+    node54 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node54"];
+    node66 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node66"];
+    node62 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node62"];
+    node65 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node65"];
+    node69 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.8999999999999999; id="node69"];
     node4 -> node5 [class="consequence"; color="#008000"];
     node13 -> node14 [class="consequence"; color="#008000"];
     node13 -> node16 [class="alternative"; color="#ff0000"];
-    node22 -> node23 [class="consequence"; color="#008000"];
+    node30 -> node33 [class="alternative"; color="#ff0000"];
+    node39 -> node40 [class="consequence"; color="#008000"];
+    node47 -> node48 [class="consequence"; color="#008000"];
+    node47 -> node50 [class="alternative"; color="#ff0000"];
+    node62 -> node65 [class="alternative"; color="#ff0000"];
     node1 -> node2 [class="regular"; color="#0000ff"];
     node2 -> node3 [class="regular"; color="#0000ff"; penwidth=2; dir="back"; headport="s"; tailport="n"];
     node2 -> node4 [class="consequence"; color="#008000"];
     node2 -> node11 [class="alternative"; color="#ff0000"];
+    node5 -> node11 [class="regular"; color="#0000ff"];
     node4 -> node3 [class="alternative"; color="#ff0000"];
     node11 -> node12 [class="regular"; color="#0000ff"];
     node12 -> node16 [class="regular"; color="#0000ff"; penwidth=2; dir="back"; headport="s"; tailport="n"];
     node12 -> node13 [class="consequence"; color="#008000"];
     node12 -> node20 [class="alternative"; color="#ff0000"];
+    node14 -> node20 [class="regular"; color="#0000ff"];
     node20 -> node22 [class="regular"; color="#0000ff"];
     node22 -> node21 [class="regular"; color="#0000ff"; penwidth=2; dir="back"; headport="s"; tailport="n"];
     node22 -> node21 [class="alternative"; color="#ff0000"];
+    node22 -> node29 [class="consequence"; color="#008000"];
+    node29 -> node30 [class="regular"; color="#0000ff"];
+    node30 -> node33 [class="regular"; color="#0000ff"; penwidth=2; dir="back"; headport="s"; tailport="n"];
+    node30 -> node43 [class="consequence"; color="#008000"];
+    node43 -> node37 [class="regular"; color="#0000ff"];
+    node37 -> node38 [class="regular"; color="#0000ff"; penwidth=2; dir="back"; headport="s"; tailport="n"];
+    node37 -> node39 [class="consequence"; color="#008000"];
+    node37 -> node51 [class="alternative"; color="#ff0000"];
+    node40 -> node51 [class="regular"; color="#0000ff"];
+    node39 -> node38 [class="alternative"; color="#ff0000"];
+    node51 -> node46 [class="regular"; color="#0000ff"];
+    node46 -> node50 [class="regular"; color="#0000ff"; penwidth=2; dir="back"; headport="s"; tailport="n"];
+    node46 -> node47 [class="consequence"; color="#008000"];
+    node46 -> node59 [class="alternative"; color="#ff0000"];
+    node48 -> node59 [class="regular"; color="#0000ff"];
+    node59 -> node55 [class="regular"; color="#0000ff"];
+    node55 -> node54 [class="regular"; color="#0000ff"; penwidth=2; dir="back"; headport="s"; tailport="n"];
+    node55 -> node54 [class="alternative"; color="#ff0000"];
+    node55 -> node66 [class="consequence"; color="#008000"];
+    node66 -> node62 [class="regular"; color="#0000ff"];
+    node62 -> node65 [class="regular"; color="#0000ff"; penwidth=2; dir="back"; headport="s"; tailport="n"];
+    node62 -> node69 [class="consequence"; color="#008000"];
 }"
 `;
 
@@ -10870,7 +10917,7 @@ Lookup {
     },
     {
       "start": 1823,
-      "value": "node23",
+      "value": "node29",
     },
     {
       "start": 1824,
@@ -10878,7 +10925,7 @@ Lookup {
     },
     {
       "start": 1824,
-      "value": "node23",
+      "value": "node29",
     },
     {
       "start": 1830,
@@ -10894,7 +10941,7 @@ Lookup {
     },
     {
       "start": 1831,
-      "value": "node34",
+      "value": "node29",
     },
     {
       "start": 1840,
@@ -10902,7 +10949,7 @@ Lookup {
     },
     {
       "start": 1840,
-      "value": "node34",
+      "value": "node29",
     },
     {
       "start": 1845,
@@ -10910,11 +10957,11 @@ Lookup {
     },
     {
       "start": 1848,
-      "value": "node34",
+      "value": "node29",
     },
     {
       "start": 1860,
-      "value": "node32",
+      "value": "node30",
     },
     {
       "start": 1862,
@@ -10926,7 +10973,7 @@ Lookup {
     },
     {
       "start": 1868,
-      "value": "node31",
+      "value": "node43",
     },
     {
       "start": 1869,
@@ -10934,7 +10981,7 @@ Lookup {
     },
     {
       "start": 1869,
-      "value": "node31",
+      "value": "node43",
     },
     {
       "start": 1875,
@@ -10942,11 +10989,11 @@ Lookup {
     },
     {
       "start": 1875,
-      "value": "node32",
+      "value": "node30",
     },
     {
       "start": 1876,
-      "value": "node34",
+      "value": "node29",
     },
     {
       "start": 1876,
@@ -10978,7 +11025,7 @@ Lookup {
     },
     {
       "start": 1905,
-      "value": "node41",
+      "value": "node39",
     },
     {
       "start": 1907,
@@ -11006,7 +11053,7 @@ Lookup {
     },
     {
       "start": 1920,
-      "value": "node41",
+      "value": "node39",
     },
     {
       "start": 1921,
@@ -11034,7 +11081,7 @@ Lookup {
     },
     {
       "start": 1950,
-      "value": "node49",
+      "value": "node47",
     },
     {
       "start": 1952,
@@ -11062,7 +11109,7 @@ Lookup {
     },
     {
       "start": 1965,
-      "value": "node49",
+      "value": "node47",
     },
     {
       "start": 1966,
@@ -11090,7 +11137,7 @@ Lookup {
     },
     {
       "start": 1995,
-      "value": "node57",
+      "value": "node55",
     },
     {
       "start": 1997,
@@ -11102,7 +11149,7 @@ Lookup {
     },
     {
       "start": 2003,
-      "value": "node56",
+      "value": "node66",
     },
     {
       "start": 2004,
@@ -11110,7 +11157,7 @@ Lookup {
     },
     {
       "start": 2004,
-      "value": "node56",
+      "value": "node66",
     },
     {
       "start": 2010,
@@ -11118,7 +11165,7 @@ Lookup {
     },
     {
       "start": 2010,
-      "value": "node57",
+      "value": "node55",
     },
     {
       "start": 2011,
@@ -11138,7 +11185,7 @@ Lookup {
     },
     {
       "start": 2040,
-      "value": "node64",
+      "value": "node62",
     },
     {
       "start": 2042,
@@ -11150,7 +11197,7 @@ Lookup {
     },
     {
       "start": 2048,
-      "value": "node63",
+      "value": "node69",
     },
     {
       "start": 2049,
@@ -11158,7 +11205,7 @@ Lookup {
     },
     {
       "start": 2049,
-      "value": "node63",
+      "value": "node69",
     },
     {
       "start": 2055,
@@ -11166,7 +11213,7 @@ Lookup {
     },
     {
       "start": 2055,
-      "value": "node64",
+      "value": "node62",
     },
     {
       "start": 2056,
@@ -11196,12 +11243,19 @@ exports[`Java: sample.java!IfWithoutBraces: DOT Snapshot 1`] = `
 
     node5 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.6; id="node5"];
     node1 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node1"];
-    node2 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node2"];
     node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
-    node1 -> node2 [class="consequence"; color="#008000"];
+    node12 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node12"];
+    node8 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node8"];
+    node11 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node11"];
+    node15 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.8999999999999999; id="node15"];
     node1 -> node4 [class="alternative"; color="#ff0000"];
+    node8 -> node11 [class="alternative"; color="#ff0000"];
     node5 -> node1 [class="regular"; color="#0000ff"];
     node1 -> node4 [class="regular"; color="#0000ff"; penwidth=2; dir="back"; headport="s"; tailport="n"];
+    node1 -> node12 [class="consequence"; color="#008000"];
+    node12 -> node8 [class="regular"; color="#0000ff"];
+    node8 -> node11 [class="regular"; color="#0000ff"; penwidth=2; dir="back"; headport="s"; tailport="n"];
+    node8 -> node15 [class="consequence"; color="#008000"];
 }"
 `;
 
@@ -11234,7 +11288,7 @@ Lookup {
     },
     {
       "start": 5211,
-      "value": "node2",
+      "value": "node12",
     },
     {
       "start": 5212,
@@ -11242,7 +11296,7 @@ Lookup {
     },
     {
       "start": 5212,
-      "value": "node2",
+      "value": "node12",
     },
     {
       "start": 5218,
@@ -11270,7 +11324,7 @@ Lookup {
     },
     {
       "start": 5246,
-      "value": "node10",
+      "value": "node8",
     },
     {
       "start": 5260,
@@ -11282,7 +11336,7 @@ Lookup {
     },
     {
       "start": 5266,
-      "value": "node9",
+      "value": "node15",
     },
     {
       "start": 5267,
@@ -11290,15 +11344,15 @@ Lookup {
     },
     {
       "start": 5267,
-      "value": "node9",
+      "value": "node15",
     },
     {
       "start": 5285,
-      "value": "node9",
+      "value": "node15",
     },
     {
       "start": 5291,
-      "value": "node9",
+      "value": "node15",
     },
     {
       "start": 5305,
@@ -11306,7 +11360,7 @@ Lookup {
     },
     {
       "start": 5305,
-      "value": "node10",
+      "value": "node8",
     },
     {
       "start": 5315,
@@ -11338,14 +11392,17 @@ exports[`Java: sample.java!LabeledStatement: DOT Snapshot 1`] = `
     node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node4"];
     node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node6"];
     node14 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node14"];
-    node7 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node7"];
-    node5 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node5"];
+    node7 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node7"];
+    node5 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node5"];
+    node10 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node10"];
     node6 -> node7 [class="consequence"; color="#008000"];
+    node10 -> node5 [class="regular"; color="#0000ff"];
+    node7 -> node5 [class="regular"; color="#0000ff"];
     node3 -> node4 [class="regular"; color="#0000ff"];
     node4 -> node5 [class="regular"; color="#0000ff"; penwidth=2; dir="back"; headport="s"; tailport="n"];
     node4 -> node6 [class="consequence"; color="#008000"];
     node4 -> node14 [class="alternative"; color="#ff0000"];
-    node6 -> node5 [class="alternative"; color="#ff0000"];
+    node6 -> node10 [class="alternative"; color="#ff0000"];
 }"
 `;
 
@@ -11442,7 +11499,7 @@ Lookup {
     },
     {
       "start": 3200,
-      "value": "node5",
+      "value": "node10",
     },
     {
       "start": 3213,
@@ -11450,7 +11507,7 @@ Lookup {
     },
     {
       "start": 3213,
-      "value": "node5",
+      "value": "node10",
     },
     {
       "start": 3227,
@@ -11488,8 +11545,9 @@ exports[`Java: sample.java!LabelledStatementFlow: DOT Snapshot 1`] = `
 
     node9 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.8999999999999999; id="node9"];
     node11 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node11"];
-    node3 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=1.2; id="node3"];
+    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=1.2; id="node3"];
     node9 -> node11 [class="alternative"; color="#ff0000"];
+    node3 -> node11 [class="regular"; color="#0000ff"];
     node9 -> node3 [class="consequence"; color="#008000"];
 }"
 `;
@@ -12588,139 +12646,139 @@ Lookup {
       "value": "node1",
     },
     {
-      "start": 5673,
+      "start": 5691,
       "value": "node1",
     },
     {
-      "start": 5708,
+      "start": 5726,
       "value": "node1",
     },
     {
-      "start": 5720,
+      "start": 5738,
       "value": "node1",
     },
     {
-      "start": 5733,
+      "start": 5751,
       "value": "node1",
     },
     {
-      "start": 5733,
+      "start": 5751,
       "value": "node1",
     },
     {
-      "start": 5740,
+      "start": 5758,
       "value": "node3",
     },
     {
-      "start": 5757,
+      "start": 5775,
       "value": "node3",
     },
     {
-      "start": 5761,
+      "start": 5779,
       "value": "node1",
     },
     {
-      "start": 5761,
+      "start": 5779,
       "value": "node3",
     },
     {
-      "start": 5778,
+      "start": 5796,
       "value": "node3",
     },
     {
-      "start": 5784,
+      "start": 5802,
       "value": "node1",
     },
     {
-      "start": 5784,
+      "start": 5802,
       "value": "node4",
     },
     {
-      "start": 5797,
+      "start": 5815,
       "value": "node1",
     },
     {
-      "start": 5797,
+      "start": 5815,
       "value": "node4",
     },
     {
-      "start": 5804,
+      "start": 5822,
       "value": "node6",
     },
     {
-      "start": 5821,
+      "start": 5839,
       "value": "node6",
     },
     {
-      "start": 5825,
+      "start": 5843,
       "value": "node4",
     },
     {
-      "start": 5825,
+      "start": 5843,
       "value": "node6",
     },
     {
-      "start": 5842,
+      "start": 5860,
       "value": "node6",
     },
     {
-      "start": 5848,
+      "start": 5866,
       "value": "node4",
     },
     {
-      "start": 5848,
+      "start": 5866,
       "value": "node9",
     },
     {
-      "start": 5861,
+      "start": 5879,
       "value": "node1",
     },
     {
-      "start": 5861,
+      "start": 5879,
       "value": "node9",
     },
     {
-      "start": 5869,
+      "start": 5887,
       "value": "node9",
     },
     {
-      "start": 5886,
+      "start": 5904,
       "value": "node9",
     },
     {
-      "start": 5890,
+      "start": 5908,
       "value": "node9",
     },
     {
-      "start": 5890,
+      "start": 5908,
       "value": "node9",
     },
     {
-      "start": 5907,
+      "start": 5925,
       "value": "node9",
     },
     {
-      "start": 5913,
+      "start": 5931,
       "value": "node9",
     },
     {
-      "start": 5913,
+      "start": 5931,
       "value": "node9",
     },
     {
-      "start": 5923,
+      "start": 5941,
       "value": "node1",
     },
     {
-      "start": 5923,
+      "start": 5941,
       "value": "node1",
     },
     {
-      "start": 5929,
+      "start": 5947,
       "value": "node1",
     },
     {
-      "start": 5929,
+      "start": 5947,
       "value": "node1",
     },
   ],
@@ -12733,11 +12791,21 @@ exports[`Java: sample.java!SynchronizedBlock: DOT Snapshot 1`] = `
     edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
     bgcolor="#ffffff";
 
-    node1 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.8999999999999999; id="node1"];
-    node2 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node2"];
-    node6 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.8999999999999999; id="node6"];
-    node1 -> node2 [class="consequence"; color="#008000"];
-    node1 -> node6 [class="alternative"; color="#ff0000"];
+    subgraph cluster_0 {
+        penwidth=0; class="with"; color="#ffffff"; bgcolor="#ffddff"
+        node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node2"];
+        node3 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node3"];
+        node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node6"];
+        node2 -> node3 [class="consequence"; color="#008000"];
+        node2 -> node6 [class="alternative"; color="#ff0000"];
+    }
+    node1 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.6; id="node1"];
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node2"];
+    node3 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node3"];
+    node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node6"];
+    node7 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node7"];
+    node6 -> node7 [class="regular"; color="#0000ff"];
+    node1 -> node2 [class="regular"; color="#0000ff"];
 }"
 `;
 
@@ -12753,40 +12821,48 @@ Lookup {
       "value": "node1",
     },
     {
-      "start": 5427,
+      "start": 5420,
       "value": "node1",
+    },
+    {
+      "start": 5426,
+      "value": "node1",
+    },
+    {
+      "start": 5427,
+      "value": "node2",
     },
     {
       "start": 5441,
-      "value": "node1",
+      "value": "node2",
     },
     {
       "start": 5444,
-      "value": "node1",
+      "value": "node2",
     },
     {
       "start": 5447,
-      "value": "node2",
-    },
-    {
-      "start": 5448,
-      "value": "node1",
+      "value": "node3",
     },
     {
       "start": 5448,
       "value": "node2",
+    },
+    {
+      "start": 5448,
+      "value": "node3",
     },
     {
       "start": 5466,
-      "value": "node2",
+      "value": "node3",
     },
     {
       "start": 5473,
-      "value": "node2",
+      "value": "node3",
     },
     {
       "start": 5487,
-      "value": "node1",
+      "value": "node2",
     },
     {
       "start": 5487,
@@ -12798,7 +12874,7 @@ Lookup {
     },
     {
       "start": 5504,
-      "value": "node1",
+      "value": "node2",
     },
     {
       "start": 5514,
@@ -12822,7 +12898,15 @@ exports[`Java: sample.java!SynchronizedSimple: DOT Snapshot 1`] = `
     edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
     bgcolor="#ffffff";
 
-    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=1.2; id="node3"];
+    subgraph cluster_0 {
+        penwidth=0; class="with"; color="#ffffff"; bgcolor="#ffddff"
+        node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node3"];
+    }
+    node1 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.6; id="node1"];
+    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node3"];
+    node4 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.5; id="node4"];
+    node3 -> node4 [class="regular"; color="#0000ff"];
+    node1 -> node3 [class="regular"; color="#0000ff"];
 }"
 `;
 
@@ -12831,47 +12915,55 @@ Lookup {
   "ranges": [
     {
       "start": 0,
-      "value": "node3",
+      "value": "node1",
     },
     {
-      "start": 6232,
-      "value": "node3",
+      "start": 6250,
+      "value": "node1",
     },
     {
-      "start": 6288,
-      "value": "node3",
+      "start": 6299,
+      "value": "node1",
     },
     {
-      "start": 6302,
-      "value": "node3",
-    },
-    {
-      "start": 6306,
-      "value": "node3",
+      "start": 6305,
+      "value": "node1",
     },
     {
       "start": 6306,
       "value": "node3",
     },
     {
-      "start": 6319,
+      "start": 6320,
       "value": "node3",
     },
     {
-      "start": 6323,
+      "start": 6324,
       "value": "node3",
     },
     {
-      "start": 6333,
+      "start": 6324,
+      "value": "node3",
+    },
+    {
+      "start": 6337,
+      "value": "node3",
+    },
+    {
+      "start": 6341,
+      "value": "node3",
+    },
+    {
+      "start": 6351,
       "value": "Not found",
     },
     {
-      "start": 6339,
-      "value": "node3",
+      "start": 6357,
+      "value": "node1",
     },
     {
-      "start": 6339,
-      "value": "node3",
+      "start": 6357,
+      "value": "node1",
     },
   ],
 }
@@ -13319,87 +13411,87 @@ Lookup {
       "value": "node0",
     },
     {
-      "start": 5980,
+      "start": 5998,
       "value": "node0",
     },
     {
-      "start": 6021,
+      "start": 6039,
       "value": "node2",
     },
     {
-      "start": 6047,
-      "value": "node2",
-    },
-    {
-      "start": 6061,
-      "value": "node2",
-    },
-    {
-      "start": 6068,
-      "value": "node2",
-    },
-    {
-      "start": 6078,
+      "start": 6065,
       "value": "node2",
     },
     {
       "start": 6079,
-      "value": "node3",
-    },
-    {
-      "start": 6099,
-      "value": "node3",
-    },
-    {
-      "start": 6113,
-      "value": "node3",
-    },
-    {
-      "start": 6122,
-      "value": "node3",
-    },
-    {
-      "start": 6132,
-      "value": "node3",
-    },
-    {
-      "start": 6132,
       "value": "node2",
     },
     {
-      "start": 6133,
-      "value": "node4",
-    },
-    {
-      "start": 6141,
-      "value": "node4",
-    },
-    {
-      "start": 6155,
-      "value": "node4",
-    },
-    {
-      "start": 6165,
-      "value": "node4",
-    },
-    {
-      "start": 6175,
-      "value": "node4",
-    },
-    {
-      "start": 6175,
+      "start": 6086,
       "value": "node2",
     },
     {
-      "start": 6175,
+      "start": 6096,
       "value": "node2",
     },
     {
-      "start": 6181,
+      "start": 6097,
+      "value": "node3",
+    },
+    {
+      "start": 6117,
+      "value": "node3",
+    },
+    {
+      "start": 6131,
+      "value": "node3",
+    },
+    {
+      "start": 6140,
+      "value": "node3",
+    },
+    {
+      "start": 6150,
+      "value": "node3",
+    },
+    {
+      "start": 6150,
+      "value": "node2",
+    },
+    {
+      "start": 6151,
+      "value": "node4",
+    },
+    {
+      "start": 6159,
+      "value": "node4",
+    },
+    {
+      "start": 6173,
+      "value": "node4",
+    },
+    {
+      "start": 6183,
+      "value": "node4",
+    },
+    {
+      "start": 6193,
+      "value": "node4",
+    },
+    {
+      "start": 6193,
+      "value": "node2",
+    },
+    {
+      "start": 6193,
+      "value": "node2",
+    },
+    {
+      "start": 6199,
       "value": "node0",
     },
     {
-      "start": 6181,
+      "start": 6199,
       "value": "node0",
     },
   ],

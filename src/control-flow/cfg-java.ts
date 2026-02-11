@@ -85,6 +85,7 @@ const statementHandlers: StatementHandlers = {
     try_statement: processTryStatement,
     try_with_resources_statement: processTryStatement,
     synchronized_statement: processSynchronizedStatement,
+    assert_statement: processAssertStatement,
     labeled_statement: processLabeledStatement,
     line_comment: processComment,
     block_comment: processComment,
@@ -109,19 +110,24 @@ function defaultProcessStatement(syntax: SyntaxNode, ctx: Context): BasicBlock {
 function processForStatement(forNode: SyntaxNode, ctx: Context): BasicBlock {
   const { builder, matcher } = ctx;
 
+  const match = matcher.match(
+    forNode,
+    `
+    (for_statement
+      body: (_) @body
+    ) @for
+    `,
+  );
+
   const initSyntax = forNode.childForFieldName("init");
   const condSyntax = forNode.childForFieldName("condition");
   const updateSyntax = forNode.childForFieldName("update");
-  const bodySyntax = forNode.childForFieldName("body");
+  const bodySyntax = match.requireSyntax("body");
 
-  if (!bodySyntax) {
-    return defaultProcessStatement(forNode, ctx);
-  }
-
-  const initBlock = initSyntax ? ctx.dispatch.single(initSyntax) : null;
-  const condBlock = condSyntax ? ctx.dispatch.single(condSyntax) : null;
-  const updateBlock = updateSyntax ? ctx.dispatch.single(updateSyntax) : null;
-  const bodyBlock = ctx.dispatch.single(bodySyntax);
+  const initBlock = initSyntax ? match.getBlock(initSyntax) : null;
+  const condBlock = condSyntax ? match.getBlock(condSyntax) : null;
+  const updateBlock = updateSyntax ? match.getBlock(updateSyntax) : null;
+  const bodyBlock = match.getBlock(bodySyntax);
 
   const entryNode = builder.addNode("EMPTY", "loop head", forNode.startIndex);
   const exitNode = builder.addNode("FOR_EXIT", "loop exit", forNode.endIndex);
@@ -367,12 +373,59 @@ function processSynchronizedStatement(
   syncSyntax: SyntaxNode,
   ctx: Context,
 ): BasicBlock {
-  const bodySyntax = syncSyntax.childForFieldName("body");
-  if (!bodySyntax) {
-    return defaultProcessStatement(syncSyntax, ctx);
-  }
-  const bodyBlock = ctx.dispatch.single(bodySyntax);
-  return ctx.state.update({ entry: bodyBlock.entry, exit: bodyBlock.exit });
+  const { builder, matcher } = ctx;
+  const match = matcher.match(
+    syncSyntax,
+    `
+    (synchronized_statement
+      (parenthesized_expression) @lock
+      body: (_) @body
+    ) @sync
+    `,
+  );
+
+  const lockSyntax = match.requireSyntax("lock");
+  const lockBlock = match.getBlock(lockSyntax);
+
+  return builder.withCluster("with", () => {
+    const bodySyntax = match.requireSyntax("body");
+    const bodyBlock = match.getBlock(bodySyntax);
+
+    if (lockBlock.exit) builder.addEdge(lockBlock.exit, bodyBlock.entry);
+
+    return matcher.state.update({
+      entry: lockBlock.entry,
+      exit: bodyBlock.exit,
+    });
+  });
+}
+
+function processAssertStatement(
+  assertSyntax: SyntaxNode,
+  ctx: Context,
+): BasicBlock {
+  const conditionSyntax = assertSyntax.child(1) as SyntaxNode;
+  const messageSyntax = assertSyntax.child(3);
+  const conditionNode = ctx.builder.addNode(
+    "ASSERT_CONDITION",
+    `Assert: ${conditionSyntax.text}`,
+    conditionSyntax.startIndex,
+  );
+  const raiseNode = ctx.builder.addNode(
+    "THROW",
+    `Assertion Message: ${messageSyntax?.text}`,
+    conditionSyntax.endIndex,
+  );
+  const happyNode = ctx.builder.addNode(
+    "MERGE",
+    "Assert successful",
+    assertSyntax.endIndex,
+  );
+
+  ctx.builder.addEdge(conditionNode, raiseNode, "alternative");
+  ctx.builder.addEdge(conditionNode, happyNode, "consequence");
+
+  return { entry: conditionNode, exit: happyNode, functionExits: [raiseNode] };
 }
 
 function processLabeledStatement(

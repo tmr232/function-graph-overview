@@ -124,7 +124,7 @@ class Sample {
     }
 
     /*
-    exits: 3
+    exits: 1
     */
     void ForLoops() {
         for (a(); b(); c()) { if (x) break;}
@@ -201,7 +201,7 @@ class Sample {
     }
 
     /*
-    exits: 2
+    exits: 1
     */
     void LabeledStatement() {
         String str = "";
@@ -321,7 +321,7 @@ class Sample {
     }
 
     /*
-    nodes: 4
+    nodes: 7
     */
     void IfWithoutBraces() {
         for (;;) {
@@ -348,7 +348,8 @@ class Sample {
     }
 
     /*
-    exits: 1
+    exits: 2,
+    render: true
     */
     void AssertStatement() {
         assert x != null;
