@@ -27,6 +27,23 @@ declare global {
         setHighlight: (highlight: boolean) => void;
       };
     };
+    VisualStudio?: {
+      /**
+       * Functions the VS extension can use to call into the WebView
+       */
+      ToWebview?: {
+        setColors: (colors: string, isDark:boolean, backgroundColor:string, foregroundColor:string) => void;
+        setCode: (code: string, offset: number, language: string) => void;
+        setSimplify: (simplify: boolean) => void;
+        setFlatSwitch: (flatSwitch: boolean) => void;
+        setHighlight: (highlight: boolean) => void;
+      };
+    };
+    chrome?: {
+      webview?: {
+        postMessage: (message: string) => void;
+      };
+    };
   }
 }
 </script>
@@ -195,9 +212,46 @@ declare global {
     });
   }
 
+  function initVisualStudio(stateHandler: StateHandler): void {
+    function setColors(colors: string, isDark:boolean, backgroundColor:string, foregroundColor:string) {
+      try {
+        colorList = deserializeColorList(colors);
+        document.body.style.backgroundColor = colorList.find(
+          ({ name }) => name === "graph.background",
+        ).hex;
+
+        document.documentElement.style.setProperty("--jetbrains-editor-background", backgroundColor);
+        document.documentElement.style.setProperty("--jetbrains-editor-foreground", foregroundColor);
+        document.documentElement.style.setProperty("--jetbrains-color-scheme", isDark?"dark":"light");
+      } catch (error) {
+        console.trace(error);
+        return;
+      }
+    }
+
+    window.VisualStudio ??= {};
+    window.VisualStudio.ToWebview = {
+      setSimplify: (flag: boolean) =>
+        stateHandler.update({ config: { simplify: flag } }),
+      setFlatSwitch: (flag: boolean) =>
+        stateHandler.update({ config: { flatSwitch: flag } }),
+      setHighlight: (flag: boolean) =>
+        stateHandler.update({ config: { highlight: flag } }),
+      setCode,
+      setColors,
+    };
+
+    stateHandler.onNavigateTo((offset: number) => {
+      window.chrome?.webview?.postMessage(
+        JSON.stringify({ tag: "navigateTo", offset }),
+      );
+    });
+  }
+
   const stateHandler = new StateHandler();
   initVSCode(stateHandler);
   initJetBrains(stateHandler);
+  initVisualStudio(stateHandler);
 
   function navigateTo(
     e: CustomEvent<{ node: string; offset: number | null }>,
