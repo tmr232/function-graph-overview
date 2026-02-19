@@ -8,6 +8,7 @@ import fs from "node:fs";
 import { glob } from "glob";
 import { getTestFuncs as getTestFuncsForC } from "./collect-c";
 import { getTestFuncs as getTestsForCpp } from "./collect-cpp.ts";
+import { getTestFuncs as getTestsForCSharp } from "./collect-csharp";
 import { getTestFuncs as getTestFuncsForGo } from "./collect-go";
 import { getTestFuncs as getTestsForJava } from "./collect-java";
 import { getTestFuncs as getTestsForPython } from "./collect-python";
@@ -30,6 +31,7 @@ const languages: {
 }[] = [
   // ADD-LANGUAGES-HERE
   { ext: "c", getTestFuncs: getTestFuncsForC },
+  { ext: "cs", getTestFuncs: getTestsForCSharp },
   { ext: "go", getTestFuncs: getTestFuncsForGo },
   { ext: "java", getTestFuncs: getTestsForJava },
   { ext: "py", getTestFuncs: getTestsForPython },
