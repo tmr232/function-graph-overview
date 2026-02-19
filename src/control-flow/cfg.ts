@@ -1,6 +1,7 @@
 import type { Node as SyntaxNode } from "web-tree-sitter";
 import { cLanguageDefinition } from "./cfg-c";
 import { cppLanguageDefinition } from "./cfg-cpp";
+import { csharpLanguageDefinition } from "./cfg-csharp";
 import type { BuilderOptions, CFGBuilder } from "./cfg-defs";
 import { goLanguageDefinition } from "./cfg-go";
 import { javaLanguageDefinition } from "./cfg-java";
@@ -16,6 +17,7 @@ import {
  */
 export const supportedLanguages = [
   "C",
+  "C#",
   "Go",
   "Java",
   "Python",
@@ -41,6 +43,7 @@ export type LanguageDefinition = {
 
 export const languageDefinitions: Record<Language, LanguageDefinition> = {
   C: cLanguageDefinition,
+  "C#": csharpLanguageDefinition,
   Go: goLanguageDefinition,
   Java: javaLanguageDefinition,
   Python: pythonLanguageDefinition,

@@ -18,6 +18,7 @@ import { OverviewViewProvider } from "./overview-view";
 const languageMapping: { [key: string]: Language } = {
   c: "C",
   cpp: "C++",
+  csharp: "C#",
   go: "Go",
   java: "Java",
   python: "Python",
