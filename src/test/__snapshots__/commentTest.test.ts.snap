@@ -1,5 +1,1573 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`C#: sample.cs!BreakInLoop: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node1 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.6; id="node1"];
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+    node4 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node4"];
+    node1 -> node2 [class="consequence"; color="#008000"];
+    node1 -> node4 [class="alternative"; color="#ff0000"];
+    node2 -> node4 [class="regular"; color="#0000ff"];
+}"
+`;
+
+exports[`C#: sample.cs!BreakInLoop: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 2102,
+      "value": "node1",
+    },
+    {
+      "start": 2131,
+      "value": "node1",
+    },
+    {
+      "start": 2138,
+      "value": "node1",
+    },
+    {
+      "start": 2142,
+      "value": "node1",
+    },
+    {
+      "start": 2142,
+      "value": "node1",
+    },
+    {
+      "start": 2144,
+      "value": "node2",
+    },
+    {
+      "start": 2158,
+      "value": "node2",
+    },
+    {
+      "start": 2164,
+      "value": "node2",
+    },
+    {
+      "start": 2174,
+      "value": "node2",
+    },
+    {
+      "start": 2174,
+      "value": "node1",
+    },
+    {
+      "start": 2174,
+      "value": "node1",
+    },
+    {
+      "start": 2180,
+      "value": "node1",
+    },
+    {
+      "start": 2180,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`C#: sample.cs!ContinueInLoop: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node0 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.5; id="node0"];
+    node1 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node1"];
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node2"];
+    node7 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node7"];
+    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
+    node5 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node5"];
+    node2 -> node3 [class="consequence"; color="#008000"];
+    node2 -> node5 [class="alternative"; color="#ff0000"];
+    node1 -> node5 [class="regular"; color="#0000ff"; penwidth=2; dir="back"; headport="s"; tailport="n"];
+    node1 -> node3 [class="regular"; color="#0000ff"; penwidth=2; dir="back"; headport="s"; tailport="n"];
+    node0 -> node1 [class="regular"; color="#0000ff"];
+    node1 -> node2 [class="consequence"; color="#008000"];
+    node1 -> node7 [class="alternative"; color="#ff0000"];
+}"
+`;
+
+exports[`C#: sample.cs!ContinueInLoop: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node0",
+    },
+    {
+      "start": 2227,
+      "value": "node0",
+    },
+    {
+      "start": 2259,
+      "value": "node1",
+    },
+    {
+      "start": 2266,
+      "value": "node1",
+    },
+    {
+      "start": 2269,
+      "value": "node1",
+    },
+    {
+      "start": 2269,
+      "value": "node1",
+    },
+    {
+      "start": 2271,
+      "value": "node2",
+    },
+    {
+      "start": 2285,
+      "value": "node2",
+    },
+    {
+      "start": 2289,
+      "value": "node2",
+    },
+    {
+      "start": 2290,
+      "value": "node2",
+    },
+    {
+      "start": 2291,
+      "value": "node3",
+    },
+    {
+      "start": 2292,
+      "value": "node2",
+    },
+    {
+      "start": 2292,
+      "value": "node3",
+    },
+    {
+      "start": 2310,
+      "value": "node3",
+    },
+    {
+      "start": 2319,
+      "value": "node3",
+    },
+    {
+      "start": 2333,
+      "value": "node2",
+    },
+    {
+      "start": 2333,
+      "value": "node2",
+    },
+    {
+      "start": 2343,
+      "value": "node2",
+    },
+    {
+      "start": 2343,
+      "value": "node1",
+    },
+    {
+      "start": 2343,
+      "value": "node1",
+    },
+    {
+      "start": 2349,
+      "value": "node0",
+    },
+    {
+      "start": 2349,
+      "value": "node0",
+    },
+  ],
+}
+`;
+
+exports[`C#: sample.cs!DoWhile: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node0 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.5; id="node0"];
+    node1 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node1"];
+    node4 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node4"];
+    node1 -> node1 [class="consequence"; color="#008000"; penwidth=2; dir="back"; headport="s"; tailport="n"];
+    node0 -> node1 [class="regular"; color="#0000ff"];
+    node1 -> node4 [class="alternative"; color="#ff0000"];
+}"
+`;
+
+exports[`C#: sample.cs!DoWhile: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node0",
+    },
+    {
+      "start": 849,
+      "value": "node0",
+    },
+    {
+      "start": 874,
+      "value": "node1",
+    },
+    {
+      "start": 877,
+      "value": "node1",
+    },
+    {
+      "start": 888,
+      "value": "node1",
+    },
+    {
+      "start": 888,
+      "value": "node1",
+    },
+    {
+      "start": 896,
+      "value": "node1",
+    },
+    {
+      "start": 899,
+      "value": "node1",
+    },
+    {
+      "start": 899,
+      "value": "node1",
+    },
+    {
+      "start": 901,
+      "value": "node1",
+    },
+    {
+      "start": 907,
+      "value": "node0",
+    },
+    {
+      "start": 907,
+      "value": "node0",
+    },
+  ],
+}
+`;
+
+exports[`C#: sample.cs!ForLoop: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node1 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.8999999999999999; id="node1"];
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node2"];
+    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node3"];
+    node8 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node8"];
+    node1 -> node2 [class="regular"; color="#0000ff"];
+    node2 -> node3 [class="regular"; color="#0000ff"; penwidth=2; dir="back"; headport="s"; tailport="n"];
+    node2 -> node3 [class="consequence"; color="#008000"];
+    node2 -> node8 [class="alternative"; color="#ff0000"];
+}"
+`;
+
+exports[`C#: sample.cs!ForLoop: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 463,
+      "value": "node1",
+    },
+    {
+      "start": 488,
+      "value": "node1",
+    },
+    {
+      "start": 493,
+      "value": "node1",
+    },
+    {
+      "start": 502,
+      "value": "node1",
+    },
+    {
+      "start": 504,
+      "value": "node2",
+    },
+    {
+      "start": 510,
+      "value": "node1",
+    },
+    {
+      "start": 512,
+      "value": "node3",
+    },
+    {
+      "start": 515,
+      "value": "node1",
+    },
+    {
+      "start": 517,
+      "value": "node3",
+    },
+    {
+      "start": 572,
+      "value": "node1",
+    },
+    {
+      "start": 572,
+      "value": "node1",
+    },
+    {
+      "start": 578,
+      "value": "node1",
+    },
+    {
+      "start": 578,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`C#: sample.cs!ForeachLoop: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node0 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.5; id="node0"];
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+    node1 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node1"];
+    node4 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node4"];
+    node2 -> node1 [class="consequence"; color="#008000"];
+    node2 -> node1 [class="regular"; color="#0000ff"; penwidth=2; dir="back"; headport="s"; tailport="n"];
+    node0 -> node2 [class="regular"; color="#0000ff"];
+    node2 -> node4 [class="alternative"; color="#ff0000"];
+}"
+`;
+
+exports[`C#: sample.cs!ForeachLoop: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node0",
+    },
+    {
+      "start": 625,
+      "value": "node0",
+    },
+    {
+      "start": 654,
+      "value": "node2",
+    },
+    {
+      "start": 681,
+      "value": "node1",
+    },
+    {
+      "start": 682,
+      "value": "node2",
+    },
+    {
+      "start": 682,
+      "value": "node1",
+    },
+    {
+      "start": 693,
+      "value": "node2",
+    },
+    {
+      "start": 693,
+      "value": "node2",
+    },
+    {
+      "start": 699,
+      "value": "node0",
+    },
+    {
+      "start": 699,
+      "value": "node0",
+    },
+  ],
+}
+`;
+
+exports[`C#: sample.cs!Forever: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node2 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.6; id="node2"];
+    node1 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node1"];
+    node2 -> node1 [class="regular"; color="#0000ff"];
+    node1 -> node1 [class="regular"; color="#0000ff"; penwidth=2; dir="back"; headport="s"; tailport="n"];
+}"
+`;
+
+exports[`C#: sample.cs!Forever: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node2",
+    },
+    {
+      "start": 329,
+      "value": "node2",
+    },
+    {
+      "start": 354,
+      "value": "node2",
+    },
+    {
+      "start": 363,
+      "value": "node1",
+    },
+    {
+      "start": 374,
+      "value": "node2",
+    },
+    {
+      "start": 374,
+      "value": "node2",
+    },
+    {
+      "start": 380,
+      "value": "node2",
+    },
+    {
+      "start": 380,
+      "value": "node2",
+    },
+  ],
+}
+`;
+
+exports[`C#: sample.cs!IfElse: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node1 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.8999999999999999; id="node1"];
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
+    node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
+    node5 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node5"];
+    node8 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node8"];
+    node1 -> node2 [class="consequence"; color="#008000"];
+    node1 -> node3 [class="alternative"; color="#ff0000"];
+    node3 -> node4 [class="consequence"; color="#008000"];
+    node3 -> node5 [class="alternative"; color="#ff0000"];
+    node2 -> node8 [class="regular"; color="#0000ff"];
+    node4 -> node8 [class="regular"; color="#0000ff"];
+    node5 -> node8 [class="regular"; color="#0000ff"];
+}"
+`;
+
+exports[`C#: sample.cs!IfElse: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 193,
+      "value": "node1",
+    },
+    {
+      "start": 217,
+      "value": "node1",
+    },
+    {
+      "start": 221,
+      "value": "node1",
+    },
+    {
+      "start": 222,
+      "value": "node1",
+    },
+    {
+      "start": 223,
+      "value": "node2",
+    },
+    {
+      "start": 224,
+      "value": "node1",
+    },
+    {
+      "start": 224,
+      "value": "node2",
+    },
+    {
+      "start": 235,
+      "value": "node3",
+    },
+    {
+      "start": 241,
+      "value": "node1",
+    },
+    {
+      "start": 241,
+      "value": "node3",
+    },
+    {
+      "start": 245,
+      "value": "node3",
+    },
+    {
+      "start": 246,
+      "value": "node3",
+    },
+    {
+      "start": 247,
+      "value": "node4",
+    },
+    {
+      "start": 248,
+      "value": "node3",
+    },
+    {
+      "start": 248,
+      "value": "node4",
+    },
+    {
+      "start": 259,
+      "value": "node5",
+    },
+    {
+      "start": 265,
+      "value": "node3",
+    },
+    {
+      "start": 265,
+      "value": "node5",
+    },
+    {
+      "start": 276,
+      "value": "node5",
+    },
+    {
+      "start": 276,
+      "value": "node3",
+    },
+    {
+      "start": 276,
+      "value": "node1",
+    },
+    {
+      "start": 276,
+      "value": "node1",
+    },
+    {
+      "start": 282,
+      "value": "node1",
+    },
+    {
+      "start": 282,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`C#: sample.cs!ManyIfs: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node1 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.8999999999999999; id="node1"];
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+    node5 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node5"];
+    node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node6"];
+    node7 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node7"];
+    node10 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node10"];
+    node11 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node11"];
+    node12 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node12"];
+    node13 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node13"];
+    node16 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node16"];
+    node17 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node17"];
+    node18 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node18"];
+    node19 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node19"];
+    node20 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node20"];
+    node23 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node23"];
+    node1 -> node2 [class="consequence"; color="#008000"];
+    node5 -> node6 [class="consequence"; color="#008000"];
+    node5 -> node7 [class="alternative"; color="#ff0000"];
+    node10 -> node11 [class="consequence"; color="#008000"];
+    node10 -> node12 [class="alternative"; color="#ff0000"];
+    node12 -> node13 [class="consequence"; color="#008000"];
+    node16 -> node17 [class="consequence"; color="#008000"];
+    node16 -> node18 [class="alternative"; color="#ff0000"];
+    node18 -> node19 [class="consequence"; color="#008000"];
+    node18 -> node20 [class="alternative"; color="#ff0000"];
+    node2 -> node5 [class="regular"; color="#0000ff"];
+    node1 -> node5 [class="alternative"; color="#ff0000"];
+    node6 -> node10 [class="regular"; color="#0000ff"];
+    node7 -> node10 [class="regular"; color="#0000ff"];
+    node11 -> node16 [class="regular"; color="#0000ff"];
+    node13 -> node16 [class="regular"; color="#0000ff"];
+    node12 -> node16 [class="alternative"; color="#ff0000"];
+    node17 -> node23 [class="regular"; color="#0000ff"];
+    node19 -> node23 [class="regular"; color="#0000ff"];
+    node20 -> node23 [class="regular"; color="#0000ff"];
+}"
+`;
+
+exports[`C#: sample.cs!ManyIfs: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 1254,
+      "value": "node1",
+    },
+    {
+      "start": 1279,
+      "value": "node1",
+    },
+    {
+      "start": 1283,
+      "value": "node1",
+    },
+    {
+      "start": 1284,
+      "value": "node1",
+    },
+    {
+      "start": 1285,
+      "value": "node2",
+    },
+    {
+      "start": 1286,
+      "value": "node1",
+    },
+    {
+      "start": 1286,
+      "value": "node2",
+    },
+    {
+      "start": 1297,
+      "value": "node1",
+    },
+    {
+      "start": 1297,
+      "value": "node5",
+    },
+    {
+      "start": 1307,
+      "value": "node1",
+    },
+    {
+      "start": 1307,
+      "value": "node5",
+    },
+    {
+      "start": 1311,
+      "value": "node5",
+    },
+    {
+      "start": 1312,
+      "value": "node5",
+    },
+    {
+      "start": 1313,
+      "value": "node6",
+    },
+    {
+      "start": 1314,
+      "value": "node5",
+    },
+    {
+      "start": 1314,
+      "value": "node6",
+    },
+    {
+      "start": 1325,
+      "value": "node7",
+    },
+    {
+      "start": 1331,
+      "value": "node5",
+    },
+    {
+      "start": 1331,
+      "value": "node7",
+    },
+    {
+      "start": 1342,
+      "value": "node7",
+    },
+    {
+      "start": 1342,
+      "value": "node5",
+    },
+    {
+      "start": 1342,
+      "value": "node10",
+    },
+    {
+      "start": 1352,
+      "value": "node1",
+    },
+    {
+      "start": 1352,
+      "value": "node10",
+    },
+    {
+      "start": 1356,
+      "value": "node10",
+    },
+    {
+      "start": 1357,
+      "value": "node10",
+    },
+    {
+      "start": 1358,
+      "value": "node11",
+    },
+    {
+      "start": 1359,
+      "value": "node10",
+    },
+    {
+      "start": 1359,
+      "value": "node11",
+    },
+    {
+      "start": 1370,
+      "value": "node12",
+    },
+    {
+      "start": 1376,
+      "value": "node10",
+    },
+    {
+      "start": 1376,
+      "value": "node12",
+    },
+    {
+      "start": 1380,
+      "value": "node12",
+    },
+    {
+      "start": 1381,
+      "value": "node12",
+    },
+    {
+      "start": 1382,
+      "value": "node13",
+    },
+    {
+      "start": 1383,
+      "value": "node12",
+    },
+    {
+      "start": 1383,
+      "value": "node13",
+    },
+    {
+      "start": 1394,
+      "value": "node12",
+    },
+    {
+      "start": 1394,
+      "value": "node10",
+    },
+    {
+      "start": 1394,
+      "value": "node16",
+    },
+    {
+      "start": 1404,
+      "value": "node1",
+    },
+    {
+      "start": 1404,
+      "value": "node16",
+    },
+    {
+      "start": 1408,
+      "value": "node16",
+    },
+    {
+      "start": 1409,
+      "value": "node16",
+    },
+    {
+      "start": 1410,
+      "value": "node17",
+    },
+    {
+      "start": 1411,
+      "value": "node16",
+    },
+    {
+      "start": 1411,
+      "value": "node17",
+    },
+    {
+      "start": 1422,
+      "value": "node18",
+    },
+    {
+      "start": 1428,
+      "value": "node16",
+    },
+    {
+      "start": 1428,
+      "value": "node18",
+    },
+    {
+      "start": 1432,
+      "value": "node18",
+    },
+    {
+      "start": 1433,
+      "value": "node18",
+    },
+    {
+      "start": 1434,
+      "value": "node19",
+    },
+    {
+      "start": 1435,
+      "value": "node18",
+    },
+    {
+      "start": 1435,
+      "value": "node19",
+    },
+    {
+      "start": 1446,
+      "value": "node20",
+    },
+    {
+      "start": 1452,
+      "value": "node18",
+    },
+    {
+      "start": 1452,
+      "value": "node20",
+    },
+    {
+      "start": 1463,
+      "value": "node20",
+    },
+    {
+      "start": 1463,
+      "value": "node18",
+    },
+    {
+      "start": 1463,
+      "value": "node16",
+    },
+    {
+      "start": 1463,
+      "value": "node16",
+    },
+    {
+      "start": 1469,
+      "value": "node1",
+    },
+    {
+      "start": 1469,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`C#: sample.cs!SimpleIf: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node1 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.8999999999999999; id="node1"];
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+    node5 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node5"];
+    node1 -> node2 [class="consequence"; color="#008000"];
+    node2 -> node5 [class="regular"; color="#0000ff"];
+    node1 -> node5 [class="alternative"; color="#ff0000"];
+}"
+`;
+
+exports[`C#: sample.cs!SimpleIf: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 96,
+      "value": "node1",
+    },
+    {
+      "start": 122,
+      "value": "node1",
+    },
+    {
+      "start": 126,
+      "value": "node1",
+    },
+    {
+      "start": 127,
+      "value": "node1",
+    },
+    {
+      "start": 128,
+      "value": "node2",
+    },
+    {
+      "start": 129,
+      "value": "node1",
+    },
+    {
+      "start": 129,
+      "value": "node2",
+    },
+    {
+      "start": 140,
+      "value": "node1",
+    },
+    {
+      "start": 140,
+      "value": "node1",
+    },
+    {
+      "start": 146,
+      "value": "node1",
+    },
+    {
+      "start": 146,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`C#: sample.cs!SimpleReturn: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node1 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.6; id="node1"];
+}"
+`;
+
+exports[`C#: sample.cs!SimpleReturn: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 1516,
+      "value": "node1",
+    },
+    {
+      "start": 1546,
+      "value": "node1",
+    },
+    {
+      "start": 1553,
+      "value": "node1",
+    },
+    {
+      "start": 1559,
+      "value": "node1",
+    },
+    {
+      "start": 1559,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`C#: sample.cs!SimpleThrow: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node0 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.5; id="node0"];
+    node1 [shape="triangle"; class="throw"; fillcolor="#ffdddd"; color="#000000"; height=0.3; id="node1"];
+    node0 -> node1 [class="regular"; color="#0000ff"];
+}"
+`;
+
+exports[`C#: sample.cs!SimpleThrow: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node0",
+    },
+    {
+      "start": 1606,
+      "value": "node0",
+    },
+    {
+      "start": 1635,
+      "value": "node1",
+    },
+    {
+      "start": 1657,
+      "value": "node1",
+    },
+    {
+      "start": 1663,
+      "value": "node0",
+    },
+    {
+      "start": 1663,
+      "value": "node0",
+    },
+  ],
+}
+`;
+
+exports[`C#: sample.cs!Switch1: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node1 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.8999999999999999; id="node1"];
+    node5 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node5"];
+    node6 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node6"];
+    node7 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node7"];
+    node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node4"];
+    node13 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node13"];
+    node10 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node10"];
+    node1 -> node5 [class="alternative"; color="#ff0000"];
+    node5 -> node6 [class="consequence"; color="#008000"];
+    node5 -> node7 [class="alternative"; color="#ff0000"];
+    node1 -> node4 [class="consequence"; color="#008000"];
+    node7 -> node13 [class="alternative"; color="#ff0000"];
+    node4 -> node13 [class="regular"; color="#0000ff"];
+    node10 -> node13 [class="regular"; color="#0000ff"];
+    node6 -> node10 [class="regular"; color="#0000ff"];
+    node7 -> node10 [class="consequence"; color="#008000"];
+}"
+`;
+
+exports[`C#: sample.cs!Switch1: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node1",
+    },
+    {
+      "start": 954,
+      "value": "node1",
+    },
+    {
+      "start": 979,
+      "value": "node1",
+    },
+    {
+      "start": 1004,
+      "value": "node1",
+    },
+    {
+      "start": 1009,
+      "value": "node4",
+    },
+    {
+      "start": 1010,
+      "value": "node1",
+    },
+    {
+      "start": 1010,
+      "value": "node4",
+    },
+    {
+      "start": 1011,
+      "value": "node4",
+    },
+    {
+      "start": 1009,
+      "value": "node4",
+    },
+    {
+      "start": 1028,
+      "value": "node1",
+    },
+    {
+      "start": 1028,
+      "value": "node4",
+    },
+    {
+      "start": 1053,
+      "value": "node4",
+    },
+    {
+      "start": 1070,
+      "value": "node4",
+    },
+    {
+      "start": 1076,
+      "value": "node1",
+    },
+    {
+      "start": 1076,
+      "value": "node5",
+    },
+    {
+      "start": 1089,
+      "value": "node5",
+    },
+    {
+      "start": 1094,
+      "value": "node6",
+    },
+    {
+      "start": 1095,
+      "value": "node5",
+    },
+    {
+      "start": 1096,
+      "value": "node1",
+    },
+    {
+      "start": 1096,
+      "value": "node6",
+    },
+    {
+      "start": 1094,
+      "value": "node7",
+    },
+    {
+      "start": 1109,
+      "value": "node1",
+    },
+    {
+      "start": 1109,
+      "value": "node7",
+    },
+    {
+      "start": 1114,
+      "value": "node10",
+    },
+    {
+      "start": 1115,
+      "value": "node7",
+    },
+    {
+      "start": 1115,
+      "value": "node10",
+    },
+    {
+      "start": 1116,
+      "value": "node10",
+    },
+    {
+      "start": 1114,
+      "value": "node10",
+    },
+    {
+      "start": 1133,
+      "value": "node7",
+    },
+    {
+      "start": 1133,
+      "value": "node10",
+    },
+    {
+      "start": 1167,
+      "value": "node10",
+    },
+    {
+      "start": 1184,
+      "value": "node10",
+    },
+    {
+      "start": 1190,
+      "value": "node7",
+    },
+    {
+      "start": 1190,
+      "value": "node1",
+    },
+    {
+      "start": 1200,
+      "value": "Not found",
+    },
+    {
+      "start": 991,
+      "value": "node1",
+    },
+    {
+      "start": 1206,
+      "value": "node1",
+    },
+    {
+      "start": 1206,
+      "value": "node1",
+    },
+  ],
+}
+`;
+
+exports[`C#: sample.cs!Trivial: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.8999999999999999; id="node2"];
+}"
+`;
+
+exports[`C#: sample.cs!Trivial: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node2",
+    },
+    {
+      "start": 46,
+      "value": "node2",
+    },
+    {
+      "start": 63,
+      "value": "node2",
+    },
+  ],
+}
+`;
+
+exports[`C#: sample.cs!TryCatch: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    subgraph cluster_0 {
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
+        subgraph cluster_1 {
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
+            node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+        }
+        subgraph cluster_2 {
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
+            node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
+        }
+    }
+    node0 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.5; id="node0"];
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
+    node4 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node4"];
+    node2 -> node3 [style="invis"; headport="e"; tailport="w"];
+    node0 -> node2 [class="regular"; color="#0000ff"];
+    node3 -> node4 [class="regular"; color="#0000ff"];
+    node2 -> node4 [class="regular"; color="#0000ff"];
+}"
+`;
+
+exports[`C#: sample.cs!TryCatch: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node0",
+    },
+    {
+      "start": 1700,
+      "value": "node0",
+    },
+    {
+      "start": 1726,
+      "value": "node2",
+    },
+    {
+      "start": 1730,
+      "value": "node2",
+    },
+    {
+      "start": 1744,
+      "value": "node2",
+    },
+    {
+      "start": 1758,
+      "value": "node2",
+    },
+    {
+      "start": 1768,
+      "value": "node2",
+    },
+    {
+      "start": 1769,
+      "value": "node3",
+    },
+    {
+      "start": 1789,
+      "value": "node3",
+    },
+    {
+      "start": 1803,
+      "value": "node3",
+    },
+    {
+      "start": 1818,
+      "value": "node3",
+    },
+    {
+      "start": 1828,
+      "value": "node3",
+    },
+    {
+      "start": 1828,
+      "value": "node2",
+    },
+    {
+      "start": 1828,
+      "value": "node2",
+    },
+    {
+      "start": 1834,
+      "value": "node0",
+    },
+    {
+      "start": 1834,
+      "value": "node0",
+    },
+  ],
+}
+`;
+
+exports[`C#: sample.cs!TryCatchFinally: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    subgraph cluster_0 {
+        penwidth=0; class="tryComplex"; color="#ffffff"; bgcolor="#ddddff"
+        subgraph cluster_1 {
+            penwidth=0; class="try"; color="#ffffff"; bgcolor="#ddffdd"
+            node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+        }
+        subgraph cluster_2 {
+            penwidth=0; class="except"; color="#ffffff"; bgcolor="#ffdddd"
+            node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
+        }
+        subgraph cluster_3 {
+            penwidth=0; class="finally"; color="#ffffff"; bgcolor="#ffffdd"
+            node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
+        }
+    }
+    node0 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.5; id="node0"];
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+    node3 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node3"];
+    node4 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node4"];
+    node5 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node5"];
+    node2 -> node3 [style="invis"; headport="e"; tailport="w"];
+    node2 -> node4 [class="regular"; color="#0000ff"];
+    node3 -> node4 [class="regular"; color="#0000ff"];
+    node0 -> node2 [class="regular"; color="#0000ff"];
+    node4 -> node5 [class="regular"; color="#0000ff"];
+}"
+`;
+
+exports[`C#: sample.cs!TryCatchFinally: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node0",
+    },
+    {
+      "start": 1871,
+      "value": "node0",
+    },
+    {
+      "start": 1904,
+      "value": "node2",
+    },
+    {
+      "start": 1908,
+      "value": "node2",
+    },
+    {
+      "start": 1922,
+      "value": "node2",
+    },
+    {
+      "start": 1936,
+      "value": "node2",
+    },
+    {
+      "start": 1946,
+      "value": "node2",
+    },
+    {
+      "start": 1947,
+      "value": "node3",
+    },
+    {
+      "start": 1967,
+      "value": "node3",
+    },
+    {
+      "start": 1981,
+      "value": "node3",
+    },
+    {
+      "start": 1996,
+      "value": "node3",
+    },
+    {
+      "start": 2006,
+      "value": "node3",
+    },
+    {
+      "start": 2006,
+      "value": "node2",
+    },
+    {
+      "start": 2007,
+      "value": "node4",
+    },
+    {
+      "start": 2015,
+      "value": "node4",
+    },
+    {
+      "start": 2029,
+      "value": "node4",
+    },
+    {
+      "start": 2039,
+      "value": "node4",
+    },
+    {
+      "start": 2049,
+      "value": "node4",
+    },
+    {
+      "start": 2049,
+      "value": "node2",
+    },
+    {
+      "start": 2049,
+      "value": "node2",
+    },
+    {
+      "start": 2055,
+      "value": "node0",
+    },
+    {
+      "start": 2055,
+      "value": "node0",
+    },
+  ],
+}
+`;
+
+exports[`C#: sample.cs!WhileLoop: DOT Snapshot 1`] = `
+"digraph "" {
+    node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];
+    edge [penwidth=1; color="#0000ff"; headport="n"; tailport="s"];
+    bgcolor="#ffffff";
+
+    node0 [shape="invhouse"; class="entry"; fillcolor="#48AB30"; color="#000000"; height=0.5; id="node0"];
+    node1 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node1"];
+    node2 [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"; height=0.3; id="node2"];
+    node4 [shape="house"; class="exit"; fillcolor="#AB3030"; color="#000000"; height=0.6; id="node4"];
+    node1 -> node2 [class="consequence"; color="#008000"];
+    node1 -> node2 [class="regular"; color="#0000ff"; penwidth=2; dir="back"; headport="s"; tailport="n"];
+    node0 -> node1 [class="regular"; color="#0000ff"];
+    node1 -> node4 [class="alternative"; color="#ff0000"];
+}"
+`;
+
+exports[`C#: sample.cs!WhileLoop: Segmentation 1`] = `
+Lookup {
+  "ranges": [
+    {
+      "start": 0,
+      "value": "node0",
+    },
+    {
+      "start": 746,
+      "value": "node0",
+    },
+    {
+      "start": 773,
+      "value": "node1",
+    },
+    {
+      "start": 780,
+      "value": "node1",
+    },
+    {
+      "start": 783,
+      "value": "node1",
+    },
+    {
+      "start": 783,
+      "value": "node1",
+    },
+    {
+      "start": 785,
+      "value": "node2",
+    },
+    {
+      "start": 796,
+      "value": "node2",
+    },
+    {
+      "start": 796,
+      "value": "node1",
+    },
+    {
+      "start": 796,
+      "value": "node1",
+    },
+    {
+      "start": 802,
+      "value": "node0",
+    },
+    {
+      "start": 802,
+      "value": "node0",
+    },
+  ],
+}
+`;
+
 exports[`C++: issue-106-co_yield.cpp!fibonacci_sequence: DOT Snapshot 1`] = `
 "digraph "" {
     node [label=""; style="filled"; shape="box"; class="default"; fillcolor="#d3d3d3"; color="#000000"];

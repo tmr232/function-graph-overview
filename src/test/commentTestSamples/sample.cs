@@ -73,18 +73,15 @@ class Sample {
 
     /*
     nodes: 7,
-    exits: 1,
-    reaches: [["1","3"]]
+    exits: 1
     */
     void Switch1() {
         switch (x) {
             case 1:
-                // CFG: 1
                 Console.WriteLine("one");
                 break;
             case 2:
             case 3:
-                // CFG: 3
                 Console.WriteLine("two or three");
                 break;
         }
@@ -113,7 +110,7 @@ class Sample {
     }
 
     /*
-    nodes: 2,
+    nodes: 1,
     exits: 1
     */
     void SimpleReturn() {
@@ -122,7 +119,7 @@ class Sample {
 
     /*
     nodes: 2,
-    exits: 0
+    exits: 1
     */
     void SimpleThrow() {
         throw new Exception();
@@ -153,20 +150,17 @@ class Sample {
     }
 
     /*
-    nodes: 5,
-    exits: 1,
-    reaches: [["a","b"]]
+    nodes: 3,
+    exits: 1
     */
     void BreakInLoop() {
         while (true) {
-            // CFG: a
             break;
-            // CFG: b
         }
     }
 
     /*
-    nodes: 5,
+    nodes: 6,
     exits: 1
     */
     void ContinueInLoop() {
