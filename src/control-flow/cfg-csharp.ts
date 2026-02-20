@@ -192,7 +192,11 @@ function parseCase(caseSyntax: SyntaxNode): {
   // In C#, switch_section has one or more case/default labels followed by statements.
   // Labels are "case_switch_label" or "default_switch_label" in the AST.
   // Find the first non-label child as the start of the consequence.
-  const labelTypes = new Set(["case_switch_label", "case_pattern_switch_label", "default_switch_label"]);
+  const labelTypes = new Set([
+    "case_switch_label",
+    "case_pattern_switch_label",
+    "default_switch_label",
+  ]);
   const labels: SyntaxNode[] = [];
   const consequence: SyntaxNode[] = [];
   for (const child of children) {
@@ -237,11 +241,15 @@ function processSwitchStatement(
       `(switch_body "{" @opening-brace "}" @closing-brace) @block`,
     );
     const openingBrace = braceMatch.requireSyntax("opening-brace");
-    ctx.link.offsetToSyntax(switchSyntax, openingBrace, { includeTo: true });
     const closingBrace = braceMatch.requireSyntax("closing-brace");
-    const lastCase = cases[cases.length - 1];
-    if (lastCase?.syntax) {
-      ctx.link.offsetToSyntax(lastCase.syntax, closingBrace, {
+    const caseSyntaxMany = getCases(switchSyntax);
+    const firstCase = caseSyntaxMany[0];
+    if (firstCase) {
+      ctx.link.offsetToSyntax(openingBrace, firstCase);
+    }
+    const lastCase = caseSyntaxMany[caseSyntaxMany.length - 1];
+    if (lastCase) {
+      ctx.link.offsetToSyntax(lastCase, closingBrace, {
         reverse: true,
         includeTo: true,
       });
@@ -413,8 +421,7 @@ function processUsingStatement(
 const functionQuery = {
   methodDeclaration: "(method_declaration name: (identifier) @name)",
   constructorDeclaration: "(constructor_declaration name: (identifier) @name)",
-  localFunctionStatement:
-    "(local_function_statement name: (identifier) @name)",
+  localFunctionStatement: "(local_function_statement name: (identifier) @name)",
   captureName: "name",
 };
 

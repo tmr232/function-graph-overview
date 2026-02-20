@@ -1096,6 +1096,14 @@ Lookup {
       "value": "node1",
     },
     {
+      "start": 991,
+      "value": "node1",
+    },
+    {
+      "start": 1004,
+      "value": "node1",
+    },
+    {
       "start": 1004,
       "value": "node1",
     },
@@ -1217,14 +1225,14 @@ Lookup {
     },
     {
       "start": 1190,
+      "value": "node7",
+    },
+    {
+      "start": 1200,
       "value": "node1",
     },
     {
       "start": 1200,
-      "value": "Not found",
-    },
-    {
-      "start": 991,
       "value": "node1",
     },
     {
