@@ -129,7 +129,7 @@ All locations marked with `ADD-LANGUAGES-HERE` in the codebase.
 ## Phase 7 — Verify ✅
 
 - [x] `bun vitest run` — all 801 tests pass (683 comment tests + 118 other tests)
-- [ ] `bun lint` — not yet run
+- [x] `bun lint` — clean (biome reordered one import in Demo.svelte)
 - [ ] `bun demo` — not yet tested manually
 
 ---
