@@ -32,7 +32,12 @@ declare global {
        * Functions the VS extension can use to call into the WebView
        */
       ToWebview?: {
-        setColors: (colors: string, isDark:boolean, backgroundColor:string, foregroundColor:string) => void;
+        setColors: (
+          colors: string,
+          isDark: boolean,
+          backgroundColor: string,
+          foregroundColor: string,
+        ) => void;
         setCode: (code: string, offset: number, language: string) => void;
         setSimplify: (simplify: boolean) => void;
         setFlatSwitch: (flatSwitch: boolean) => void;
