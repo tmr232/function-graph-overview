@@ -6,12 +6,17 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.17] - 2026-02-21
+
 ### Added
 
 - Function name extraction with support for multiple programming languages. 
 - Unit tests for function name extraction, covering various structures and languages.
 - Frontend logic in `render/src/App.svelte` to extract and display metadata based on render type. 
 - Display of both CFG and function metadata in the GitHub render view, and CFG metadata in the Graph render view.
+- Visual Studio extension (at https://github.com/tmr232/vs-function-graph-overview/)
+- Initial Java support
+- Initial C# support
 
 ## [0.0.16] - 2025-05-07
 

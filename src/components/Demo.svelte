@@ -350,6 +350,10 @@ function onZoomClick(
         href="https://plugins.jetbrains.com/plugin/25676-function-graph-overview"
       >JetBrains Plugin</a
       >
+      <a
+        href="https://marketplace.visualstudio.com/items?itemName=tamir-bahar.vs-function-graph-overview"
+      >Visual Studio Extension</a
+      >
     </div>
     <div class="themeToggleWrapper">
       <button
