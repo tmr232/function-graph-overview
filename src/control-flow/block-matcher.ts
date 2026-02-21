@@ -80,9 +80,13 @@ export class BlockMatcher {
     return new Match(match, this.blockHandler, this.dispatchSingle);
   }
 
-  public tryMatch(syntax: SyntaxNode, queryString: string): Match | null {
+  public tryMatch(
+    syntax: SyntaxNode,
+    queryString: string,
+    options?: QueryOptions,
+  ): Match | null {
     try {
-      return this.match(syntax, queryString);
+      return this.match(syntax, queryString, options);
     } catch {
       return null;
     }

@@ -1,10 +1,12 @@
 <script lang="ts">
 import { cpp } from "@codemirror/lang-cpp";
 import { go } from "@codemirror/lang-go";
+import { java } from "@codemirror/lang-java";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import type { LanguageSupport } from "@codemirror/language";
 import type { PanzoomObject } from "@panzoom/panzoom";
+import { csharp } from "@replit/codemirror-lang-csharp";
 import * as LZString from "lz-string";
 import { onMount } from "svelte";
 import { type Language, isValidLanguage } from "../control-flow/cfg";
@@ -20,7 +22,9 @@ import { getSystemColorList, isDark, toggleTheme } from "./lightdark.ts";
 // ADD-LANGUAGES-HERE
 const defaultCodeSamples: { [language in Language]?: string } = {
   Go: "func Example() {\n\tif x {\n\t\treturn\n\t}\n}",
+  Java: "void example() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
   C: "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
+  "C#": "void Example() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
   "C++": "void main() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
   Python: "def example():\n    if x:\n        return",
   TypeScript: "function main() {\n\tif (x) {\n\t\treturn;\n\t}\n}",
@@ -48,7 +52,9 @@ let languages: {
   codeMirror: () => LanguageSupport;
 }[] = [
   { language: "Go" as Language, text: "Go", codeMirror: go },
+  { language: "Java" as Language, text: "Java", codeMirror: java },
   { language: "C" as Language, text: "C", codeMirror: cpp },
+  { language: "C#" as Language, text: "C#", codeMirror: csharp },
   {
     language: "Python" as Language,
     text: "Python",
@@ -85,7 +91,9 @@ type ShareParameters = {
 // ADD-LANGUAGES-HERE
 const languageAliases: Record<string, Language> = {
   go: "Go",
+  java: "Java",
   c: "C",
+  csharp: "C#",
   cpp: "C++",
   python: "Python",
   typescript: "TypeScript",

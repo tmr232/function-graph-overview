@@ -5,7 +5,9 @@ import { isDark } from "../../components/lightdark";
 import type { Language } from "../../control-flow/cfg.ts";
 import demoCodeC from "./assets/demo.c?raw";
 import demoCodeCpp from "./assets/demo.cpp?raw";
+import demoCodeCSharp from "./assets/demo.cs?raw";
 import demoCodeGo from "./assets/demo.go?raw";
+import demoCodeJava from "./assets/demo.java?raw";
 import demoCodePython from "./assets/demo.py?raw";
 import demoCodeTypeScript from "./assets/demo.ts?raw";
 
@@ -18,6 +20,8 @@ const unsubscribe = isDark.subscribe((isDark) => {
 // ADD-LANGUAGES-HERE
 const code: { [language in Language]?: string } = {
   C: demoCodeC,
+  "C#": demoCodeCSharp,
+  Java: demoCodeJava,
   Python: demoCodePython,
   Go: demoCodeGo,
   "C++": demoCodeCpp,
