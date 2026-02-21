@@ -157,13 +157,16 @@ export function collectCases(
       ctx.dispatch.many(consequence, caseSyntax),
     );
     if (consequence.length > 0) {
-      ctx.link.offsetToSyntax(
-        ctx.matcher
-          .match(caseSyntax, `(_ (":") @colon)`, { maxStartDepth: 1 })
-          .requireSyntax("colon"),
-        // @ts-expect-error: We know there's at least one element
-        consequence[0],
-      );
+      const colonMatch = ctx.matcher.tryMatch(caseSyntax, `(_ (":") @colon)`, {
+        maxStartDepth: 1,
+      });
+      if (colonMatch) {
+        ctx.link.offsetToSyntax(
+          colonMatch.requireSyntax("colon"),
+          // @ts-expect-error: We know there's at least one element
+          consequence[0],
+        );
+      }
     }
 
     // We want to mark empty nodes, so that we can avoid linking their

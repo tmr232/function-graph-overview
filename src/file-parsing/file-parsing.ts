@@ -6,6 +6,7 @@ type FileType = { ext: string; language: Language };
 // ADD-LANGUAGES-HERE
 export const fileTypes: FileType[] = [
   { ext: "c", language: "C" },
+  { ext: "cs", language: "C#" },
   { ext: "cpp", language: "C++" },
   { ext: "h", language: "C++" },
   { ext: "hh", language: "C++" },
@@ -13,6 +14,7 @@ export const fileTypes: FileType[] = [
   { ext: "cc", language: "C++" },
   { ext: "py", language: "Python" },
   { ext: "go", language: "Go" },
+  { ext: "java", language: "Java" },
   { ext: "ts", language: "TypeScript" },
   { ext: "js", language: "TypeScript" },
   { ext: "tsx", language: "TSX" },

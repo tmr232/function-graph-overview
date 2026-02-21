@@ -8,4 +8,6 @@ export const perLanguageHandlers: Partial<Record<Language, CallHandler[]>> = {
     { pattern: "os.abort", is: "TERMINATE" },
   ],
   Go: [{ pattern: "panic", is: "TERMINATE" }],
+  Java: [{ pattern: "System.exit", is: "TERMINATE" }],
+  "C#": [{ pattern: "Environment.Exit", is: "TERMINATE" }],
 };
