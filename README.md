@@ -68,3 +68,5 @@ Additionally, the view will automatically pan to the highlighted node when it ch
 - [Python](https://tmr232.github.io/function-graph-overview/?language=python)
 - [TypesScript](https://tmr232.github.io/function-graph-overview/?language=typescript) & [TSX]((https://tmr232.github.io/function-graph-overview/?language=tsx))
 - [JavaScript](https://tmr232.github.io/function-graph-overview/?language=typescript) & [JSX]((https://tmr232.github.io/function-graph-overview/?language=tsx))
+- [C#](https://tmr232.github.io/function-graph-overview/?language=csharp)
+- [Java](https://tmr232.github.io/function-graph-overview/?language=java)
